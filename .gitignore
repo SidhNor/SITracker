@@ -4,7 +4,9 @@ Thumbs.db
 # Mac crap
 .DS_Store
 
+# Android Studio
 local.properties
 build/
 .idea/
 .gradle/
+*.iml
