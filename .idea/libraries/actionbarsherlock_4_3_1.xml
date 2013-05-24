@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="actionbarsherlock-4.3.1">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/SITracker/libs/actionbarsherlock-4.3.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
