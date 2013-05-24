@@ -6,3 +6,5 @@ Thumbs.db
 
 local.properties
 build/
+.idea/
+.gradle/
