@@ -1,0 +1,8 @@
+# Windows image file caches
+Thumbs.db
+
+# Mac crap
+.DS_Store
+
+local.properties
+build/

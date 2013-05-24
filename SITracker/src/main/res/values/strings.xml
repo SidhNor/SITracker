@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name" >SITracker
+    </string>
+    <string name="action_settings" >Settings
+    </string>
+    <string name="hello_world" >Hello world!
+    </string>
+    <string name="action_refresh">Refresh
+    </string>
+    <string name="action_add">Add
+    </string>
+    <string name="add_author_placeholder">samlib link
+    </string>
+</resources>

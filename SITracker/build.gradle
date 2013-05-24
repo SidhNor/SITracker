@@ -1,0 +1,42 @@
+buildscript {
+    repositories {
+        maven { url 'http://repo1.maven.org/maven2' }
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:0.4'
+    }
+}
+apply plugin: 'android'
+
+repositories {
+    maven { url 'http://repo1.maven.org/maven2' }
+}
+
+dependencies {
+    compile 'com.google.android:support-v4:r7'
+    compile 'org.jsoup:jsoup:1.7.2'
+    compile files('libs/actionbarsherlock-4.3.1.jar')
+    compile 'com.j256.ormlite:ormlite-android:4.45'
+    compile 'com.github.kevinsawicki:http-request:4.2'
+}
+
+tasks.withType(Compile) {
+    options.encoding = "UTF-8"
+}
+
+android {
+    compileSdkVersion 17
+    buildToolsVersion "17.0.0"
+
+    defaultConfig {
+        minSdkVersion 8
+        targetSdkVersion 17
+    }
+    sourceSets {
+        main {
+            java {
+                srcDir 'src/main/java'
+            }
+        }
+    }
+}
