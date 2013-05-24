@@ -2,6 +2,7 @@ package com.andrada.sitracker.task;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.db.beans.Author;
 import com.andrada.sitracker.db.beans.Publication;
 import com.andrada.sitracker.db.manager.SiSQLiteHelper;
@@ -38,16 +39,17 @@ public class AddAuthorTask extends AsyncTask<String, Void, Void> {
 		for (String url : args) {
 
 			try {
-                String normalizedLink = url;
-                if (!url.endsWith("indexdate.shtml"))
-                    normalizedLink = (url.endsWith("/")) ? url + "indexdate.shtml" : url + "/indexdate.shtml";
+                if (!url.endsWith(Constants.AUTHOR_PAGE_URL_ENDING_WO_SLASH)) {
+                    url = (url.endsWith("/")) ? url + Constants.AUTHOR_PAGE_URL_ENDING_WO_SLASH : url + Constants.AUTHOR_PAGE_URL_ENDING_WI_SLASH;
+                }
 
-				HttpRequest request = HttpRequest.get(new URL(normalizedLink));
-				String body = request.body();
+				HttpRequest request = HttpRequest.get(new URL(url));
+                url = url.replace(Constants.AUTHOR_PAGE_URL_ENDING_WI_SLASH, "");
+				String body = StringParser.sanitizeHTML(request.body());
 
 				Author author = new Author();
-
 				author.setName(StringParser.getAuthor(body));
+                author.setUpdateDate(StringParser.getAuthorUpdateDate(body));
 				author.setUrl(url);
 				helper.getAuthorDao().create(author);
 				int i = helper.getAuthorDao().extractId(author);

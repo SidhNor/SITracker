@@ -17,8 +17,14 @@ public class Publication {
 	String date;
 	@DatabaseField
 	String description;
+    @DatabaseField
+    String commentUrl;
 	@DatabaseField
 	String url;
+    @DatabaseField
+    String rating;
+    @DatabaseField
+    int commentsCount;
 
 	public String getUrl() {
 		return url;
@@ -83,5 +89,29 @@ public class Publication {
 	public void setDate(String date) {
 		this.date = date;
 	}
+
+    public String getCommentUrl() {
+        return commentUrl;
+    }
+
+    public void setCommentUrl(String commentUrl) {
+        this.commentUrl = commentUrl;
+    }
+
+    public String getRating() {
+        return rating;
+    }
+
+    public void setRating(String rating) {
+        this.rating = rating;
+    }
+
+    public int getCommentsCount() {
+        return commentsCount;
+    }
+
+    public void setCommentsCount(int commentsCount) {
+        this.commentsCount = commentsCount;
+    }
 
 }

@@ -1,30 +1,17 @@
 package com.andrada.sitracker;
 
 public class Constants {
-public final static String START_BOOK_BLOCK = "<!----------- Собственно произведение --------------->";
-public final static String START_PUBLICATIONS_BLOCK = "<!-------- вместо <body> вставятся ссылки на произведения! ------>";
-public final static String END_PUBLICATIONS_BLOCK = "<!--------- Подножие ------------------------------->";
-public final static String END_BLOCK = 		  "<!--------------------------------------------------->";
-public static final String AUTHOR_BLOCK_TOKEN = "html title";
-public static final String CATEGORIES_DIVIDER = "<p>";
-public static final String CATEGORIES_NAME_START = "<font color=#393939>";
-public static final String CATEGORIES_NAME_END = ":</font>";
-public static final String ITEMS_DIVIDER = "<DL><DT><li>";
 
-public static final String ITEM_URL_START = "<A HREF=";
-public static final String ITEM_URL_END = ">";
+    public final static String PUBLICATIONS_REGEX =
+            "<DL>\\s*<DT>\\s*<li>.*?<A HREF=(.*?)><b>\\s*(.*?)\\s*</b></A>.*?<b>(\\d+)k</b>.*?<small>(?:Оценка:<b>((\\d+(?:\\.\\d+)?).*?)</b>.*?)?\\s*\\\"(.*?)\\\"\\s*(.*?)?\\s*(?:<A HREF=\\\"(.*?)\\\">Комментарии:\\s*((\\d+).*?)</A>\\s*)?</small>.*?(?:<br>\\s*<dd>\\s*<font.*?>(.*?)</font>)";
 
-public static final String ITEM_TITLE_START = "<b>";
-public static final String ITEM_TITLE_END = "</b>";
+    public final static String AUTHOR_UPDATE_DATE_REGEX = "Обновлялось:</font></a></b>\\s*(.*?)\\s*$";
 
-public static final String ITEM_DESCRIPTION_START = "<DD><font color=\"#555555\">";
-public static final String ITEM_DESCRIPTION_END = "</font>";
+    public final static String AUTHOR_UPDATE_DATE_FORMAT = "dd/MM/yyyy";
 
+    public final static String DIALOG_ADD_AUTHOR = "DIALOG_ADD_AUTHOR";
 
-public static final String URL = "http://samlib.ru/k/kulakow_a_i/";
-
-
-public static final String DIALOG_ADD_AUTHOR = "DIALOG_ADD_AUTHOR";
-
+    public final static String AUTHOR_PAGE_URL_ENDING_WO_SLASH = "indexdate.shtml";
+    public final static String AUTHOR_PAGE_URL_ENDING_WI_SLASH = "/indexdate.shtml";
 
 }

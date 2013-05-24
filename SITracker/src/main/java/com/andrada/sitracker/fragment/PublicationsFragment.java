@@ -121,11 +121,14 @@ public class PublicationsFragment extends Fragment{
 		public View getChildView(int groupPosition, int childPosition,
 				boolean isLastChild, View convertView, ViewGroup parent) {
 			View view = convertView;
-			  if (view == null) {
+            if (view == null) {
 			   view = LayoutInflater.from(context).inflate(R.layout.publications_item, null);
-			  }
-			  TextView title = (TextView) view.findViewById(R.id.item_title);
-			  title.setText(mChildren.get(groupPosition).get(childPosition).getName());
+			}
+			TextView title = (TextView) view.findViewById(R.id.item_title);
+			title.setText(mChildren.get(groupPosition).get(childPosition).getName());
+            TextView description = (TextView) view.findViewById(R.id.item_description);
+            description.setText(mChildren.get(groupPosition).get(childPosition).getDescription());
+
 			return view;
 		}
 
