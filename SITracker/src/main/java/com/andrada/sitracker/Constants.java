@@ -5,8 +5,7 @@ public final static String START_BOOK_BLOCK = "<!----------- Собственн�
 public final static String START_PUBLICATIONS_BLOCK = "<!-------- вместо <body> вставятся ссылки на произведения! ------>";
 public final static String END_PUBLICATIONS_BLOCK = "<!--------- Подножие ------------------------------->";
 public final static String END_BLOCK = 		  "<!--------------------------------------------------->";
-public final static String AUTHOR_START_BLOCK ="<h3>";
-public final static String AUTHOR_END_BLOCK =":<br>";
+public static final String AUTHOR_BLOCK_TOKEN = "html title";
 public static final String CATEGORIES_DIVIDER = "<p>";
 public static final String CATEGORIES_NAME_START = "<font color=#393939>";
 public static final String CATEGORIES_NAME_END = ":</font>";

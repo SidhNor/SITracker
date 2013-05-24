@@ -8,7 +8,11 @@ import com.andrada.sitracker.db.manager.SiSQLiteHelper;
 import com.andrada.sitracker.util.StringParser;
 import com.github.kevinsawicki.http.HttpRequest;
 import com.github.kevinsawicki.http.HttpRequest.HttpRequestException;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.SQLException;
@@ -21,12 +25,12 @@ public class AddAuthorTask extends AsyncTask<String, Void, Void> {
 	}
 
 	SiSQLiteHelper helper;
-	ITaskCallback reciever;
+	ITaskCallback receiver;
 	
 	
-	public AddAuthorTask(Context context, ITaskCallback reciever) {
+	public AddAuthorTask(Context context, ITaskCallback receiver) {
 		helper = new SiSQLiteHelper(context);
-		this.reciever = reciever;
+		this.receiver = receiver;
 	}
 	
 	@Override
@@ -34,15 +38,19 @@ public class AddAuthorTask extends AsyncTask<String, Void, Void> {
 		for (String url : args) {
 
 			try {
-				HttpRequest request = HttpRequest.get(new URL(url));
+                String normalizedLink = url;
+                if (!url.endsWith("indexdate.shtml"))
+                    normalizedLink = (url.endsWith("/")) ? url + "indexdate.shtml" : url + "/indexdate.shtml";
+
+				HttpRequest request = HttpRequest.get(new URL(normalizedLink));
 				String body = request.body();
 
 				Author author = new Author();
-				
+
 				author.setName(StringParser.getAuthor(body));
 				author.setUrl(url);
 				helper.getAuthorDao().create(author);
-				int i = helper.getAuthorDao().extractId(author).intValue();
+				int i = helper.getAuthorDao().extractId(author);
 				List<Publication> items = StringParser.getPublications(body, url, i);
 				for (Publication publication : items) {
 					helper.getPublicationDao().create(publication);
@@ -64,6 +72,8 @@ public class AddAuthorTask extends AsyncTask<String, Void, Void> {
 
 	@Override
 	protected void onPostExecute(Void result) {
-		reciever.deliverResults();
+        if (receiver != null) {
+            receiver.deliverResults();
+        }
 	}
 }

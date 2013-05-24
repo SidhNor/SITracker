@@ -1,5 +1,6 @@
 package com.andrada.sitracker.fragment.dialog;
 
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.*;
@@ -35,13 +36,14 @@ public class AddAuthorDialog extends DialogFragment implements android.content.D
 		mAddedListner = listener;
 	}
 
-	@Override
+    @Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		LayoutInflater inflater = (LayoutInflater) getActivity()
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View layout = inflater.inflate(R.layout.dialog_add_author, null);
 
-		mAuthorEditText = (EditText) layout.findViewById(R.id.et_add_author);
+        assert layout != null;
+        mAuthorEditText = (EditText) layout.findViewById(R.id.et_add_author);
         ClipboardManager clipboard = (ClipboardManager)
                 getActivity().getApplicationContext().getSystemService(Context.CLIPBOARD_SERVICE);
         CharSequence clipboardChars = null;
