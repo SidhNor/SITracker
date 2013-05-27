@@ -1,5 +1,6 @@
 package com.andrada.sitracker.fragment;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
@@ -31,7 +32,7 @@ public class AuthorsFragment extends ListFragment {
 		super.onCreate(savedInstanceState);
 	}
 
-	@Override
+    @Override
 	public void onStart() {
 		super.onStart();
 
@@ -106,18 +107,18 @@ public class AuthorsFragment extends ListFragment {
 
 		@Override
 		public long getItemId(int position) {
-			// TODO Auto-generated method stub
 			return authors.get(position).getId();
 		}
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			// TODO Auto-generated method stub
-			int layout = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ? android.R.layout.simple_list_item_activated_1
-					: android.R.layout.simple_list_item_1;
+			int layout = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ?
+                    android.R.layout.simple_list_item_activated_1 : android.R.layout.simple_list_item_1;
 			TextView view = (TextView) inflater.inflate(layout, parent,false);
-			view.setText(authors.get(position).getName());
-			return view;
+            if (view != null) {
+                view.setText(authors.get(position).getName());
+            }
+            return view;
 		}
 		
 	}

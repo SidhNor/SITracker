@@ -2,17 +2,27 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:showDividers="middle"
     android:orientation="vertical" >
 
     <TextView
         android:id="@+id/item_title"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" android:textSize="14sp"/>
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="?android:attr/textColorPrimary"
+        android:text="@string/designtime_placeholder_short"/>
     <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:id="@+id/item_description" android:layout_gravity="left|center_vertical"/>
-
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="?android:attr/textColorSecondary"
+        android:id="@+id/item_description" android:layout_gravity="left|center_vertical"
+        android:text="@string/designtime_placeholder_long"
+        android:singleLine="false" android:maxLines="3" android:ellipsize="end"/>
+    <View
+        android:id="@+id/publication_item_divider"
+        style="@style/DividerThin" android:layout_marginBottom="6dp" android:layout_marginTop="4dp"
+        android:paddingLeft="3dp" android:paddingRight="3dp"/>
 
 </LinearLayout>
