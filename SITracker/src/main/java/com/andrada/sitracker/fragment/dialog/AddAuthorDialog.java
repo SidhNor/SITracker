@@ -1,6 +1,5 @@
 package com.andrada.sitracker.fragment.dialog;
 
-import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.*;
@@ -16,15 +15,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.task.AddAuthorTask;
-import com.andrada.sitracker.task.AddAuthorTask.ITaskCallback;
 
-public class AddAuthorDialog extends DialogFragment implements android.content.DialogInterface.OnClickListener, ITaskCallback {
+public class AddAuthorDialog extends DialogFragment implements android.content.DialogInterface.OnClickListener, AddAuthorTask.IAuthorTaskCallback {
 	EditText mAuthorEditText;
 	AlertDialog mDialog;
 	OnAuthorAddedListener mAddedListner;
 
 	public interface OnAuthorAddedListener {
 		public void onAuthorAdded();
+        public void onProgressStarted();
 	}
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -98,17 +97,23 @@ public class AddAuthorDialog extends DialogFragment implements android.content.D
 		super.onDestroyView();
 	}
 
-	@Override
-	public void onClick(DialogInterface dialog, int which) {
-	 if (which == Dialog.BUTTON_NEGATIVE) {
-			   dialog.dismiss();
-			  }		
-	}
+    @Override
+    public void onClick(DialogInterface dialog, int which) {
+        if (which == Dialog.BUTTON_NEGATIVE) {
+            dialog.dismiss();
+        }
+    }
 
 	@Override
 	public void deliverResults() {
 		mAddedListner.onAuthorAdded();
-		dismiss();
+        dismiss();
 	}
+
+    @Override
+    public void operationStart() {
+        mAddedListner.onProgressStarted();
+        getDialog().hide();
+    }
 
 }

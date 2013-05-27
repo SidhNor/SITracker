@@ -75,6 +75,10 @@ public class AuthorsFragment extends ListFragment {
 		getListView().setSelection(position);
 	}
 
+    public void showAuthorLoadingProgress() {
+
+    }
+
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		// Notify the parent activity of selected item
@@ -106,13 +110,11 @@ public class AuthorsFragment extends ListFragment {
 
 		@Override
 		public long getItemId(int position) {
-			// TODO Auto-generated method stub
 			return authors.get(position).getId();
 		}
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			// TODO Auto-generated method stub
 			int layout = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ? android.R.layout.simple_list_item_activated_1
 					: android.R.layout.simple_list_item_1;
 			TextView view = (TextView) inflater.inflate(layout, parent,false);
