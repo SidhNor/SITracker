@@ -1,5 +1,6 @@
 package com.andrada.sitracker.fragment.dialog;
 
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.*;
@@ -15,6 +16,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.task.AddAuthorTask;
+import com.andrada.sitracker.util.ClipboardHelper;
 
 public class AddAuthorDialog extends DialogFragment implements android.content.DialogInterface.OnClickListener, AddAuthorTask.IAuthorTaskCallback {
 	EditText mAuthorEditText;
@@ -43,17 +45,8 @@ public class AddAuthorDialog extends DialogFragment implements android.content.D
 
         assert layout != null;
         mAuthorEditText = (EditText) layout.findViewById(R.id.et_add_author);
-        ClipboardManager clipboard = (ClipboardManager)
-                getActivity().getApplicationContext().getSystemService(Context.CLIPBOARD_SERVICE);
-        CharSequence clipboardChars = null;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            if (clipboard.hasPrimaryClip()) {
-                ClipData.Item item = clipboard.getPrimaryClip().getItemAt(0);
-                clipboardChars = item.getText();
-            }
-        } else {
-            clipboardChars = clipboard.getText();
-        }
+        CharSequence clipboardChars = ClipboardHelper.getClipboardText(getActivity().getApplicationContext());
+
         if (clipboardChars != null && clipboardChars.length() > 0) {
             mAuthorEditText.setText(clipboardChars);
         }
@@ -71,14 +64,16 @@ public class AddAuthorDialog extends DialogFragment implements android.content.D
 			@Override
 			public void onShow(DialogInterface dialog) {
 				Button yes = mDialog.getButton(AlertDialog.BUTTON_POSITIVE);
-				yes.setOnClickListener(new OnClickListener() {
+                if (yes != null) {
+                    yes.setOnClickListener(new OnClickListener() {
 
-					@Override
-					public void onClick(View v) {
-						doPositiveClick();
-					}
+                        @Override
+                        public void onClick(View v) {
+                            doPositiveClick();
+                        }
 
-				});
+                    });
+                }
 			}
 		});
 

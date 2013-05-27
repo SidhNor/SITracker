@@ -92,8 +92,6 @@ public class MainActivity extends SherlockFragmentActivity implements
         if (authFrag == null) {
             authFrag = (AuthorsFragment) getSupportFragmentManager()
                     .findFragmentById(R.id.fragment_authors);
-
-        } else {
         }
         authFrag.updateViewAtPosition(authFrag.getSelectedItemPosition());
     }

@@ -128,31 +128,31 @@ public class PublicationsFragment extends Fragment{
 			title.setText(mChildren.get(groupPosition).get(childPosition).getName());
             TextView description = (TextView) view.findViewById(R.id.item_description);
             description.setText(mChildren.get(groupPosition).get(childPosition).getDescription());
+            if (childPosition == (mChildren.get(groupPosition).size()-1)) {
+                View dividerView = view.findViewById(R.id.publication_item_divider);
+                dividerView.setVisibility(View.INVISIBLE);
+            }
 
 			return view;
 		}
 
 		@Override
 		public int getChildrenCount(int groupPosition) {
-			// TODO Auto-generated method stub
 			return mChildren.get(groupPosition).size();
 		}
 
 		@Override
 		public Object getGroup(int groupPosition) {
-			// TODO Auto-generated method stub
 			return mCategories.get(groupPosition);
 		}
 
 		@Override
 		public int getGroupCount() {
-			// TODO Auto-generated method stub
 			return mCategories.size();
 		}
 
 		@Override
 		public long getGroupId(int groupPosition) {
-			// TODO Auto-generated method stub
 			return groupPosition;
 		}
 
@@ -171,13 +171,11 @@ public class PublicationsFragment extends Fragment{
 
 		@Override
 		public boolean hasStableIds() {
-			// TODO Auto-generated method stub
 			return false;
 		}
 
 		@Override
 		public boolean isChildSelectable(int groupPosition, int childPosition) {
-			// TODO Auto-generated method stub
 			return false;
 		}
 		
