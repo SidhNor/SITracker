@@ -13,8 +13,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.google.android:support-v4:r7'
-    compile files('libs/actionbarsherlock-4.3.1.jar')
+    compile project(":libraries:actionbarsherlock")
     compile 'com.j256.ormlite:ormlite-android:4.45'
     compile 'com.github.kevinsawicki:http-request:4.2'
 }

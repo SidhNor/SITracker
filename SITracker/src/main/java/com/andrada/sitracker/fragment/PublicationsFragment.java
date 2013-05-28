@@ -60,10 +60,10 @@ public class PublicationsFragment extends Fragment{
 	    @Override
 	    public void onStart() {
 	    	super.onStart();
-	    	updateArticleView(mCurrentId, getActivity());
+	    	updatePublicationsView(mCurrentId, getActivity());
 	    }
 
-	public void updateArticleView(long id, Context context) {
+	public void updatePublicationsView(long id, Context context) {
 		List<Publication> items = new ArrayList<Publication>();
 		try {
 			items = helper.getPublicationDao().queryBuilder().where().eq("authorID", id).query();

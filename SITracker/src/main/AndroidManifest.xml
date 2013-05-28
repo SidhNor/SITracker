@@ -23,6 +23,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+grad
+        <activity android:name=".phoneactivities.PublicationsActivity" />
     </application>
 
 </manifest>

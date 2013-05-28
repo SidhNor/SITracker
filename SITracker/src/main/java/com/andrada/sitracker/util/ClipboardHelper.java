@@ -13,11 +13,13 @@ import android.os.Build;
 public class ClipboardHelper {
 
     public static CharSequence getClipboardText(Context context) {
-        ClipboardManager clipboard = (ClipboardManager)context.getSystemService(Context.CLIPBOARD_SERVICE);
+
         CharSequence clipboardChars;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            android.content.ClipboardManager clipboard =  (android.content.ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
             clipboardChars = getClipboardHoneycomb(clipboard);
         } else {
+            android.text.ClipboardManager clipboard = (android.text.ClipboardManager)context.getSystemService(Context.CLIPBOARD_SERVICE);
             clipboardChars = getClipboardFroyo(clipboard);
         }
         return clipboardChars;
@@ -25,7 +27,7 @@ public class ClipboardHelper {
 
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    private static CharSequence getClipboardHoneycomb(ClipboardManager clipboard) {
+    private static CharSequence getClipboardHoneycomb(android.content.ClipboardManager clipboard) {
         if (clipboard.hasPrimaryClip()) {
             ClipData.Item item = clipboard.getPrimaryClip().getItemAt(0);
             return item.getText();
@@ -34,7 +36,7 @@ public class ClipboardHelper {
     }
 
     @TargetApi(Build.VERSION_CODES.FROYO)
-    private static CharSequence getClipboardFroyo(ClipboardManager clipboard) {
+    private static CharSequence getClipboardFroyo(android.text.ClipboardManager clipboard) {
         //noinspection deprecation,AndroidLintNewApi
         return clipboard.getText();
     }
