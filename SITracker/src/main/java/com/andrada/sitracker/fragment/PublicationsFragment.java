@@ -26,42 +26,37 @@ public class PublicationsFragment extends Fragment{
 	long mCurrentId = -1;
 	private SiSQLiteHelper helper;
 
-	    @Override
-	    public View onCreateView(LayoutInflater inflater, ViewGroup container, 
-	        Bundle savedInstanceState) {
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+        Bundle savedInstanceState) {
 
-	        // If activity recreated (such as from screen rotate), restore
-	        // the previous article selection set by onSaveInstanceState().
-	        // This is primarily necessary when in the two-pane layout.
-	        if (savedInstanceState != null) {
-	            mCurrentId = savedInstanceState.getLong(ARG_ID);
-	        }
+        // If activity recreated (such as from screen rotate), restore
+        // the previous article selection set by onSaveInstanceState().
+        // This is primarily necessary when in the two-pane layout.
+        if (savedInstanceState != null) {
+            mCurrentId = savedInstanceState.getLong(ARG_ID);
+        }
 
-	        // Inflate the layout for this fragment
-	        View view = inflater.inflate(R.layout.fragment_publications, container, false);
-	        mListView = (ExpandableListView) view.findViewById(R.id.publication_list);
-	        return view;
-	    }
-	    @Override
-	    public void onCreate(Bundle savedInstanceState) {
-	    	super.onCreate(savedInstanceState);
-	    	setRetainInstance(true);
-	    	Bundle  bundle = getArguments();
-			if (bundle   != null) {
-	            mCurrentId = bundle.getLong(ARG_ID);
-	        }
-	    }
-	    @Override
-	    public void onAttach(Activity activity) {
-	    	super.onAttach(activity);
-	    	helper = new SiSQLiteHelper(activity);
-	    	
-	    }
-	    @Override
-	    public void onStart() {
-	    	super.onStart();
-	    	updatePublicationsView(mCurrentId, getActivity());
-	    }
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_publications, container, false);
+        mListView = (ExpandableListView) view.findViewById(R.id.publication_list);
+        return view;
+    }
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+        Bundle  bundle = getArguments();
+        if (bundle  != null) {
+            mCurrentId = bundle.getLong(ARG_ID);
+        }
+    }
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        helper = new SiSQLiteHelper(activity);
+
+    }
 
 	public void updatePublicationsView(long id, Context context) {
 		List<Publication> items = new ArrayList<Publication>();
@@ -112,7 +107,6 @@ public class PublicationsFragment extends Fragment{
 
 		@Override
 		public long getChildId(int groupPosition, int childPosition) {
-			// TODO Auto-generated method stub
 			List<Publication> items = mChildren.get(groupPosition);
 			return items.get(childPosition).getId();
 		}

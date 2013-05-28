@@ -16,16 +16,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.task.AddAuthorTask;
-import com.andrada.sitracker.task.AddAuthorTask.ITaskCallback;
 import com.andrada.sitracker.util.ClipboardHelper;
 
-public class AddAuthorDialog extends DialogFragment implements android.content.DialogInterface.OnClickListener, ITaskCallback {
+public class AddAuthorDialog extends DialogFragment implements android.content.DialogInterface.OnClickListener, AddAuthorTask.IAuthorTaskCallback {
 	EditText mAuthorEditText;
 	AlertDialog mDialog;
 	OnAuthorAddedListener mAddedListner;
 
 	public interface OnAuthorAddedListener {
 		public void onAuthorAdded();
+        public void onProgressStarted();
 	}
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -37,7 +37,6 @@ public class AddAuthorDialog extends DialogFragment implements android.content.D
 		mAddedListner = listener;
 	}
 
-    @TargetApi(Build.VERSION_CODES.FROYO)
     @Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		LayoutInflater inflater = (LayoutInflater) getActivity()
@@ -93,17 +92,23 @@ public class AddAuthorDialog extends DialogFragment implements android.content.D
 		super.onDestroyView();
 	}
 
-	@Override
-	public void onClick(DialogInterface dialog, int which) {
-	 if (which == Dialog.BUTTON_NEGATIVE) {
-			   dialog.dismiss();
-			  }		
-	}
+    @Override
+    public void onClick(DialogInterface dialog, int which) {
+        if (which == Dialog.BUTTON_NEGATIVE) {
+            dialog.dismiss();
+        }
+    }
 
 	@Override
 	public void deliverResults() {
 		mAddedListner.onAuthorAdded();
-		dismiss();
+        dismiss();
 	}
+
+    @Override
+    public void operationStart() {
+        mAddedListner.onProgressStarted();
+        getDialog().hide();
+    }
 
 }

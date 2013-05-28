@@ -85,4 +85,14 @@ public class MainActivity extends SherlockFragmentActivity implements
     public void onAuthorAdded() {
         updateAuthors();
     }
+
+    @Override
+    public void onProgressStarted() {
+        //Show loading indicator
+        AuthorsFragment authFrag = (AuthorsFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.fragment_authors);
+        if (authFrag != null) {
+            authFrag.showAuthorLoadingProgress();
+        }
+    }
 }

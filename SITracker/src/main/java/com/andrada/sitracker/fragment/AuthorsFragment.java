@@ -1,6 +1,5 @@
 package com.andrada.sitracker.fragment;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
@@ -32,7 +31,7 @@ public class AuthorsFragment extends ListFragment {
 		super.onCreate(savedInstanceState);
 	}
 
-    @Override
+	@Override
 	public void onStart() {
 		super.onStart();
 
@@ -76,6 +75,10 @@ public class AuthorsFragment extends ListFragment {
 		getListView().setSelection(position);
 	}
 
+    public void showAuthorLoadingProgress() {
+
+    }
+
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		// Notify the parent activity of selected item
@@ -112,8 +115,8 @@ public class AuthorsFragment extends ListFragment {
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			int layout = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ?
-                    android.R.layout.simple_list_item_activated_1 : android.R.layout.simple_list_item_1;
+			int layout = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ? android.R.layout.simple_list_item_activated_1
+					: android.R.layout.simple_list_item_1;
 			TextView view = (TextView) inflater.inflate(layout, parent,false);
             if (view != null) {
                 view.setText(authors.get(position).getName());

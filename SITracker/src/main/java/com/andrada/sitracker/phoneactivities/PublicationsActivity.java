@@ -5,12 +5,10 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.fragment.PublicationsFragment;
 
-import static com.andrada.sitracker.fragment.AuthorsFragment.OnAuthorSelectedListener;
-
 /**
  * Created by ggodonoga on 27/05/13.
  */
-public class PublicationsActivity extends SherlockFragmentActivity implements AuthorsFragment.OnAuthorSelectedListener{
+public class PublicationsActivity extends SherlockFragmentActivity{
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
@@ -18,7 +16,7 @@ public class PublicationsActivity extends SherlockFragmentActivity implements Au
 
         Bundle extras = getIntent().getExtras();
 
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.publications_activity);
 
         if (extras != null) {
             // Take the info from the intent and deliver it to the fragment so it can update
@@ -28,5 +26,4 @@ public class PublicationsActivity extends SherlockFragmentActivity implements Au
             frag.updatePublicationsView(authorId, this);
         }
     }
-
 }

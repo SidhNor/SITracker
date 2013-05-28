@@ -15,17 +15,18 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.util.List;
 
-public class AddAuthorTask extends AsyncTask<String, Void, Void> {
+public class AddAuthorTask extends AsyncTask<String, Integer, Void> {
 	
-	public interface ITaskCallback{
+	public interface IAuthorTaskCallback {
 		public void deliverResults();
+        public void operationStart();
 	}
 
 	SiSQLiteHelper helper;
-	ITaskCallback receiver;
+	IAuthorTaskCallback receiver;
 	
 	
-	public AddAuthorTask(Context context, ITaskCallback receiver) {
+	public AddAuthorTask(Context context, IAuthorTaskCallback receiver) {
 		helper = new SiSQLiteHelper(context);
 		this.receiver = receiver;
 	}
@@ -67,6 +68,13 @@ public class AddAuthorTask extends AsyncTask<String, Void, Void> {
 		}
 		return null;
 	}
+
+    @Override
+    protected void onPreExecute() {
+        if (receiver != null) {
+            receiver.operationStart();
+        }
+    }
 
 	@Override
 	protected void onPostExecute(Void result) {
