@@ -16,5 +16,6 @@
         ultricies
     </string>
     <string name="designtime_placeholder_short">Lorem ipsum dolor</string>
+    <string name="designtime_placeholder_date">May 28</string>
 
 </resources>

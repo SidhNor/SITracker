@@ -1,28 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:showDividers="middle"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:minHeight="60dp">
 
     <TextView
         android:id="@+id/item_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="?android:attr/textColorPrimary"
         android:text="@string/designtime_placeholder_short"/>
+    <LinearLayout
+        android:id="@+id/item_actions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:orientation="vertical">
+        <TextView android:id="@+id/item_update_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/designtime_placeholder_date"/>
+        <CheckBox android:id="@+id/item_updated"
+            style="?android:attr/starStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" android:layout_gravity="center_horizontal"/>
+    </LinearLayout>
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:id="@+id/item_description"
+        android:layout_below="@id/item_title"
+        android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@+id/item_actions"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="?android:attr/textColorSecondary"
-        android:id="@+id/item_description" android:layout_gravity="left|center_vertical"
+        android:layout_gravity="left|center_vertical"
         android:text="@string/designtime_placeholder_long"
         android:singleLine="false" android:maxLines="3" android:ellipsize="end"/>
+
     <View
         android:id="@+id/publication_item_divider"
-        style="@style/DividerThin" android:layout_marginBottom="6dp" android:layout_marginTop="4dp"
-        android:paddingLeft="3dp" android:paddingRight="3dp"/>
+        android:layout_alignParentBottom="true"
+        android:layout_below="@id/item_description"
+        style="@style/DividerThin" android:layout_marginBottom="6dp" android:layout_marginTop="4dp"/>
 
-</LinearLayout>
+</RelativeLayout>

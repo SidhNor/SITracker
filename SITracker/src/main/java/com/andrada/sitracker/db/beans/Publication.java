@@ -2,6 +2,8 @@ package com.andrada.sitracker.db.beans;
 
 import com.j256.ormlite.field.DatabaseField;
 
+import java.util.Date;
+
 public class Publication {
 	@DatabaseField(generatedId = true)
 	int id;
@@ -25,6 +27,9 @@ public class Publication {
     String rating;
     @DatabaseField
     int commentsCount;
+
+    @DatabaseField
+    Date updateDate;
 
 	public String getUrl() {
 		return url;
@@ -112,6 +117,14 @@ public class Publication {
 
     public void setCommentsCount(int commentsCount) {
         this.commentsCount = commentsCount;
+    }
+
+    public Date getUpdateDate() {
+        return updateDate;
+    }
+
+    public void setUpdateDate(Date updateDate) {
+        this.updateDate = updateDate;
     }
 
 }

@@ -26,39 +26,46 @@ public class PublicationsFragment extends Fragment{
 	long mCurrentId = -1;
 	private SiSQLiteHelper helper;
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-        Bundle savedInstanceState) {
+	    @Override
+	    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+	        Bundle savedInstanceState) {
 
-        // If activity recreated (such as from screen rotate), restore
-        // the previous article selection set by onSaveInstanceState().
-        // This is primarily necessary when in the two-pane layout.
-        if (savedInstanceState != null) {
-            mCurrentId = savedInstanceState.getLong(ARG_ID);
-        }
+	        // If activity recreated (such as from screen rotate), restore
+	        // the previous article selection set by onSaveInstanceState().
+	        // This is primarily necessary when in the two-pane layout.
+	        if (savedInstanceState != null) {
+	            mCurrentId = savedInstanceState.getLong(ARG_ID);
+	        }
 
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_publications, container, false);
-        mListView = (ExpandableListView) view.findViewById(R.id.publication_list);
-        return view;
-    }
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setRetainInstance(true);
-        Bundle  bundle = getArguments();
-        if (bundle  != null) {
-            mCurrentId = bundle.getLong(ARG_ID);
-        }
-    }
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        helper = new SiSQLiteHelper(activity);
+	        // Inflate the layout for this fragment
+	        View view = inflater.inflate(R.layout.fragment_publications, container, false);
+	        mListView = (ExpandableListView) view.findViewById(R.id.publication_list);
+	        return view;
+	    }
+	    @Override
+	    public void onCreate(Bundle savedInstanceState) {
+	    	super.onCreate(savedInstanceState);
+	    	setRetainInstance(true);
+	    	Bundle  bundle = getArguments();
+			if (bundle  != null) {
+	            mCurrentId = bundle.getLong(ARG_ID);
+	        }
+	    }
+	    @Override
+	    public void onAttach(Activity activity) {
+	    	super.onAttach(activity);
+	    	helper = new SiSQLiteHelper(activity);
 
-    }
+	    }
+	    @Override
+	    public void onStart() {
+	    	super.onStart();
+            if (mCurrentId >= 0)
+	    	    updatePublicationsView(mCurrentId, getActivity());
+	    }
 
 	public void updatePublicationsView(long id, Context context) {
+        mCurrentId = id;
 		List<Publication> items = new ArrayList<Publication>();
 		try {
 			items = helper.getPublicationDao().queryBuilder().where().eq("authorID", id).query();
@@ -107,6 +114,7 @@ public class PublicationsFragment extends Fragment{
 
 		@Override
 		public long getChildId(int groupPosition, int childPosition) {
+			// TODO Auto-generated method stub
 			List<Publication> items = mChildren.get(groupPosition);
 			return items.get(childPosition).getId();
 		}
@@ -119,14 +127,10 @@ public class PublicationsFragment extends Fragment{
 			   view = LayoutInflater.from(context).inflate(R.layout.publications_item, null);
 			}
 			TextView title = (TextView) view.findViewById(R.id.item_title);
-			title.setText(mChildren.get(groupPosition).get(childPosition).getName());
+            Publication child = (Publication)getChild(groupPosition, childPosition);
+			title.setText(child.getName());
             TextView description = (TextView) view.findViewById(R.id.item_description);
-            description.setText(mChildren.get(groupPosition).get(childPosition).getDescription());
-            if (childPosition == (mChildren.get(groupPosition).size()-1)) {
-                View dividerView = view.findViewById(R.id.publication_item_divider);
-                dividerView.setVisibility(View.INVISIBLE);
-            }
-
+            description.setText(child.getDescription());
 			return view;
 		}
 

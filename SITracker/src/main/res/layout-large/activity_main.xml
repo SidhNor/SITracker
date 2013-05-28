@@ -10,6 +10,9 @@
               android:layout_weight="1"
               android:layout_width="0dp"
               android:layout_height="match_parent" tools:layout="@layout/simple_list_item_1"/>
+    <ImageView
+        android:layout_height="match_parent"
+        android:layout_width="6dp" android:src="#acacac" android:contentDescription="Shadow image"/>
 
     <fragment android:name="com.andrada.sitracker.fragment.PublicationsFragment"
               android:id="@+id/fragment_publications"

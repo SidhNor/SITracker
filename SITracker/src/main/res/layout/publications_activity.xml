@@ -5,6 +5,6 @@
              android:layout_height="match_parent">
     <fragment android:name="com.andrada.sitracker.fragment.PublicationsFragment"
               android:id="@+id/fragment_publications"
-              android:layout_width="0dp"
+              android:layout_width="match_parent"
               android:layout_height="match_parent"/>
 </FrameLayout>

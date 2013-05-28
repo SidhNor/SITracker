@@ -2,6 +2,7 @@ package com.andrada.sitracker.fragment;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
@@ -117,6 +118,7 @@ public class AuthorsFragment extends ListFragment {
 		public View getView(int position, View convertView, ViewGroup parent) {
 			int layout = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ? android.R.layout.simple_list_item_activated_1
 					: android.R.layout.simple_list_item_1;
+
 			TextView view = (TextView) inflater.inflate(layout, parent,false);
             if (view != null) {
                 view.setText(authors.get(position).getName());
