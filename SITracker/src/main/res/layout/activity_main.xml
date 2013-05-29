@@ -9,5 +9,7 @@
     <fragment android:name="com.andrada.sitracker.fragment.AuthorsFragment"
               android:id="@+id/fragment_authors"
               android:layout_width="match_parent"
-              android:layout_height="match_parent" tools:layout="@layout/simple_list_item_1"/>
+              android:layout_height="match_parent"
+              android:listSelector="@drawable/authors_list_selector"
+              tools:layout="@layout/authors_list_item"/>
 </merge>

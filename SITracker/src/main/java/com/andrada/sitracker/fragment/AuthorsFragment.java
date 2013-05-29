@@ -42,6 +42,7 @@ public class AuthorsFragment extends ListFragment {
 		// available.)
 		if (getFragmentManager().findFragmentById(R.id.fragment_publications) != null) {
 			getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+            getListView().setSelector(R.drawable.authors_list_selector);
 		}
 	}
 
@@ -116,11 +117,11 @@ public class AuthorsFragment extends ListFragment {
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			int layout = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ? android.R.layout.simple_list_item_activated_1
-					: android.R.layout.simple_list_item_1;
-
-			TextView view = (TextView) inflater.inflate(layout, parent,false);
+			/*int layout = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ? android.R.layout.simple_list_item_activated_1
+					: android.R.layout.simple_list_item_1;*/
+			TextView view = (TextView) inflater.inflate(R.layout.authors_list_item, parent,false);
             if (view != null) {
+                view.setBackgroundResource(R.drawable.authors_list_item_selector_normal);
                 view.setText(authors.get(position).getName());
             }
             return view;
