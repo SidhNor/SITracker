@@ -116,12 +116,14 @@ public class AuthorsFragment extends ListFragment {
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			/*int layout = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ? android.R.layout.simple_list_item_activated_1
-					: android.R.layout.simple_list_item_1;*/
-			TextView view = (TextView) inflater.inflate(R.layout.authors_list_item, parent,false);
-            if (view != null) {
-                view.setBackgroundResource(R.drawable.authors_list_item_selector_normal);
-                view.setText(authors.get(position).getName());
+            View view = convertView;
+            if (view == null) {
+                view = inflater.inflate(R.layout.authors_list_item, parent,false);
+            }
+            view.setBackgroundResource(R.drawable.authors_list_item_selector_normal);
+			TextView authorTitle = (TextView) view.findViewById(R.id.author_title);
+            if (authorTitle != null) {
+                authorTitle.setText(authors.get(position).getName());
             }
             return view;
 		}
