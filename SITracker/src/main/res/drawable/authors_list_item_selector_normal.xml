@@ -10,6 +10,6 @@
 
     <item android:state_focused="true" android:drawable="@drawable/authors_list_item_background_highlight" />
 
-    <item android:drawable="@drawable/authors_list_item_background_normal" />
+    <item android:drawable="@android:color/transparent" />
 
 </selector>

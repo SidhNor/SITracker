@@ -2,8 +2,6 @@ package com.andrada.sitracker.fragment;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
@@ -43,6 +41,7 @@ public class AuthorsFragment extends ListFragment {
 		if (getFragmentManager().findFragmentById(R.id.fragment_publications) != null) {
 			getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
             getListView().setSelector(R.drawable.authors_list_selector);
+            getListView().setBackgroundResource(R.drawable.authors_list_background);
 		}
 	}
 
