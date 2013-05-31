@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.andrada.sitracker.R;
@@ -120,10 +121,20 @@ public class AuthorsFragment extends ListFragment {
             if (view == null) {
                 view = inflater.inflate(R.layout.authors_list_item, parent,false);
             }
-            view.setBackgroundResource(R.drawable.authors_list_item_selector_normal);
+            if (position == 1) {
+                view.setBackgroundResource(R.drawable.authors_list_item_selector_new);
+            } else {
+                view.setBackgroundResource(R.drawable.authors_list_item_selector_normal);
+            }
+
 			TextView authorTitle = (TextView) view.findViewById(R.id.author_title);
             if (authorTitle != null) {
                 authorTitle.setText(authors.get(position).getName());
+            }
+            CheckBox updated = (CheckBox)view.findViewById(R.id.author_updated);
+            if (updated != null) {
+                authors.get(position).getUpdateDate();
+                //updated.setChecked(true);
             }
             return view;
 		}

@@ -10,6 +10,7 @@
         android:id="@+id/item_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/list_left_padding"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_toLeftOf="@+id/item_actions"
@@ -38,6 +39,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/list_left_padding"
         android:id="@+id/item_description"
         android:layout_below="@id/item_title"
         android:layout_alignParentLeft="true"

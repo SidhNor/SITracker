@@ -2,21 +2,21 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:paddingRight="8dp" >
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/category_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="@dimen/group_heading_margin_top"
+        android:paddingLeft="@dimen/list_left_padding"
         android:textAppearance="@android:style/TextAppearance.Large"
-        android:textColor="@color/left_menu_text_gray"
+        android:textColor="@color/holo_blue_light"
         android:fontFamily="sans-serif-light"
         android:text="@string/designtime_placeholder_short"
         android:textIsSelectable="false" android:textStyle="bold" android:focusableInTouchMode="false"/>
 
-    <View style="@style/DividerThick" android:layout_marginBottom="4dp"
-        android:layout_marginTop="4dp"/>
+    <View style="@style/DividerThick" android:layout_marginBottom="@dimen/divider_margin_bottom"
+        android:layout_marginTop="@dimen/divider_margin_top"/>
 
 </LinearLayout>

@@ -1,32 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="horizontal"
         android:descendantFocusability="blocksDescendants">
+
     <TextView
         android:id="@+id/author_title"
-        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_width="match_parent"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:gravity="center_vertical"
-        android:paddingLeft="6dip"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/author_update_date"
         android:textColor="@color/authors_list_color_selector"
         android:minHeight="?android:attr/listPreferredItemHeight"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_toLeftOf="@+id/author_updated"
         android:ellipsize="end"
         android:maxLines="2"
         android:text="@string/designtime_placeholder_short"/>
-    <CheckBox android:id="@+id/author_updated"
-        style="?android:attr/starStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:layout_gravity="center_horizontal"/>
-
+        <TextView android:id="@+id/author_update_date"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_alignParentTop="true"
+                  android:layout_alignParentRight="true"
+                  android:textSize="12sp"
+                  android:text="@string/designtime_placeholder_date"
+                  android:textAlignment="viewEnd"/>
+        <CheckBox android:id="@+id/author_updated"
+                  style="?android:attr/starStyle"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_alignParentRight="true"
+                  android:layout_alignRight="@+id/author_update_date"
+                  android:layout_alignParentBottom="true"
+                  android:clickable="false"/>
 </RelativeLayout>
 
 
