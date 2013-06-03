@@ -2,10 +2,14 @@ package com.andrada.sitracker.task;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.widget.Toast;
+
 import com.andrada.sitracker.Constants;
+import com.andrada.sitracker.R;
 import com.andrada.sitracker.db.beans.Author;
 import com.andrada.sitracker.db.beans.Publication;
 import com.andrada.sitracker.db.manager.SiSQLiteHelper;
+import com.andrada.sitracker.exceptions.AddAuthorException;
 import com.andrada.sitracker.util.StringParser;
 import com.github.kevinsawicki.http.HttpRequest;
 import com.github.kevinsawicki.http.HttpRequest.HttpRequestException;
@@ -15,34 +19,40 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.util.List;
 
-public class AddAuthorTask extends AsyncTask<String, Integer, Void> {
+public class AddAuthorTask extends AsyncTask<String, Integer, String> {
 	
 	public interface IAuthorTaskCallback {
-		public void deliverResults();
+		public void deliverResults(String message);
         public void operationStart();
+        public void onProgressUpdate(int percent);
 	}
 
-	SiSQLiteHelper helper;
-	IAuthorTaskCallback receiver;
+	private SiSQLiteHelper helper;
+    private IAuthorTaskCallback mReceiver;
+    private Context context;
 	
 	
 	public AddAuthorTask(Context context, IAuthorTaskCallback receiver) {
+        this.context = context;
 		helper = new SiSQLiteHelper(context);
-		this.receiver = receiver;
+		this.mReceiver = receiver;
 	}
 	
 	@Override
-	protected Void doInBackground(String... args) {
+	protected String doInBackground(String... args) {
+        String message = "";
 		for (String url : args) {
-
 			try {
                 if (!url.endsWith(Constants.AUTHOR_PAGE_URL_ENDING_WO_SLASH)) {
                     url = (url.endsWith("/")) ? url + Constants.AUTHOR_PAGE_URL_ENDING_WO_SLASH : url + Constants.AUTHOR_PAGE_URL_ENDING_WI_SLASH;
                 }
 
+                if (helper.getAuthorDao().queryBuilder().where().eq("url", url).query().size() != 0){
+                    throw new AddAuthorException(AddAuthorException.AuthorAddErrors.AUTHOR_ALREADY_EXISTS);
+                }
+
 				HttpRequest request = HttpRequest.get(new URL(url));
-                url = url.replace(Constants.AUTHOR_PAGE_URL_ENDING_WI_SLASH, "");
-				String body = StringParser.sanitizeHTML(request.body());
+                String body = StringParser.sanitizeHTML(request.body());
 
 				Author author = new Author();
 				author.setName(StringParser.getAuthor(body));
@@ -55,31 +65,51 @@ public class AddAuthorTask extends AsyncTask<String, Integer, Void> {
 					helper.getPublicationDao().create(publication);
 				}
 			} catch (HttpRequestException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+                message = context.getResources().getString(R.string.cannot_add_author_network);
 			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+                message = context.getResources().getString(R.string.cannot_add_author_malformed);
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+                message = context.getResources().getString(R.string.cannot_add_author_internal);
+			} catch (AddAuthorException e) {
+                switch (e.getError()) {
+                    case AUTHOR_ALREADY_EXISTS:
+                        message = context.getResources().getString(R.string.cannot_add_author_already_exits);
+                        break;
+                    case AUTHOR_DATE_NOT_FOUND:
+                        message = context.getResources().getString(R.string.cannot_add_author_no_update_date);
+                        break;
+                    case AUTHOR_NAME_NOT_FOUND:
+                        message = context.getResources().getString(R.string.cannot_add_author_no_name);
+                        break;
+                    default:
+                        message = context.getResources().getString(R.string.cannot_add_author_unknown);
+                        break;
+                }
+
+            }
 
 		}
-		return null;
+		return message;
 	}
 
     @Override
     protected void onPreExecute() {
-        if (receiver != null) {
-            receiver.operationStart();
+        if (mReceiver != null) {
+            mReceiver.operationStart();
+        }
+    }
+
+    @Override
+    protected void onProgressUpdate(Integer... values) {
+        if (mReceiver != null) {
+            mReceiver.onProgressUpdate(values[0]);
         }
     }
 
 	@Override
-	protected void onPostExecute(Void result) {
-        if (receiver != null) {
-            receiver.deliverResults();
+	protected void onPostExecute(String result) {
+        if (mReceiver != null) {
+            mReceiver.deliverResults(result);
         }
 	}
 }

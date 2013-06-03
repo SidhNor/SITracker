@@ -8,11 +8,10 @@ import com.andrada.sitracker.fragment.AuthorsFragment;
 import com.andrada.sitracker.fragment.AuthorsFragment.OnAuthorSelectedListener;
 import com.andrada.sitracker.fragment.PublicationsFragment;
 import com.andrada.sitracker.fragment.dialog.AddAuthorDialog;
-import com.andrada.sitracker.fragment.dialog.AddAuthorDialog.OnAuthorAddedListener;
 import com.andrada.sitracker.phoneactivities.PublicationsActivity;
 
 public class MainActivity extends SherlockFragmentActivity implements
-        OnAuthorSelectedListener, OnAuthorAddedListener {
+        OnAuthorSelectedListener, AddAuthorDialog.OnAuthorLinkSuppliedListener {
 
     private boolean mDualFragments = false;
 
@@ -37,7 +36,7 @@ public class MainActivity extends SherlockFragmentActivity implements
         switch (item.getItemId()) {
             case R.id.action_add:
                 AddAuthorDialog authorDialog = new AddAuthorDialog();
-                authorDialog.setOnAuthorAddedListener(this);
+                authorDialog.setOnAuthorLinkSuppliedListener(this);
                 authorDialog.show(getSupportFragmentManager(),
                         Constants.DIALOG_ADD_AUTHOR);
                 break;
@@ -81,17 +80,19 @@ public class MainActivity extends SherlockFragmentActivity implements
     }
 
     @Override
-    public void onAuthorAdded() {
-        updateAuthors();
+    public void onLinkSupplied(String url) {
+        AuthorsFragment authFrag = (AuthorsFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.fragment_container);
+
+        if (authFrag == null) {
+            authFrag = (AuthorsFragment) getSupportFragmentManager()
+                    .findFragmentById(R.id.fragment_authors);
+        }
+        authFrag.tryAddAuthor(url);
     }
 
     @Override
-    public void onProgressStarted() {
-        //Show loading indicator
-        AuthorsFragment authFrag = (AuthorsFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.fragment_authors);
-        if (authFrag != null) {
-            authFrag.showAuthorLoadingProgress();
-        }
+    public void onAuthorAdded() {
+        updateAuthors();
     }
 }

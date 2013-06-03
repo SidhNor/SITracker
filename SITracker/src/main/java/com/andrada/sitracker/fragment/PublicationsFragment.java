@@ -126,7 +126,16 @@ public class PublicationsFragment extends Fragment{
             if (view == null) {
 			   view = LayoutInflater.from(context).inflate(R.layout.publications_item, null);
 			}
+            ExpandableListView v = (ExpandableListView) parent;
+
 			TextView title = (TextView) view.findViewById(R.id.item_title);
+            View divider = view.findViewById(R.id.publication_item_divider);
+            if (mChildren.get(groupPosition).size() -1 == childPosition) {
+                divider.setVisibility(View.GONE);
+            } else {
+                divider.setVisibility(View.VISIBLE);
+            }
+
             Publication child = (Publication)getChild(groupPosition, childPosition);
 			title.setText(child.getName());
             TextView description = (TextView) view.findViewById(R.id.item_description);
@@ -161,7 +170,6 @@ public class PublicationsFragment extends Fragment{
 			  if (view == null) {
 			   view = LayoutInflater.from(context).inflate(R.layout.publications_category, null);
 			  }
-
 			  TextView categoryTitle = (TextView) view.findViewById(R.id.category_title);
 			  categoryTitle.setText(mCategories.get(groupPosition));
 			return view;

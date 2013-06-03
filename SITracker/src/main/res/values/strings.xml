@@ -17,5 +17,12 @@
     </string>
     <string name="designtime_placeholder_short">Lorem ipsum dolor</string>
     <string name="designtime_placeholder_date">May 28</string>
-
+    <string name="cannot_add_author">Cannot add author.</string>
+    <string name="cannot_add_author_internal">Cannot add author. Some internal error occurred.</string>
+    <string name="cannot_add_author_malformed">Cannot add author. Make sure the link is correct.</string>
+    <string name="cannot_add_author_network">Cannot add author. Check your internet connection.</string>
+    <string name="cannot_add_author_already_exits">Author already exists.</string>
+    <string name="cannot_add_author_no_update_date">Cannot add author. No update date found.</string>
+    <string name="cannot_add_author_no_name">Cannot add author. No author name found.</string>
+    <string name="cannot_add_author_unknown">Cannot add author. An unexpected error occurred.</string>
 </resources>

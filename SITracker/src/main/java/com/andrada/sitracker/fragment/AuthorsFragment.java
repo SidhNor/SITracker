@@ -11,25 +11,31 @@ import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.db.beans.Author;
 import com.andrada.sitracker.db.manager.SiSQLiteHelper;
+import com.andrada.sitracker.task.AddAuthorTask;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AuthorsFragment extends ListFragment {
+public class AuthorsFragment extends ListFragment implements AddAuthorTask.IAuthorTaskCallback {
+
 	OnAuthorSelectedListener mCallback;
 
-	public interface OnAuthorSelectedListener {
+    public interface OnAuthorSelectedListener {
 		public void onAuthorSelected(long id);
+        public void onAuthorAdded();
 	}
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-	}
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
 
 	@Override
 	public void onStart() {
@@ -42,8 +48,8 @@ public class AuthorsFragment extends ListFragment {
 		if (getFragmentManager().findFragmentById(R.id.fragment_publications) != null) {
 			getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
             getListView().setSelector(R.drawable.authors_list_selector);
-            getListView().setBackgroundResource(R.drawable.authors_list_background);
-		}
+        }
+        getListView().setBackgroundResource(R.drawable.authors_list_background);
 	}
 
 	@Override
@@ -61,13 +67,18 @@ public class AuthorsFragment extends ListFragment {
 		}
 	}
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mCallback = null;
+    }
+
 	public void updateView() {
 		try {
 			SiSQLiteHelper helper = new SiSQLiteHelper(getActivity());
 			List<Author> authors = helper.getAuthorDao().queryForAll();
 			setListAdapter(new AuthorsAdapter(authors, getActivity()));
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -77,8 +88,8 @@ public class AuthorsFragment extends ListFragment {
 		getListView().setSelection(position);
 	}
 
-    public void showAuthorLoadingProgress() {
-
+    public void tryAddAuthor(String url) {
+        new AddAuthorTask((Context)mCallback, this).execute(url);
     }
 
 	@Override
@@ -89,6 +100,27 @@ public class AuthorsFragment extends ListFragment {
 		// Set the item as checked to be highlighted when in two-pane layout
 		getListView().setItemChecked(position, true);
 	}
+
+    @Override
+    public void deliverResults(String message) {
+        if (message.length() == 0) {
+            //This is success
+            mCallback.onAuthorAdded();
+        } else {
+            Toast.makeText((Context)mCallback, message, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void operationStart() {
+
+    }
+
+    @Override
+    public void onProgressUpdate(int percent) {
+
+    }
+
 	
 	private class AuthorsAdapter extends BaseAdapter {
 		List<Author> authors;

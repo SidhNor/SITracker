@@ -16,8 +16,10 @@
         android:layout_toLeftOf="@+id/item_actions"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="?android:attr/textColorPrimary"
+        android:fontFamily="sans-serif-condensed"
         android:text="@string/designtime_placeholder_short"
-        android:maxLines="1"
+        android:lines="1"
+        android:scrollHorizontally="true"
         android:ellipsize="end"/>
     <LinearLayout
         android:id="@+id/item_actions"

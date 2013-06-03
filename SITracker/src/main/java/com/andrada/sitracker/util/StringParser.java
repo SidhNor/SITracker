@@ -3,6 +3,7 @@ package com.andrada.sitracker.util;
 
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.db.beans.Publication;
+import com.andrada.sitracker.exceptions.AddAuthorException;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -14,17 +15,17 @@ import java.util.regex.Pattern;
 
 public class StringParser {
 
-    public static String getAuthor(String pageContent) {
+    public static String getAuthor(String pageContent) throws AddAuthorException {
         int index = pageContent.indexOf('.', pageContent.indexOf("<title>")) + 1;
         int secondPointIndex = pageContent.indexOf(".", index);
         String authorName = pageContent.substring(index, secondPointIndex);
         if (authorName == null || "".equals(authorName.trim())) {
-            //TODO Handle author add error
+            throw new AddAuthorException(AddAuthorException.AuthorAddErrors.AUTHOR_NAME_NOT_FOUND);
         }
         return authorName;
 	}
 
-    public static Date getAuthorUpdateDate(String pageContent) {
+    public static Date getAuthorUpdateDate(String pageContent) throws AddAuthorException {
         Pattern pattern = Pattern.compile(Constants.AUTHOR_UPDATE_DATE_REGEX, Pattern.MULTILINE);
         Matcher matcher = pattern.matcher(pageContent);
         Date date = new Date();
@@ -35,24 +36,21 @@ public class StringParser {
             try {
                 date = ft.parse(matcher.group(1));
             } catch (ParseException e) {
-                //TODO Surface the error to the user, probably return null here to propagate to AddAuthorTask
+                throw new AddAuthorException(AddAuthorException.AuthorAddErrors.AUTHOR_DATE_NOT_FOUND);
             }
         }
         return date;
     }
 
-	public static List<Publication> getPublications(String body, String baseUrl, long authorId) {
+	public static List<Publication> getPublications(String body, String authorUrl, long authorId) {
 		ArrayList<Publication> publicationList = new ArrayList<Publication>();
-        String page = body;
-
         Pattern pattern = Pattern.compile(Constants.PUBLICATIONS_REGEX, Pattern.CASE_INSENSITIVE);
-        Matcher matcher = pattern.matcher(page);
+        Matcher matcher = pattern.matcher(body);
         while (matcher.find()) {
 
             Publication item = new Publication();
-            if(!baseUrl.endsWith("/")){
-                baseUrl+="/";
-            }
+            String baseUrl = authorUrl.replace(Constants.AUTHOR_PAGE_URL_ENDING_WI_SLASH, "");
+
             item.setAuthorID(authorId);
             //Group 1 - LinkToText
             String itemURL = matcher.group(1) == null ? "" : matcher.group(1);

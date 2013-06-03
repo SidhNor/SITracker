@@ -1,11 +1,9 @@
 package com.andrada.sitracker.fragment.dialog;
 
-import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.*;
 import android.content.DialogInterface.OnShowListener;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
@@ -18,23 +16,22 @@ import com.andrada.sitracker.R;
 import com.andrada.sitracker.task.AddAuthorTask;
 import com.andrada.sitracker.util.ClipboardHelper;
 
-public class AddAuthorDialog extends DialogFragment implements android.content.DialogInterface.OnClickListener, AddAuthorTask.IAuthorTaskCallback {
+public class AddAuthorDialog extends DialogFragment implements
+        android.content.DialogInterface.OnClickListener {
 	EditText mAuthorEditText;
-	AlertDialog mDialog;
-	OnAuthorAddedListener mAddedListner;
+	private AlertDialog mDialog;
+	private OnAuthorLinkSuppliedListener mSuppliedLinkListener;
 
-	public interface OnAuthorAddedListener {
-		public void onAuthorAdded();
-        public void onProgressStarted();
+	public interface OnAuthorLinkSuppliedListener {
+        public void onLinkSupplied(String url);
 	}
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setRetainInstance(true);
 	}
 	
-	public void setOnAuthorAddedListener(OnAuthorAddedListener listener){
-		mAddedListner = listener;
+	public void setOnAuthorLinkSuppliedListener(OnAuthorLinkSuppliedListener listener){
+		mSuppliedLinkListener = listener;
 	}
 
     @Override
@@ -66,12 +63,11 @@ public class AddAuthorDialog extends DialogFragment implements android.content.D
 				Button yes = mDialog.getButton(AlertDialog.BUTTON_POSITIVE);
                 if (yes != null) {
                     yes.setOnClickListener(new OnClickListener() {
-
                         @Override
                         public void onClick(View v) {
                             doPositiveClick();
+                            mDialog.dismiss();
                         }
-
                     });
                 }
 			}
@@ -81,7 +77,7 @@ public class AddAuthorDialog extends DialogFragment implements android.content.D
 	}
 	
 	private void doPositiveClick() {
-		new AddAuthorTask(getActivity(), this).execute(mAuthorEditText.getText().toString());
+        mSuppliedLinkListener.onLinkSupplied(mAuthorEditText.getText().toString());
 	}
 
 	@Override
@@ -98,17 +94,4 @@ public class AddAuthorDialog extends DialogFragment implements android.content.D
             dialog.dismiss();
         }
     }
-
-	@Override
-	public void deliverResults() {
-		mAddedListner.onAuthorAdded();
-        dismiss();
-	}
-
-    @Override
-    public void operationStart() {
-        mAddedListner.onProgressStarted();
-        getDialog().hide();
-    }
-
 }
