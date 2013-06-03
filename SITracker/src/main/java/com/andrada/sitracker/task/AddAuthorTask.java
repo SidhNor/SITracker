@@ -2,7 +2,6 @@ package com.andrada.sitracker.task;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.widget.Toast;
 
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
@@ -10,7 +9,7 @@ import com.andrada.sitracker.db.beans.Author;
 import com.andrada.sitracker.db.beans.Publication;
 import com.andrada.sitracker.db.manager.SiSQLiteHelper;
 import com.andrada.sitracker.exceptions.AddAuthorException;
-import com.andrada.sitracker.util.StringParser;
+import com.andrada.sitracker.util.SamlibPageParser;
 import com.github.kevinsawicki.http.HttpRequest;
 import com.github.kevinsawicki.http.HttpRequest.HttpRequestException;
 
@@ -47,23 +46,30 @@ public class AddAuthorTask extends AsyncTask<String, Integer, String> {
                     url = (url.endsWith("/")) ? url + Constants.AUTHOR_PAGE_URL_ENDING_WO_SLASH : url + Constants.AUTHOR_PAGE_URL_ENDING_WI_SLASH;
                 }
 
+                if (!url.startsWith(Constants.HTTP_PROTOCOL) && !url.startsWith(Constants.HTTPS_PROTOCOL)) {
+                    url = Constants.HTTP_PROTOCOL + url;
+                }
+
                 if (helper.getAuthorDao().queryBuilder().where().eq("url", url).query().size() != 0){
                     throw new AddAuthorException(AddAuthorException.AuthorAddErrors.AUTHOR_ALREADY_EXISTS);
                 }
 
                 publishProgress(10);
 				HttpRequest request = HttpRequest.get(new URL(url));
+                if (request.code() == 404) {
+                    throw new MalformedURLException();
+                }
                 publishProgress(70);
-                String body = StringParser.sanitizeHTML(request.body());
+                String body = SamlibPageParser.sanitizeHTML(request.body());
                 publishProgress(80);
 				Author author = new Author();
-				author.setName(StringParser.getAuthor(body));
-                author.setUpdateDate(StringParser.getAuthorUpdateDate(body));
+				author.setName(SamlibPageParser.getAuthor(body));
+                author.setUpdateDate(SamlibPageParser.getAuthorUpdateDate(body));
 				author.setUrl(url);
                 publishProgress(85);
 				helper.getAuthorDao().create(author);
 				int i = helper.getAuthorDao().extractId(author);
-				List<Publication> items = StringParser.getPublications(body, url, i);
+				List<Publication> items = SamlibPageParser.getPublications(body, url, i);
 				for (Publication publication : items) {
 					helper.getPublicationDao().create(publication);
 				}

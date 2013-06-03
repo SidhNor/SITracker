@@ -7,13 +7,13 @@ import java.util.Date;
 public class Publication {
 	@DatabaseField(generatedId = true)
 	int id;
-	@DatabaseField
+    @DatabaseField(canBeNull = false)
 	String name;
 	@DatabaseField
 	int size;
 	@DatabaseField
 	String category;
-	@DatabaseField
+    @DatabaseField(canBeNull = false)
 	long authorID;
 	@DatabaseField
 	String date;
@@ -21,15 +21,20 @@ public class Publication {
 	String description;
     @DatabaseField
     String commentUrl;
-	@DatabaseField
+    @DatabaseField(canBeNull = false)
 	String url;
     @DatabaseField
     String rating;
     @DatabaseField
     int commentsCount;
-
-    @DatabaseField
+    @DatabaseField(defaultValue = "false", canBeNull = false)
+    Boolean isNew;
+    @DatabaseField(canBeNull = false)
     Date updateDate;
+
+    public Publication() {
+        updateDate = new Date();
+    }
 
 	public String getUrl() {
 		return url;
@@ -125,6 +130,14 @@ public class Publication {
 
     public void setUpdateDate(Date updateDate) {
         this.updateDate = updateDate;
+    }
+
+    public Boolean getNew() {
+        return isNew;
+    }
+
+    public void setNew(Boolean aNew) {
+        isNew = aNew;
     }
 
 }

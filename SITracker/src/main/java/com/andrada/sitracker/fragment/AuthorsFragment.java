@@ -17,6 +17,7 @@ import com.andrada.sitracker.R;
 import com.andrada.sitracker.db.beans.Author;
 import com.andrada.sitracker.db.manager.SiSQLiteHelper;
 import com.andrada.sitracker.task.AddAuthorTask;
+import com.andrada.sitracker.util.DateFormatterUtil;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -153,21 +154,19 @@ public class AuthorsFragment extends ListFragment implements AddAuthorTask.IAuth
             if (view == null) {
                 view = inflater.inflate(R.layout.authors_list_item, parent,false);
             }
-            if (position == 1) {
+            if (authors.get(position).isUpdated()) {
                 view.setBackgroundResource(R.drawable.authors_list_item_selector_new);
             } else {
                 view.setBackgroundResource(R.drawable.authors_list_item_selector_normal);
             }
 
 			TextView authorTitle = (TextView) view.findViewById(R.id.author_title);
-            if (authorTitle != null) {
-                authorTitle.setText(authors.get(position).getName());
-            }
+            authorTitle.setText(authors.get(position).getName());
             CheckBox updated = (CheckBox)view.findViewById(R.id.author_updated);
-            if (updated != null) {
-                authors.get(position).getUpdateDate();
-                //updated.setChecked(true);
-            }
+            updated.setChecked(authors.get(position).isUpdated());
+            TextView authorUpdateDate = (TextView) view.findViewById(R.id.author_update_date);
+            authorUpdateDate.setText(DateFormatterUtil.getFriendlyDateRelativeToToday(authors.get(position).getUpdateDate()));
+
             return view;
 		}
 		

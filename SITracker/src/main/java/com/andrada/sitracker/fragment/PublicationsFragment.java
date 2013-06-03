@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.db.beans.Publication;
 import com.andrada.sitracker.db.manager.SiSQLiteHelper;
+import com.andrada.sitracker.util.DateFormatterUtil;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -129,6 +130,7 @@ public class PublicationsFragment extends Fragment{
             ExpandableListView v = (ExpandableListView) parent;
 
 			TextView title = (TextView) view.findViewById(R.id.item_title);
+            TextView updateDate = (TextView) view.findViewById(R.id.item_update_date);
             View divider = view.findViewById(R.id.publication_item_divider);
             if (mChildren.get(groupPosition).size() -1 == childPosition) {
                 divider.setVisibility(View.GONE);
@@ -140,6 +142,7 @@ public class PublicationsFragment extends Fragment{
 			title.setText(child.getName());
             TextView description = (TextView) view.findViewById(R.id.item_description);
             description.setText(child.getDescription());
+            updateDate.setText(DateFormatterUtil.getFriendlyDateRelativeToToday(child.getUpdateDate()));
 			return view;
 		}
 

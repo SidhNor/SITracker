@@ -7,12 +7,18 @@ import java.util.Date;
 public class Author {
 	@DatabaseField(generatedId = true)
 	int id;
-	@DatabaseField
+    @DatabaseField(canBeNull = false)
 	String name;
-	@DatabaseField
+	@DatabaseField(unique = true)
 	String url;
-    @DatabaseField
+    @DatabaseField(canBeNull = false)
     Date updateDate;
+    @DatabaseField(defaultValue = "false", canBeNull = false)
+    Boolean updated;
+
+    public Author() {
+        updateDate = new Date();
+    }
 
 	public int getId() {
 		return id;
@@ -45,5 +51,14 @@ public class Author {
     public void setUpdateDate(Date updateDate) {
         this.updateDate = updateDate;
     }
+
+    public Boolean isUpdated() {
+        return updated;
+    }
+
+    public void setUpdated(Boolean updated) {
+        this.updated = updated;
+    }
+
 
 }

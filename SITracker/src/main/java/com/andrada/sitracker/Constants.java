@@ -13,5 +13,7 @@ public class Constants {
 
     public final static String AUTHOR_PAGE_URL_ENDING_WO_SLASH = "indexdate.shtml";
     public final static String AUTHOR_PAGE_URL_ENDING_WI_SLASH = "/indexdate.shtml";
+    public final static String HTTP_PROTOCOL = "http://";
+    public final static String HTTPS_PROTOCOL = "https://";
 
 }
