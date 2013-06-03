@@ -51,19 +51,23 @@ public class AddAuthorTask extends AsyncTask<String, Integer, String> {
                     throw new AddAuthorException(AddAuthorException.AuthorAddErrors.AUTHOR_ALREADY_EXISTS);
                 }
 
+                publishProgress(10);
 				HttpRequest request = HttpRequest.get(new URL(url));
+                publishProgress(70);
                 String body = StringParser.sanitizeHTML(request.body());
-
+                publishProgress(80);
 				Author author = new Author();
 				author.setName(StringParser.getAuthor(body));
                 author.setUpdateDate(StringParser.getAuthorUpdateDate(body));
 				author.setUrl(url);
+                publishProgress(85);
 				helper.getAuthorDao().create(author);
 				int i = helper.getAuthorDao().extractId(author);
 				List<Publication> items = StringParser.getPublications(body, url, i);
 				for (Publication publication : items) {
 					helper.getPublicationDao().create(publication);
 				}
+                publishProgress(99);
 			} catch (HttpRequestException e) {
                 message = context.getResources().getString(R.string.cannot_add_author_network);
 			} catch (MalformedURLException e) {
