@@ -15,7 +15,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.andrada.sitracker.MainActivity"
+            android:name="com.andrada.sitracker.MainActivity_"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,8 +23,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-grad
-        <activity android:name=".phoneactivities.PublicationsActivity" />
+        <activity android:name=".phoneactivities.PublicationsActivity_" />
+        <service android:name=".task.UpdateAuthorsIntentService_" />
     </application>
 
 </manifest>
+

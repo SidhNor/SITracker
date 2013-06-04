@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <fragment android:name="com.andrada.sitracker.fragment.AuthorsFragment"
+    <fragment android:name="com.andrada.sitracker.fragment.AuthorsFragment_"
               android:id="@+id/fragment_authors"
               android:layout_width="match_parent"
               android:layout_height="match_parent"

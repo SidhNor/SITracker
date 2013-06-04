@@ -15,17 +15,26 @@ import android.widget.Toast;
 
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.db.beans.Author;
-import com.andrada.sitracker.db.manager.SiSQLiteHelper;
+import com.andrada.sitracker.db.manager.SiDBHelper;
 import com.andrada.sitracker.task.AddAuthorTask;
 import com.andrada.sitracker.util.DateFormatterUtil;
+import com.j256.ormlite.dao.Dao;
+
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.OrmLiteDao;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+@EFragment
 public class AuthorsFragment extends ListFragment implements AddAuthorTask.IAuthorTaskCallback {
 
 	OnAuthorSelectedListener mCallback;
+
+    @OrmLiteDao(helper = SiDBHelper.class, model = Author.class)
+    Dao<Author, Integer> authorDao;
 
     public interface OnAuthorSelectedListener {
 		public void onAuthorSelected(long id);
@@ -58,7 +67,6 @@ public class AuthorsFragment extends ListFragment implements AddAuthorTask.IAuth
 		super.onAttach(activity);
 
 		try {
-			updateView();
 			// This makes sure that the container activity has implemented
 			// the callback interface. If not, it throws an exception.
 			mCallback = (OnAuthorSelectedListener) activity;
@@ -74,10 +82,10 @@ public class AuthorsFragment extends ListFragment implements AddAuthorTask.IAuth
         mCallback = null;
     }
 
+    @AfterViews
 	public void updateView() {
 		try {
-			SiSQLiteHelper helper = new SiSQLiteHelper(getActivity());
-			List<Author> authors = helper.getAuthorDao().queryForAll();
+			List<Author> authors = authorDao.queryForAll();
 			setListAdapter(new AuthorsAdapter(authors, getActivity()));
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -104,6 +112,7 @@ public class AuthorsFragment extends ListFragment implements AddAuthorTask.IAuth
 
     @Override
     public void deliverResults(String message) {
+        //Stop progress bar
         if (message.length() == 0) {
             //This is success
             mCallback.onAuthorAdded();
@@ -114,12 +123,7 @@ public class AuthorsFragment extends ListFragment implements AddAuthorTask.IAuth
 
     @Override
     public void operationStart() {
-
-    }
-
-    @Override
-    public void onProgressUpdate(int percent) {
-
+        //Start progress bar
     }
 
 	

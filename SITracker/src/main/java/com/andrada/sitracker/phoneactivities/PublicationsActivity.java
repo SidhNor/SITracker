@@ -1,29 +1,28 @@
 package com.andrada.sitracker.phoneactivities;
 
-import android.os.Bundle;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.fragment.PublicationsFragment;
 
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.Extra;
+import org.androidannotations.annotations.FragmentById;
+
 /**
  * Created by ggodonoga on 27/05/13.
  */
-public class PublicationsActivity extends SherlockFragmentActivity{
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
+@EActivity(R.layout.publications_activity)
+public class PublicationsActivity extends SherlockFragmentActivity {
 
-        super.onCreate(savedInstanceState);
+    @FragmentById(R.id.fragment_publications)
+    PublicationsFragment mPubFragment;
 
-        Bundle extras = getIntent().getExtras();
+    @Extra(PublicationsFragment.ARG_ID)
+    long mAuthorId;
 
-        setContentView(R.layout.publications_activity);
-
-        if (extras != null) {
-            // Take the info from the intent and deliver it to the fragment so it can update
-            long authorId = extras.getLong(PublicationsFragment.ARG_ID);
-            PublicationsFragment frag = (PublicationsFragment) getSupportFragmentManager()
-                    .findFragmentById(R.id.fragment_publications);
-            frag.updatePublicationsView(authorId, this);
-        }
+    @AfterViews
+    void updatePublications() {
+        mPubFragment.updatePublicationsView(mAuthorId, this);
     }
 }

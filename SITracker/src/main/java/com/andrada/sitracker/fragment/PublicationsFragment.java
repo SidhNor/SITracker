@@ -12,36 +12,43 @@ import android.widget.ExpandableListView;
 import android.widget.TextView;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.db.beans.Publication;
-import com.andrada.sitracker.db.manager.SiSQLiteHelper;
+import com.andrada.sitracker.db.manager.SiDBHelper;
 import com.andrada.sitracker.util.DateFormatterUtil;
+import com.j256.ormlite.android.apptools.OpenHelperManager;
+import com.j256.ormlite.dao.Dao;
+
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.OrmLiteDao;
+import org.androidannotations.annotations.ViewById;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+@EFragment(R.layout.fragment_publications)
 public class PublicationsFragment extends Fragment{
 
 	public static final String ARG_ID = "author_id";
+
+    @OrmLiteDao(helper = SiDBHelper.class, model = Publication.class)
+    Dao<Publication, Integer> publicationsDao;
+
+    @ViewById(R.id.publication_list)
 	ExpandableListView mListView;
 	
 	long mCurrentId = -1;
-	private SiSQLiteHelper helper;
+    private Context mCurrentActivity;
 
 	    @Override
 	    public View onCreateView(LayoutInflater inflater, ViewGroup container,
 	        Bundle savedInstanceState) {
-
 	        // If activity recreated (such as from screen rotate), restore
 	        // the previous article selection set by onSaveInstanceState().
 	        // This is primarily necessary when in the two-pane layout.
 	        if (savedInstanceState != null) {
 	            mCurrentId = savedInstanceState.getLong(ARG_ID);
 	        }
-
-	        // Inflate the layout for this fragment
-	        View view = inflater.inflate(R.layout.fragment_publications, container, false);
-	        mListView = (ExpandableListView) view.findViewById(R.id.publication_list);
-	        return view;
+	        return null;
 	    }
 	    @Override
 	    public void onCreate(Bundle savedInstanceState) {
@@ -55,9 +62,15 @@ public class PublicationsFragment extends Fragment{
 	    @Override
 	    public void onAttach(Activity activity) {
 	    	super.onAttach(activity);
-	    	helper = new SiSQLiteHelper(activity);
-
+            mCurrentActivity = activity;
 	    }
+
+        @Override
+        public void onDetach(){
+            super.onDetach();
+            mCurrentActivity = null;
+        }
+
 	    @Override
 	    public void onStart() {
 	    	super.onStart();
@@ -69,7 +82,9 @@ public class PublicationsFragment extends Fragment{
         mCurrentId = id;
 		List<Publication> items = new ArrayList<Publication>();
 		try {
-			items = helper.getPublicationDao().queryBuilder().where().eq("authorID", id).query();
+			items = publicationsDao.queryBuilder().where().eq("authorID", id).query();
+            OpenHelperManager.releaseHelper();
+
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

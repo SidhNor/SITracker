@@ -7,11 +7,12 @@ import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.db.beans.Author;
 import com.andrada.sitracker.db.beans.Publication;
-import com.andrada.sitracker.db.manager.SiSQLiteHelper;
+import com.andrada.sitracker.db.manager.SiDBHelper;
 import com.andrada.sitracker.exceptions.AddAuthorException;
 import com.andrada.sitracker.util.SamlibPageParser;
 import com.github.kevinsawicki.http.HttpRequest;
 import com.github.kevinsawicki.http.HttpRequest.HttpRequestException;
+import com.j256.ormlite.android.apptools.OpenHelperManager;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -23,17 +24,15 @@ public class AddAuthorTask extends AsyncTask<String, Integer, String> {
 	public interface IAuthorTaskCallback {
 		public void deliverResults(String message);
         public void operationStart();
-        public void onProgressUpdate(int percent);
 	}
 
-	private SiSQLiteHelper helper;
     private IAuthorTaskCallback mReceiver;
     private Context context;
+    private SiDBHelper helper;
 	
 	
 	public AddAuthorTask(Context context, IAuthorTaskCallback receiver) {
         this.context = context;
-		helper = new SiSQLiteHelper(context);
 		this.mReceiver = receiver;
 	}
 	
@@ -54,26 +53,21 @@ public class AddAuthorTask extends AsyncTask<String, Integer, String> {
                     throw new AddAuthorException(AddAuthorException.AuthorAddErrors.AUTHOR_ALREADY_EXISTS);
                 }
 
-                publishProgress(10);
 				HttpRequest request = HttpRequest.get(new URL(url));
                 if (request.code() == 404) {
                     throw new MalformedURLException();
                 }
-                publishProgress(70);
                 String body = SamlibPageParser.sanitizeHTML(request.body());
-                publishProgress(80);
 				Author author = new Author();
 				author.setName(SamlibPageParser.getAuthor(body));
                 author.setUpdateDate(SamlibPageParser.getAuthorUpdateDate(body));
 				author.setUrl(url);
-                publishProgress(85);
 				helper.getAuthorDao().create(author);
 				int i = helper.getAuthorDao().extractId(author);
 				List<Publication> items = SamlibPageParser.getPublications(body, url, i);
 				for (Publication publication : items) {
 					helper.getPublicationDao().create(publication);
 				}
-                publishProgress(99);
 			} catch (HttpRequestException e) {
                 message = context.getResources().getString(R.string.cannot_add_author_network);
 			} catch (MalformedURLException e) {
@@ -97,27 +91,21 @@ public class AddAuthorTask extends AsyncTask<String, Integer, String> {
                 }
 
             }
-
 		}
 		return message;
 	}
 
     @Override
     protected void onPreExecute() {
+        helper = OpenHelperManager.getHelper(this.context, SiDBHelper.class);
         if (mReceiver != null) {
             mReceiver.operationStart();
         }
     }
 
-    @Override
-    protected void onProgressUpdate(Integer... values) {
-        if (mReceiver != null) {
-            mReceiver.onProgressUpdate(values[0]);
-        }
-    }
-
 	@Override
 	protected void onPostExecute(String result) {
+        OpenHelperManager.releaseHelper();
         if (mReceiver != null) {
             mReceiver.deliverResults(result);
         }

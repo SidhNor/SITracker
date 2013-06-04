@@ -11,21 +11,20 @@ import com.j256.ormlite.table.TableUtils;
 
 import java.sql.SQLException;
 
-public class SiSQLiteHelper extends OrmLiteSqliteOpenHelper {
+public class SiDBHelper extends OrmLiteSqliteOpenHelper {
 
 	private static final String DATABASE_NAME = "siinformer.db";
-	private static final int DATABASE_VERSION = 1;
+	private static final int DATABASE_VERSION = 2;
 
 	private Dao<Publication, Integer> publicationDao;
 	private Dao<Author, Integer> authorDao;
 	
-	public SiSQLiteHelper(Context context) {
+	public SiDBHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
 	}
 
 	@Override
 	public void onCreate(SQLiteDatabase db, ConnectionSource connectionSource) {
-		// TODO Auto-generated method stub
 		try {
 			TableUtils.createTable(connectionSource, Author.class);
 			TableUtils.createTable(connectionSource, Publication.class);
@@ -38,7 +37,7 @@ public class SiSQLiteHelper extends OrmLiteSqliteOpenHelper {
 	@Override
 	public void onUpgrade(SQLiteDatabase db, ConnectionSource connectionSource,
 			int oldVersion, int newVersion) {
-		// TODO Auto-generated method stub
+
 
 	}
 	
@@ -55,5 +54,12 @@ public class SiSQLiteHelper extends OrmLiteSqliteOpenHelper {
 		}
 		return publicationDao;
 	}
+
+    @Override
+    public void close(){
+        super.close();
+        publicationDao = null;
+        authorDao = null;
+    }
 
 }
