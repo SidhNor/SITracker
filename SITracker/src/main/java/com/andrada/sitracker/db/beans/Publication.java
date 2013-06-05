@@ -11,6 +11,8 @@ public class Publication {
 	String name;
 	@DatabaseField
 	int size;
+    @DatabaseField
+    int oldSize;
 	@DatabaseField
 	String category;
     @DatabaseField(canBeNull = false)
@@ -21,7 +23,7 @@ public class Publication {
 	String description;
     @DatabaseField
     String commentUrl;
-    @DatabaseField(canBeNull = false)
+    @DatabaseField(canBeNull = false, unique = true)
 	String url;
     @DatabaseField
     String rating;
@@ -32,10 +34,30 @@ public class Publication {
     @DatabaseField(canBeNull = false)
     Date updateDate;
 
+
     public Publication() {
         updateDate = new Date();
     }
 
+    @Override
+    public boolean equals(Object object)
+    {
+        boolean sameSame = false;
+
+        if (object != null && object instanceof Publication)
+        {
+            sameSame = this.getUrl().equals(((Publication) object).getUrl());
+        }
+
+        return sameSame;
+    }
+
+    public int hashCode() {
+        return getUrl().hashCode() * 3 + 12;
+    }
+
+
+    //region Getters setters
 	public String getUrl() {
 		return url;
 	}
@@ -43,6 +65,14 @@ public class Publication {
 	public void setUrl(String url) {
 		this.url = url;
 	}
+
+    public int getOldSize() {
+        return oldSize;
+    }
+
+    public void setOldSize(int oldSize) {
+        this.oldSize = oldSize;
+    }
 
 	public String getDescription() {
 		return description;
@@ -139,5 +169,6 @@ public class Publication {
     public void setNew(Boolean aNew) {
         isNew = aNew;
     }
+    //endregion
 
 }

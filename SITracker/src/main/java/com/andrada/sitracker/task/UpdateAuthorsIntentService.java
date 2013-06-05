@@ -1,13 +1,25 @@
 package com.andrada.sitracker.task;
 
-
 import android.app.IntentService;
 import android.content.Intent;
 
+import com.andrada.sitracker.db.beans.Author;
+import com.andrada.sitracker.db.beans.Publication;
 import com.andrada.sitracker.db.manager.SiDBHelper;
-import com.j256.ormlite.android.apptools.OpenHelperManager;
+import com.andrada.sitracker.exceptions.AddAuthorException;
+import com.andrada.sitracker.util.SamlibPageParser;
+import com.github.kevinsawicki.http.HttpRequest;
+import com.j256.ormlite.dao.Dao;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.sql.SQLException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 import org.androidannotations.annotations.EService;
+import org.androidannotations.annotations.OrmLiteDao;
 
 /**
  * Created by Gleb on 03.06.13.
@@ -16,13 +28,16 @@ import org.androidannotations.annotations.EService;
 @EService
 public class UpdateAuthorsIntentService extends IntentService  {
 
+    @OrmLiteDao(helper = SiDBHelper.class, model = Author.class)
+    Dao<Author, Integer> authorDao;
+
+    @OrmLiteDao(helper = SiDBHelper.class, model = Publication.class)
+    Dao<Publication, Integer> publicationsDao;
+
     public UpdateAuthorsIntentService() {
-        super("UpdateAuthorsIntentService");
+        super(UpdateAuthorsIntentService.class.getSimpleName());
     }
 
-    private volatile SiDBHelper helper;
-    private volatile boolean created = false;
-    private volatile boolean destroyed = false;
     /**
      * The IntentService calls this method from the default worker thread with
      * the intent that started the service. When this method returns, IntentService
@@ -31,22 +46,79 @@ public class UpdateAuthorsIntentService extends IntentService  {
     @Override
     protected void onHandleIntent(Intent intent) {
         //Check for updates
-        //Update DB for new items.
-    }
+        try {
+            List<Author> authors = authorDao.queryForAll();
+            for (Author author : authors) {
+                HttpRequest request = null;
+                try {
+                    request = HttpRequest.get(new URL(author.getUrl()));
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                }
+                if (request.code() == 404) {
+                    //skip this author
+                    //Do a toast
+                    //No longer available
+                    continue;
+                }
+                String body = SamlibPageParser.sanitizeHTML(request.body());
 
-    @Override
-         public void onCreate() {
-        if (helper == null) {
-            helper = OpenHelperManager.getHelper(this, SiDBHelper.class);
+                List<Publication> oldItems = publicationsDao.queryBuilder().
+                        where().eq("authorID", author.getId()).query();
+                List<Publication> newItems = SamlibPageParser.getPublications(body, author.getUrl(), author.getId());
+
+                HashMap<String, Publication> oldItemsMap = new HashMap<String, Publication>();
+                for (Publication oldPub : oldItems) {
+                    oldItemsMap.put(oldPub.getUrl(), oldPub);
+                }
+
+                for (Publication pub : newItems) {
+                    //Find pub in oldItems
+                    if (oldItemsMap.containsKey(pub.getUrl())) {
+                        Publication old = oldItemsMap.get(pub.getUrl());
+                        //Check size/name/description
+                        if (pub.getSize() != old.getSize() ||
+                            !pub.getDescription().equals(old.getDescription()) ||
+                            !pub.getName().equals(old.getName()) ) {
+                            //if something differs
+                            //Store the old size
+                            pub.setOldSize(old.getSize());
+                            //Swap the ids, do an update in DB
+                            pub.setId(old.getId());
+                            publicationsDao.update(pub);
+                            //Mark author new, update in DB
+                            author.setUpdated(true);
+                            author.setUpdateDate(new Date());
+                            authorDao.update(author);
+                        }
+                    } else {
+                        //Mark author new, update in DB
+                        author.setUpdated(true);
+                        author.setUpdateDate(new Date());
+                        authorDao.update(author);
+                        //Mark publication new, create in DB
+                        pub.setNew(true);
+                        publicationsDao.create(pub);
+                    }
+                }
+
+                if (oldItems.size() != newItems.size()) {
+                    //Find any old publications to remove
+                    for (Publication oldItem : oldItems) {
+                        if (!newItems.contains(oldItem)) {
+                            //Remove from DB
+                            publicationsDao.delete(oldItem);
+                        }
+                    }
+                }
+
+
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        super.onCreate();
-    }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        OpenHelperManager.releaseHelper();
-        helper = null;
     }
 
 }

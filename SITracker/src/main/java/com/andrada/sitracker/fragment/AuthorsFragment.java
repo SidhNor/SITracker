@@ -50,14 +50,6 @@ public class AuthorsFragment extends ListFragment implements AddAuthorTask.IAuth
             getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
             getListView().setSelector(R.drawable.authors_list_selector);
         }
-		// When in two-pane layout, set the listview to highlight the selected
-		// list item
-		// (We do this during onStart because at the point the listview is
-		// available.)
-		/*if (getFragmentManager().findFragmentById(R.id.fragment_publications) != null) {
-			getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-            getListView().setSelector(R.drawable.authors_list_selector);
-        }*/
         getListView().setBackgroundResource(R.drawable.authors_list_background);
 	}
 

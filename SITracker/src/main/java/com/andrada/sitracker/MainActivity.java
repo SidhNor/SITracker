@@ -1,15 +1,12 @@
 package com.andrada.sitracker;
 
-import android.content.Intent;
-import android.os.Bundle;
-
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.andrada.sitracker.fragment.AuthorsFragment;
 import com.andrada.sitracker.fragment.AuthorsFragment.OnAuthorSelectedListener;
 import com.andrada.sitracker.fragment.PublicationsFragment;
 import com.andrada.sitracker.fragment.dialog.AddAuthorDialog;
 import com.andrada.sitracker.phoneactivities.PublicationsActivity_;
-import com.andrada.sitracker.task.UpdateAuthorsIntentService;
+import com.andrada.sitracker.task.UpdateAuthorsIntentService_;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
@@ -77,7 +74,7 @@ public class MainActivity extends SherlockFragmentActivity implements
 
     @OptionsItem(R.id.action_refresh)
     void menuRefreshSelected() {
-        startService(new Intent(this, UpdateAuthorsIntentService.class));
+        UpdateAuthorsIntentService_.intent(getApplication()).start();
     }
     //endregion
 
