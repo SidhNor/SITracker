@@ -1,6 +1,8 @@
 package com.andrada.sitracker;
 
 import android.content.Intent;
+import android.os.Bundle;
+
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.andrada.sitracker.fragment.AuthorsFragment;
 import com.andrada.sitracker.fragment.AuthorsFragment.OnAuthorSelectedListener;
@@ -30,7 +32,10 @@ public class MainActivity extends SherlockFragmentActivity implements
 
     @AfterViews
     void checkDualFragments() {
-        if (mPubFragment != null) mDualFragments = true;
+        if (mPubFragment != null) {
+            mDualFragments = true;
+            mAuthorsFragment.setInTwoPane(true);
+        }
     }
 
     @Override
@@ -42,7 +47,7 @@ public class MainActivity extends SherlockFragmentActivity implements
             PublicationsActivity_.intent(this).mAuthorId(id).start();
         } else {
             // Capture the publications fragment from the activity layout
-            mPubFragment.updatePublicationsView(id, this);
+            mPubFragment.updatePublicationsView(id);
         }
     }
 

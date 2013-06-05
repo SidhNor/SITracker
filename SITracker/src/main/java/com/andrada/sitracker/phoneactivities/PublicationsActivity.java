@@ -18,11 +18,11 @@ public class PublicationsActivity extends SherlockFragmentActivity {
     @FragmentById(R.id.fragment_publications)
     PublicationsFragment mPubFragment;
 
-    @Extra(PublicationsFragment.ARG_ID)
+    @Extra("author_id")
     long mAuthorId;
 
     @AfterViews
     void updatePublications() {
-        mPubFragment.updatePublicationsView(mAuthorId, this);
+        mPubFragment.updatePublicationsView(mAuthorId);
     }
 }
