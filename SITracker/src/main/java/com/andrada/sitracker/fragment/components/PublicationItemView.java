@@ -1,4 +1,4 @@
-package com.andrada.sitracker.components;
+package com.andrada.sitracker.fragment.components;
 
 import android.content.Context;
 import android.view.View;
@@ -34,6 +34,9 @@ public class PublicationItemView extends RelativeLayout {
     @ViewById
     View publication_item_divider;
 
+    @ViewById
+    TextView itemSize;
+
 
     public PublicationItemView(Context context) {
         super(context);
@@ -44,6 +47,19 @@ public class PublicationItemView extends RelativeLayout {
         item_updated.setChecked(publication.getNew());
         item_update_date.setText(DateFormatterUtil.getFriendlyDateRelativeToToday(publication.getUpdateDate()));
         item_description.setText(publication.getDescription());
+
+        StringBuilder builder = new StringBuilder();
+        int oldSize = publication.getOldSize();
+        int newSize = publication.getSize();
+        if (oldSize == 0 || oldSize == newSize) {
+            builder.append(newSize);
+        } else {
+            builder.append(oldSize);
+            builder.append('+');
+            builder.append(newSize - oldSize);
+        }
+        builder.append("kb");
+        itemSize.setText(builder.toString());
 
         if (isLast) {
             publication_item_divider.setVisibility(View.GONE);

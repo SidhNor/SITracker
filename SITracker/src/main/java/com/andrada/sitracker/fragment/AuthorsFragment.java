@@ -96,7 +96,6 @@ public class AuthorsFragment extends ListFragment implements AddAuthorTask.IAuth
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		// Notify the parent activity of selected item
 		mCallback.onAuthorSelected(id);
-
 		// Set the item as checked to be highlighted when in two-pane layout
 		getListView().setItemChecked(position, true);
 	}

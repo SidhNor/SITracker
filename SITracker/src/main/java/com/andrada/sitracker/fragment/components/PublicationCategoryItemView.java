@@ -1,4 +1,4 @@
-package com.andrada.sitracker.components;
+package com.andrada.sitracker.fragment.components;
 
 import android.content.Context;
 import android.widget.LinearLayout;

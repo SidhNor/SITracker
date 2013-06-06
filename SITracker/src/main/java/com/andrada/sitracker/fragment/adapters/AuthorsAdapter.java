@@ -1,28 +1,25 @@
 package com.andrada.sitracker.fragment.adapters;
 
 import android.content.Context;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.CheckBox;
-import android.widget.TextView;
 
 import com.andrada.sitracker.R;
-import com.andrada.sitracker.components.AuthorItemView;
-import com.andrada.sitracker.components.AuthorItemView_;
+import com.andrada.sitracker.fragment.components.AuthorItemView;
+import com.andrada.sitracker.fragment.components.AuthorItemView_;
 import com.andrada.sitracker.db.beans.Author;
 import com.andrada.sitracker.db.manager.SiDBHelper;
-import com.andrada.sitracker.util.DateFormatterUtil;
 import com.j256.ormlite.dao.Dao;
 
 import org.androidannotations.annotations.AfterInject;
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.OrmLiteDao;
 import org.androidannotations.annotations.RootContext;
+import org.androidannotations.annotations.UiThread;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -49,13 +46,19 @@ public class AuthorsAdapter extends BaseAdapter {
         }
     }
 
+    @Background
     public void reloadAuthors() {
         try {
             authors = authorDao.queryForAll();
-            notifyDataSetChanged();
+            notifyAuthorsReloaded();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    @UiThread
+    void notifyAuthorsReloaded() {
+        notifyDataSetChanged();
     }
 
     @Override

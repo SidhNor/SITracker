@@ -14,7 +14,7 @@ import java.sql.SQLException;
 public class SiDBHelper extends OrmLiteSqliteOpenHelper {
 
 	private static final String DATABASE_NAME = "siinformer.db";
-	private static final int DATABASE_VERSION = 2;
+	private static final int DATABASE_VERSION = 4;
 
 	private Dao<Publication, Integer> publicationDao;
 	private Dao<Author, Integer> authorDao;
@@ -22,6 +22,7 @@ public class SiDBHelper extends OrmLiteSqliteOpenHelper {
 	public SiDBHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
 	}
+
 
 	@Override
 	public void onCreate(SQLiteDatabase db, ConnectionSource connectionSource) {
@@ -31,14 +32,27 @@ public class SiDBHelper extends OrmLiteSqliteOpenHelper {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, ConnectionSource connectionSource,
 			int oldVersion, int newVersion) {
-
-
+        try {
+            while (++oldVersion <= newVersion) {
+                switch (oldVersion) {
+                    case 2: {
+                        getPublicationDao().executeRaw("ALTER TABLE 'publication' ADD COLUMN oldSize INTEGER;");
+                        break;
+                    }
+                    case 3: {
+                        getPublicationDao().executeRaw("CREATE INDEX 'fk_author_publication' ON 'publication' ('authorID' ASC)");
+                        break;
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 	}
 	
 	public Dao<Author, Integer> getAuthorDao() throws SQLException {

@@ -6,7 +6,7 @@ import android.content.Intent;
 import com.andrada.sitracker.db.beans.Author;
 import com.andrada.sitracker.db.beans.Publication;
 import com.andrada.sitracker.db.manager.SiDBHelper;
-import com.andrada.sitracker.exceptions.AddAuthorException;
+import com.andrada.sitracker.task.receivers.UpdateBroadcastReceiver;
 import com.andrada.sitracker.util.SamlibPageParser;
 import com.github.kevinsawicki.http.HttpRequest;
 import com.j256.ormlite.dao.Dao;
@@ -15,7 +15,6 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.androidannotations.annotations.EService;
@@ -57,8 +56,7 @@ public class UpdateAuthorsIntentService extends IntentService  {
                 }
                 if (request.code() == 404) {
                     //skip this author
-                    //Do a toast
-                    //No longer available
+                    //Not available atm
                     continue;
                 }
                 String body = SamlibPageParser.sanitizeHTML(request.body());
@@ -85,6 +83,7 @@ public class UpdateAuthorsIntentService extends IntentService  {
                             pub.setOldSize(old.getSize());
                             //Swap the ids, do an update in DB
                             pub.setId(old.getId());
+                            pub.setNew(true);
                             publicationsDao.update(pub);
                             //Mark author new, update in DB
                             author.setUpdated(true);
@@ -114,11 +113,23 @@ public class UpdateAuthorsIntentService extends IntentService  {
 
 
             }
+            //Success
+            //Do a broadcast
+            broadCastResult();
 
         } catch (SQLException e) {
+            //Error
+            //Do a broadcast
+            broadCastResult();
             e.printStackTrace();
         }
+    }
 
+    private void broadCastResult() {
+        Intent broadcastIntent = new Intent();
+        broadcastIntent.setAction(UpdateBroadcastReceiver.UPDATE_RECEIVER_ACTION);
+        broadcastIntent.addCategory(Intent.CATEGORY_DEFAULT);
+        sendBroadcast(broadcastIntent);
     }
 
 }

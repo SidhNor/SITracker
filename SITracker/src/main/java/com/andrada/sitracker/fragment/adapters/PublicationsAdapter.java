@@ -5,17 +5,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 
-import com.andrada.sitracker.components.PublicationCategoryItemView;
-import com.andrada.sitracker.components.PublicationCategoryItemView_;
-import com.andrada.sitracker.components.PublicationItemView;
-import com.andrada.sitracker.components.PublicationItemView_;
+import com.andrada.sitracker.fragment.components.PublicationCategoryItemView;
+import com.andrada.sitracker.fragment.components.PublicationCategoryItemView_;
+import com.andrada.sitracker.fragment.components.PublicationItemView;
+import com.andrada.sitracker.fragment.components.PublicationItemView_;
 import com.andrada.sitracker.db.beans.Publication;
 import com.andrada.sitracker.db.manager.SiDBHelper;
 import com.j256.ormlite.dao.Dao;
 
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.OrmLiteDao;
 import org.androidannotations.annotations.RootContext;
+import org.androidannotations.annotations.UiThread;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -40,13 +42,19 @@ public class PublicationsAdapter extends BaseExpandableListAdapter {
     public void reloadPublicationsForAuthorId(long id) {
         try {
             createChildList(publicationsDao.queryBuilder().where().eq("authorID", id).query());
-            notifyDataSetChanged();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    private void createChildList(List<Publication> items) {
+    @UiThread
+    void notifyChildrenChange() {
+        notifyDataSetChanged();
+    }
+
+
+    @Background
+    void createChildList(List<Publication> items) {
         mCategories.clear();
         mChildren.clear();
 
@@ -65,6 +73,7 @@ public class PublicationsAdapter extends BaseExpandableListAdapter {
             }
             mChildren.add(categoryList);
         }
+        notifyChildrenChange();
     }
 
     @Override

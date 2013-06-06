@@ -15,7 +15,7 @@ public class Publication {
     int oldSize;
 	@DatabaseField
 	String category;
-    @DatabaseField(canBeNull = false)
+    @DatabaseField(canBeNull = false, index = true)
 	long authorID;
 	@DatabaseField
 	String date;

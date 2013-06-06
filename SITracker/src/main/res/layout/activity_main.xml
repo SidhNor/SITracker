@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/fragment_container"
-    android:baselineAligned="false"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/fragment_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
     <fragment android:name="com.andrada.sitracker.fragment.AuthorsFragment_"
               android:id="@+id/fragment_authors"
@@ -12,4 +11,13 @@
               android:layout_height="match_parent"
               android:listSelector="@drawable/authors_list_selector"
               tools:layout="@layout/authors_list_item"/>
-</merge>
+
+    <ProgressBar android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+                 android:id="@+id/refreshProgressBar"
+                 style="@style/Widget.Sherlock.Light.ProgressBar.Horizontal"
+                 android:indeterminate="true"
+                 android:visibility="gone"
+                 android:layout_alignParentTop="true"
+                 android:layout_marginTop="-6dp"/>
+</RelativeLayout>
