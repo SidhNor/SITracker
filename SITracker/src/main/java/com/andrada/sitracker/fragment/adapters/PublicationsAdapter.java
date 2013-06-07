@@ -5,12 +5,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 
+import com.andrada.sitracker.db.beans.Publication;
+import com.andrada.sitracker.db.manager.SiDBHelper;
 import com.andrada.sitracker.fragment.components.PublicationCategoryItemView;
 import com.andrada.sitracker.fragment.components.PublicationCategoryItemView_;
 import com.andrada.sitracker.fragment.components.PublicationItemView;
 import com.andrada.sitracker.fragment.components.PublicationItemView_;
-import com.andrada.sitracker.db.beans.Publication;
-import com.andrada.sitracker.db.manager.SiDBHelper;
 import com.j256.ormlite.dao.Dao;
 
 import org.androidannotations.annotations.Background;

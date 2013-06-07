@@ -1,9 +1,5 @@
 package com.andrada.sitracker.task;
 
-import com.andrada.sitracker.db.beans.Author;
-
-import java.util.List;
-
 /**
  * Created by ggodonoga on 04/06/13.
  */

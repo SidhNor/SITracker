@@ -16,11 +16,21 @@ public class UpdateBroadcastReceiver extends BroadcastReceiver{
 
     public static final String UPDATE_RECEIVER_ACTION = "com.andrada.sitracker.updated";
 
+    private AuthorUpdateProgressListener mListener = null;
+
+    public UpdateBroadcastReceiver(AuthorUpdateProgressListener listener) {
+        mListener = listener;
+    }
+
+    public UpdateBroadcastReceiver() {
+
+    }
+
     @Override
     public void onReceive(Context context, Intent intent) {
         //See if there is something we can notify
-        if (context instanceof AuthorUpdateProgressListener) {
-            ((AuthorUpdateProgressListener)context).updateComplete();
+        if (mListener != null) {
+            mListener.updateComplete();
         }
     }
 }

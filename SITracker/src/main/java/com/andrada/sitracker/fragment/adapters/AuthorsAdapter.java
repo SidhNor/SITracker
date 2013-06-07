@@ -6,10 +6,10 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 import com.andrada.sitracker.R;
-import com.andrada.sitracker.fragment.components.AuthorItemView;
-import com.andrada.sitracker.fragment.components.AuthorItemView_;
 import com.andrada.sitracker.db.beans.Author;
 import com.andrada.sitracker.db.manager.SiDBHelper;
+import com.andrada.sitracker.fragment.components.AuthorItemView;
+import com.andrada.sitracker.fragment.components.AuthorItemView_;
 import com.j256.ormlite.dao.Dao;
 
 import org.androidannotations.annotations.AfterInject;

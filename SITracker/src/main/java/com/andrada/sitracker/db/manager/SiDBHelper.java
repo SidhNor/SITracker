@@ -2,6 +2,7 @@ package com.andrada.sitracker.db.manager;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+
 import com.andrada.sitracker.db.beans.Author;
 import com.andrada.sitracker.db.beans.Publication;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;

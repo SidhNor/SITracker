@@ -3,24 +3,44 @@ package com.andrada.sitracker.fragment;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.ListFragment;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.SherlockFragment;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
+import com.andrada.sitracker.contracts.AuthorUpdateProgressListener;
 import com.andrada.sitracker.fragment.adapters.AuthorsAdapter;
+import com.andrada.sitracker.fragment.dialog.AddAuthorDialog;
 import com.andrada.sitracker.task.AddAuthorTask;
+import com.andrada.sitracker.task.UpdateAuthorsIntentService_;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.InstanceState;
+import org.androidannotations.annotations.ItemClick;
+import org.androidannotations.annotations.OptionsItem;
+import org.androidannotations.annotations.OptionsMenu;
+import org.androidannotations.annotations.ViewById;
 
-@EFragment
-public class AuthorsFragment extends ListFragment implements AddAuthorTask.IAuthorTaskCallback {
+@EFragment(R.layout.fragmet_authors)
+@OptionsMenu(R.menu.authors_menu)
+public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.IAuthorTaskCallback,
+        AuthorUpdateProgressListener, AddAuthorDialog.OnAuthorLinkSuppliedListener {
 
 	OnAuthorSelectedListener mCallback;
+
+    @ViewById
+    ListView list;
+
+    @ViewById
+    View refreshProgressBar;
 
     @Bean
     AuthorsAdapter adapter;
@@ -28,14 +48,18 @@ public class AuthorsFragment extends ListFragment implements AddAuthorTask.IAuth
     @InstanceState
     Boolean isInTwoPane = false;
 
+    private boolean mIsUpdating = false;
+
     public interface OnAuthorSelectedListener {
 		public void onAuthorSelected(long id);
-        public void onAuthorAdded();
 	}
 
     public void setInTwoPane(Boolean inTwoPane) {
         isInTwoPane = inTwoPane;
     }
+
+
+    //region Fragment lifecycle overrides
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -47,10 +71,12 @@ public class AuthorsFragment extends ListFragment implements AddAuthorTask.IAuth
 	public void onStart() {
 		super.onStart();
         if (isInTwoPane) {
-            getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-            getListView().setSelector(R.drawable.authors_list_selector);
+            list.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+            list.setSelector(R.drawable.authors_list_selector);
         }
-        getListView().setBackgroundResource(R.drawable.authors_list_background);
+        list.setBackgroundResource(R.drawable.authors_list_background);
+
+        getActivity().invalidateOptionsMenu();
 	}
 
 	@Override
@@ -73,39 +99,64 @@ public class AuthorsFragment extends ListFragment implements AddAuthorTask.IAuth
         mCallback = null;
     }
 
-    @AfterViews
-    void bindAdapter() {
-        setListAdapter(adapter);
+    //endregion
+
+
+
+    //region Menu item tap handlers
+    @OptionsItem(R.id.action_add)
+    void menuAddSelected() {
+        AddAuthorDialog authorDialog = new AddAuthorDialog();
+        authorDialog.setOnAuthorLinkSuppliedListener(this);
+        authorDialog.show(getActivity().getSupportFragmentManager(),
+                Constants.DIALOG_ADD_AUTHOR);
     }
 
-	public void updateView() {
-		adapter.reloadAuthors();
+    @OptionsItem(R.id.action_refresh)
+    void menuRefreshSelected() {
+        UpdateAuthorsIntentService_.intent(getActivity()).start();
+        toggleUpdatingState();
+    }
+    //endregion
+
+    @AfterViews
+    void bindAdapter() {
+        list.setAdapter(adapter);
+    }
+
+	public void updateAuthors() {
+        int tempPosition = list.getSelectedItemPosition();
+        adapter.reloadAuthors();
+        list.setItemChecked(tempPosition, true);
+        list.setSelection(tempPosition);
 	}
 
-	public void updateViewAtPosition(int position) {
-		updateView();
-		getListView().setItemChecked(position, true);
-		getListView().setSelection(position);
-	}
-
-    public void tryAddAuthor(String url) {
+    protected void tryAddAuthor(String url) {
         new AddAuthorTask((Context)mCallback, this).execute(url);
     }
 
-	@Override
-	public void onListItemClick(ListView l, View v, int position, long id) {
+	@ItemClick
+	public void listItemClicked(int position) {
 		// Notify the parent activity of selected item
+        Object obj = list.getItemAtPosition(position);
+        long id = list.getItemIdAtPosition(position);
 		mCallback.onAuthorSelected(id);
+
 		// Set the item as checked to be highlighted when in two-pane layout
-		getListView().setItemChecked(position, true);
+        list.setItemChecked(position, true);
 	}
+
+    @Override
+    public void onLinkSupplied(String url) {
+        tryAddAuthor(url);
+    }
 
     @Override
     public void deliverResults(String message) {
         //Stop progress bar
         if (message.length() == 0) {
             //This is success
-            mCallback.onAuthorAdded();
+            updateAuthors();
         } else {
             Toast.makeText((Context)mCallback, message, Toast.LENGTH_SHORT).show();
         }
@@ -116,5 +167,34 @@ public class AuthorsFragment extends ListFragment implements AddAuthorTask.IAuth
         //Start progress bar
     }
 
+    @Override
+    public void updateComplete() {
+        toggleUpdatingState();
+        this.updateAuthors();
+    }
+
+    private void toggleUpdatingState() {
+
+        ActionBar bar = ((SherlockFragmentActivity)getActivity()).getSupportActionBar();
+        bar.setDisplayShowHomeEnabled(mIsUpdating);
+        bar.setDisplayShowTitleEnabled(mIsUpdating);
+        bar.setDisplayShowCustomEnabled(!mIsUpdating);
+
+        if (mIsUpdating) {
+            refreshProgressBar.setVisibility(View.GONE);
+        } else {
+            View mLogoView = LayoutInflater.from(getActivity()).inflate(R.layout.updating_actionbar_layout, null);
+            bar.setCustomView(mLogoView, new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT));
+            refreshProgressBar.setVisibility(View.VISIBLE);
+        }
+
+        mIsUpdating = !mIsUpdating;
+        getActivity().invalidateOptionsMenu();
+    }
+
+    public boolean isUpdating() {
+        return mIsUpdating;
+    }
 
 }

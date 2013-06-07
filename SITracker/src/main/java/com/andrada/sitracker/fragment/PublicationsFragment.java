@@ -1,8 +1,9 @@
 package com.andrada.sitracker.fragment;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.widget.ExpandableListView;
+
+import com.actionbarsherlock.app.SherlockFragment;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.fragment.adapters.PublicationsAdapter;
 
@@ -13,7 +14,7 @@ import org.androidannotations.annotations.InstanceState;
 import org.androidannotations.annotations.ViewById;
 
 @EFragment(R.layout.fragment_publications)
-public class PublicationsFragment extends Fragment{
+public class PublicationsFragment extends SherlockFragment {
 
     @Bean
     PublicationsAdapter adapter;

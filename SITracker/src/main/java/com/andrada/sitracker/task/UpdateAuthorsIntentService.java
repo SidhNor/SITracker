@@ -10,15 +10,16 @@ import com.andrada.sitracker.task.receivers.UpdateBroadcastReceiver;
 import com.andrada.sitracker.util.SamlibPageParser;
 import com.github.kevinsawicki.http.HttpRequest;
 import com.j256.ormlite.dao.Dao;
+
+import org.androidannotations.annotations.EService;
+import org.androidannotations.annotations.OrmLiteDao;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-
-import org.androidannotations.annotations.EService;
-import org.androidannotations.annotations.OrmLiteDao;
 
 /**
  * Created by Gleb on 03.06.13.
