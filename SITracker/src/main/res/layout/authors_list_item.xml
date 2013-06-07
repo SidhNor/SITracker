@@ -27,7 +27,7 @@
               android:text="@string/designtime_placeholder_date"
               android:textAlignment="viewEnd"/>
     <CheckBox android:id="@+id/author_updated"
-              style="?android:attr/starStyle"
+              android:button="@drawable/star_check_selector"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:layout_alignParentRight="true"

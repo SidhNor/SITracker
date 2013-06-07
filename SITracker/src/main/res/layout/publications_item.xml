@@ -43,12 +43,13 @@
         android:layout_marginBottom="2dp"/>
 
     <CheckBox android:id="@+id/item_updated"
-        style="?android:attr/starStyle"
+        android:button="@drawable/star_check_selector"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_alignRight="@+id/item_update_date"
-        android:layout_alignParentBottom="true"/>
+        android:layout_alignParentBottom="true"
+        android:padding="2dp"/>
 
     <TextView
         android:layout_width="wrap_content"
