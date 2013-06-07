@@ -1,9 +1,12 @@
 package com.andrada.sitracker.db.beans;
 
+import com.andrada.sitracker.db.dao.AuthorDaoImpl;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 
 import java.util.Date;
 
+@DatabaseTable(daoClass = AuthorDaoImpl.class)
 public class Author {
 	@DatabaseField(generatedId = true)
 	int id;

@@ -34,6 +34,10 @@ import org.androidannotations.annotations.ViewById;
 public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.IAuthorTaskCallback,
         AuthorUpdateProgressListener, AddAuthorDialog.OnAuthorLinkSuppliedListener {
 
+    public interface OnAuthorSelectedListener {
+        public void onAuthorSelected(long id);
+    }
+
 	OnAuthorSelectedListener mCallback;
 
     @ViewById
@@ -50,15 +54,6 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
 
     private boolean mIsUpdating = false;
 
-    public interface OnAuthorSelectedListener {
-		public void onAuthorSelected(long id);
-	}
-
-    public void setInTwoPane(Boolean inTwoPane) {
-        isInTwoPane = inTwoPane;
-    }
-
-
     //region Fragment lifecycle overrides
 
     @Override
@@ -72,11 +67,11 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
 		super.onStart();
         if (isInTwoPane) {
             list.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-            list.setSelector(R.drawable.authors_list_selector);
         }
+        list.setSelector(R.drawable.authors_list_selector);
         list.setBackgroundResource(R.drawable.authors_list_background);
 
-        getActivity().invalidateOptionsMenu();
+        getSherlockActivity().invalidateOptionsMenu();
 	}
 
 	@Override
@@ -101,8 +96,6 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
 
     //endregion
 
-
-
     //region Menu item tap handlers
     @OptionsItem(R.id.action_add)
     void menuAddSelected() {
@@ -124,7 +117,7 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
         list.setAdapter(adapter);
     }
 
-	public void updateAuthors() {
+    protected void updateAuthors() {
         int tempPosition = list.getSelectedItemPosition();
         adapter.reloadAuthors();
         list.setItemChecked(tempPosition, true);
@@ -146,33 +139,6 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
         list.setItemChecked(position, true);
 	}
 
-    @Override
-    public void onLinkSupplied(String url) {
-        tryAddAuthor(url);
-    }
-
-    @Override
-    public void deliverResults(String message) {
-        //Stop progress bar
-        if (message.length() == 0) {
-            //This is success
-            updateAuthors();
-        } else {
-            Toast.makeText((Context)mCallback, message, Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    @Override
-    public void operationStart() {
-        //Start progress bar
-    }
-
-    @Override
-    public void updateComplete() {
-        toggleUpdatingState();
-        this.updateAuthors();
-    }
-
     private void toggleUpdatingState() {
 
         ActionBar bar = ((SherlockFragmentActivity)getActivity()).getSupportActionBar();
@@ -190,11 +156,58 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
         }
 
         mIsUpdating = !mIsUpdating;
-        getActivity().invalidateOptionsMenu();
+        getSherlockActivity().invalidateOptionsMenu();
     }
 
+    //region Public methods
     public boolean isUpdating() {
         return mIsUpdating;
     }
+
+
+    public void setInTwoPane(Boolean inTwoPane) {
+        isInTwoPane = inTwoPane;
+    }
+
+    //endregion
+
+
+    //region AddAuthorTask.IAuthorTaskCallback callbacks
+    @Override
+    public void onAuthorAddStarted() {
+        //Add a temporary item to authors
+        //Start progress bar
+    }
+
+    @Override
+    public void onAuthorAddCompleted(String message) {
+        //Stop progress bar
+        if (message.length() == 0) {
+            //This is success
+            updateAuthors();
+        } else {
+            Toast.makeText((Context)mCallback, message, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    //endregion
+
+
+    //region AuthorUpdateProgressListener callbacks
+    @Override
+    public void onAuthorsUpdated() {
+        toggleUpdatingState();
+        this.updateAuthors();
+    }
+    //endregion
+
+
+    //region AddAuthorDialog.OnAuthorLinkSuppliedListener callbacks
+    @Override
+    public void onLinkSupplied(String url) {
+        tryAddAuthor(url);
+    }
+    //endregion
+
 
 }

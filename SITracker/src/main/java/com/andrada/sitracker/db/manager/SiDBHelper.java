@@ -5,6 +5,8 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.andrada.sitracker.db.beans.Author;
 import com.andrada.sitracker.db.beans.Publication;
+import com.andrada.sitracker.db.dao.AuthorDao;
+import com.andrada.sitracker.db.dao.PublicationDao;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
@@ -17,8 +19,8 @@ public class SiDBHelper extends OrmLiteSqliteOpenHelper {
 	private static final String DATABASE_NAME = "siinformer.db";
 	private static final int DATABASE_VERSION = 4;
 
-	private Dao<Publication, Integer> publicationDao;
-	private Dao<Author, Integer> authorDao;
+	private PublicationDao publicationDao;
+	private AuthorDao authorDao;
 	
 	public SiDBHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -56,14 +58,14 @@ public class SiDBHelper extends OrmLiteSqliteOpenHelper {
         }
 	}
 	
-	public Dao<Author, Integer> getAuthorDao() throws SQLException {
+	public AuthorDao getAuthorDao() throws SQLException {
 		if (authorDao == null) {
 			authorDao = getDao(Author.class);
 		}
 		return authorDao;
 	}
 
-	public Dao<Publication, Integer> getPublicationDao() throws SQLException {
+	public PublicationDao getPublicationDao() throws SQLException {
 		if (publicationDao == null) {
 			publicationDao = getDao(Publication.class);
 		}

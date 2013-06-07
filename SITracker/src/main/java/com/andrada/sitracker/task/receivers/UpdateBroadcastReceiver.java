@@ -30,7 +30,7 @@ public class UpdateBroadcastReceiver extends BroadcastReceiver{
     public void onReceive(Context context, Intent intent) {
         //See if there is something we can notify
         if (mListener != null) {
-            mListener.updateComplete();
+            mListener.onAuthorsUpdated();
         }
     }
 }

@@ -22,8 +22,8 @@ import java.util.List;
 public class AddAuthorTask extends AsyncTask<String, Integer, String> {
 	
 	public interface IAuthorTaskCallback {
-		public void deliverResults(String message);
-        public void operationStart();
+		public void onAuthorAddCompleted(String message);
+        public void onAuthorAddStarted();
 	}
 
     private IAuthorTaskCallback mReceiver;
@@ -99,7 +99,7 @@ public class AddAuthorTask extends AsyncTask<String, Integer, String> {
     protected void onPreExecute() {
         helper = OpenHelperManager.getHelper(this.context, SiDBHelper.class);
         if (mReceiver != null) {
-            mReceiver.operationStart();
+            mReceiver.onAuthorAddStarted();
         }
     }
 
@@ -107,7 +107,7 @@ public class AddAuthorTask extends AsyncTask<String, Integer, String> {
 	protected void onPostExecute(String result) {
         OpenHelperManager.releaseHelper();
         if (mReceiver != null) {
-            mReceiver.deliverResults(result);
+            mReceiver.onAuthorAddCompleted(result);
         }
 	}
 }

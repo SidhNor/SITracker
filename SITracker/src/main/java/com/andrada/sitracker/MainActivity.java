@@ -54,7 +54,10 @@ public class MainActivity extends SherlockFragmentActivity implements
     @Override
     public boolean onPrepareOptionsMenu (Menu menu) {
         //Do not show menu in actionbar if authors are updating
-        return !mAuthorsFragment.isUpdating();
+        if (mAuthorsFragment != null) {
+            return !mAuthorsFragment.isUpdating();
+        }
+        return true;
     }
 
     private BroadcastReceiver receiver;

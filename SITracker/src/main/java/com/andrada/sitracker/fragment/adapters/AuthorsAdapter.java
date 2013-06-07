@@ -7,6 +7,7 @@ import android.widget.BaseAdapter;
 
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.db.beans.Author;
+import com.andrada.sitracker.db.dao.AuthorDao;
 import com.andrada.sitracker.db.manager.SiDBHelper;
 import com.andrada.sitracker.fragment.components.AuthorItemView;
 import com.andrada.sitracker.fragment.components.AuthorItemView_;
@@ -30,25 +31,23 @@ import java.util.List;
 public class AuthorsAdapter extends BaseAdapter {
 
     List<Author> authors;
+    long mNewAuthors;
 
     @OrmLiteDao(helper = SiDBHelper.class, model = Author.class)
-    Dao<Author, Integer> authorDao;
+    AuthorDao authorDao;
 
     @RootContext
     Context context;
 
     @AfterInject
     void initAdapter() {
-        try {
-            authors = authorDao.queryForAll();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        reloadAuthors();
     }
 
     public void reloadAuthors() {
         try {
             authors = authorDao.queryForAll();
+            mNewAuthors = authorDao.getNewAuthorsCount();
             notifyDataSetChanged();
         } catch (SQLException e) {
             e.printStackTrace();

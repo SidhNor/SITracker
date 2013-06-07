@@ -1,9 +1,12 @@
 package com.andrada.sitracker.db.beans;
 
+import com.andrada.sitracker.db.dao.PublicationDaoImpl;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 
 import java.util.Date;
 
+@DatabaseTable(daoClass = PublicationDaoImpl.class)
 public class Publication {
 	@DatabaseField(generatedId = true)
 	int id;

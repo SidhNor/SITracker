@@ -13,6 +13,7 @@
         android:groupIndicator="@null"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:listSelector="@drawable/authors_list_selector"
         android:paddingTop="4dp"
         android:paddingBottom="4dp">
     </ExpandableListView>

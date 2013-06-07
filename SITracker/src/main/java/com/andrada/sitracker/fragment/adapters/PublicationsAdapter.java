@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 
 import com.andrada.sitracker.db.beans.Publication;
+import com.andrada.sitracker.db.dao.PublicationDao;
 import com.andrada.sitracker.db.manager.SiDBHelper;
 import com.andrada.sitracker.fragment.components.PublicationCategoryItemView;
 import com.andrada.sitracker.fragment.components.PublicationCategoryItemView_;
@@ -34,14 +35,14 @@ public class PublicationsAdapter extends BaseExpandableListAdapter {
     List<List<Publication>> mChildren = new ArrayList<List<Publication>>();
 
     @OrmLiteDao(helper = SiDBHelper.class, model = Publication.class)
-    Dao<Publication, Integer> publicationsDao;
+    PublicationDao publicationsDao;
 
     @RootContext
     Context context;
 
     public void reloadPublicationsForAuthorId(long id) {
         try {
-            createChildList(publicationsDao.queryBuilder().where().eq("authorID", id).query());
+            createChildList(publicationsDao.getPublicationsForAuthorId(id));
         } catch (SQLException e) {
             e.printStackTrace();
         }
