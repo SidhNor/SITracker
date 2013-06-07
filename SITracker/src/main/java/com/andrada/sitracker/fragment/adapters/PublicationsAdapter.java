@@ -47,13 +47,6 @@ public class PublicationsAdapter extends BaseExpandableListAdapter {
         }
     }
 
-    @UiThread
-    void notifyChildrenChange() {
-        notifyDataSetChanged();
-    }
-
-
-    @Background
     void createChildList(List<Publication> items) {
         mCategories.clear();
         mChildren.clear();
@@ -73,7 +66,7 @@ public class PublicationsAdapter extends BaseExpandableListAdapter {
             }
             mChildren.add(categoryList);
         }
-        notifyChildrenChange();
+        notifyDataSetChanged();
     }
 
     @Override

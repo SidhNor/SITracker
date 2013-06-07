@@ -46,20 +46,15 @@ public class AuthorsAdapter extends BaseAdapter {
         }
     }
 
-    @Background
     public void reloadAuthors() {
         try {
             authors = authorDao.queryForAll();
-            notifyAuthorsReloaded();
+            notifyDataSetChanged();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    @UiThread
-    void notifyAuthorsReloaded() {
-        notifyDataSetChanged();
-    }
 
     @Override
     public int getCount() {

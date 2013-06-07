@@ -29,6 +29,7 @@ public class AddAuthorDialog extends DialogFragment implements
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+        setRetainInstance(true);
 	}
 	
 	public void setOnAuthorLinkSuppliedListener(OnAuthorLinkSuppliedListener listener){
