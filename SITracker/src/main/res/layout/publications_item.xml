@@ -13,7 +13,7 @@
         android:paddingLeft="@dimen/list_left_padding"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_toLeftOf="@+id/item_update_date"
+        android:layout_toLeftOf="@+id/actions_view"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="?android:attr/textColorPrimary"
         android:fontFamily="sans-serif-condensed"
@@ -21,49 +21,50 @@
         android:lines="1"
         android:scrollHorizontally="true"
         android:ellipsize="end"/>
-
-    <TextView android:id="@+id/item_update_date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:textSize="12sp"
-        android:text="@string/designtime_placeholder_date"
-        android:textAlignment="viewEnd"/>
-
-    <TextView android:id="@+id/itemSize"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignRight="@+id/item_update_date"
-        android:text="@string/designtime_placeholder_size"
-        android:textAlignment="viewEnd"
-        android:layout_below="@+id/item_update_date"
-        android:layout_marginTop="2dp"
-        android:layout_marginBottom="2dp"/>
-
-    <CheckBox android:id="@+id/item_updated"
-        android:button="@drawable/star_check_selector"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignRight="@+id/item_update_date"
-        android:layout_alignParentBottom="true"
-        android:padding="2dp"/>
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingLeft="@dimen/list_left_padding"
         android:id="@+id/item_description"
-        android:layout_below="@id/item_title"
         android:layout_alignParentLeft="true"
-        android:layout_toLeftOf="@+id/itemSize"
+        android:layout_toLeftOf="@+id/actions_view"
+        android:layout_below="@+id/item_title"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="?android:attr/textColorSecondary"
         android:layout_gravity="left|center_vertical"
         android:text="@string/designtime_placeholder_long"
         android:singleLine="false" android:maxLines="3" android:ellipsize="end"/>
+
+    <LinearLayout
+            android:id="@+id/actions_view"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true">
+        <TextView android:id="@+id/item_update_date"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:textSize="12sp"
+                  android:text="@string/designtime_placeholder_date"
+                  android:textAlignment="viewEnd"
+                  android:layout_gravity="right"/>
+        <TextView android:id="@+id/itemSize"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:text="@string/designtime_placeholder_size"
+                  android:textAlignment="viewEnd"
+                  android:layout_marginTop="2dp"
+                  android:layout_marginBottom="2dp"
+                  android:layout_gravity="right"/>
+        <CheckBox android:id="@+id/item_updated"
+                  android:button="@drawable/star_check_selector"
+                  android:layout_width="wrap_content"
+                  android:layout_height="0dp"
+                  android:layout_weight="1"
+                  android:layout_gravity="end"
+                />
+    </LinearLayout>
 
     <View
         android:id="@+id/publication_item_divider"

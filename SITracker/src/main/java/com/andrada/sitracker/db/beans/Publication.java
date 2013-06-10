@@ -8,33 +8,33 @@ import java.util.Date;
 
 @DatabaseTable(daoClass = PublicationDaoImpl.class)
 public class Publication {
-	@DatabaseField(generatedId = true)
+	@DatabaseField(generatedId = true, useGetSet = true)
 	int id;
-    @DatabaseField(canBeNull = false)
+    @DatabaseField(canBeNull = false, useGetSet = true)
 	String name;
-	@DatabaseField
+    @DatabaseField(useGetSet = true)
 	int size;
-    @DatabaseField
+    @DatabaseField(useGetSet = true)
     int oldSize;
-	@DatabaseField
+	@DatabaseField(useGetSet = true)
 	String category;
     @DatabaseField(canBeNull = false, index = true)
 	long authorID;
-	@DatabaseField
+	@DatabaseField(useGetSet = true)
 	String date;
-	@DatabaseField
+	@DatabaseField(useGetSet = true)
 	String description;
-    @DatabaseField
+    @DatabaseField(useGetSet = true)
     String commentUrl;
-    @DatabaseField(canBeNull = false, unique = true)
+    @DatabaseField(canBeNull = false, unique = true, useGetSet = true)
 	String url;
-    @DatabaseField
+    @DatabaseField(useGetSet = true)
     String rating;
-    @DatabaseField
+    @DatabaseField(useGetSet = true)
     int commentsCount;
     @DatabaseField(defaultValue = "false", canBeNull = false)
     Boolean isNew;
-    @DatabaseField(canBeNull = false)
+    @DatabaseField(canBeNull = false, useGetSet = true)
     Date updateDate;
 
 
@@ -56,7 +56,7 @@ public class Publication {
     }
 
     public int hashCode() {
-        return getUrl().hashCode() * 3 + 12;
+        return getUrl().hashCode();
     }
 
 

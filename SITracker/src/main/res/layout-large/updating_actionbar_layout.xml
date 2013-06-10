@@ -7,7 +7,7 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:gravity="center_vertical|center_horizontal"
-              android:textAppearance="?android:attr/textAppearanceMedium"
+              android:textAppearance="?android:attr/textAppearanceLarge"
               android:textColor="@color/holo_blue_light"/>
 
 </RelativeLayout>

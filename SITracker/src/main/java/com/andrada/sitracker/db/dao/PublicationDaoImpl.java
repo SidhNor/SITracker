@@ -3,6 +3,7 @@ package com.andrada.sitracker.db.dao;
 import com.andrada.sitracker.db.beans.Author;
 import com.andrada.sitracker.db.beans.Publication;
 import com.j256.ormlite.dao.BaseDaoImpl;
+import com.j256.ormlite.stmt.UpdateBuilder;
 import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.support.ConnectionSource;
 
@@ -55,5 +56,17 @@ public class PublicationDaoImpl extends BaseDaoImpl<Publication, Integer>
                 .eq("authorID", authorId)
                 .and()
                 .eq("isNew", true).countOf();
+    }
+
+    @Override
+    public void markAsReadForAuthor(Author author) throws SQLException {
+        markAsReadForAuthorId(author.getId());
+    }
+    @Override
+    public void markAsReadForAuthorId(long authorId) throws SQLException {
+        UpdateBuilder<Publication, Integer> updateBuilder = this.updateBuilder();
+        updateBuilder.updateColumnValue("isNew", false);
+        updateBuilder.where().eq("authorID", authorId);
+        updateBuilder.update();
     }
 }

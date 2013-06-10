@@ -3,19 +3,20 @@ package com.andrada.sitracker;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.support.v4.widget.SlidingPaneLayout;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.andrada.sitracker.fragment.AuthorsFragment;
 import com.andrada.sitracker.fragment.AuthorsFragment.OnAuthorSelectedListener;
 import com.andrada.sitracker.fragment.PublicationsFragment;
-import com.andrada.sitracker.phoneactivities.PublicationsActivity_;
 import com.andrada.sitracker.task.receivers.UpdateBroadcastReceiver;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.FragmentById;
 import org.androidannotations.annotations.OptionsMenu;
+import org.androidannotations.annotations.ViewById;
 
 @EActivity(R.layout.activity_main)
 @OptionsMenu(R.menu.main_menu)
@@ -28,27 +29,18 @@ public class MainActivity extends SherlockFragmentActivity implements
     @FragmentById(R.id.fragment_authors)
     AuthorsFragment mAuthorsFragment;
 
-    private boolean mDualFragments = false;
-
-    @AfterViews
-    void checkDualFragments() {
-        if (mPubFragment != null) {
-            mDualFragments = true;
-            mAuthorsFragment.setInTwoPane(true);
-        }
-    }
+    @ViewById
+    SlidingPaneLayout fragment_container;
 
     @Override
     public void onAuthorSelected(long id) {
+        // Capture the publications fragment from the activity layout
+        mPubFragment.updatePublicationsView(id);
+    }
 
-        if (!mDualFragments) {
-            // If showing only the AuthorsFragment, start the PublicationsActivity and
-            // pass it the info about the selected item
-            PublicationsActivity_.intent(this).mAuthorId(id).start();
-        } else {
-            // Capture the publications fragment from the activity layout
-            mPubFragment.updatePublicationsView(id);
-        }
+    @AfterViews
+    public void afterViews() {
+        fragment_container.openPane();
     }
 
     @Override

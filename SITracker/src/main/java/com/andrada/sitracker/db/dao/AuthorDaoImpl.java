@@ -29,4 +29,10 @@ public class AuthorDaoImpl extends BaseDaoImpl<Author, Integer>
         return this.queryBuilder().where()
                 .eq("updated", true).query();
     }
+
+    @Override
+    public void markAsRead(Author author) throws SQLException {
+        author.setUpdated(false);
+        this.update(author);
+    }
 }
