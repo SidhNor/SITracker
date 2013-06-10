@@ -17,7 +17,7 @@ import org.androidannotations.annotations.ViewById;
  */
 
 @EViewGroup(R.layout.authors_list_item)
-public class AuthorItemView extends RelativeLayout {
+public class AuthorItemView extends CheckedRelativeLayout {
 
     @ViewById
     TextView author_title;

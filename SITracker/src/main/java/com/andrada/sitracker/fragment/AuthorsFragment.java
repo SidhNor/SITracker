@@ -49,9 +49,6 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
     @Bean
     AuthorsAdapter adapter;
 
-    @InstanceState
-    Boolean isInTwoPane = false;
-
     private boolean mIsUpdating = false;
 
     //region Fragment lifecycle overrides
@@ -65,13 +62,12 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
 	@Override
 	public void onStart() {
 		super.onStart();
-        if (isInTwoPane) {
-            list.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-        }
-        list.setSelector(R.drawable.authors_list_selector);
+        list.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         list.setBackgroundResource(R.drawable.authors_list_background);
-
         getSherlockActivity().invalidateOptionsMenu();
+        if (adapter.getCount() > 0) {
+            listItemClicked(0);
+        }
 	}
 
 	@Override
@@ -118,10 +114,9 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
     }
 
     protected void updateAuthors() {
-        int tempPosition = list.getSelectedItemPosition();
+        int tempPosition = list.getCheckedItemPosition();
         adapter.reloadAuthors();
         list.setItemChecked(tempPosition, true);
-        list.setSelection(tempPosition);
 	}
 
     protected void tryAddAuthor(String url) {
@@ -131,10 +126,8 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
 	@ItemClick
 	public void listItemClicked(int position) {
 		// Notify the parent activity of selected item
-        Object obj = list.getItemAtPosition(position);
         long id = list.getItemIdAtPosition(position);
 		mCallback.onAuthorSelected(id);
-
 		// Set the item as checked to be highlighted when in two-pane layout
         list.setItemChecked(position, true);
 	}
@@ -162,11 +155,6 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
     //region Public methods
     public boolean isUpdating() {
         return mIsUpdating;
-    }
-
-
-    public void setInTwoPane(Boolean inTwoPane) {
-        isInTwoPane = inTwoPane;
     }
 
     //endregion
