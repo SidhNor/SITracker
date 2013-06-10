@@ -2,19 +2,21 @@ package com.andrada.sitracker.db.beans;
 
 import com.andrada.sitracker.db.dao.AuthorDaoImpl;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.util.Collection;
 import java.util.Date;
 
 @DatabaseTable(daoClass = AuthorDaoImpl.class)
 public class Author {
-	@DatabaseField(generatedId = true)
+	@DatabaseField(generatedId = true, useGetSet = true)
 	int id;
-    @DatabaseField(canBeNull = false)
+    @DatabaseField(canBeNull = false, useGetSet = true)
 	String name;
-	@DatabaseField(unique = true)
+	@DatabaseField(unique = true, useGetSet = true)
 	String url;
-    @DatabaseField(canBeNull = false)
+    @DatabaseField(canBeNull = false, useGetSet = true)
     Date updateDate;
     @DatabaseField(defaultValue = "false", canBeNull = false)
     Boolean updated;
@@ -62,6 +64,4 @@ public class Author {
     public void setUpdated(Boolean updated) {
         this.updated = updated;
     }
-
-
 }

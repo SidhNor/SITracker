@@ -12,4 +12,5 @@ import java.util.List;
 public interface AuthorDao extends Dao<Author, Integer> {
     long getNewAuthorsCount() throws SQLException;
     List<Author> getNewAuthors() throws SQLException;
+    void markAsRead(Author author) throws SQLException;
 }

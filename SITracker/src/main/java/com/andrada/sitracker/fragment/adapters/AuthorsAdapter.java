@@ -4,21 +4,22 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ListView;
 
 import com.andrada.sitracker.R;
+import com.andrada.sitracker.contracts.IsNewItemTappedListener;
 import com.andrada.sitracker.db.beans.Author;
+import com.andrada.sitracker.db.beans.Publication;
 import com.andrada.sitracker.db.dao.AuthorDao;
+import com.andrada.sitracker.db.dao.PublicationDao;
 import com.andrada.sitracker.db.manager.SiDBHelper;
 import com.andrada.sitracker.fragment.components.AuthorItemView;
 import com.andrada.sitracker.fragment.components.AuthorItemView_;
-import com.j256.ormlite.dao.Dao;
 
 import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.OrmLiteDao;
 import org.androidannotations.annotations.RootContext;
-import org.androidannotations.annotations.UiThread;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -28,13 +29,17 @@ import java.util.List;
  */
 
 @EBean
-public class AuthorsAdapter extends BaseAdapter {
+public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListener {
 
     List<Author> authors;
     long mNewAuthors;
+    ListView listView = null;
 
     @OrmLiteDao(helper = SiDBHelper.class, model = Author.class)
     AuthorDao authorDao;
+
+    @OrmLiteDao(helper = SiDBHelper.class, model = Publication.class)
+    PublicationDao publicationsDao;
 
     @RootContext
     Context context;
@@ -73,9 +78,13 @@ public class AuthorsAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
+        if (listView == null) {
+            listView = (ListView) parent;
+        }
         AuthorItemView authorsItemView;
         if (convertView == null) {
             authorsItemView = AuthorItemView_.build(context);
+            authorsItemView.setListener(this);
         } else {
             authorsItemView = (AuthorItemView) convertView;
         }
@@ -84,9 +93,29 @@ public class AuthorsAdapter extends BaseAdapter {
         } else {
             authorsItemView.setBackgroundResource(R.drawable.authors_list_item_selector_normal);
         }
-
         authorsItemView.bind(authors.get(position));
 
         return authorsItemView;
+    }
+
+    @Override
+    public void tapped(View checkBox) {
+        if (listView != null) {
+            final int position = listView.getPositionForView(checkBox);
+            if (position != ListView.INVALID_POSITION &&
+                    position < authors.size() &&
+                    authors.get(position).isUpdated()) {
+                try {
+                    authorDao.markAsRead(authors.get(position));
+                    publicationsDao.markAsReadForAuthor(authors.get(position));
+                    //TODO Reload publications as we marked them all as read
+
+                } catch (SQLException e) {
+                    //TODO write error
+                    e.printStackTrace();
+                }
+            }
+        }
+
     }
 }
