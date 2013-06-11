@@ -1,6 +1,7 @@
 package com.andrada.sitracker.fragment.adapters;
 
 import android.content.Context;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -15,6 +16,7 @@ import com.andrada.sitracker.db.dao.PublicationDao;
 import com.andrada.sitracker.db.manager.SiDBHelper;
 import com.andrada.sitracker.fragment.components.AuthorItemView;
 import com.andrada.sitracker.fragment.components.AuthorItemView_;
+import com.andrada.sitracker.tasks.messages.AuthorMarkedAsReadMessage;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
@@ -37,9 +39,6 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
 
     @OrmLiteDao(helper = SiDBHelper.class, model = Author.class)
     AuthorDao authorDao;
-
-    @OrmLiteDao(helper = SiDBHelper.class, model = Publication.class)
-    PublicationDao publicationsDao;
 
     @RootContext
     Context context;
@@ -99,7 +98,7 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
     }
 
     @Override
-    public void tapped(View checkBox) {
+    public void onIsNewItemTapped(View checkBox) {
         if (listView != null) {
             final int position = listView.getPositionForView(checkBox);
             if (position != ListView.INVALID_POSITION &&
@@ -107,15 +106,12 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
                     authors.get(position).isUpdated()) {
                 try {
                     authorDao.markAsRead(authors.get(position));
-                    publicationsDao.markAsReadForAuthor(authors.get(position));
-                    //TODO Reload publications as we marked them all as read
-
+                    LocalBroadcastManager.getInstance(context).sendBroadcast(new AuthorMarkedAsReadMessage(authors.get(position).getId()));
                 } catch (SQLException e) {
                     //TODO write error
                     e.printStackTrace();
                 }
             }
         }
-
     }
 }

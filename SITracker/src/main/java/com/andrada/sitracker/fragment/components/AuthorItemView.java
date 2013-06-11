@@ -3,7 +3,6 @@ package com.andrada.sitracker.fragment.components;
 import android.content.Context;
 import android.view.View;
 import android.widget.CheckBox;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.andrada.sitracker.R;
@@ -11,7 +10,6 @@ import com.andrada.sitracker.contracts.IsNewItemTappedListener;
 import com.andrada.sitracker.db.beans.Author;
 import com.andrada.sitracker.util.DateFormatterUtil;
 
-import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
@@ -40,7 +38,7 @@ public class AuthorItemView extends CheckedRelativeLayout {
     @Click(R.id.author_updated)
     void authorDismissUpdates(View checkBox) {
         if (mListener != null) {
-            mListener.tapped(checkBox);
+            mListener.onIsNewItemTapped(checkBox);
         }
     }
 

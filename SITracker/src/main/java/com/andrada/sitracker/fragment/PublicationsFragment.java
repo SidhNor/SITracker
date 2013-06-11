@@ -5,6 +5,7 @@ import android.widget.ExpandableListView;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.andrada.sitracker.R;
+import com.andrada.sitracker.contracts.AuthorMarkedAsReadListener;
 import com.andrada.sitracker.fragment.adapters.PublicationsAdapter;
 
 import org.androidannotations.annotations.AfterViews;
@@ -14,7 +15,7 @@ import org.androidannotations.annotations.InstanceState;
 import org.androidannotations.annotations.ViewById;
 
 @EFragment(R.layout.fragment_publications)
-public class PublicationsFragment extends SherlockFragment {
+public class PublicationsFragment extends SherlockFragment implements AuthorMarkedAsReadListener {
 
     @Bean
     PublicationsAdapter adapter;
@@ -42,4 +43,14 @@ public class PublicationsFragment extends SherlockFragment {
         adapter.reloadPublicationsForAuthorId(id);
 	}
 
+    @Override
+    public void onAuthorMarkedAsRead(long authorId) {
+        if (mCurrentId == authorId){
+            //That means that we are viewing the current author
+            //Just do a reload.
+            adapter.markPublicationsAsReadForAuthor(authorId);
+            updatePublicationsView(authorId);
+        }
+
+    }
 }

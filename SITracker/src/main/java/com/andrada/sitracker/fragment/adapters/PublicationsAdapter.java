@@ -141,4 +141,13 @@ public class PublicationsAdapter extends BaseExpandableListAdapter {
     public boolean isChildSelectable(int groupPosition, int childPosition) {
         return false;
     }
+
+    public void markPublicationsAsReadForAuthor(long id) {
+        try {
+            publicationsDao.markAsReadForAuthorId(id);
+        } catch (SQLException e) {
+            //TODO handle exception
+            e.printStackTrace();
+        }
+    }
 }

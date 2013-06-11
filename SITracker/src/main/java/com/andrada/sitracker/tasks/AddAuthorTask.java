@@ -1,4 +1,4 @@
-package com.andrada.sitracker.task;
+package com.andrada.sitracker.tasks;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -20,7 +20,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class AddAuthorTask extends AsyncTask<String, Integer, String> {
-	
+
 	public interface IAuthorTaskCallback {
 		public void onAuthorAddCompleted(String message);
         public void onAuthorAddStarted();

@@ -1,4 +1,4 @@
-package com.andrada.sitracker.task;
+package com.andrada.sitracker.tasks;
 
 import android.app.IntentService;
 import android.content.Intent;
@@ -6,7 +6,8 @@ import android.content.Intent;
 import com.andrada.sitracker.db.beans.Author;
 import com.andrada.sitracker.db.beans.Publication;
 import com.andrada.sitracker.db.manager.SiDBHelper;
-import com.andrada.sitracker.task.receivers.UpdateBroadcastReceiver;
+import com.andrada.sitracker.tasks.messages.UpdateFailedIntentMessage;
+import com.andrada.sitracker.tasks.messages.UpdateSuccessfulIntentMessage;
 import com.andrada.sitracker.util.SamlibPageParser;
 import com.github.kevinsawicki.http.HttpRequest;
 import com.j256.ormlite.dao.Dao;
@@ -26,7 +27,7 @@ import java.util.List;
  */
 
 @EService
-public class UpdateAuthorsIntentService extends IntentService  {
+public class UpdateAuthorsTask extends IntentService  {
 
     @OrmLiteDao(helper = SiDBHelper.class, model = Author.class)
     Dao<Author, Integer> authorDao;
@@ -34,8 +35,8 @@ public class UpdateAuthorsIntentService extends IntentService  {
     @OrmLiteDao(helper = SiDBHelper.class, model = Publication.class)
     Dao<Publication, Integer> publicationsDao;
 
-    public UpdateAuthorsIntentService() {
-        super(UpdateAuthorsIntentService.class.getSimpleName());
+    public UpdateAuthorsTask() {
+        super(UpdateAuthorsTask.class.getSimpleName());
     }
 
     /**
@@ -53,7 +54,9 @@ public class UpdateAuthorsIntentService extends IntentService  {
                 try {
                     request = HttpRequest.get(new URL(author.getUrl()));
                 } catch (MalformedURLException e) {
-                    e.printStackTrace();
+                    //Just swallow exception, as this is unlikely to happen
+                    //SKip author
+                    continue;
                 }
                 if (request.code() == 404) {
                     //skip this author
@@ -116,20 +119,19 @@ public class UpdateAuthorsIntentService extends IntentService  {
             }
             //Success
             //Do a broadcast
-            broadCastResult();
+            broadCastResult(true);
 
         } catch (SQLException e) {
             //Error
             //Do a broadcast
-            broadCastResult();
-            e.printStackTrace();
+            broadCastResult(false);
         }
     }
 
-    private void broadCastResult() {
-        Intent broadcastIntent = new Intent();
-        broadcastIntent.setAction(UpdateBroadcastReceiver.UPDATE_RECEIVER_ACTION);
-        broadcastIntent.addCategory(Intent.CATEGORY_DEFAULT);
+    private void broadCastResult(boolean success) {
+        Intent broadcastIntent;
+        if (success) broadcastIntent = new UpdateSuccessfulIntentMessage();
+        else broadcastIntent = new UpdateFailedIntentMessage();
         sendBroadcast(broadcastIntent);
     }
 

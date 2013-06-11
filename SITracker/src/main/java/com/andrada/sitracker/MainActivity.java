@@ -1,8 +1,7 @@
 package com.andrada.sitracker;
 
 import android.content.BroadcastReceiver;
-import android.content.Intent;
-import android.content.IntentFilter;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SlidingPaneLayout;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -10,7 +9,10 @@ import com.actionbarsherlock.view.Menu;
 import com.andrada.sitracker.fragment.AuthorsFragment;
 import com.andrada.sitracker.fragment.AuthorsFragment.OnAuthorSelectedListener;
 import com.andrada.sitracker.fragment.PublicationsFragment;
-import com.andrada.sitracker.task.receivers.UpdateBroadcastReceiver;
+import com.andrada.sitracker.tasks.filters.MarkAsReadMessageFilter;
+import com.andrada.sitracker.tasks.filters.UpdateStatusMessageFilter;
+import com.andrada.sitracker.tasks.receivers.MarkedAsReadReceiver;
+import com.andrada.sitracker.tasks.receivers.UpdateStatusReceiver;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
@@ -44,7 +46,7 @@ public class MainActivity extends SherlockFragmentActivity implements
     }
 
     @Override
-    public boolean onPrepareOptionsMenu (Menu menu) {
+    public boolean onPrepareOptionsMenu(Menu menu) {
         //Do not show menu in actionbar if authors are updating
         if (mAuthorsFragment != null) {
             return !mAuthorsFragment.isUpdating();
@@ -52,23 +54,29 @@ public class MainActivity extends SherlockFragmentActivity implements
         return true;
     }
 
-    private BroadcastReceiver receiver;
+    private BroadcastReceiver updateStatusReceiver;
+    private BroadcastReceiver markAsReadReceiver;
 
     @Override
     protected void onResume() {
-        if (receiver == null) {
+        if (updateStatusReceiver == null) {
             //AuthorsFragment is the callback here
-            receiver = new UpdateBroadcastReceiver(mAuthorsFragment);
+            updateStatusReceiver = new UpdateStatusReceiver(mAuthorsFragment);
         }
-        IntentFilter filter = new IntentFilter(UpdateBroadcastReceiver.UPDATE_RECEIVER_ACTION);
-        filter.addCategory(Intent.CATEGORY_DEFAULT);
-        registerReceiver(receiver, filter);
+        if (markAsReadReceiver == null) {
+            markAsReadReceiver = new MarkedAsReadReceiver(mPubFragment, mAuthorsFragment);
+        }
+        LocalBroadcastManager.getInstance(getApplicationContext())
+                .registerReceiver(updateStatusReceiver, new UpdateStatusMessageFilter());
+        LocalBroadcastManager.getInstance(getApplicationContext())
+                .registerReceiver(markAsReadReceiver, new MarkAsReadMessageFilter());
         super.onResume();
     }
 
     @Override
     protected void onPause() {
-        unregisterReceiver(receiver);
+        LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(updateStatusReceiver);
+        LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(markAsReadReceiver);
         super.onPause();
     }
 

@@ -14,16 +14,16 @@ import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
-import com.andrada.sitracker.contracts.AuthorUpdateProgressListener;
+import com.andrada.sitracker.contracts.AuthorUpdateStatusListener;
+import com.andrada.sitracker.contracts.PublicationMarkedAsReadListener;
 import com.andrada.sitracker.fragment.adapters.AuthorsAdapter;
 import com.andrada.sitracker.fragment.dialog.AddAuthorDialog;
-import com.andrada.sitracker.task.AddAuthorTask;
-import com.andrada.sitracker.task.UpdateAuthorsIntentService_;
+import com.andrada.sitracker.tasks.AddAuthorTask;
+import com.andrada.sitracker.tasks.UpdateAuthorsTask_;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.InstanceState;
 import org.androidannotations.annotations.ItemClick;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
@@ -32,7 +32,7 @@ import org.androidannotations.annotations.ViewById;
 @EFragment(R.layout.fragmet_authors)
 @OptionsMenu(R.menu.authors_menu)
 public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.IAuthorTaskCallback,
-        AuthorUpdateProgressListener, AddAuthorDialog.OnAuthorLinkSuppliedListener {
+        AuthorUpdateStatusListener, AddAuthorDialog.OnAuthorLinkSuppliedListener, PublicationMarkedAsReadListener {
 
     public interface OnAuthorSelectedListener {
         public void onAuthorSelected(long id);
@@ -103,7 +103,7 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
 
     @OptionsItem(R.id.action_refresh)
     void menuRefreshSelected() {
-        UpdateAuthorsIntentService_.intent(getActivity()).start();
+        UpdateAuthorsTask_.intent(getActivity()).start();
         toggleUpdatingState();
     }
     //endregion
@@ -133,7 +133,6 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
 	}
 
     private void toggleUpdatingState() {
-
         ActionBar bar = ((SherlockFragmentActivity)getActivity()).getSupportActionBar();
         bar.setDisplayShowHomeEnabled(mIsUpdating);
         bar.setDisplayShowTitleEnabled(mIsUpdating);
@@ -181,11 +180,17 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
     //endregion
 
 
-    //region AuthorUpdateProgressListener callbacks
+    //region AuthorUpdateStatusListener callbacks
     @Override
     public void onAuthorsUpdated() {
         toggleUpdatingState();
         this.updateAuthors();
+    }
+
+    @Override
+    public void onAuthorsUpdateFailed() {
+        toggleUpdatingState();
+        //TODO Show failed notification/toast
     }
     //endregion
 
@@ -197,5 +202,10 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
     }
     //endregion
 
+
+    @Override
+    public void onPublicationMarkedAsRead(long publicationId) {
+        //TODO ensure we update the new status of the author if he has no new publications
+    }
 
 }
