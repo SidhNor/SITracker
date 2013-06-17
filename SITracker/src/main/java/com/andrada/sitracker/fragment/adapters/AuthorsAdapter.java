@@ -10,9 +10,7 @@ import android.widget.ListView;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.IsNewItemTappedListener;
 import com.andrada.sitracker.db.beans.Author;
-import com.andrada.sitracker.db.beans.Publication;
 import com.andrada.sitracker.db.dao.AuthorDao;
-import com.andrada.sitracker.db.dao.PublicationDao;
 import com.andrada.sitracker.db.manager.SiDBHelper;
 import com.andrada.sitracker.fragment.components.AuthorItemView;
 import com.andrada.sitracker.fragment.components.AuthorItemView_;
@@ -113,5 +111,9 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
                 }
             }
         }
+    }
+
+    public void ensureAuthorIsStillNew(long publicationId) {
+
     }
 }

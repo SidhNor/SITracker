@@ -206,6 +206,7 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
     @Override
     public void onPublicationMarkedAsRead(long publicationId) {
         //TODO ensure we update the new status of the author if he has no new publications
+        adapter.ensureAuthorIsStillNew(publicationId);
     }
 
 }

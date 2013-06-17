@@ -1,10 +1,14 @@
 package com.andrada.sitracker.fragment.adapters;
 
 import android.content.Context;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ExpandableListView;
+import android.widget.ListView;
 
+import com.andrada.sitracker.contracts.IsNewItemTappedListener;
 import com.andrada.sitracker.db.beans.Publication;
 import com.andrada.sitracker.db.dao.PublicationDao;
 import com.andrada.sitracker.db.manager.SiDBHelper;
@@ -12,6 +16,7 @@ import com.andrada.sitracker.fragment.components.PublicationCategoryItemView;
 import com.andrada.sitracker.fragment.components.PublicationCategoryItemView_;
 import com.andrada.sitracker.fragment.components.PublicationItemView;
 import com.andrada.sitracker.fragment.components.PublicationItemView_;
+import com.andrada.sitracker.tasks.messages.PublicationMarkedAsReadMessage;
 import com.j256.ormlite.dao.Dao;
 
 import org.androidannotations.annotations.Background;
@@ -29,7 +34,7 @@ import java.util.List;
  */
 
 @EBean
-public class PublicationsAdapter extends BaseExpandableListAdapter {
+public class PublicationsAdapter extends BaseExpandableListAdapter implements IsNewItemTappedListener {
 
     List<String> mCategories = new ArrayList<String>();
     List<List<Publication>> mChildren = new ArrayList<List<Publication>>();
@@ -39,6 +44,8 @@ public class PublicationsAdapter extends BaseExpandableListAdapter {
 
     @RootContext
     Context context;
+
+    ListView listView = null;
 
     public void reloadPublicationsForAuthorId(long id) {
         try {
@@ -89,6 +96,7 @@ public class PublicationsAdapter extends BaseExpandableListAdapter {
         PublicationItemView publicationItemView;
         if (convertView == null) {
             publicationItemView = PublicationItemView_.build(context);
+            publicationItemView.setListener(this);
         } else {
             publicationItemView = (PublicationItemView) convertView;
         }
@@ -101,7 +109,9 @@ public class PublicationsAdapter extends BaseExpandableListAdapter {
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded,
                              View convertView, ViewGroup parent) {
-
+        if (listView == null) {
+            listView = (ListView) parent;
+        }
         PublicationCategoryItemView publicationCategoryView;
         if (convertView == null) {
             publicationCategoryView = PublicationCategoryItemView_.build(context);
@@ -148,6 +158,27 @@ public class PublicationsAdapter extends BaseExpandableListAdapter {
         } catch (SQLException e) {
             //TODO handle exception
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onIsNewItemTapped(View checkBox) {
+        if (listView != null) {
+            final long packedPosition = listView.getAdapter().getItemId(listView.getPositionForView(checkBox));
+            final long groupPos = ExpandableListView.getPackedPositionGroup(packedPosition);
+            final long childPos = ExpandableListView.getPackedPositionChild(packedPosition);
+            Publication pub =  null;//mChildren.get((int) groupPos).get((int) childPos);
+            /*if (position != ListView.INVALID_POSITION &&
+                    position < authors.size() &&
+                    authors.get(position).isUpdated()) {
+                try {
+                    authorDao.markAsRead(authors.get(position));
+                    LocalBroadcastManager.getInstance(context).sendBroadcast(new PublicationMarkedAsReadMessage(mChildren.get(position).get(position).getId()));
+                } catch (SQLException e) {
+                    //TODO write error
+                    e.printStackTrace();
+                }
+            }*/
         }
     }
 }

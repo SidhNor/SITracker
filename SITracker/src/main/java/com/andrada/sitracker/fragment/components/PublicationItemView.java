@@ -7,9 +7,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.andrada.sitracker.R;
+import com.andrada.sitracker.contracts.IsNewItemTappedListener;
 import com.andrada.sitracker.db.beans.Publication;
 import com.andrada.sitracker.util.DateFormatterUtil;
 
+import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
 
@@ -37,9 +39,23 @@ public class PublicationItemView extends RelativeLayout {
     @ViewById
     TextView itemSize;
 
+    private IsNewItemTappedListener mListener;
+
 
     public PublicationItemView(Context context) {
         super(context);
+    }
+
+
+    @Click(R.id.item_updated)
+    void publicationDismissUpdates(View checkBox) {
+        if (mListener != null) {
+            mListener.onIsNewItemTapped(checkBox);
+        }
+    }
+
+    public void setListener(IsNewItemTappedListener listener) {
+        mListener = listener;
     }
 
     public void bind(Publication publication, Boolean isLast) {
