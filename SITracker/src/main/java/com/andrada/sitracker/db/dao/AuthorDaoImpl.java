@@ -2,6 +2,7 @@ package com.andrada.sitracker.db.dao;
 
 import com.andrada.sitracker.db.beans.Author;
 import com.j256.ormlite.dao.BaseDaoImpl;
+import com.j256.ormlite.dao.GenericRawResults;
 import com.j256.ormlite.support.ConnectionSource;
 
 import java.sql.SQLException;
@@ -20,8 +21,11 @@ public class AuthorDaoImpl extends BaseDaoImpl<Author, Integer>
 
     @Override
     public long getNewAuthorsCount() throws SQLException {
-        return this.queryBuilder().where()
-                .eq("updated", true).countOf();
+
+        long rawResults = this.queryRawValue(
+            "SELECT COUNT(*) FROM authors, publications WHERE authors.id = publications.author_id AND publications.isNew = 1");
+        return rawResults;
+
     }
 
     @Override

@@ -1,14 +1,15 @@
 package com.andrada.sitracker.db.beans;
 
 import com.andrada.sitracker.db.dao.AuthorDaoImpl;
+import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import java.util.Collection;
+import java.sql.SQLException;
 import java.util.Date;
 
-@DatabaseTable(daoClass = AuthorDaoImpl.class)
+@DatabaseTable(daoClass = AuthorDaoImpl.class, tableName = "authors")
 public class Author {
 	@DatabaseField(generatedId = true, useGetSet = true)
 	int id;
@@ -18,8 +19,9 @@ public class Author {
 	String url;
     @DatabaseField(canBeNull = false, useGetSet = true)
     Date updateDate;
-    @DatabaseField(defaultValue = "false", canBeNull = false)
-    Boolean updated;
+
+    @ForeignCollectionField(eager = true)
+    ForeignCollection<Publication> publications;
 
     public Author() {
         updateDate = new Date();
@@ -56,12 +58,37 @@ public class Author {
     public void setUpdateDate(Date updateDate) {
         this.updateDate = updateDate;
     }
+    public ForeignCollection<Publication> getPublications() {
+        return publications;
+    }
+
+    public void setPublications(ForeignCollection<Publication> publications) {
+        this.publications = publications;
+    }
 
     public Boolean isUpdated() {
-        return updated;
+        boolean isUpdated = false;
+        for(Publication pub : this.publications) {
+            if (pub.isNew) {
+                isUpdated = true;
+                break;
+            }
+        }
+        return isUpdated;
     }
 
     public void setUpdated(Boolean updated) {
-        this.updated = updated;
+        if (!updated) {
+            for(Publication pub : this.publications) {
+                pub.setNew(false);
+                try {
+                    this.publications.update(pub);
+                } catch (SQLException e) {
+                    //TODO surface error
+                    e.printStackTrace();
+                }
+            }
+
+        }
     }
 }

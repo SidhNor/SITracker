@@ -29,7 +29,7 @@ public class PublicationDaoImpl extends BaseDaoImpl<Publication, Integer>
 
     @Override
     public List<Publication> getPublicationsForAuthorId(long authorId) throws SQLException {
-        return this.queryBuilder().where().eq("authorID", authorId).query();
+        return this.queryBuilder().where().eq("author_id", authorId).query();
     }
 
     @Override
@@ -40,7 +40,7 @@ public class PublicationDaoImpl extends BaseDaoImpl<Publication, Integer>
     @Override
     public List<Publication> getNewPublicationsForAuthorId(long authorId) throws SQLException {
         return this.queryBuilder().where()
-                .eq("authorID", authorId)
+                .eq("author_id", authorId)
                 .and()
                 .eq("isNew", true).query();
     }
@@ -53,20 +53,8 @@ public class PublicationDaoImpl extends BaseDaoImpl<Publication, Integer>
     @Override
     public long getNewPublicationsCountForAuthorId(long authorId) throws SQLException {
         return this.queryBuilder().where()
-                .eq("authorID", authorId)
+                .eq("author_id", authorId)
                 .and()
                 .eq("isNew", true).countOf();
-    }
-
-    @Override
-    public void markAsReadForAuthor(Author author) throws SQLException {
-        markAsReadForAuthorId(author.getId());
-    }
-    @Override
-    public void markAsReadForAuthorId(long authorId) throws SQLException {
-        UpdateBuilder<Publication, Integer> updateBuilder = this.updateBuilder();
-        updateBuilder.updateColumnValue("isNew", false);
-        updateBuilder.where().eq("authorID", authorId);
-        updateBuilder.update();
     }
 }

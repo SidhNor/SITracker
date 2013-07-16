@@ -1,6 +1,7 @@
 package com.andrada.sitracker.util;
 
 import com.andrada.sitracker.Constants;
+import com.andrada.sitracker.db.beans.Author;
 import com.andrada.sitracker.db.beans.Publication;
 import com.andrada.sitracker.exceptions.AddAuthorException;
 
@@ -40,16 +41,16 @@ public class SamlibPageParser {
         return date;
     }
 
-	public static List<Publication> getPublications(String body, String authorUrl, long authorId) {
+	public static List<Publication> getPublications(String body, Author author) {
 		ArrayList<Publication> publicationList = new ArrayList<Publication>();
         Pattern pattern = Pattern.compile(Constants.PUBLICATIONS_REGEX, Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(body);
         while (matcher.find()) {
 
             Publication item = new Publication();
-            String baseUrl = authorUrl.replace(Constants.AUTHOR_PAGE_URL_ENDING_WI_SLASH, "");
+            String baseUrl = author.getUrl().replace(Constants.AUTHOR_PAGE_URL_ENDING_WI_SLASH, "");
 
-            item.setAuthorID(authorId);
+            item.setAuthor(author);
             item.setUpdateDate(new Date());
             //Group 1 - LinkToText
             String itemURL = matcher.group(1) == null ? "" : matcher.group(1);

@@ -48,7 +48,6 @@ public class PublicationsFragment extends SherlockFragment implements AuthorMark
         if (mCurrentId == authorId){
             //That means that we are viewing the current author
             //Just do a reload.
-            adapter.markPublicationsAsReadForAuthor(authorId);
             updatePublicationsView(authorId);
         }
 

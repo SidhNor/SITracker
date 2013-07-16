@@ -63,8 +63,7 @@ public class AddAuthorTask extends AsyncTask<String, Integer, String> {
                 author.setUpdateDate(SamlibPageParser.getAuthorUpdateDate(body));
 				author.setUrl(url);
 				helper.getAuthorDao().create(author);
-				int i = helper.getAuthorDao().extractId(author);
-				List<Publication> items = SamlibPageParser.getPublications(body, url, i);
+				List<Publication> items = SamlibPageParser.getPublications(body, author);
 				for (Publication publication : items) {
 					helper.getPublicationDao().create(publication);
 				}

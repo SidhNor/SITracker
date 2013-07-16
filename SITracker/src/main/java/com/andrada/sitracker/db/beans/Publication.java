@@ -6,7 +6,7 @@ import com.j256.ormlite.table.DatabaseTable;
 
 import java.util.Date;
 
-@DatabaseTable(daoClass = PublicationDaoImpl.class)
+@DatabaseTable(daoClass = PublicationDaoImpl.class, tableName = "publications")
 public class Publication {
 	@DatabaseField(generatedId = true, useGetSet = true)
 	int id;
@@ -18,8 +18,8 @@ public class Publication {
     int oldSize;
 	@DatabaseField(useGetSet = true)
 	String category;
-    @DatabaseField(canBeNull = false, index = true)
-	long authorID;
+    @DatabaseField(canBeNull = false, foreign = true)
+	Author author;
 	@DatabaseField(useGetSet = true)
 	String date;
 	@DatabaseField(useGetSet = true)
@@ -117,12 +117,12 @@ public class Publication {
 		this.category = category;
 	}
 
-	public long getAuthorID() {
-		return authorID;
+	public Author getAuthor() {
+		return author;
 	}
 
-	public void setAuthorID(long authorID) {
-		this.authorID = authorID;
+	public void setAuthor(Author author) {
+		this.author = author;
 	}
 
 	public String getDate() {

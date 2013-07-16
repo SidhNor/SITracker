@@ -27,6 +27,8 @@ import org.androidannotations.annotations.UiThread;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -73,6 +75,15 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements Is
                 }
             }
             mChildren.add(categoryList);
+        }
+
+        for (List<Publication> category : mChildren) {
+            //sort the category list by new and date
+            Collections.sort(category, new Comparator<Publication>() {
+                public int compare(Publication o1, Publication o2) {
+                    return o2.getNew().compareTo(o1.getNew());
+                }
+            });
         }
         notifyDataSetChanged();
     }
@@ -150,15 +161,6 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements Is
     @Override
     public boolean isChildSelectable(int groupPosition, int childPosition) {
         return false;
-    }
-
-    public void markPublicationsAsReadForAuthor(long id) {
-        try {
-            publicationsDao.markAsReadForAuthorId(id);
-        } catch (SQLException e) {
-            //TODO handle exception
-            e.printStackTrace();
-        }
     }
 
     @Override

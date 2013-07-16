@@ -2,6 +2,7 @@ package com.andrada.sitracker.tasks;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 
 import com.andrada.sitracker.db.beans.Author;
 import com.andrada.sitracker.db.beans.Publication;
@@ -11,6 +12,7 @@ import com.andrada.sitracker.tasks.messages.UpdateSuccessfulIntentMessage;
 import com.andrada.sitracker.util.SamlibPageParser;
 import com.github.kevinsawicki.http.HttpRequest;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.ForeignCollection;
 
 import org.androidannotations.annotations.EService;
 import org.androidannotations.annotations.OrmLiteDao;
@@ -65,9 +67,8 @@ public class UpdateAuthorsTask extends IntentService  {
                 }
                 String body = SamlibPageParser.sanitizeHTML(request.body());
 
-                List<Publication> oldItems = publicationsDao.queryBuilder().
-                        where().eq("authorID", author.getId()).query();
-                List<Publication> newItems = SamlibPageParser.getPublications(body, author.getUrl(), author.getId());
+                ForeignCollection<Publication> oldItems = author.getPublications();
+                List<Publication> newItems = SamlibPageParser.getPublications(body, author);
 
                 HashMap<String, Publication> oldItemsMap = new HashMap<String, Publication>();
                 for (Publication oldPub : oldItems) {
@@ -90,13 +91,11 @@ public class UpdateAuthorsTask extends IntentService  {
                             pub.setNew(true);
                             publicationsDao.update(pub);
                             //Mark author new, update in DB
-                            author.setUpdated(true);
                             author.setUpdateDate(new Date());
                             authorDao.update(author);
                         }
                     } else {
                         //Mark author new, update in DB
-                        author.setUpdated(true);
                         author.setUpdateDate(new Date());
                         authorDao.update(author);
                         //Mark publication new, create in DB
@@ -132,7 +131,7 @@ public class UpdateAuthorsTask extends IntentService  {
         Intent broadcastIntent;
         if (success) broadcastIntent = new UpdateSuccessfulIntentMessage();
         else broadcastIntent = new UpdateFailedIntentMessage();
-        sendBroadcast(broadcastIntent);
+        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(broadcastIntent);
     }
 
 }
