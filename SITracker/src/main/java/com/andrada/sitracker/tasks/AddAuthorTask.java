@@ -41,6 +41,10 @@ public class AddAuthorTask extends AsyncTask<String, Integer, String> {
         String message = "";
 		for (String url : args) {
 			try {
+                if (url.equals("") || !url.matches(Constants.SIMPLE_URL_REGEX)) {
+                    throw new MalformedURLException();
+                }
+
                 if (!url.endsWith(Constants.AUTHOR_PAGE_URL_ENDING_WO_SLASH)) {
                     url = (url.endsWith("/")) ? url + Constants.AUTHOR_PAGE_URL_ENDING_WO_SLASH : url + Constants.AUTHOR_PAGE_URL_ENDING_WI_SLASH;
                 }

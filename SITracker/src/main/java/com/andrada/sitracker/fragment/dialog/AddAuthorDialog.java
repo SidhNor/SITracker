@@ -20,28 +20,29 @@ import com.andrada.sitracker.util.ClipboardHelper;
 public class AddAuthorDialog extends SherlockDialogFragment implements
         android.content.DialogInterface.OnClickListener {
 
-	EditText mAuthorEditText;
-	private AlertDialog mDialog;
-	private OnAuthorLinkSuppliedListener mSuppliedLinkListener;
+    EditText mAuthorEditText;
+    private AlertDialog mDialog;
+    private OnAuthorLinkSuppliedListener mSuppliedLinkListener;
 
-	public interface OnAuthorLinkSuppliedListener {
+    public interface OnAuthorLinkSuppliedListener {
         public void onLinkSupplied(String url);
-	}
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-        setRetainInstance(true);
-	}
-	
-	public void setOnAuthorLinkSuppliedListener(OnAuthorLinkSuppliedListener listener){
-		mSuppliedLinkListener = listener;
-	}
+    }
 
     @Override
-	public Dialog onCreateDialog(Bundle savedInstanceState) {
-		LayoutInflater inflater = (LayoutInflater) getActivity()
-				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		View layout = inflater.inflate(R.layout.dialog_add_author, null);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
+
+    public void setOnAuthorLinkSuppliedListener(OnAuthorLinkSuppliedListener listener) {
+        mSuppliedLinkListener = listener;
+    }
+
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        LayoutInflater inflater = (LayoutInflater) getActivity()
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View layout = inflater.inflate(R.layout.dialog_add_author, null);
 
         assert layout != null;
         mAuthorEditText = (EditText) layout.findViewById(R.id.et_add_author);
@@ -51,19 +52,19 @@ public class AddAuthorDialog extends SherlockDialogFragment implements
             mAuthorEditText.setText(clipboardChars);
         }
 
-		mAuthorEditText.requestFocus();
-		mDialog = new AlertDialog.Builder(getActivity())
-				.setTitle(R.string.action_add).setView(layout)
-				.setPositiveButton(R.string.action_add, this)
-				.setNegativeButton(android.R.string.cancel, this).create();
-		mDialog.getWindow().setSoftInputMode(
-				WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        mAuthorEditText.requestFocus();
+        mDialog = new AlertDialog.Builder(getActivity())
+                .setTitle(R.string.action_add).setView(layout)
+                .setPositiveButton(R.string.action_add_ok, this)
+                .setNegativeButton(android.R.string.cancel, this).create();
+        mDialog.getWindow().setSoftInputMode(
+                WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
 
-		// Retrieve the "Yes" button and override it to validate the input
-		mDialog.setOnShowListener(new OnShowListener() {
-			@Override
-			public void onShow(DialogInterface dialog) {
-				Button yes = mDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        // Retrieve the "Yes" button and override it to validate the input
+        mDialog.setOnShowListener(new OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                Button yes = mDialog.getButton(AlertDialog.BUTTON_POSITIVE);
                 if (yes != null) {
                     yes.setOnClickListener(new OnClickListener() {
                         @Override
@@ -73,23 +74,23 @@ public class AddAuthorDialog extends SherlockDialogFragment implements
                         }
                     });
                 }
-			}
-		});
+            }
+        });
 
-		return mDialog;
-	}
-	
-	private void doPositiveClick() {
+        return mDialog;
+    }
+
+    private void doPositiveClick() {
         mSuppliedLinkListener.onLinkSupplied(mAuthorEditText.getText().toString());
-	}
+    }
 
-	@Override
-	public void onDestroyView() {
-		if (getDialog() != null && getRetainInstance()) {
-			getDialog().setDismissMessage(null);
-		}
-		super.onDestroyView();
-	}
+    @Override
+    public void onDestroyView() {
+        if (getDialog() != null && getRetainInstance()) {
+            getDialog().setDismissMessage(null);
+        }
+        super.onDestroyView();
+    }
 
     @Override
     public void onClick(DialogInterface dialog, int which) {
