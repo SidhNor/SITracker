@@ -1,9 +1,12 @@
 package com.andrada.sitracker.fragment.adapters;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
@@ -17,13 +20,10 @@ import com.andrada.sitracker.fragment.components.PublicationCategoryItemView_;
 import com.andrada.sitracker.fragment.components.PublicationItemView;
 import com.andrada.sitracker.fragment.components.PublicationItemView_;
 import com.andrada.sitracker.tasks.messages.PublicationMarkedAsReadMessage;
-import com.j256.ormlite.dao.Dao;
 
-import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.OrmLiteDao;
 import org.androidannotations.annotations.RootContext;
-import org.androidannotations.annotations.UiThread;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -36,7 +36,8 @@ import java.util.List;
  */
 
 @EBean
-public class PublicationsAdapter extends BaseExpandableListAdapter implements IsNewItemTappedListener {
+public class PublicationsAdapter extends BaseExpandableListAdapter implements
+        IsNewItemTappedListener, AdapterView.OnItemLongClickListener {
 
     List<String> mCategories = new ArrayList<String>();
     List<List<Publication>> mChildren = new ArrayList<List<Publication>>();
@@ -51,7 +52,7 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements Is
 
     public void reloadPublicationsForAuthorId(long id) {
         try {
-            createChildList(publicationsDao.getPublicationsForAuthorId(id));
+            createChildList(publicationsDao.getSortedPublicationsForAuthorId(id));
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -62,7 +63,7 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements Is
         mChildren.clear();
 
         for (Publication publication : items) {
-            if(!mCategories.contains(publication.getCategory())){
+            if (!mCategories.contains(publication.getCategory())) {
                 mCategories.add(publication.getCategory());
             }
         }
@@ -111,8 +112,8 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements Is
         } else {
             publicationItemView = (PublicationItemView) convertView;
         }
-        Boolean isLast = mChildren.get(groupPosition).size() -1 == childPosition;
-        publicationItemView.bind((Publication)getChild(groupPosition, childPosition), isLast);
+        Boolean isLast = mChildren.get(groupPosition).size() - 1 == childPosition;
+        publicationItemView.bind((Publication) getChild(groupPosition, childPosition), isLast);
 
         return publicationItemView;
     }
@@ -160,27 +161,48 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements Is
 
     @Override
     public boolean isChildSelectable(int groupPosition, int childPosition) {
-        return false;
+        return true;
     }
 
     @Override
     public void onIsNewItemTapped(View checkBox) {
         if (listView != null) {
-            final long packedPosition = listView.getAdapter().getItemId(listView.getPositionForView(checkBox));
-            final long groupPos = ExpandableListView.getPackedPositionGroup(packedPosition);
-            final long childPos = ExpandableListView.getPackedPositionChild(packedPosition);
-            Publication pub =  null;//mChildren.get((int) groupPos).get((int) childPos);
-            /*if (position != ListView.INVALID_POSITION &&
-                    position < authors.size() &&
-                    authors.get(position).isUpdated()) {
-                try {
-                    authorDao.markAsRead(authors.get(position));
-                    LocalBroadcastManager.getInstance(context).sendBroadcast(new PublicationMarkedAsReadMessage(mChildren.get(position).get(position).getId()));
-                } catch (SQLException e) {
-                    //TODO write error
-                    e.printStackTrace();
-                }
-            }*/
+            Publication pub = (Publication) checkBox.getTag();
+            updateStatusOfPublication(pub);
         }
+    }
+
+    private void updateStatusOfPublication(Publication pub) {
+        if (pub != null && pub.getNew()) {
+            pub.setNew(false);
+            pub.setOldSize(0);
+            try {
+                publicationsDao.update(pub);
+                LocalBroadcastManager.getInstance(context).sendBroadcast(new PublicationMarkedAsReadMessage(pub.getId()));
+            } catch (SQLException e) {
+                //TODO write error
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+        if (ExpandableListView.getPackedPositionType(id) == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
+            long packedPosition = ((ExpandableListView) parent).getExpandableListPosition(position);
+            int groupPosition = ExpandableListView.getPackedPositionGroup(packedPosition);
+            int childPosition = ExpandableListView.getPackedPositionChild(packedPosition);
+            List<Publication> items = mChildren.get(groupPosition);
+            Publication pub = items.get(childPosition);
+            updateStatusOfPublication(pub);
+
+            Intent i = new Intent(Intent.ACTION_VIEW);
+            i.setData(Uri.parse(pub.getUrl()));
+            context.startActivity(i);
+            // Return true as we are handling the event.
+            return true;
+        }
+
+        return false;
     }
 }

@@ -1,21 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@android:color/white"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin">
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              android:background="@android:color/white"
+              android:paddingLeft="@dimen/activity_horizontal_margin"
+              android:paddingRight="@dimen/activity_horizontal_margin"
+              android:descendantFocusability="blocksDescendants">
 
     <ExpandableListView
-        android:id="@+id/publication_list"
-        android:divider="@null"
-        android:groupIndicator="@null"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:listSelector="@drawable/authors_list_selector"
-        android:paddingTop="4dp"
-        android:paddingBottom="4dp">
+            android:id="@+id/publication_list"
+            android:divider="@null"
+            android:groupIndicator="@null"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:listSelector="@drawable/authors_list_selector"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp">
     </ExpandableListView>
 
 </LinearLayout>

@@ -48,7 +48,7 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
 
     public void reloadAuthors() {
         try {
-            authors = authorDao.queryForAll();
+            authors = authorDao.getAllAuthorsSorted();
             mNewAuthors = authorDao.getNewAuthorsCount();
             notifyDataSetChanged();
         } catch (SQLException e) {
@@ -111,9 +111,5 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
                 }
             }
         }
-    }
-
-    public void ensureAuthorIsStillNew(long publicationId) {
-
     }
 }

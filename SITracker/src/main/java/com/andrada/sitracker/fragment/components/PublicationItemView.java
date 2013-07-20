@@ -61,6 +61,7 @@ public class PublicationItemView extends RelativeLayout {
     public void bind(Publication publication, Boolean isLast) {
         item_title.setText(publication.getName());
         item_updated.setChecked(publication.getNew());
+        item_updated.setTag(publication);
         item_update_date.setText(DateFormatterUtil.getFriendlyDateRelativeToToday(publication.getUpdateDate()));
         item_description.setText(publication.getDescription());
 
@@ -71,7 +72,9 @@ public class PublicationItemView extends RelativeLayout {
             builder.append(newSize);
         } else {
             builder.append(oldSize);
-            builder.append('+');
+            if ((newSize - oldSize) > 0) {
+                builder.append('+');
+            }
             builder.append(newSize - oldSize);
         }
         builder.append("kb");

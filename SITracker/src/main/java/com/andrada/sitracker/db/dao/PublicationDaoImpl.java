@@ -3,8 +3,6 @@ package com.andrada.sitracker.db.dao;
 import com.andrada.sitracker.db.beans.Author;
 import com.andrada.sitracker.db.beans.Publication;
 import com.j256.ormlite.dao.BaseDaoImpl;
-import com.j256.ormlite.stmt.UpdateBuilder;
-import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.support.ConnectionSource;
 
 import java.sql.SQLException;
@@ -56,5 +54,14 @@ public class PublicationDaoImpl extends BaseDaoImpl<Publication, Integer>
                 .eq("author_id", authorId)
                 .and()
                 .eq("isNew", true).countOf();
+    }
+
+    @Override
+    public List<Publication> getSortedPublicationsForAuthorId(long authorId) throws SQLException {
+        return this.queryBuilder()
+                .orderBy("category", true)
+                .orderBy("isNew", true)
+                .where().eq("author_id", authorId)
+                .query();
     }
 }

@@ -12,9 +12,16 @@ import java.util.List;
  */
 public interface PublicationDao extends Dao<Publication, Integer> {
     List<Publication> getPublicationsForAuthor(Author author) throws SQLException;
+
     List<Publication> getPublicationsForAuthorId(long authorId) throws SQLException;
+
+    List<Publication> getSortedPublicationsForAuthorId(long authorId) throws SQLException;
+
     List<Publication> getNewPublicationsForAuthor(Author author) throws SQLException;
+
     List<Publication> getNewPublicationsForAuthorId(long authorId) throws SQLException;
+
     long getNewPublicationsCountForAuthor(Author author) throws SQLException;
+
     long getNewPublicationsCountForAuthorId(long authorId) throws SQLException;
 }

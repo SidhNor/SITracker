@@ -11,45 +11,45 @@ import java.util.Date;
 
 @DatabaseTable(daoClass = AuthorDaoImpl.class, tableName = "authors")
 public class Author {
-	@DatabaseField(generatedId = true, useGetSet = true)
-	int id;
+    @DatabaseField(generatedId = true, useGetSet = true)
+    int id;
     @DatabaseField(canBeNull = false, useGetSet = true)
-	String name;
-	@DatabaseField(unique = true, useGetSet = true)
-	String url;
+    String name;
+    @DatabaseField(unique = true, useGetSet = true)
+    String url;
     @DatabaseField(canBeNull = false, useGetSet = true)
     Date updateDate;
 
-    @ForeignCollectionField(eager = true)
+    @ForeignCollectionField(eager = false)
     ForeignCollection<Publication> publications;
 
     public Author() {
         updateDate = new Date();
     }
 
-	public int getId() {
-		return id;
-	}
+    public int getId() {
+        return id;
+    }
 
-	public void setId(int id) {
-		this.id = id;
-	}
+    public void setId(int id) {
+        this.id = id;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public String getUrl() {
-		return url;
-	}
+    public String getUrl() {
+        return url;
+    }
 
-	public void setUrl(String url) {
-		this.url = url;
-	}
+    public void setUrl(String url) {
+        this.url = url;
+    }
 
     public Date getUpdateDate() {
         return updateDate;
@@ -58,6 +58,7 @@ public class Author {
     public void setUpdateDate(Date updateDate) {
         this.updateDate = updateDate;
     }
+
     public ForeignCollection<Publication> getPublications() {
         return publications;
     }
@@ -68,7 +69,7 @@ public class Author {
 
     public Boolean isUpdated() {
         boolean isUpdated = false;
-        for(Publication pub : this.publications) {
+        for (Publication pub : this.publications) {
             if (pub.isNew) {
                 isUpdated = true;
                 break;
@@ -79,8 +80,9 @@ public class Author {
 
     public void setUpdated(Boolean updated) {
         if (!updated) {
-            for(Publication pub : this.publications) {
+            for (Publication pub : this.publications) {
                 pub.setNew(false);
+                pub.setOldSize(0);
                 try {
                     this.publications.update(pub);
                 } catch (SQLException e) {

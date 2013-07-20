@@ -23,14 +23,13 @@ public class SamlibPageParser {
             throw new AddAuthorException(AddAuthorException.AuthorAddErrors.AUTHOR_NAME_NOT_FOUND);
         }
         return authorName;
-	}
+    }
 
     public static Date getAuthorUpdateDate(String pageContent) throws AddAuthorException {
         Pattern pattern = Pattern.compile(Constants.AUTHOR_UPDATE_DATE_REGEX, Pattern.MULTILINE);
         Matcher matcher = pattern.matcher(pageContent);
         Date date = new Date();
-        if (matcher.find())
-        {
+        if (matcher.find()) {
             SimpleDateFormat ft = new SimpleDateFormat(Constants.AUTHOR_UPDATE_DATE_FORMAT);
             try {
                 date = ft.parse(matcher.group(1));
@@ -41,8 +40,8 @@ public class SamlibPageParser {
         return date;
     }
 
-	public static List<Publication> getPublications(String body, Author author) {
-		ArrayList<Publication> publicationList = new ArrayList<Publication>();
+    public static List<Publication> getPublications(String body, Author author) {
+        ArrayList<Publication> publicationList = new ArrayList<Publication>();
         Pattern pattern = Pattern.compile(Constants.PUBLICATIONS_REGEX, Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(body);
         while (matcher.find()) {
@@ -54,7 +53,7 @@ public class SamlibPageParser {
             item.setUpdateDate(new Date());
             //Group 1 - LinkToText
             String itemURL = matcher.group(1) == null ? "" : matcher.group(1);
-            item.setUrl(baseUrl+itemURL);
+            item.setUrl(baseUrl + "/" + itemURL);
             //Group 2 - NameOfText
             String itemTitle = matcher.group(2) == null ? "" : matcher.group(2);
             item.setName(escapeHTML(itemTitle));
@@ -70,7 +69,7 @@ public class SamlibPageParser {
             String categoryName = matcher.group(6) == null ? "" : matcher.group(6);
             item.setCategory(escapeHTML(categoryName).replace("@", ""));
             //Group 7 - Genres
-            String genre =  matcher.group(7) == null ? "" : matcher.group(7);
+            String genre = matcher.group(7) == null ? "" : matcher.group(7);
             //Group 8 - Link to Comments
             String commentsUrl = matcher.group(8) == null ? "" : matcher.group(8);
             item.setCommentUrl(commentsUrl);
@@ -84,8 +83,8 @@ public class SamlibPageParser {
             item.setDescription(escapeHTML(itemDescription).trim());
             publicationList.add(item);
         }
-		return publicationList;
-	}
+        return publicationList;
+    }
 
     public static String sanitizeHTML(String value) {
         value = value.replaceAll("(?i)<br />", "<br>")

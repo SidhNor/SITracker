@@ -29,7 +29,7 @@ import java.util.List;
  */
 
 @EService
-public class UpdateAuthorsTask extends IntentService  {
+public class UpdateAuthorsTask extends IntentService {
 
     @OrmLiteDao(helper = SiDBHelper.class, model = Author.class)
     Dao<Author, Integer> authorDao;
@@ -81,8 +81,8 @@ public class UpdateAuthorsTask extends IntentService  {
                         Publication old = oldItemsMap.get(pub.getUrl());
                         //Check size/name/description
                         if (pub.getSize() != old.getSize() ||
-                            !pub.getDescription().equals(old.getDescription()) ||
-                            !pub.getName().equals(old.getName()) ) {
+                                !pub.getDescription().equals(old.getDescription()) ||
+                                !pub.getName().equals(old.getName())) {
                             //if something differs
                             //Store the old size
                             pub.setOldSize(old.getSize());
@@ -104,16 +104,13 @@ public class UpdateAuthorsTask extends IntentService  {
                     }
                 }
 
-                if (oldItems.size() != newItems.size()) {
-                    //Find any old publications to remove
-                    for (Publication oldItem : oldItems) {
-                        if (!newItems.contains(oldItem)) {
-                            //Remove from DB
-                            publicationsDao.delete(oldItem);
-                        }
+                //Find any old publications to remove
+                for (Publication oldItem : oldItems) {
+                    if (!newItems.contains(oldItem)) {
+                        //Remove from DB
+                        publicationsDao.delete(oldItem);
                     }
                 }
-
 
             }
             //Success

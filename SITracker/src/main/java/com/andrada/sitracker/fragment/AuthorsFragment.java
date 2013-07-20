@@ -24,6 +24,7 @@ import com.andrada.sitracker.tasks.UpdateAuthorsTask_;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.InstanceState;
 import org.androidannotations.annotations.ItemClick;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
@@ -38,7 +39,7 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
         public void onAuthorSelected(long id);
     }
 
-	OnAuthorSelectedListener mCallback;
+    OnAuthorSelectedListener mCallback;
 
     @ViewById
     ListView list;
@@ -48,6 +49,9 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
 
     @Bean
     AuthorsAdapter adapter;
+
+    @InstanceState
+    int currentAuthorIndex = 0;
 
     private boolean mIsUpdating = false;
 
@@ -59,30 +63,30 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
         setRetainInstance(true);
     }
 
-	@Override
-	public void onStart() {
-		super.onStart();
+    @Override
+    public void onStart() {
+        super.onStart();
         list.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         list.setBackgroundResource(R.drawable.authors_list_background);
         getSherlockActivity().invalidateOptionsMenu();
-        if (adapter.getCount() > 0) {
-            listItemClicked(0);
+        if (adapter.getCount() > 0 && currentAuthorIndex < adapter.getCount()) {
+            listItemClicked(currentAuthorIndex);
         }
-	}
+    }
 
-	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
 
-		try {
-			// This makes sure that the container activity has implemented
-			// the callback interface. If not, it throws an exception.
-			mCallback = (OnAuthorSelectedListener) activity;
-		} catch (ClassCastException e) {
-			throw new ClassCastException(activity.toString()
-					+ " must implement OnAuthorSelectedListener");
-		}
-	}
+        try {
+            // This makes sure that the container activity has implemented
+            // the callback interface. If not, it throws an exception.
+            mCallback = (OnAuthorSelectedListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnAuthorSelectedListener");
+        }
+    }
 
     @Override
     public void onDetach() {
@@ -117,23 +121,24 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
         int tempPosition = list.getCheckedItemPosition();
         adapter.reloadAuthors();
         list.setItemChecked(tempPosition, true);
-	}
-
-    protected void tryAddAuthor(String url) {
-        new AddAuthorTask((Context)mCallback, this).execute(url);
     }
 
-	@ItemClick
-	public void listItemClicked(int position) {
-		// Notify the parent activity of selected item
+    protected void tryAddAuthor(String url) {
+        new AddAuthorTask((Context) mCallback, this).execute(url);
+    }
+
+    @ItemClick
+    public void listItemClicked(int position) {
+        // Notify the parent activity of selected item
         long id = list.getItemIdAtPosition(position);
-		mCallback.onAuthorSelected(id);
-		// Set the item as checked to be highlighted when in two-pane layout
+        currentAuthorIndex = position;
+        mCallback.onAuthorSelected(id);
+        // Set the item as checked to be highlighted when in two-pane layout
         list.setItemChecked(position, true);
-	}
+    }
 
     private void toggleUpdatingState() {
-        ActionBar bar = ((SherlockFragmentActivity)getActivity()).getSupportActionBar();
+        ActionBar bar = ((SherlockFragmentActivity) getActivity()).getSupportActionBar();
         bar.setDisplayShowHomeEnabled(mIsUpdating);
         bar.setDisplayShowTitleEnabled(mIsUpdating);
         bar.setDisplayShowCustomEnabled(!mIsUpdating);
@@ -142,14 +147,16 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
             refreshProgressBar.setVisibility(View.GONE);
         } else {
             View mLogoView = LayoutInflater.from(getActivity()).inflate(R.layout.updating_actionbar_layout, null);
+
             bar.setCustomView(mLogoView, new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT));
+
             refreshProgressBar.setVisibility(View.VISIBLE);
         }
-
         mIsUpdating = !mIsUpdating;
         getSherlockActivity().invalidateOptionsMenu();
     }
+
 
     //region Public methods
     public boolean isUpdating() {
@@ -173,7 +180,7 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
             //This is success
             updateAuthors();
         } else {
-            Toast.makeText((Context)mCallback, message, Toast.LENGTH_SHORT).show();
+            Toast.makeText((Context) mCallback, message, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -205,8 +212,8 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
 
     @Override
     public void onPublicationMarkedAsRead(long publicationId) {
-        //TODO ensure we update the new status of the author if he has no new publications
-        adapter.ensureAuthorIsStillNew(publicationId);
+        //ensure we update the new status of the author if he has no new publications
+        adapter.notifyDataSetChanged();
     }
 
 }
