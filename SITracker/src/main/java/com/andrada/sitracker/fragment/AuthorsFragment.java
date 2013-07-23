@@ -14,6 +14,7 @@ import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
+import com.andrada.sitracker.SettingsActivity_;
 import com.andrada.sitracker.contracts.AuthorUpdateStatusListener;
 import com.andrada.sitracker.contracts.PublicationMarkedAsReadListener;
 import com.andrada.sitracker.fragment.adapters.AuthorsAdapter;
@@ -110,6 +111,11 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
         UpdateAuthorsTask_.intent(getActivity()).start();
         toggleUpdatingState();
     }
+
+    @OptionsItem(R.id.action_settings)
+    void menuSettingsSelected() {
+        getSherlockActivity().startActivity(SettingsActivity_.intent(getSherlockActivity()).get());
+    }
     //endregion
 
     @AfterViews
@@ -190,7 +196,9 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
     //region AuthorUpdateStatusListener callbacks
     @Override
     public void onAuthorsUpdated() {
-        toggleUpdatingState();
+        if (isUpdating()) {
+            toggleUpdatingState();
+        }
         this.updateAuthors();
     }
 

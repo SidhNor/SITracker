@@ -8,14 +8,11 @@ import com.andrada.sitracker.contracts.AuthorUpdateStatusListener;
 import com.andrada.sitracker.tasks.messages.UpdateFailedIntentMessage;
 import com.andrada.sitracker.tasks.messages.UpdateSuccessfulIntentMessage;
 
-import org.androidannotations.annotations.EReceiver;
-
 /**
  * Created by ggodonoga on 06/06/13.
  */
 
-@EReceiver
-public class UpdateStatusReceiver extends BroadcastReceiver{
+public class UpdateStatusReceiver extends BroadcastReceiver {
 
     private AuthorUpdateStatusListener mListener = null;
 
@@ -24,7 +21,7 @@ public class UpdateStatusReceiver extends BroadcastReceiver{
     }
 
     public UpdateStatusReceiver() {
-
+        super();
     }
 
     @Override
@@ -37,7 +34,7 @@ public class UpdateStatusReceiver extends BroadcastReceiver{
             } else if (action.equals(UpdateFailedIntentMessage.getMessageName())) {
                 mListener.onAuthorsUpdateFailed();
             }
-
+            this.abortBroadcast();
         }
     }
 }

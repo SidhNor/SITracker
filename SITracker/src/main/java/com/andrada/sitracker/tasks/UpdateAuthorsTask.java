@@ -2,7 +2,6 @@ package com.andrada.sitracker.tasks;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.support.v4.content.LocalBroadcastManager;
 
 import com.andrada.sitracker.db.beans.Author;
 import com.andrada.sitracker.db.beans.Publication;
@@ -125,10 +124,9 @@ public class UpdateAuthorsTask extends IntentService {
     }
 
     private void broadCastResult(boolean success) {
-        Intent broadcastIntent;
-        if (success) broadcastIntent = new UpdateSuccessfulIntentMessage();
-        else broadcastIntent = new UpdateFailedIntentMessage();
-        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(broadcastIntent);
+        Intent broadcastIntent = new Intent();
+        if (success) broadcastIntent.setAction(UpdateSuccessfulIntentMessage.SUCCESS_MESSAGE);
+        else broadcastIntent = broadcastIntent.setAction(UpdateFailedIntentMessage.FAILED_MESSAGE);
+        sendOrderedBroadcast(broadcastIntent, null);
     }
-
 }

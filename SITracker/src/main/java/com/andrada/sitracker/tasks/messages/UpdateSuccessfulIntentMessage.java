@@ -5,7 +5,14 @@ package com.andrada.sitracker.tasks.messages;
  */
 public class UpdateSuccessfulIntentMessage extends BaseIntentMessage {
 
+    public static final String SUCCESS_MESSAGE = "com.andrada.sitracker.UPDATE_SUCCESS_ACTION";
+
+    public UpdateSuccessfulIntentMessage() {
+        super();
+        this.setAction(SUCCESS_MESSAGE);
+    }
+
     public static String getMessageName() {
-        return UpdateSuccessfulIntentMessage.class.getCanonicalName();
+        return SUCCESS_MESSAGE;
     }
 }

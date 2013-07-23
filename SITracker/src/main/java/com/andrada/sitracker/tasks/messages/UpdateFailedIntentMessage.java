@@ -5,8 +5,15 @@ package com.andrada.sitracker.tasks.messages;
  */
 public class UpdateFailedIntentMessage extends BaseIntentMessage {
 
+    public static final String FAILED_MESSAGE = "com.andrada.sitracker.UPDATE_FAILED_ACTION";
+
+    public UpdateFailedIntentMessage() {
+        super();
+        this.setAction(FAILED_MESSAGE);
+    }
+
     public static String getMessageName() {
-        return UpdateFailedIntentMessage.class.getCanonicalName();
+        return FAILED_MESSAGE;
     }
 
 }

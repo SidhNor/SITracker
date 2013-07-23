@@ -19,4 +19,7 @@ public class Constants {
     public final static String HTTP_PROTOCOL = "http://";
     public final static String HTTPS_PROTOCOL = "https://";
 
+    public final static String UPDATE_PREFERENCE_KEY = "pref_updates";
+    public final static String UPDATE_INTERVAL_KEY = "pref_update_period";
+
 }
