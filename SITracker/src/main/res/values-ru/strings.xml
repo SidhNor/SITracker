@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
     <string name="app_name">SITracker
     </string>
@@ -9,6 +9,7 @@
     </string>
     <string name="action_add">Добавить автора
     </string>
+    <string name="action_delete">Удалить автора</string>
     <string name="add_author_placeholder">samlib link
     </string>
     <string name="designtime_placeholder_long">Lorem ipsum dolor sit amet, consectetur adipiscing
@@ -39,6 +40,18 @@
     </string>
     <string name="check_for_updates">Проверка обновлений</string>
     <string name="action_add_ok">Добавить</string>
+
+    <plurals name="authors_selected">
+        <item quantity="one">1 выбранный</item>
+        <item quantity="few">
+            <xliff:g id="num_authors">%1$d</xliff:g>
+            выбранных
+        </item>
+        <item quantity="many">
+            <xliff:g id="num_authors">%1$d</xliff:g>
+            выбранных
+        </item>
+    </plurals>
 
     <!--Preferences -->
     <string name="pref_updates_check">Автоматическое обновление</string>

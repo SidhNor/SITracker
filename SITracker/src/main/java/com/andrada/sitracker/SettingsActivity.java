@@ -29,6 +29,8 @@ public class SettingsActivity extends SherlockPreferenceActivity implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
+        setSummary();
+
     }
 
     @Override
@@ -58,11 +60,16 @@ public class SettingsActivity extends SherlockPreferenceActivity implements
         }
 
         if (key.equals(Constants.UPDATE_INTERVAL_KEY)) {
-            ListPreference updateInterval = (ListPreference) findPreference(key);
-            // Set summary to be the user-description for the selected value
-            int index = updateInterval.findIndexOfValue(sharedPreferences.getString(key, ""));
-            if (index >= 0 && index < updateInterval.getEntries().length)
-                updateInterval.setSummary(updateInterval.getEntries()[index]);
+            setSummary();
         }
+    }
+
+    private void setSummary() {
+        ListPreference updateInterval = (ListPreference) findPreference(Constants.UPDATE_INTERVAL_KEY);
+        // Set summary to be the user-description for the selected value
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        int index = updateInterval.findIndexOfValue(sharedPreferences.getString(Constants.UPDATE_INTERVAL_KEY, ""));
+        if (index >= 0 && index < updateInterval.getEntries().length)
+            updateInterval.setSummary(updateInterval.getEntries()[index]);
     }
 }

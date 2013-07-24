@@ -1,6 +1,7 @@
 package com.andrada.sitracker.fragment.components;
 
 import android.content.Context;
+import android.os.Build;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
@@ -46,7 +47,10 @@ public class AuthorItemView extends CheckedRelativeLayout {
         mListener = listener;
     }
 
-    public void bind(Author author) {
+    public void bind(Author author, boolean isSelected) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            this.setActivated(isSelected);
+        }
         author_title.setText(author.getName());
         author_updated.setChecked(author.isUpdated());
         author_update_date.setText(DateFormatterUtil.getFriendlyDateRelativeToToday(author.getUpdateDate()));

@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
-    <string name="app_name">SITracker
-    </string>
-    <string name="action_settings">Settings
-    </string>
-    <string name="action_refresh">Refresh
-    </string>
-    <string name="action_add">Add
-    </string>
+    <string name="app_name">SITracker</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_refresh">Update authors</string>
+    <string name="action_add">Add author</string>
+    <string name="action_delete">Delete author</string>
     <string name="add_author_placeholder">samlib link
     </string>
     <string name="designtime_placeholder_long">Lorem ipsum dolor sit amet, consectetur adipiscing
@@ -35,6 +32,14 @@
     </string>
     <string name="check_for_updates">Checking for updates</string>
     <string name="action_add_ok">Add</string>
+
+    <plurals name="authors_selected">
+        <item quantity="one">1 selected</item>
+        <item quantity="other">
+            <xliff:g id="num_authors">%1$d</xliff:g>
+            selected
+        </item>
+    </plurals>
 
     <!--Preferences -->
     <string name="pref_updates_check">Automatically update</string>

@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
@@ -17,10 +20,13 @@ import com.andrada.sitracker.R;
 import com.andrada.sitracker.SettingsActivity_;
 import com.andrada.sitracker.contracts.AuthorUpdateStatusListener;
 import com.andrada.sitracker.contracts.PublicationMarkedAsReadListener;
+import com.andrada.sitracker.db.beans.Author;
 import com.andrada.sitracker.fragment.adapters.AuthorsAdapter;
 import com.andrada.sitracker.fragment.dialog.AddAuthorDialog;
 import com.andrada.sitracker.tasks.AddAuthorTask;
 import com.andrada.sitracker.tasks.UpdateAuthorsTask_;
+import com.andrada.sitracker.util.actionmodecompat.ActionMode;
+import com.andrada.sitracker.util.actionmodecompat.MultiChoiceModeListener;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
@@ -31,10 +37,14 @@ import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @EFragment(R.layout.fragmet_authors)
 @OptionsMenu(R.menu.authors_menu)
 public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.IAuthorTaskCallback,
-        AuthorUpdateStatusListener, AddAuthorDialog.OnAuthorLinkSuppliedListener, PublicationMarkedAsReadListener {
+        AuthorUpdateStatusListener, AddAuthorDialog.OnAuthorLinkSuppliedListener,
+        PublicationMarkedAsReadListener, MultiChoiceModeListener {
 
     public interface OnAuthorSelectedListener {
         public void onAuthorSelected(long id);
@@ -56,6 +66,8 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
 
     private boolean mIsUpdating = false;
 
+    private List<Author> mSelectedAuthors = new ArrayList<Author>();
+
     //region Fragment lifecycle overrides
 
     @Override
@@ -67,7 +79,6 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
     @Override
     public void onStart() {
         super.onStart();
-        list.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         list.setBackgroundResource(R.drawable.authors_list_background);
         getSherlockActivity().invalidateOptionsMenu();
         if (adapter.getCount() > 0 && currentAuthorIndex < adapter.getCount()) {
@@ -121,12 +132,13 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
     @AfterViews
     void bindAdapter() {
         list.setAdapter(adapter);
+        ActionMode.setMultiChoiceMode(list, getSherlockActivity(), this);
     }
 
     protected void updateAuthors() {
         int tempPosition = list.getCheckedItemPosition();
+        adapter.setSelectedItem(tempPosition);
         adapter.reloadAuthors();
-        list.setItemChecked(tempPosition, true);
     }
 
     protected void tryAddAuthor(String url) {
@@ -139,8 +151,11 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
         long id = list.getItemIdAtPosition(position);
         currentAuthorIndex = position;
         mCallback.onAuthorSelected(id);
-        // Set the item as checked to be highlighted when in two-pane layout
-        list.setItemChecked(position, true);
+
+        // Set the item as checked to be highlighted
+        adapter.setSelectedItem(position);
+        adapter.notifyDataSetChanged();
+
     }
 
     private void toggleUpdatingState() {
@@ -207,6 +222,52 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
         toggleUpdatingState();
         //TODO Show failed notification/toast
     }
+    //endregion
+
+    //region CABListener
+
+    @Override
+    public void onItemCheckedStateChanged(com.andrada.sitracker.util.actionmodecompat.ActionMode mode,
+                                          int position, long id, boolean checked) {
+        if (checked) {
+            mSelectedAuthors.add((Author) adapter.getItem(position));
+        } else {
+            mSelectedAuthors.remove(adapter.getItem(position));
+        }
+        int numSelectedAuthors = mSelectedAuthors.size();
+        mode.setTitle(getResources().getQuantityString(
+                R.plurals.authors_selected,
+                numSelectedAuthors, numSelectedAuthors));
+
+    }
+
+    @Override
+    public boolean onCreateActionMode(com.andrada.sitracker.util.actionmodecompat.ActionMode mode, Menu menu) {
+        MenuInflater inflater = mode.getMenuInflater();
+        inflater.inflate(R.menu.context, menu);
+        mSelectedAuthors.clear();
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareActionMode(com.andrada.sitracker.util.actionmodecompat.ActionMode mode, Menu menu) {
+        return false;
+    }
+
+    @Override
+    public boolean onActionItemClicked(com.andrada.sitracker.util.actionmodecompat.ActionMode mode, MenuItem item) {
+        mode.finish();
+        if (item.getItemId() == R.id.action_remove) {
+            adapter.removeAuthors(mSelectedAuthors);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void onDestroyActionMode(com.andrada.sitracker.util.actionmodecompat.ActionMode mode) {
+    }
+
     //endregion
 
 

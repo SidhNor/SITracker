@@ -40,6 +40,7 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
 
     @RootContext
     Context context;
+    private int mSelectedItem = 0;
 
     @AfterInject
     void initAdapter() {
@@ -85,13 +86,13 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
         } else {
             authorsItemView = (AuthorItemView) convertView;
         }
+
         if (authors.get(position).isUpdated()) {
             authorsItemView.setBackgroundResource(R.drawable.authors_list_item_selector_new);
         } else {
             authorsItemView.setBackgroundResource(R.drawable.authors_list_item_selector_normal);
         }
-        authorsItemView.bind(authors.get(position));
-
+        authorsItemView.bind(authors.get(position), position == mSelectedItem);
         return authorsItemView;
     }
 
@@ -106,10 +107,25 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
                     authorDao.markAsRead(authors.get(position));
                     LocalBroadcastManager.getInstance(context).sendBroadcast(new AuthorMarkedAsReadMessage(authors.get(position).getId()));
                 } catch (SQLException e) {
-                    //TODO write error
+                    //TODO surface error
                     e.printStackTrace();
                 }
             }
         }
+    }
+
+    public void removeAuthors(List<Author> authorsToRemove) {
+        try {
+            authorDao.delete(authorsToRemove);
+        } catch (SQLException e) {
+            //TODO surface error
+            e.printStackTrace();
+        }
+        authors.remove(authorsToRemove);
+        notifyDataSetChanged();
+    }
+
+    public void setSelectedItem(int selectedItem) {
+        this.mSelectedItem = selectedItem;
     }
 }
