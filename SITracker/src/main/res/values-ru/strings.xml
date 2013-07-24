@@ -40,6 +40,7 @@
     </string>
     <string name="check_for_updates">Проверка обновлений</string>
     <string name="action_add_ok">Добавить</string>
+    <string name="notification_title">Прода</string>
 
     <plurals name="authors_selected">
         <item quantity="one">1 выбранный</item>
@@ -50,6 +51,18 @@
         <item quantity="many">
             <xliff:g id="num_authors">%1$d</xliff:g>
             выбранных
+        </item>
+    </plurals>
+
+    <plurals name="authors_updated">
+        <item quantity="one">Автор обновился</item>
+        <item quantity="few">
+            <xliff:g id="num_updates">%1$d</xliff:g>
+            автора обновились
+        </item>
+        <item quantity="many">
+            <xliff:g id="num_updates">%1$d</xliff:g>
+            авторов обновились
         </item>
     </plurals>
 

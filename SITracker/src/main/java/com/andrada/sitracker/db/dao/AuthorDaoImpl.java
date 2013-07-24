@@ -19,12 +19,10 @@ public class AuthorDaoImpl extends BaseDaoImpl<Author, Integer>
     }
 
     @Override
-    public long getNewAuthorsCount() throws SQLException {
+    public int getNewAuthorsCount() throws SQLException {
 
-        long rawResults = this.queryRawValue(
+        return (int) this.queryRawValue(
                 "SELECT COUNT(*) FROM authors, publications WHERE authors.id = publications.author_id AND publications.isNew = 1");
-        return rawResults;
-
     }
 
     @Override

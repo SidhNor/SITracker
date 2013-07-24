@@ -10,7 +10,7 @@ import java.util.List;
  * Created by ggodonoga on 07/06/13.
  */
 public interface AuthorDao extends Dao<Author, Integer> {
-    long getNewAuthorsCount() throws SQLException;
+    int getNewAuthorsCount() throws SQLException;
 
     void markAsRead(Author author) throws SQLException;
 

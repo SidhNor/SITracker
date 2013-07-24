@@ -104,7 +104,10 @@ public class MainActivity extends SherlockFragmentActivity implements
         alarmManager.cancel(this.updatePendingIntent);
         if (isSyncing) {
             long updateInterval = Long.getLong(sharedPreferences.getString(Constants.UPDATE_INTERVAL_KEY, "3600000L"), 3600000L);
-            alarmManager.setInexactRepeating(AlarmManager.RTC, System.currentTimeMillis(), updateInterval, this.updatePendingIntent);
+            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP,
+                    System.currentTimeMillis(),
+                    updateInterval,
+                    this.updatePendingIntent);
         }
     }
 }

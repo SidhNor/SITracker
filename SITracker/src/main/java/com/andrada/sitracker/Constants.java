@@ -22,4 +22,5 @@ public class Constants {
     public final static String UPDATE_PREFERENCE_KEY = "pref_updates";
     public final static String UPDATE_INTERVAL_KEY = "pref_update_period";
 
+    public static final String NUMBER_OF_UPDATED_AUTHORS = "number_of_updated_authors";
 }

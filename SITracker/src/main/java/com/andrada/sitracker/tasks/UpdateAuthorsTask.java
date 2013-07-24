@@ -3,14 +3,16 @@ package com.andrada.sitracker.tasks;
 import android.app.IntentService;
 import android.content.Intent;
 
+import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.db.beans.Author;
 import com.andrada.sitracker.db.beans.Publication;
+import com.andrada.sitracker.db.dao.AuthorDao;
+import com.andrada.sitracker.db.dao.PublicationDao;
 import com.andrada.sitracker.db.manager.SiDBHelper;
 import com.andrada.sitracker.tasks.messages.UpdateFailedIntentMessage;
 import com.andrada.sitracker.tasks.messages.UpdateSuccessfulIntentMessage;
 import com.andrada.sitracker.util.SamlibPageParser;
 import com.github.kevinsawicki.http.HttpRequest;
-import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.ForeignCollection;
 
 import org.androidannotations.annotations.EService;
@@ -31,10 +33,12 @@ import java.util.List;
 public class UpdateAuthorsTask extends IntentService {
 
     @OrmLiteDao(helper = SiDBHelper.class, model = Author.class)
-    Dao<Author, Integer> authorDao;
+    AuthorDao authorDao;
 
     @OrmLiteDao(helper = SiDBHelper.class, model = Publication.class)
-    Dao<Publication, Integer> publicationsDao;
+    PublicationDao publicationsDao;
+
+    private int updatedAuthors;
 
     public UpdateAuthorsTask() {
         super(UpdateAuthorsTask.class.getSimpleName());
@@ -48,6 +52,7 @@ public class UpdateAuthorsTask extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         //Check for updates
+        this.updatedAuthors = 0;
         try {
             List<Author> authors = authorDao.queryForAll();
             for (Author author : authors) {
@@ -112,6 +117,7 @@ public class UpdateAuthorsTask extends IntentService {
                 }
 
             }
+            this.updatedAuthors = authorDao.getNewAuthorsCount();
             //Success
             //Do a broadcast
             broadCastResult(true);
@@ -125,8 +131,12 @@ public class UpdateAuthorsTask extends IntentService {
 
     private void broadCastResult(boolean success) {
         Intent broadcastIntent = new Intent();
-        if (success) broadcastIntent.setAction(UpdateSuccessfulIntentMessage.SUCCESS_MESSAGE);
-        else broadcastIntent = broadcastIntent.setAction(UpdateFailedIntentMessage.FAILED_MESSAGE);
+        if (success) {
+            broadcastIntent.setAction(UpdateSuccessfulIntentMessage.SUCCESS_MESSAGE);
+            broadcastIntent.putExtra(Constants.NUMBER_OF_UPDATED_AUTHORS, this.updatedAuthors);
+        } else {
+            broadcastIntent = broadcastIntent.setAction(UpdateFailedIntentMessage.FAILED_MESSAGE);
+        }
         sendOrderedBroadcast(broadcastIntent, null);
     }
 }
