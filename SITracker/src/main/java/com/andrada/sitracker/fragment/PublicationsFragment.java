@@ -16,7 +16,8 @@ import org.androidannotations.annotations.InstanceState;
 import org.androidannotations.annotations.ViewById;
 
 @EFragment(R.layout.fragment_publications)
-public class PublicationsFragment extends SherlockFragment implements AuthorMarkedAsReadListener, ExpandableListView.OnChildClickListener {
+public class PublicationsFragment extends SherlockFragment implements AuthorMarkedAsReadListener,
+        ExpandableListView.OnChildClickListener {
 
     @Bean
     PublicationsAdapter adapter;

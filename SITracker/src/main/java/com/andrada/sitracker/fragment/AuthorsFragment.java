@@ -2,6 +2,8 @@ package com.andrada.sitracker.fragment;
 
 import android.app.Activity;
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -27,6 +29,7 @@ import com.andrada.sitracker.tasks.AddAuthorTask;
 import com.andrada.sitracker.tasks.UpdateAuthorsTask_;
 import com.andrada.sitracker.util.actionmodecompat.ActionMode;
 import com.andrada.sitracker.util.actionmodecompat.MultiChoiceModeListener;
+import com.google.analytics.tracking.android.EasyTracker;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
@@ -35,6 +38,7 @@ import org.androidannotations.annotations.InstanceState;
 import org.androidannotations.annotations.ItemClick;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
+import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
@@ -60,6 +64,9 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
 
     @Bean
     AuthorsAdapter adapter;
+
+    @SystemService
+    ConnectivityManager connectivityManager;
 
     @InstanceState
     int currentAuthorIndex = 0;
@@ -115,12 +122,24 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
         authorDialog.setOnAuthorLinkSuppliedListener(this);
         authorDialog.show(getActivity().getSupportFragmentManager(),
                 Constants.DIALOG_ADD_AUTHOR);
+        EasyTracker.getTracker().sendView(Constants.GA_SCREEN_ADD_DIALOG);
     }
 
     @OptionsItem(R.id.action_refresh)
     void menuRefreshSelected() {
-        UpdateAuthorsTask_.intent(getActivity()).start();
-        toggleUpdatingState();
+        final NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
+        if (activeNetwork != null && activeNetwork.isConnected()) {
+            UpdateAuthorsTask_.intent(getActivity()).start();
+            EasyTracker.getTracker().sendEvent(
+                    Constants.GA_UI_CATEGORY,
+                    Constants.GA_EVENT_AUTHORS_MANUAL_REFRESH,
+                    Constants.GA_EVENT_AUTHORS_MANUAL_REFRESH, null);
+            EasyTracker.getInstance().dispatch();
+            toggleUpdatingState();
+        } else {
+            //TODO surface crouton that network is unavailable
+        }
+
     }
 
     @OptionsItem(R.id.action_settings)
@@ -188,14 +207,14 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
 
 
     //region AddAuthorTask.IAuthorTaskCallback callbacks
-    @Override
-    public void onAuthorAddStarted() {
-        //Add a temporary item to authors
-        //Start progress bar
-    }
 
     @Override
     public void onAuthorAddCompleted(String message) {
+        EasyTracker.getTracker().sendEvent(
+                Constants.GA_UI_CATEGORY,
+                Constants.GA_EVENT_AUTHOR_ADDED,
+                Constants.GA_EVENT_AUTHOR_ADDED, null);
+        EasyTracker.getInstance().dispatch();
         //Stop progress bar
         if (message.length() == 0) {
             //This is success
@@ -220,7 +239,7 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
     @Override
     public void onAuthorsUpdateFailed() {
         toggleUpdatingState();
-        //TODO Show failed notification/toast
+        //TODO surface crouton that update failed
     }
     //endregion
 
@@ -258,6 +277,11 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
     public boolean onActionItemClicked(com.andrada.sitracker.util.actionmodecompat.ActionMode mode, MenuItem item) {
         mode.finish();
         if (item.getItemId() == R.id.action_remove) {
+            EasyTracker.getTracker().sendEvent(
+                    Constants.GA_UI_CATEGORY,
+                    Constants.GA_EVENT_AUTHOR_REMOVED,
+                    Constants.GA_EVENT_AUTHOR_REMOVED, (long) mSelectedAuthors.size());
+            EasyTracker.getInstance().dispatch();
             adapter.removeAuthors(mSelectedAuthors);
             return true;
         }
@@ -282,7 +306,13 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
     @Override
     public void onPublicationMarkedAsRead(long publicationId) {
         //ensure we update the new status of the author if he has no new publications
+        EasyTracker.getTracker().sendEvent(
+                Constants.GA_UI_CATEGORY,
+                Constants.GA_EVENT_AUTHOR_MANUAL_READ,
+                Constants.GA_EVENT_AUTHOR_MANUAL_READ, null);
+        EasyTracker.getInstance().dispatch();
         adapter.notifyDataSetChanged();
+
     }
 
 }

@@ -10,6 +10,7 @@ import android.preference.PreferenceManager;
 
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.andrada.sitracker.tasks.UpdateAuthorsTask_;
+import com.google.analytics.tracking.android.EasyTracker;
 
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.SystemService;
@@ -37,12 +38,14 @@ public class SettingsActivity extends SherlockPreferenceActivity implements
     protected void onResume() {
         super.onResume();
         PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
+        EasyTracker.getInstance().activityStart(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
+        EasyTracker.getInstance().activityStop(this);
     }
 
 
@@ -53,14 +56,18 @@ public class SettingsActivity extends SherlockPreferenceActivity implements
         PendingIntent pi = PendingIntent.getService(this.getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         alarmManager.cancel(pi);
-
+        long updateInterval = Long.getLong(sharedPreferences.getString(Constants.UPDATE_INTERVAL_KEY, "3600000L"), 3600000L);
         if (isSyncing) {
-            long updateInterval = Long.getLong(sharedPreferences.getString(Constants.UPDATE_INTERVAL_KEY, "3600000L"), 3600000L);
             alarmManager.setInexactRepeating(AlarmManager.RTC, System.currentTimeMillis(), updateInterval, pi);
         }
 
         if (key.equals(Constants.UPDATE_INTERVAL_KEY)) {
             setSummary();
+            EasyTracker.getTracker().sendEvent(
+                    Constants.GA_UI_CATEGORY,
+                    Constants.GA_EVENT_CHANGED_UPDATE_INTERVAL,
+                    Constants.GA_EVENT_CHANGED_UPDATE_INTERVAL, updateInterval);
+            EasyTracker.getInstance().dispatch();
         }
     }
 

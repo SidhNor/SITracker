@@ -2,6 +2,8 @@ package com.andrada.sitracker.tasks;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.db.beans.Author;
@@ -13,10 +15,12 @@ import com.andrada.sitracker.tasks.messages.UpdateFailedIntentMessage;
 import com.andrada.sitracker.tasks.messages.UpdateSuccessfulIntentMessage;
 import com.andrada.sitracker.util.SamlibPageParser;
 import com.github.kevinsawicki.http.HttpRequest;
+import com.google.analytics.tracking.android.EasyTracker;
 import com.j256.ormlite.dao.ForeignCollection;
 
 import org.androidannotations.annotations.EService;
 import org.androidannotations.annotations.OrmLiteDao;
+import org.androidannotations.annotations.SystemService;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -38,6 +42,9 @@ public class UpdateAuthorsTask extends IntentService {
     @OrmLiteDao(helper = SiDBHelper.class, model = Publication.class)
     PublicationDao publicationsDao;
 
+    @SystemService
+    ConnectivityManager connectivityManager;
+
     private int updatedAuthors;
 
     public UpdateAuthorsTask() {
@@ -51,6 +58,13 @@ public class UpdateAuthorsTask extends IntentService {
      */
     @Override
     protected void onHandleIntent(Intent intent) {
+
+        if (!this.isConnected())
+            return;
+
+        EasyTracker.getInstance().setContext(this.getApplicationContext());
+        // Get a reference to tracker.
+
         //Check for updates
         this.updatedAuthors = 0;
         try {
@@ -64,13 +78,20 @@ public class UpdateAuthorsTask extends IntentService {
                         //Not available atm
                         continue;
                     }
+                    EasyTracker.getTracker().sendEvent(
+                            Constants.GA_BGR_CATEGORY,
+                            Constants.GA_EVENT_AUTHOR_UPDATE,
+                            author.getName(), null);
+                    EasyTracker.getInstance().dispatch();
                 } catch (MalformedURLException e) {
                     //Just swallow exception, as this is unlikely to happen
                     //Skip author
+                    trackException(e.getMessage());
                     continue;
                 } catch (HttpRequest.HttpRequestException e) {
                     //Author currently inaccessible or no internet
                     //Skip author
+                    trackException(e.getMessage());
                     continue;
                 }
                 String body = SamlibPageParser.sanitizeHTML(request.body());
@@ -131,9 +152,10 @@ public class UpdateAuthorsTask extends IntentService {
             //Error
             //Do a broadcast
             broadCastResult(false);
+            trackException(e.getMessage());
         } catch (InterruptedException e) {
             //Ignore
-            e.printStackTrace();
+            trackException(e.getMessage());
         }
     }
 
@@ -146,5 +168,14 @@ public class UpdateAuthorsTask extends IntentService {
             broadcastIntent = broadcastIntent.setAction(UpdateFailedIntentMessage.FAILED_MESSAGE);
         }
         sendOrderedBroadcast(broadcastIntent, null);
+    }
+
+    private boolean isConnected() {
+        final NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
+        return (activeNetwork != null && activeNetwork.isConnected());
+    }
+
+    private void trackException(String message) {
+        EasyTracker.getTracker().sendException(message, false);
     }
 }

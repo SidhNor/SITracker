@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SlidingPaneLayout;
+import android.view.View;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
@@ -19,6 +20,7 @@ import com.andrada.sitracker.tasks.filters.MarkAsReadMessageFilter;
 import com.andrada.sitracker.tasks.filters.UpdateStatusMessageFilter;
 import com.andrada.sitracker.tasks.receivers.MarkedAsReadReceiver;
 import com.andrada.sitracker.tasks.receivers.UpdateStatusReceiver;
+import com.google.analytics.tracking.android.EasyTracker;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
@@ -31,7 +33,7 @@ import org.androidannotations.annotations.ViewById;
 @EActivity(R.layout.activity_main)
 @OptionsMenu(R.menu.main_menu)
 public class MainActivity extends SherlockFragmentActivity implements
-        OnAuthorSelectedListener {
+        OnAuthorSelectedListener, SlidingPaneLayout.PanelSlideListener {
 
     @FragmentById(R.id.fragment_publications)
     PublicationsFragment mPubFragment;
@@ -55,6 +57,7 @@ public class MainActivity extends SherlockFragmentActivity implements
 
     @AfterViews
     public void afterViews() {
+        fragment_container.setPanelSlideListener(this);
         fragment_container.openPane();
         Intent intent = UpdateAuthorsTask_.intent(this.getApplicationContext()).get();
         this.updatePendingIntent = PendingIntent.getService(this.getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -90,6 +93,7 @@ public class MainActivity extends SherlockFragmentActivity implements
         registerReceiver(updateStatusReceiver, filter);
         LocalBroadcastManager.getInstance(getApplicationContext())
                 .registerReceiver(markAsReadReceiver, new MarkAsReadMessageFilter());
+        EasyTracker.getInstance().activityStart(this);
     }
 
     @Override
@@ -97,6 +101,7 @@ public class MainActivity extends SherlockFragmentActivity implements
         super.onPause();
         unregisterReceiver(updateStatusReceiver);
         LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(markAsReadReceiver);
+        EasyTracker.getInstance().activityStop(this);
     }
 
     public void ensureUpdatesAreRunningOnSchedule(SharedPreferences sharedPreferences) {
@@ -109,5 +114,19 @@ public class MainActivity extends SherlockFragmentActivity implements
                     updateInterval,
                     this.updatePendingIntent);
         }
+    }
+
+    @Override
+    public void onPanelSlide(View view, float v) {
+    }
+
+    @Override
+    public void onPanelOpened(View view) {
+        EasyTracker.getTracker().sendView(Constants.GA_SCREEN_AUTHORS);
+    }
+
+    @Override
+    public void onPanelClosed(View view) {
+        EasyTracker.getTracker().sendView(Constants.GA_SCREEN_PUBLICATIONS);
     }
 }

@@ -13,6 +13,8 @@ import com.andrada.sitracker.MainActivity_;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.tasks.messages.UpdateFailedIntentMessage;
 import com.andrada.sitracker.tasks.messages.UpdateSuccessfulIntentMessage;
+import com.google.analytics.tracking.android.EasyTracker;
+import com.google.analytics.tracking.android.Tracker;
 
 /**
  * Created by ggodonoga on 22/07/13.
@@ -35,7 +37,8 @@ public class UpdateStatusNotificationReceiver extends BroadcastReceiver {
 
         } else if (intent.getAction().equals(UpdateFailedIntentMessage.FAILED_MESSAGE)) {
             //Notify that update failed
-            //TODO post failed notification
+            Tracker myTracker = EasyTracker.getTracker();      // Get a reference to tracker.
+            myTracker.sendException(UpdateFailedIntentMessage.FAILED_MESSAGE, false);
         }
 
     }

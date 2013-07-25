@@ -11,6 +11,7 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
 
+import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.contracts.IsNewItemTappedListener;
 import com.andrada.sitracker.db.beans.Publication;
 import com.andrada.sitracker.db.dao.PublicationDao;
@@ -20,6 +21,7 @@ import com.andrada.sitracker.fragment.components.PublicationCategoryItemView_;
 import com.andrada.sitracker.fragment.components.PublicationItemView;
 import com.andrada.sitracker.fragment.components.PublicationItemView_;
 import com.andrada.sitracker.tasks.messages.PublicationMarkedAsReadMessage;
+import com.google.analytics.tracking.android.EasyTracker;
 
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.OrmLiteDao;
@@ -199,6 +201,11 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
             Intent i = new Intent(Intent.ACTION_VIEW);
             i.setData(Uri.parse(pub.getUrl()));
             context.startActivity(i);
+            EasyTracker.getTracker().sendEvent(
+                    Constants.GA_UI_CATEGORY,
+                    Constants.GA_EVENT_AUTHOR_PUB_OPEN,
+                    Constants.GA_EVENT_AUTHOR_PUB_OPEN, null);
+            EasyTracker.getInstance().dispatch();
             // Return true as we are handling the event.
             return true;
         }
