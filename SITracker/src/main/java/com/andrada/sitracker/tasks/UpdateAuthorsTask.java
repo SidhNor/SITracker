@@ -59,14 +59,18 @@ public class UpdateAuthorsTask extends IntentService {
                 HttpRequest request = null;
                 try {
                     request = HttpRequest.get(new URL(author.getUrl()));
+                    if (request.code() == 404) {
+                        //skip this author
+                        //Not available atm
+                        continue;
+                    }
                 } catch (MalformedURLException e) {
                     //Just swallow exception, as this is unlikely to happen
-                    //SKip author
+                    //Skip author
                     continue;
-                }
-                if (request.code() == 404) {
-                    //skip this author
-                    //Not available atm
+                } catch (HttpRequest.HttpRequestException e) {
+                    //Author currently inaccessible or no internet
+                    //Skip author
                     continue;
                 }
                 String body = SamlibPageParser.sanitizeHTML(request.body());
@@ -115,7 +119,8 @@ public class UpdateAuthorsTask extends IntentService {
                         publicationsDao.delete(oldItem);
                     }
                 }
-
+                //Sleep for 10 seconds to avoid ban from samlib
+                Thread.sleep(10000);
             }
             this.updatedAuthors = authorDao.getNewAuthorsCount();
             //Success
@@ -126,6 +131,9 @@ public class UpdateAuthorsTask extends IntentService {
             //Error
             //Do a broadcast
             broadCastResult(false);
+        } catch (InterruptedException e) {
+            //Ignore
+            e.printStackTrace();
         }
     }
 
