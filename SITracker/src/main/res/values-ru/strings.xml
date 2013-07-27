@@ -41,6 +41,8 @@
     <string name="check_for_updates">Проверка обновлений</string>
     <string name="action_add_ok">Добавить</string>
     <string name="notification_title">Прода</string>
+    <string name="update_failed_crouton_message">Не удалось обновить авторов.</string>
+    <string name="author_add_success_crouton_message">Автор добавлен</string>
 
     <plurals name="authors_selected">
         <item quantity="one">1 выбранный</item>
@@ -65,6 +67,9 @@
             авторов обновились
         </item>
     </plurals>
+
+    <string name="no_network_error">Нет соединения</string>
+    <string name="no_network_retry">ЕЩЕ РАЗ</string>
 
     <!--Preferences -->
     <string name="pref_updates_check">Автоматическое обновление</string>

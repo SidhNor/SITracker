@@ -1,6 +1,7 @@
 package com.andrada.sitracker.db.beans;
 
 import com.andrada.sitracker.db.dao.AuthorDaoImpl;
+import com.google.analytics.tracking.android.EasyTracker;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
@@ -86,8 +87,8 @@ public class Author {
                 try {
                     this.publications.update(pub);
                 } catch (SQLException e) {
-                    //TODO surface error
-                    e.printStackTrace();
+                    //surface error
+                    EasyTracker.getTracker().sendException("Author Set updated", e, false);
                 }
             }
 

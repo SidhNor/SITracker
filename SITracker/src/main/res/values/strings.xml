@@ -33,6 +33,8 @@
     <string name="check_for_updates">Checking for updates</string>
     <string name="action_add_ok">Add</string>
     <string name="notification_title">SITracker Updates</string>
+    <string name="update_failed_crouton_message">Update failed for an unexpected reason.</string>
+    <string name="author_add_success_crouton_message">Author added</string>
 
     <plurals name="authors_selected">
         <item quantity="one">1 selected</item>
@@ -56,5 +58,11 @@
     </string>
     <string name="pref_update_interval">Update interval</string>
     <string name="pref_header_title">Settings</string>
+
+    <string name="no_network_error">No network</string>
+    <string name="no_network_retry">RETRY</string>
+
+    <!--Image descriptors -->
+    <string name="crouton_image_desc">info</string>
 
 </resources>

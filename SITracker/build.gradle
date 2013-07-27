@@ -29,6 +29,10 @@ dependencies {
     androidannotations "org.androidannotations:androidannotations:${androidAnnotationsVersion}"
     compile 'com.j256.ormlite:ormlite-android:4.45'
     compile 'com.github.kevinsawicki:http-request:4.2'
+    compile('de.keyboardsurfer.android.widget:crouton:1.8.1') {
+        exclude module: 'support-v4'
+        compile 'com.android.support:support-v4:13.0.0'
+    }
     compile files("../libraries/libGoogleAnalyticsV2.jar")
 }
 

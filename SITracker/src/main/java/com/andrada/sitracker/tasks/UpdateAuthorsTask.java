@@ -59,9 +59,6 @@ public class UpdateAuthorsTask extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
 
-        if (!this.isConnected())
-            return;
-
         EasyTracker.getInstance().setContext(this.getApplicationContext());
         // Get a reference to tracker.
 
@@ -70,6 +67,9 @@ public class UpdateAuthorsTask extends IntentService {
         try {
             List<Author> authors = authorDao.queryForAll();
             for (Author author : authors) {
+                if (!this.isConnected())
+                    continue;
+
                 HttpRequest request = null;
                 try {
                     request = HttpRequest.get(new URL(author.getUrl()));

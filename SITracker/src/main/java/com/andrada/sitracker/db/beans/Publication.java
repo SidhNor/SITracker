@@ -8,26 +8,26 @@ import java.util.Date;
 
 @DatabaseTable(daoClass = PublicationDaoImpl.class, tableName = "publications")
 public class Publication {
-	@DatabaseField(generatedId = true, useGetSet = true)
-	int id;
+    @DatabaseField(generatedId = true, useGetSet = true)
+    int id;
     @DatabaseField(canBeNull = false, useGetSet = true)
-	String name;
+    String name;
     @DatabaseField(useGetSet = true)
-	int size;
+    int size;
     @DatabaseField(useGetSet = true)
     int oldSize;
-	@DatabaseField(useGetSet = true)
-	String category;
+    @DatabaseField(useGetSet = true)
+    String category;
     @DatabaseField(canBeNull = false, foreign = true)
-	Author author;
-	@DatabaseField(useGetSet = true)
-	String date;
-	@DatabaseField(useGetSet = true)
-	String description;
+    Author author;
+    @DatabaseField(useGetSet = true)
+    String date;
+    @DatabaseField(useGetSet = true)
+    String description;
     @DatabaseField(useGetSet = true)
     String commentUrl;
-    @DatabaseField(canBeNull = false, unique = true, useGetSet = true)
-	String url;
+    @DatabaseField(canBeNull = false, useGetSet = true)
+    String url;
     @DatabaseField(useGetSet = true)
     String rating;
     @DatabaseField(useGetSet = true)
@@ -43,12 +43,10 @@ public class Publication {
     }
 
     @Override
-    public boolean equals(Object object)
-    {
+    public boolean equals(Object object) {
         boolean sameSame = false;
 
-        if (object != null && object instanceof Publication)
-        {
+        if (object != null && object instanceof Publication) {
             sameSame = this.getUrl().equals(((Publication) object).getUrl());
         }
 
@@ -61,13 +59,13 @@ public class Publication {
 
 
     //region Getters setters
-	public String getUrl() {
-		return url;
-	}
+    public String getUrl() {
+        return url;
+    }
 
-	public void setUrl(String url) {
-		this.url = url;
-	}
+    public void setUrl(String url) {
+        this.url = url;
+    }
 
     public int getOldSize() {
         return oldSize;
@@ -77,61 +75,61 @@ public class Publication {
         this.oldSize = oldSize;
     }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public int getId() {
-		return id;
-	}
+    public int getId() {
+        return id;
+    }
 
-	public void setId(int id) {
-		this.id = id;
-	}
+    public void setId(int id) {
+        this.id = id;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public int getSize() {
-		return size;
-	}
+    public int getSize() {
+        return size;
+    }
 
-	public void setSize(int size) {
-		this.size = size;
-	}
+    public void setSize(int size) {
+        this.size = size;
+    }
 
-	public String getCategory() {
-		return category;
-	}
+    public String getCategory() {
+        return category;
+    }
 
-	public void setCategory(String category) {
-		this.category = category;
-	}
+    public void setCategory(String category) {
+        this.category = category;
+    }
 
-	public Author getAuthor() {
-		return author;
-	}
+    public Author getAuthor() {
+        return author;
+    }
 
-	public void setAuthor(Author author) {
-		this.author = author;
-	}
+    public void setAuthor(Author author) {
+        this.author = author;
+    }
 
-	public String getDate() {
-		return date;
-	}
+    public String getDate() {
+        return date;
+    }
 
-	public void setDate(String date) {
-		this.date = date;
-	}
+    public void setDate(String date) {
+        this.date = date;
+    }
 
     public String getCommentUrl() {
         return commentUrl;

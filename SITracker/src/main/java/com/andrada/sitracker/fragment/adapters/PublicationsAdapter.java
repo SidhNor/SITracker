@@ -182,8 +182,7 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
                 publicationsDao.update(pub);
                 LocalBroadcastManager.getInstance(context).sendBroadcast(new PublicationMarkedAsReadMessage(pub.getId()));
             } catch (SQLException e) {
-                //TODO write error
-                e.printStackTrace();
+                EasyTracker.getTracker().sendException("Publication Set update", e, false);
             }
         }
     }

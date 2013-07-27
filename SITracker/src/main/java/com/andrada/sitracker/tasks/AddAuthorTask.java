@@ -39,6 +39,7 @@ public class AddAuthorTask extends AsyncTask<String, Integer, String> {
     @Override
     protected String doInBackground(String... args) {
         String message = "";
+        String exceptionMsg = "";
         for (String url : args) {
             try {
                 if (url.equals("") || !url.matches(Constants.SIMPLE_URL_REGEX)) {
@@ -76,6 +77,7 @@ public class AddAuthorTask extends AsyncTask<String, Integer, String> {
             } catch (MalformedURLException e) {
                 message = context.getResources().getString(R.string.cannot_add_author_malformed);
             } catch (SQLException e) {
+                exceptionMsg = e.getCause().getCause().getLocalizedMessage();
                 message = context.getResources().getString(R.string.cannot_add_author_internal);
             } catch (AddAuthorException e) {
                 switch (e.getError()) {
@@ -95,7 +97,9 @@ public class AddAuthorTask extends AsyncTask<String, Integer, String> {
 
             }
         }
-        if (!message.equals("")) {
+        if (!exceptionMsg.equals("")) {
+            EasyTracker.getTracker().sendException(exceptionMsg, false);
+        } else if (!message.equals("")) {
             EasyTracker.getTracker().sendException(message, false);
         }
         return message;

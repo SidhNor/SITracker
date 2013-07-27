@@ -12,7 +12,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragment;
@@ -43,15 +42,18 @@ import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import de.keyboardsurfer.android.widget.crouton.Configuration;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.Style;
 
 @EFragment(R.layout.fragmet_authors)
 @OptionsMenu(R.menu.authors_menu)
 public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.IAuthorTaskCallback,
         AuthorUpdateStatusListener, AddAuthorDialog.OnAuthorLinkSuppliedListener,
-        PublicationMarkedAsReadListener, MultiChoiceModeListener {
+        PublicationMarkedAsReadListener, MultiChoiceModeListener, View.OnClickListener {
 
     public interface OnAuthorSelectedListener {
         public void onAuthorSelected(long id);
@@ -73,6 +75,8 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
 
     @InstanceState
     int currentAuthorIndex = 0;
+
+    private Crouton mNoNetworkCrouton;
 
     private boolean mIsUpdating = false;
 
@@ -140,8 +144,8 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
             EasyTracker.getInstance().dispatch();
             toggleUpdatingState();
         } else {
+            //Surface crouton that network is unavailable
             showCroutonMessage();
-            //TODO surface crouton that network is unavailable
         }
 
     }
@@ -151,6 +155,27 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
         getSherlockActivity().startActivity(SettingsActivity_.intent(getSherlockActivity()).get());
     }
     //endregion
+
+    @Override
+    /**
+     * Crouton click handler
+     */
+    public void onClick(View view) {
+        if (view.getId() == R.id.retryUpdateButton) {
+            if (this.mNoNetworkCrouton != null) {
+                Crouton.hide(this.mNoNetworkCrouton);
+                this.mNoNetworkCrouton = null;
+            }
+            Timer timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    menuRefreshSelected();
+                }
+            }, 1500);
+        }
+
+    }
 
     @AfterViews
     void bindAdapter() {
@@ -220,12 +245,20 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
                 Constants.GA_EVENT_AUTHOR_ADDED, null);
         EasyTracker.getInstance().dispatch();
         //Stop progress bar
+
+        Style.Builder alertStyle = new Style.Builder()
+                .setTextAppearance(android.R.attr.textAppearanceLarge)
+                .setPaddingInPixels(25);
+
         if (message.length() == 0) {
             //This is success
             updateAuthors();
+            alertStyle.setBackgroundColorValue(Style.holoGreenLight);
+            message = getResources().getString(R.string.author_add_success_crouton_message);
         } else {
-            Toast.makeText((Context) mCallback, message, Toast.LENGTH_SHORT).show();
+            alertStyle.setBackgroundColorValue(Style.holoRedLight);
         }
+        Crouton.makeText(getSherlockActivity(), message, alertStyle.build()).show();
     }
 
     //endregion
@@ -243,7 +276,10 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
     @Override
     public void onAuthorsUpdateFailed() {
         toggleUpdatingState();
-        //TODO surface crouton that update failed
+        //surface crouton that update failed
+        Crouton.makeText(getSherlockActivity(),
+                getResources().getText(R.string.update_failed_crouton_message),
+                Style.ALERT).show();
     }
     //endregion
 
@@ -321,12 +357,12 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
 
     private void showCroutonMessage() {
         View view = getLayoutInflater(null).inflate(R.layout.crouton_no_network, null);
-        final Crouton crouton;
+        view.findViewById(R.id.retryUpdateButton).setOnClickListener(this);
         Configuration croutonConfiguration = new Configuration.Builder()
                 .setDuration(Configuration.DURATION_LONG).build();
-        crouton = Crouton.make(getActivity(), view);
-        crouton.setConfiguration(croutonConfiguration);
-        crouton.show();
+        this.mNoNetworkCrouton = Crouton.make(getActivity(), view);
+        this.mNoNetworkCrouton.setConfiguration(croutonConfiguration);
+        this.mNoNetworkCrouton.show();
     }
 
 }

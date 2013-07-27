@@ -15,6 +15,7 @@ import com.andrada.sitracker.db.manager.SiDBHelper;
 import com.andrada.sitracker.fragment.components.AuthorItemView;
 import com.andrada.sitracker.fragment.components.AuthorItemView_;
 import com.andrada.sitracker.tasks.messages.AuthorMarkedAsReadMessage;
+import com.google.analytics.tracking.android.EasyTracker;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
@@ -107,8 +108,8 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
                     authorDao.markAsRead(authors.get(position));
                     LocalBroadcastManager.getInstance(context).sendBroadcast(new AuthorMarkedAsReadMessage(authors.get(position).getId()));
                 } catch (SQLException e) {
-                    //TODO surface error
-                    e.printStackTrace();
+                    //surface error
+                    EasyTracker.getTracker().sendException("Author Mark as read thread", e, false);
                 }
             }
         }
@@ -118,10 +119,12 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
         try {
             authorDao.delete(authorsToRemove);
         } catch (SQLException e) {
-            //TODO surface error
-            e.printStackTrace();
+            EasyTracker.getTracker().sendException("Author Remove thread", e, false);
         }
-        authors.remove(authorsToRemove);
+
+        for (Author anAuthorToRemove : authorsToRemove) {
+            authors.remove(anAuthorToRemove);
+        }
         notifyDataSetChanged();
     }
 

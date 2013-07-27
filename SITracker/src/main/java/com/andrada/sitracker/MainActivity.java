@@ -29,6 +29,8 @@ import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.ViewById;
 
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+
 
 @EActivity(R.layout.activity_main)
 @OptionsMenu(R.menu.main_menu)
@@ -102,6 +104,12 @@ public class MainActivity extends SherlockFragmentActivity implements
         unregisterReceiver(updateStatusReceiver);
         LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(markAsReadReceiver);
         EasyTracker.getInstance().activityStop(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Crouton.cancelAllCroutons();
     }
 
     public void ensureUpdatesAreRunningOnSchedule(SharedPreferences sharedPreferences) {

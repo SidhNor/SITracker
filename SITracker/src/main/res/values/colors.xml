@@ -3,4 +3,5 @@
     <color name="left_menu_text_gray">#949294</color>
     <color name="holo_blue_light">#ff33b5e5</color>
     <color name="author_activated_color">#ffffff</color>
+    <color name="holo_red_light">#ffff4444</color>
 </resources>

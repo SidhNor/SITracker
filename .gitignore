@@ -14,3 +14,5 @@ build/
 
 #Project specific
 /libraries
+
+SITracker/*.apk
