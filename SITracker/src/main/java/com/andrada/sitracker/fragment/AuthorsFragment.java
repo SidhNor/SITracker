@@ -44,6 +44,9 @@ import org.androidannotations.annotations.ViewById;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.keyboardsurfer.android.widget.crouton.Configuration;
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+
 @EFragment(R.layout.fragmet_authors)
 @OptionsMenu(R.menu.authors_menu)
 public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.IAuthorTaskCallback,
@@ -137,6 +140,7 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
             EasyTracker.getInstance().dispatch();
             toggleUpdatingState();
         } else {
+            showCroutonMessage();
             //TODO surface crouton that network is unavailable
         }
 
@@ -313,6 +317,16 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
         EasyTracker.getInstance().dispatch();
         adapter.notifyDataSetChanged();
 
+    }
+
+    private void showCroutonMessage() {
+        View view = getLayoutInflater(null).inflate(R.layout.crouton_no_network, null);
+        final Crouton crouton;
+        Configuration croutonConfiguration = new Configuration.Builder()
+                .setDuration(Configuration.DURATION_LONG).build();
+        crouton = Crouton.make(getActivity(), view);
+        crouton.setConfiguration(croutonConfiguration);
+        crouton.show();
     }
 
 }
