@@ -43,6 +43,7 @@
     <string name="notification_title">Прода</string>
     <string name="update_failed_crouton_message">Не удалось обновить авторов.</string>
     <string name="author_add_success_crouton_message">Автор добавлен</string>
+    <string name="no_authors">Вы пока не добавили никаких авторов</string>
 
     <plurals name="authors_selected">
         <item quantity="one">1 выбранный</item>

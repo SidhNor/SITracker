@@ -35,6 +35,7 @@
     <string name="notification_title">SITracker Updates</string>
     <string name="update_failed_crouton_message">Update failed for an unexpected reason.</string>
     <string name="author_add_success_crouton_message">Author added</string>
+    <string name="no_authors">You haven\'t added any authors yet</string>
 
     <plurals name="authors_selected">
         <item quantity="one">1 selected</item>
