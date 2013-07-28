@@ -26,7 +26,13 @@
         </activity>
         <activity
                 android:name=".SettingsActivity_"
-                android:label="@string/app_name"/>
+                android:label="@string/app_name"
+                android:parentActivityName="com.andrada.sitracker.MainActivity_">
+            <!-- Parent activity meta-data to support API level 7+ -->
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value="com.andrada.sitracker.MainActivity_"/>
+        </activity>
 
         <receiver
                 android:name=".tasks.receivers.UpdateStatusNotificationReceiver"

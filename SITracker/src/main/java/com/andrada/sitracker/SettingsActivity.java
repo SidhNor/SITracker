@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.PreferenceManager;
 
+import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.andrada.sitracker.tasks.UpdateAuthorsTask_;
 import com.google.analytics.tracking.android.EasyTracker;
@@ -31,6 +32,8 @@ public class SettingsActivity extends SherlockPreferenceActivity implements
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
         setSummary();
+        ActionBar actionBar = getSherlock().getActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
     }
 
