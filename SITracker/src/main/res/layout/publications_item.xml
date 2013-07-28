@@ -65,15 +65,15 @@
                 android:layout_marginBottom="2dp"
                 android:layout_gravity="right"/>
 
-        <CheckBox
+        <ImageButton
                 android:id="@+id/item_updated"
-                android:button="@drawable/star_check_selector"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:layout_gravity="end"
-                android:focusable="false"
-                />
+                android:background="@null"
+                android:src="@drawable/star_unselected"
+                android:contentDescription="@string/notification_title"/>
     </LinearLayout>
 
     <View

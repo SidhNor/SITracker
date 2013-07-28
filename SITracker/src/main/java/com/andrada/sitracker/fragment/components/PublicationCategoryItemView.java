@@ -18,11 +18,15 @@ public class PublicationCategoryItemView extends LinearLayout {
     @ViewById
     TextView category_title;
 
+    @ViewById
+    TextView category_item_count;
+
     public PublicationCategoryItemView(Context context) {
         super(context);
     }
 
-    public void bind(String category) {
+    public void bind(String category, Integer itemsCount) {
         category_title.setText(category);
+        category_item_count.setText("(" + itemsCount + ")");
     }
 }

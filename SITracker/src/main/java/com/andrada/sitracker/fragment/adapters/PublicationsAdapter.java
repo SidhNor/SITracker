@@ -132,7 +132,7 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
         } else {
             publicationCategoryView = (PublicationCategoryItemView) convertView;
         }
-        publicationCategoryView.bind(mCategories.get(groupPosition));
+        publicationCategoryView.bind(mCategories.get(groupPosition), mChildren.get(groupPosition).size());
         return publicationCategoryView;
     }
 

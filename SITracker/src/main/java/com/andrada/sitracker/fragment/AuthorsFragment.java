@@ -51,7 +51,7 @@ import de.keyboardsurfer.android.widget.crouton.Configuration;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
-@EFragment(R.layout.fragmet_authors)
+@EFragment(R.layout.fragment_authors)
 @OptionsMenu(R.menu.authors_menu)
 public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.IAuthorTaskCallback,
         AuthorUpdateStatusListener, AddAuthorDialog.OnAuthorLinkSuppliedListener,

@@ -11,4 +11,10 @@
             android:layout_height="match_parent"
             android:choiceMode="multipleChoiceModal"/>
 
+    <ViewStub
+            android:id="@+id/empty"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout="@layout/empty_authors"/>
 </RelativeLayout>

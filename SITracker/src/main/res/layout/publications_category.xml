@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
     <TextView
             android:id="@+id/category_title"
@@ -19,9 +18,20 @@
             android:focusable="false"
             android:focusableInTouchMode="false"/>
 
+    <TextView
+            android:id="@+id/category_item_count"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:textColor="@color/holo_blue_light"
+            android:fontFamily="sans-serif-light"
+            android:textAppearance="@android:style/TextAppearance.Large"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="@dimen/group_heading_margin_top"/>
+
     <View
             style="@style/DividerThick"
+            android:layout_below="@+id/category_title"
             android:layout_marginBottom="@dimen/divider_margin_bottom"
             android:layout_marginTop="@dimen/divider_margin_top"/>
 
-</LinearLayout>
+</RelativeLayout>
