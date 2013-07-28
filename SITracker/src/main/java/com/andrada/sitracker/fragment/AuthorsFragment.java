@@ -64,9 +64,6 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
     @ViewById
     ListView list;
 
-    @ViewById
-    View refreshProgressBar;
-
     @Bean
     AuthorsAdapter adapter;
 
@@ -122,6 +119,14 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
 
     //endregion
 
+    @Override
+    public void onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu, com.actionbarsherlock.view.MenuInflater inflater) {
+        if (mIsUpdating) {
+            menu.removeItem(R.id.action_refresh);
+        }
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
     //region Menu item tap handlers
     @OptionsItem(R.id.action_add)
     void menuAddSelected() {
@@ -134,20 +139,21 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
 
     @OptionsItem(R.id.action_refresh)
     void menuRefreshSelected() {
-        final NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
-        if (activeNetwork != null && activeNetwork.isConnected()) {
-            UpdateAuthorsTask_.intent(getActivity()).start();
-            EasyTracker.getTracker().sendEvent(
-                    Constants.GA_UI_CATEGORY,
-                    Constants.GA_EVENT_AUTHORS_MANUAL_REFRESH,
-                    Constants.GA_EVENT_AUTHORS_MANUAL_REFRESH, null);
-            EasyTracker.getInstance().dispatch();
-            toggleUpdatingState();
-        } else {
-            //Surface crouton that network is unavailable
-            showCroutonMessage();
+        if (!mIsUpdating) {
+            final NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
+            if (activeNetwork != null && activeNetwork.isConnected()) {
+                UpdateAuthorsTask_.intent(getActivity()).start();
+                EasyTracker.getTracker().sendEvent(
+                        Constants.GA_UI_CATEGORY,
+                        Constants.GA_EVENT_AUTHORS_MANUAL_REFRESH,
+                        Constants.GA_EVENT_AUTHORS_MANUAL_REFRESH, null);
+                EasyTracker.getInstance().dispatch();
+                toggleUpdatingState();
+            } else {
+                //Surface crouton that network is unavailable
+                showNoNetworkCroutonMessage();
+            }
         }
-
     }
 
     @OptionsItem(R.id.action_settings)
@@ -207,22 +213,18 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
     }
 
     private void toggleUpdatingState() {
+        mIsUpdating = !mIsUpdating;
         ActionBar bar = ((SherlockFragmentActivity) getActivity()).getSupportActionBar();
-        bar.setDisplayShowHomeEnabled(mIsUpdating);
-        bar.setDisplayShowTitleEnabled(mIsUpdating);
-        bar.setDisplayShowCustomEnabled(!mIsUpdating);
-
+        bar.setDisplayShowHomeEnabled(!mIsUpdating);
+        bar.setDisplayShowTitleEnabled(!mIsUpdating);
+        bar.setDisplayShowCustomEnabled(mIsUpdating);
+        getSherlockActivity().setSupportProgressBarIndeterminateVisibility(mIsUpdating);
         if (mIsUpdating) {
-            refreshProgressBar.setVisibility(View.GONE);
-        } else {
             View mLogoView = LayoutInflater.from(getActivity()).inflate(R.layout.updating_actionbar_layout, null);
 
             bar.setCustomView(mLogoView, new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT));
-
-            refreshProgressBar.setVisibility(View.VISIBLE);
         }
-        mIsUpdating = !mIsUpdating;
         getSherlockActivity().invalidateOptionsMenu();
     }
 
@@ -355,7 +357,7 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
 
     }
 
-    private void showCroutonMessage() {
+    private void showNoNetworkCroutonMessage() {
         View view = getLayoutInflater(null).inflate(R.layout.crouton_no_network, null);
         view.findViewById(R.id.retryUpdateButton).setOnClickListener(this);
         Configuration croutonConfiguration = new Configuration.Builder()

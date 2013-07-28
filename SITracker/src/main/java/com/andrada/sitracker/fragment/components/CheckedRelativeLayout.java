@@ -39,12 +39,12 @@ public class CheckedRelativeLayout extends RelativeLayout implements Checkable {
 
         refreshDrawableState();
 
-        //Propagate to childs
+        //Propagate to children
         final int count = getChildCount();
         for (int i = 0; i < count; i++) {
             final View child = getChildAt(i);
-            if(child instanceof Checkable) {
-                ((Checkable)child).setChecked(checked);
+            if (child instanceof Checkable) {
+                ((Checkable) child).setChecked(checked);
             }
         }
     }
