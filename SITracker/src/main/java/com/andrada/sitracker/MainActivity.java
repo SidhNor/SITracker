@@ -9,6 +9,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SlidingPaneLayout;
 import android.view.View;
+import android.widget.ProgressBar;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
@@ -35,7 +36,7 @@ import de.keyboardsurfer.android.widget.crouton.Crouton;
 @EActivity(R.layout.activity_main)
 @OptionsMenu(R.menu.main_menu)
 public class MainActivity extends SherlockFragmentActivity implements
-        OnAuthorSelectedListener, SlidingPaneLayout.PanelSlideListener {
+        OnAuthorSelectedListener, SlidingPaneLayout.PanelSlideListener, AuthorsFragment.OnAuthorsUpdatingListener {
 
     @FragmentById(R.id.fragment_publications)
     PublicationsFragment mPubFragment;
@@ -45,6 +46,9 @@ public class MainActivity extends SherlockFragmentActivity implements
 
     @ViewById
     SlidingPaneLayout fragment_container;
+
+    @ViewById
+    ProgressBar globalProgress;
 
     @SystemService
     AlarmManager alarmManager;
@@ -61,6 +65,7 @@ public class MainActivity extends SherlockFragmentActivity implements
     public void afterViews() {
         fragment_container.setPanelSlideListener(this);
         fragment_container.openPane();
+        mAuthorsFragment.setUpdatingListener(this);
         Intent intent = UpdateAuthorsTask_.intent(this.getApplicationContext()).get();
         this.updatePendingIntent = PendingIntent.getService(this.getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         ensureUpdatesAreRunningOnSchedule(PreferenceManager.getDefaultSharedPreferences(this));
@@ -136,5 +141,15 @@ public class MainActivity extends SherlockFragmentActivity implements
     @Override
     public void onPanelClosed(View view) {
         EasyTracker.getTracker().sendView(Constants.GA_SCREEN_PUBLICATIONS);
+    }
+
+    @Override
+    public void onUpdateStarted() {
+        this.globalProgress.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onUpdateStopped() {
+        this.globalProgress.setVisibility(View.GONE);
     }
 }

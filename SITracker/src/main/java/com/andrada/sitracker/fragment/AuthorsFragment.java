@@ -11,6 +11,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewStub;
+import android.view.animation.AnimationUtils;
 import android.widget.ListView;
 
 import com.actionbarsherlock.app.ActionBar;
@@ -59,10 +61,20 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
         public void onAuthorSelected(long id);
     }
 
+    public interface OnAuthorsUpdatingListener {
+        void onUpdateStarted();
+
+        void onUpdateStopped();
+    }
+
     OnAuthorSelectedListener mCallback;
+    OnAuthorsUpdatingListener updatingListener;
 
     @ViewById
     ListView list;
+
+    @ViewById
+    ViewStub empty;
 
     @Bean
     AuthorsAdapter adapter;
@@ -91,6 +103,7 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
     public void onStart() {
         super.onStart();
         list.setBackgroundResource(R.drawable.authors_list_background);
+        list.setEmptyView(empty);
         getSherlockActivity().invalidateOptionsMenu();
         if (adapter.getCount() > 0 && currentAuthorIndex < adapter.getCount()) {
             listItemClicked(currentAuthorIndex);
@@ -218,12 +231,18 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
         bar.setDisplayShowHomeEnabled(!mIsUpdating);
         bar.setDisplayShowTitleEnabled(!mIsUpdating);
         bar.setDisplayShowCustomEnabled(mIsUpdating);
-        getSherlockActivity().setSupportProgressBarIndeterminateVisibility(mIsUpdating);
+
+        if (this.updatingListener != null) {
+            if (mIsUpdating) updatingListener.onUpdateStarted();
+            else updatingListener.onUpdateStopped();
+        }
         if (mIsUpdating) {
             View mLogoView = LayoutInflater.from(getActivity()).inflate(R.layout.updating_actionbar_layout, null);
 
             bar.setCustomView(mLogoView, new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT));
+            mLogoView.clearAnimation();
+            mLogoView.startAnimation(AnimationUtils.loadAnimation(this.getSherlockActivity(), R.anim.ab_custom_view_anim));
         }
         getSherlockActivity().invalidateOptionsMenu();
     }
@@ -344,6 +363,9 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
     }
     //endregion
 
+    public void setUpdatingListener(OnAuthorsUpdatingListener updatingListener) {
+        this.updatingListener = updatingListener;
+    }
 
     @Override
     public void onPublicationMarkedAsRead(long publicationId) {
