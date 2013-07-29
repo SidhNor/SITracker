@@ -152,7 +152,7 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
 
     @OptionsItem(R.id.action_refresh)
     void menuRefreshSelected() {
-        if (!mIsUpdating) {
+        if (!mIsUpdating && adapter.getCount() > 0) {
             final NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
             if (activeNetwork != null && activeNetwork.isConnected()) {
                 UpdateAuthorsTask_.intent(getActivity()).start();

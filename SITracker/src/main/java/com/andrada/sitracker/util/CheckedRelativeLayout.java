@@ -1,13 +1,12 @@
-package com.andrada.sitracker.fragment.components;
+package com.andrada.sitracker.util;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Checkable;
-import android.widget.RelativeLayout;
 
-public class CheckedRelativeLayout extends RelativeLayout implements Checkable {
+public class CheckedRelativeLayout extends TouchDelegateRelativeLayout implements Checkable {
 
     private static final int[] CHECKED_STATE_SET = {
             android.R.attr.state_checked
