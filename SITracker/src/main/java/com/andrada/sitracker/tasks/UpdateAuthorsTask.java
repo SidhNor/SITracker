@@ -140,8 +140,8 @@ public class UpdateAuthorsTask extends IntentService {
                         publicationsDao.delete(oldItem);
                     }
                 }
-                //Sleep for 10 seconds to avoid ban from samlib
-                Thread.sleep(10000);
+                //Sleep for 5 seconds to avoid ban from samlib
+                Thread.sleep(5000);
             }
             this.updatedAuthors = authorDao.getNewAuthorsCount();
             //Success
