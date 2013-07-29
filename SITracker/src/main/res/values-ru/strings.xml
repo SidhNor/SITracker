@@ -38,6 +38,9 @@
     </string>
     <string name="cannot_add_author_unknown">Невозможно добавить автора. Непредвиденная ошибка.
     </string>
+    <string name="cannot_add_author_no_publications">Невозможно добавить автора. Не найдено
+        произведений.
+    </string>
     <string name="check_for_updates">Проверка обновлений</string>
     <string name="action_add_ok">Добавить</string>
     <string name="notification_title">Прода</string>

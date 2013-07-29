@@ -41,6 +41,7 @@ public class AddAuthorTask extends AsyncTask<String, Integer, String> {
         String message = "";
         String exceptionMsg = "";
         for (String url : args) {
+            Author author = null;
             try {
                 if (url.equals("") || !url.matches(Constants.SIMPLE_URL_REGEX)) {
                     throw new MalformedURLException();
@@ -63,12 +64,16 @@ public class AddAuthorTask extends AsyncTask<String, Integer, String> {
                     throw new MalformedURLException();
                 }
                 String body = SamlibPageParser.sanitizeHTML(request.body());
-                Author author = new Author();
+                author = new Author();
                 author.setName(SamlibPageParser.getAuthor(body));
                 author.setUpdateDate(SamlibPageParser.getAuthorUpdateDate(body));
                 author.setUrl(url);
                 helper.getAuthorDao().create(author);
                 List<Publication> items = SamlibPageParser.getPublications(body, author);
+                if (items.size() == 0) {
+                    helper.getAuthorDao().delete(author);
+                    throw new AddAuthorException(AddAuthorException.AuthorAddErrors.AUTHOR_NO_PUBLICATIONS);
+                }
                 for (Publication publication : items) {
                     helper.getPublicationDao().create(publication);
                 }
@@ -78,6 +83,14 @@ public class AddAuthorTask extends AsyncTask<String, Integer, String> {
                 message = context.getResources().getString(R.string.cannot_add_author_malformed);
             } catch (SQLException e) {
                 exceptionMsg = e.getCause().getCause().getLocalizedMessage();
+                //Fallback, at this stage the author may be in the database, try to remove it
+                if (author != null) {
+                    try {
+                        helper.getAuthorDao().delete(author);
+                    } catch (SQLException e1) {
+                        //Swallow the exception as the author just wasn't saved
+                    }
+                }
                 message = context.getResources().getString(R.string.cannot_add_author_internal);
             } catch (AddAuthorException e) {
                 switch (e.getError()) {
@@ -89,6 +102,9 @@ public class AddAuthorTask extends AsyncTask<String, Integer, String> {
                         break;
                     case AUTHOR_NAME_NOT_FOUND:
                         message = context.getResources().getString(R.string.cannot_add_author_no_name);
+                        break;
+                    case AUTHOR_NO_PUBLICATIONS:
+                        message = context.getResources().getString(R.string.cannot_add_author_no_publications);
                         break;
                     default:
                         message = context.getResources().getString(R.string.cannot_add_author_unknown);

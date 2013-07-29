@@ -30,6 +30,8 @@
     <string name="cannot_add_author_no_name">Cannot add author. No author name found.</string>
     <string name="cannot_add_author_unknown">Cannot add author. An unexpected error occurred.
     </string>
+    <string name="cannot_add_author_no_publications">Cannot add author. No publications found.
+    </string>
     <string name="check_for_updates">Checking for updates</string>
     <string name="action_add_ok">Add</string>
     <string name="notification_title">SITracker Updates</string>
