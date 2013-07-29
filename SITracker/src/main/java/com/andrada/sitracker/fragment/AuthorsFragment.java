@@ -205,6 +205,9 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
     }
 
     protected void tryAddAuthor(String url) {
+        if (updatingListener != null) {
+            updatingListener.onUpdateStarted();
+        }
         new AddAuthorTask((Context) mCallback, this).execute(url);
     }
 
@@ -254,6 +257,9 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
 
     @Override
     public void onAuthorAddCompleted(String message) {
+        if (updatingListener != null) {
+            updatingListener.onUpdateStopped();
+        }
         EasyTracker.getTracker().sendEvent(
                 Constants.GA_UI_CATEGORY,
                 Constants.GA_EVENT_AUTHOR_ADDED,
