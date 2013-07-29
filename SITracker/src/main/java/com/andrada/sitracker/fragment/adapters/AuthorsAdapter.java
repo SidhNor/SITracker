@@ -43,6 +43,8 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
     Context context;
     private int mSelectedItem = 0;
 
+    private long mSelectedAuthorId = 0;
+
     @AfterInject
     void initAdapter() {
         reloadAuthors();
@@ -52,6 +54,7 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
         try {
             authors = authorDao.getAllAuthorsSorted();
             mNewAuthors = authorDao.getNewAuthorsCount();
+            setSelectedItem(mSelectedAuthorId);
             notifyDataSetChanged();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -122,13 +125,44 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
             EasyTracker.getTracker().sendException("Author Remove thread", e, false);
         }
 
+        boolean removingCurrentlySelected = false;
         for (Author anAuthorToRemove : authorsToRemove) {
+            if (anAuthorToRemove.getId() == mSelectedAuthorId) {
+                removingCurrentlySelected = true;
+            }
             authors.remove(anAuthorToRemove);
+        }
+        if (removingCurrentlySelected) {
+            //Try select the first one
+            setSelectedItem(getFirstAuthorId());
+        } else {
+            setSelectedItem(mSelectedAuthorId);
         }
         notifyDataSetChanged();
     }
 
-    public void setSelectedItem(int selectedItem) {
-        this.mSelectedItem = selectedItem;
+    public long getFirstAuthorId() {
+        if (authors.size() > 0) {
+            return authors.get(0).getId();
+        }
+        return -1;
+    }
+
+    public void setSelectedItem(long selectedItemId) {
+        this.mSelectedAuthorId = selectedItemId;
+        this.mSelectedItem = getItemPositionByAuthorId(selectedItemId);
+    }
+
+    public long getSelectedAuthorId() {
+        return this.mSelectedAuthorId;
+    }
+
+    private int getItemPositionByAuthorId(long authorId) {
+        for (int i = 0; i < authors.size(); i++) {
+            if (authors.get(i).getId() == authorId) {
+                return i;
+            }
+        }
+        return -1;
     }
 }

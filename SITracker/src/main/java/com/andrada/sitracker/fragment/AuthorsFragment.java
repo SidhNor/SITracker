@@ -83,7 +83,7 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
     ConnectivityManager connectivityManager;
 
     @InstanceState
-    int currentAuthorIndex = 0;
+    long currentAuthorIndex = 0;
 
     private Crouton mNoNetworkCrouton;
 
@@ -105,9 +105,11 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
         list.setBackgroundResource(R.drawable.authors_list_background);
         list.setEmptyView(empty);
         getSherlockActivity().invalidateOptionsMenu();
-        if (adapter.getCount() > 0 && currentAuthorIndex < adapter.getCount()) {
-            listItemClicked(currentAuthorIndex);
-        }
+        currentAuthorIndex = adapter.getFirstAuthorId();
+        mCallback.onAuthorSelected(currentAuthorIndex);
+        // Set the item as checked to be highlighted
+        adapter.setSelectedItem(currentAuthorIndex);
+        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -202,12 +204,6 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
         ActionMode.setMultiChoiceMode(list, getSherlockActivity(), this);
     }
 
-    protected void updateAuthors() {
-        int tempPosition = list.getCheckedItemPosition();
-        adapter.setSelectedItem(tempPosition);
-        adapter.reloadAuthors();
-    }
-
     protected void tryAddAuthor(String url) {
         new AddAuthorTask((Context) mCallback, this).execute(url);
     }
@@ -215,12 +211,10 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
     @ItemClick
     public void listItemClicked(int position) {
         // Notify the parent activity of selected item
-        long id = list.getItemIdAtPosition(position);
-        currentAuthorIndex = position;
-        mCallback.onAuthorSelected(id);
-
+        currentAuthorIndex = list.getItemIdAtPosition(position);
+        mCallback.onAuthorSelected(currentAuthorIndex);
         // Set the item as checked to be highlighted
-        adapter.setSelectedItem(position);
+        adapter.setSelectedItem(currentAuthorIndex);
         adapter.notifyDataSetChanged();
 
     }
@@ -265,6 +259,7 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
                 Constants.GA_EVENT_AUTHOR_ADDED,
                 Constants.GA_EVENT_AUTHOR_ADDED, null);
         EasyTracker.getInstance().dispatch();
+
         //Stop progress bar
 
         Style.Builder alertStyle = new Style.Builder()
@@ -273,13 +268,21 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
 
         if (message.length() == 0) {
             //This is success
-            updateAuthors();
+            adapter.reloadAuthors();
             alertStyle.setBackgroundColorValue(Style.holoGreenLight);
             message = getResources().getString(R.string.author_add_success_crouton_message);
         } else {
             alertStyle.setBackgroundColorValue(Style.holoRedLight);
         }
         Crouton.makeText(getSherlockActivity(), message, alertStyle.build()).show();
+
+        if (currentAuthorIndex == -1) {
+            currentAuthorIndex = adapter.getFirstAuthorId();
+            mCallback.onAuthorSelected(currentAuthorIndex);
+            // Set the item as checked to be highlighted
+            adapter.setSelectedItem(currentAuthorIndex);
+            adapter.notifyDataSetChanged();
+        }
     }
 
     //endregion
@@ -291,7 +294,7 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
         if (isUpdating()) {
             toggleUpdatingState();
         }
-        this.updateAuthors();
+        adapter.reloadAuthors();
     }
 
     @Override
@@ -344,6 +347,7 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
                     Constants.GA_EVENT_AUTHOR_REMOVED, (long) mSelectedAuthors.size());
             EasyTracker.getInstance().dispatch();
             adapter.removeAuthors(mSelectedAuthors);
+            mCallback.onAuthorSelected(adapter.getSelectedAuthorId());
             return true;
         }
         return false;
