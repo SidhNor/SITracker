@@ -13,15 +13,15 @@
                 android:name="com.andrada.sitracker.fragment.AuthorsFragment_"
                 android:id="@+id/fragment_authors"
                 android:layout_weight="1"
-                android:layout_width="280dp"
+                android:layout_width="250dp"
                 android:layout_height="match_parent"
                 tools:layout="@layout/fragment_authors"/>
 
         <fragment
                 android:name="com.andrada.sitracker.fragment.PublicationsFragment_"
                 android:id="@+id/fragment_publications"
-                android:layout_weight="1"
-                android:layout_width="400dp"
+                android:layout_weight="2"
+                android:layout_width="360dp"
                 android:layout_height="match_parent"
                 tools:layout="@layout/fragment_publications"/>
     </android.support.v4.widget.SlidingPaneLayout>

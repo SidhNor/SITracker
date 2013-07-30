@@ -67,79 +67,7 @@ public class UpdateAuthorsTask extends IntentService {
         try {
             List<Author> authors = authorDao.queryForAll();
             for (Author author : authors) {
-                if (!this.isConnected())
-                    continue;
-
-                HttpRequest request = null;
-                try {
-                    request = HttpRequest.get(new URL(author.getUrl()));
-                    if (request.code() == 404) {
-                        //skip this author
-                        //Not available atm
-                        continue;
-                    }
-                    EasyTracker.getTracker().sendEvent(
-                            Constants.GA_BGR_CATEGORY,
-                            Constants.GA_EVENT_AUTHOR_UPDATE,
-                            author.getName(), null);
-                    EasyTracker.getInstance().dispatch();
-                } catch (MalformedURLException e) {
-                    //Just swallow exception, as this is unlikely to happen
-                    //Skip author
-                    trackException(e.getMessage());
-                    continue;
-                } catch (HttpRequest.HttpRequestException e) {
-                    //Author currently inaccessible or no internet
-                    //Skip author
-                    trackException(e.getMessage());
-                    continue;
-                }
-                String body = SamlibPageParser.sanitizeHTML(request.body());
-
-                ForeignCollection<Publication> oldItems = author.getPublications();
-                List<Publication> newItems = SamlibPageParser.getPublications(body, author);
-
-                HashMap<String, Publication> oldItemsMap = new HashMap<String, Publication>();
-                for (Publication oldPub : oldItems) {
-                    oldItemsMap.put(oldPub.getUrl(), oldPub);
-                }
-
-                for (Publication pub : newItems) {
-                    //Find pub in oldItems
-                    if (oldItemsMap.containsKey(pub.getUrl())) {
-                        Publication old = oldItemsMap.get(pub.getUrl());
-                        //Check size/name/description
-                        if (pub.getSize() != old.getSize() ||
-                                !pub.getDescription().equals(old.getDescription()) ||
-                                !pub.getName().equals(old.getName())) {
-                            //if something differs
-                            //Store the old size
-                            pub.setOldSize(old.getSize());
-                            //Swap the ids, do an update in DB
-                            pub.setId(old.getId());
-                            pub.setNew(true);
-                            publicationsDao.update(pub);
-                            //Mark author new, update in DB
-                            author.setUpdateDate(new Date());
-                            authorDao.update(author);
-                        }
-                    } else {
-                        //Mark author new, update in DB
-                        author.setUpdateDate(new Date());
-                        authorDao.update(author);
-                        //Mark publication new, create in DB
-                        pub.setNew(true);
-                        publicationsDao.create(pub);
-                    }
-                }
-
-                //Find any old publications to remove
-                for (Publication oldItem : oldItems) {
-                    if (!newItems.contains(oldItem)) {
-                        //Remove from DB
-                        publicationsDao.delete(oldItem);
-                    }
-                }
+                updateAuthor(author);
                 //Sleep for 5 seconds to avoid ban from samlib
                 Thread.sleep(5000);
             }
@@ -157,6 +85,83 @@ public class UpdateAuthorsTask extends IntentService {
             //Ignore
             trackException(e.getMessage());
         }
+    }
+
+    private boolean updateAuthor(Author author) throws SQLException {
+        if (!this.isConnected())
+            return false;
+
+        HttpRequest request = null;
+        try {
+            request = HttpRequest.get(new URL(author.getUrl()));
+            if (request.code() == 404) {
+                //skip this author
+                //Not available atm
+                return false;
+            }
+            EasyTracker.getTracker().sendEvent(
+                    Constants.GA_BGR_CATEGORY,
+                    Constants.GA_EVENT_AUTHOR_UPDATE,
+                    author.getName(), null);
+            EasyTracker.getInstance().dispatch();
+        } catch (MalformedURLException e) {
+            //Just swallow exception, as this is unlikely to happen
+            //Skip author
+            trackException(e.getMessage());
+            return false;
+        } catch (HttpRequest.HttpRequestException e) {
+            //Author currently inaccessible or no internet
+            //Skip author
+            trackException(e.getMessage());
+            return false;
+        }
+        String body = SamlibPageParser.sanitizeHTML(request.body());
+
+        ForeignCollection<Publication> oldItems = author.getPublications();
+        List<Publication> newItems = SamlibPageParser.getPublications(body, author);
+
+        HashMap<String, Publication> oldItemsMap = new HashMap<String, Publication>();
+        for (Publication oldPub : oldItems) {
+            oldItemsMap.put(oldPub.getUrl(), oldPub);
+        }
+
+        for (Publication pub : newItems) {
+            //Find pub in oldItems
+            if (oldItemsMap.containsKey(pub.getUrl())) {
+                Publication old = oldItemsMap.get(pub.getUrl());
+                //Check size/name/description
+                if (pub.getSize() != old.getSize() ||
+                        !pub.getDescription().equals(old.getDescription()) ||
+                        !pub.getName().equals(old.getName())) {
+                    //if something differs
+                    //Store the old size
+                    pub.setOldSize(old.getSize());
+                    //Swap the ids, do an update in DB
+                    pub.setId(old.getId());
+                    pub.setNew(true);
+                    publicationsDao.update(pub);
+                    //Mark author new, update in DB
+                    author.setUpdateDate(new Date());
+                    authorDao.update(author);
+                }
+            } else {
+                //Mark author new, update in DB
+                author.setUpdateDate(new Date());
+                authorDao.update(author);
+                //Mark publication new, create in DB
+                pub.setNew(true);
+                publicationsDao.create(pub);
+            }
+        }
+
+        //Find any old publications to remove
+        for (Publication oldItem : oldItems) {
+            if (!newItems.contains(oldItem)) {
+                //Remove from DB
+                publicationsDao.delete(oldItem);
+            }
+        }
+        return true;
     }
 
     private void broadCastResult(boolean success) {
