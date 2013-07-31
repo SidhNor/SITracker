@@ -20,7 +20,6 @@ import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
-import com.andrada.sitracker.SettingsActivity_;
 import com.andrada.sitracker.contracts.AuthorUpdateStatusListener;
 import com.andrada.sitracker.contracts.PublicationMarkedAsReadListener;
 import com.andrada.sitracker.db.beans.Author;
@@ -171,10 +170,6 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
         }
     }
 
-    @OptionsItem(R.id.action_settings)
-    void menuSettingsSelected() {
-        getSherlockActivity().startActivity(SettingsActivity_.intent(getSherlockActivity()).get());
-    }
     //endregion
 
     @Override
@@ -248,6 +243,14 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
     //region Public methods
     public boolean isUpdating() {
         return mIsUpdating;
+    }
+
+    public String getCurrentSelectedAuthorName() {
+        String name = "";
+        if (adapter.getCurrentlySelectedAuthor() != null) {
+            name = adapter.getCurrentlySelectedAuthor().getName();
+        }
+        return name;
     }
 
     //endregion

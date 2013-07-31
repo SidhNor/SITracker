@@ -270,9 +270,8 @@ public class TouchDelegateRelativeLayout extends RelativeLayout {
 
     private void init(Context context) {
         setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
-
+        mTouchDelegateGroup = new TouchDelegateGroup(this);
         if (BuildConfig.DEBUG) {
-            mTouchDelegateGroup = new TouchDelegateGroup(this);
             mPaint.setStyle(Paint.Style.FILL);
         }
 

@@ -150,6 +150,12 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
         return this.mSelectedAuthorId;
     }
 
+    public Author getCurrentlySelectedAuthor() {
+        if (authors.size() > 0)
+            return authors.get(mSelectedItem);
+        return null;
+    }
+
     private int getItemPositionByAuthorId(long authorId) {
         for (int i = 0; i < authors.size(); i++) {
             if (authors.get(i).getId() == authorId) {

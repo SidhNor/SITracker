@@ -29,6 +29,7 @@ import com.google.analytics.tracking.android.EasyTracker;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.FragmentById;
+import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.ViewById;
@@ -58,6 +59,8 @@ public class MainActivity extends SherlockFragmentActivity implements
 
     PendingIntent updatePendingIntent;
 
+    private String mAppName;
+
     @Override
     public void onAuthorSelected(long id) {
         // Capture the publications fragment from the activity layout
@@ -69,10 +72,10 @@ public class MainActivity extends SherlockFragmentActivity implements
         slidingPane.setPanelSlideListener(slidingPaneListener);
         //Make sure the authors are opened
         slidingPane.openPane();
-        slidingPane.setParallaxDistance(50);
+        slidingPane.setParallaxDistance(100);
 
         slidingPane.getViewTreeObserver().addOnGlobalLayoutListener(globalLayoutListener);
-
+        mAppName = getResources().getString(R.string.app_name);
         mAuthorsFragment.setUpdatingListener(this);
         Intent intent = UpdateAuthorsTask_.intent(this.getApplicationContext()).get();
         this.updatePendingIntent = PendingIntent.getService(this.getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -152,6 +155,11 @@ public class MainActivity extends SherlockFragmentActivity implements
         return super.onOptionsItemSelected(item);
     }
 
+    @OptionsItem(R.id.action_settings)
+    void menuSettingsSelected() {
+        startActivity(SettingsActivity_.intent(this).get());
+    }
+
     /**
      * This global layout listener is used to fire an event after first layout
      * occurs and then it is removed. This gives us a chance to configure parts
@@ -167,11 +175,9 @@ public class MainActivity extends SherlockFragmentActivity implements
                 slidingPane.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
             if (slidingPane.isSlideable() && !slidingPane.isOpen()) {
-                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-                getSupportActionBar().setHomeButtonEnabled(true);
+                updateActionBarWithHomeBackNavigation();
             } else {
-                getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-                getSupportActionBar().setHomeButtonEnabled(false);
+                updateActionBarWithoutLandingNavigation();
             }
         }
     };
@@ -182,19 +188,31 @@ public class MainActivity extends SherlockFragmentActivity implements
         public void onPanelOpened(View view) {
             EasyTracker.getTracker().sendView(Constants.GA_SCREEN_AUTHORS);
             if (slidingPane.isSlideable()) {
-                getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-                getSupportActionBar().setHomeButtonEnabled(false);
+                updateActionBarWithHomeBackNavigation();
             }
         }
 
         public void onPanelClosed(View view) {
             EasyTracker.getTracker().sendView(Constants.GA_SCREEN_PUBLICATIONS);
             //This is called only on phones and 7 inch tablets in portrait
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setHomeButtonEnabled(true);
-            //TODO Remove ability to add authors
+            updateActionBarWithoutLandingNavigation();
         }
     };
+
+    private void updateActionBarWithoutLandingNavigation() {
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        mAuthorsFragment.setHasOptionsMenu(false);
+        String authorTitle = mAuthorsFragment.getCurrentSelectedAuthorName();
+        getSupportActionBar().setTitle(authorTitle.equals("") ? mAppName : authorTitle);
+    }
+
+    private void updateActionBarWithHomeBackNavigation() {
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        getSupportActionBar().setHomeButtonEnabled(false);
+        mAuthorsFragment.setHasOptionsMenu(true);
+        getSupportActionBar().setTitle(mAppName);
+    }
 
     @Override
     public void onUpdateStarted() {
