@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 
-import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.IsNewItemTappedListener;
 import com.andrada.sitracker.db.beans.Author;
 import com.andrada.sitracker.db.dao.AuthorDao;
@@ -89,12 +88,6 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
             authorsItemView.setListener(this);
         } else {
             authorsItemView = (AuthorItemView) convertView;
-        }
-
-        if (authors.get(position).isUpdated()) {
-            authorsItemView.setBackgroundResource(R.drawable.authors_list_item_selector_new);
-        } else {
-            authorsItemView.setBackgroundResource(R.drawable.authors_list_item_selector_normal);
         }
         authorsItemView.bind(authors.get(position), position == mSelectedItem);
         return authorsItemView;

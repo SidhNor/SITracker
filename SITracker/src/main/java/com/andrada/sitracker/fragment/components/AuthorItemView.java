@@ -36,8 +36,15 @@ public class AuthorItemView extends CheckedRelativeLayout {
 
     private IsNewItemTappedListener mListener;
 
+    private final int REGULAR_BACKGROUND = R.drawable.authors_list_item_selector_normal;
+    private final int NEW_BACKGROUND = R.drawable.authors_list_item_selector_new;
+
+    private int currentBackground = REGULAR_BACKGROUND;
+
     public AuthorItemView(Context context) {
         super(context);
+        this.setBackgroundResource(currentBackground);
+        setOldNewBackgrounds();
     }
 
     @AfterViews
@@ -59,15 +66,15 @@ public class AuthorItemView extends CheckedRelativeLayout {
         }
         mIsNew = author.isUpdated();
         author_title.setText(author.getName());
-        author_updated.setImageResource(mIsNew ? R.drawable.star_selected : R.drawable.star_unselected);
         author_update_date.setText(DateFormatterUtil.getFriendlyDateRelativeToToday(author.getUpdateDate()));
+        setOldNewBackgrounds();
     }
 
     @Override
     protected void onDelegatedTouchViewClicked(View view) {
-        if (mListener != null && view.getId() == R.id.author_updated) {
+        if (mListener != null && view.getId() == R.id.author_updated && mIsNew) {
             mIsNew = false;
-            author_updated.setImageResource(R.drawable.star_unselected);
+            setOldNewBackgrounds();
             mListener.onIsNewItemTapped(view);
         }
     }
@@ -84,6 +91,18 @@ public class AuthorItemView extends CheckedRelativeLayout {
         //If we are not new, just ignore everything
         if (mIsNew) {
             author_updated.setImageResource(R.drawable.star_selected);
+        }
+    }
+
+    private void setOldNewBackgrounds() {
+        if (mIsNew && currentBackground != NEW_BACKGROUND) {
+            this.setBackgroundResource(NEW_BACKGROUND);
+            author_updated.setImageResource(R.drawable.star_selected);
+            currentBackground = NEW_BACKGROUND;
+        } else if (!mIsNew && currentBackground != REGULAR_BACKGROUND) {
+            this.setBackgroundResource(REGULAR_BACKGROUND);
+            author_updated.setImageResource(R.drawable.star_unselected);
+            currentBackground = REGULAR_BACKGROUND;
         }
     }
 

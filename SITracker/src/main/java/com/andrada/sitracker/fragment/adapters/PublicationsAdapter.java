@@ -23,9 +23,11 @@ import com.andrada.sitracker.fragment.components.PublicationItemView_;
 import com.andrada.sitracker.tasks.messages.PublicationMarkedAsReadMessage;
 import com.google.analytics.tracking.android.EasyTracker;
 
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.OrmLiteDao;
 import org.androidannotations.annotations.RootContext;
+import org.androidannotations.annotations.UiThread;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -52,42 +54,49 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
 
     ListView listView = null;
 
+    @Background
     public void reloadPublicationsForAuthorId(long id) {
         try {
-            createChildList(publicationsDao.getSortedPublicationsForAuthorId(id));
+
+            List<Publication> pubs = publicationsDao.getSortedPublicationsForAuthorId(id);
+            List<String> newCategories = new ArrayList<String>();
+            List<List<Publication>> newChildren = new ArrayList<List<Publication>>();
+
+            for (Publication publication : pubs) {
+                if (!newCategories.contains(publication.getCategory())) {
+                    newCategories.add(publication.getCategory());
+                }
+            }
+
+            for (String category : newCategories) {
+                List<Publication> categoryList = new ArrayList<Publication>();
+                for (Publication publication : pubs) {
+                    if (publication.getCategory().equals(category)) {
+                        categoryList.add(publication);
+                    }
+                }
+                newChildren.add(categoryList);
+            }
+
+            for (List<Publication> category : newChildren) {
+                //sort the category list by new and date
+                Collections.sort(category, new Comparator<Publication>() {
+                    public int compare(Publication o1, Publication o2) {
+                        return o2.getNew().compareTo(o1.getNew());
+                    }
+                });
+            }
+
+            updateAdapterDataSet(newCategories, newChildren);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    void createChildList(List<Publication> items) {
-        mCategories.clear();
-        mChildren.clear();
-
-        for (Publication publication : items) {
-            if (!mCategories.contains(publication.getCategory())) {
-                mCategories.add(publication.getCategory());
-            }
-        }
-
-        for (String category : mCategories) {
-            List<Publication> categoryList = new ArrayList<Publication>();
-            for (Publication publication : items) {
-                if (publication.getCategory().equals(category)) {
-                    categoryList.add(publication);
-                }
-            }
-            mChildren.add(categoryList);
-        }
-
-        for (List<Publication> category : mChildren) {
-            //sort the category list by new and date
-            Collections.sort(category, new Comparator<Publication>() {
-                public int compare(Publication o1, Publication o2) {
-                    return o2.getNew().compareTo(o1.getNew());
-                }
-            });
-        }
+    @UiThread
+    void updateAdapterDataSet(List<String> newCategories, List<List<Publication>> newChildren) {
+        mCategories = newCategories;
+        mChildren = newChildren;
         notifyDataSetChanged();
     }
 
