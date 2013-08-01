@@ -175,9 +175,9 @@ public class MainActivity extends SherlockFragmentActivity implements
                 slidingPane.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
             if (slidingPane.isSlideable() && !slidingPane.isOpen()) {
-                updateActionBarWithHomeBackNavigation();
-            } else {
                 updateActionBarWithoutLandingNavigation();
+            } else {
+                updateActionBarWithHomeBackNavigation();
             }
         }
     };

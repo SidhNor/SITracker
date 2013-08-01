@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Log;
 
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.db.beans.Author;
@@ -119,6 +120,14 @@ public class UpdateAuthorsTask extends IntentService {
 
         ForeignCollection<Publication> oldItems = author.getPublications();
         List<Publication> newItems = SamlibPageParser.getPublications(body, author);
+        if (newItems.size() == 0 && oldItems.size() > 1) {
+            StringBuilder sb = new StringBuilder("Publications are empty. Response code: ");
+            sb.append(request.code());
+            sb.append(". Response size:");
+            sb.append(request.body().getBytes().length);
+            EasyTracker.getTracker().sendException(sb.toString(), false);
+            Log.w(Constants.APP_TAG, "Something went wrong. No publications found for author that already exists");
+        }
 
         HashMap<String, Publication> oldItemsMap = new HashMap<String, Publication>();
         for (Publication oldPub : oldItems) {
@@ -154,13 +163,6 @@ public class UpdateAuthorsTask extends IntentService {
             }
         }
 
-        //Find any old publications to remove
-        for (Publication oldItem : oldItems) {
-            if (!newItems.contains(oldItem)) {
-                //Remove from DB
-                publicationsDao.delete(oldItem);
-            }
-        }
         return true;
     }
 
@@ -183,4 +185,5 @@ public class UpdateAuthorsTask extends IntentService {
     private void trackException(String message) {
         EasyTracker.getTracker().sendException(message, false);
     }
+
 }
