@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.preference.PreferenceManager;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SlidingPaneLayout;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -17,12 +16,9 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.andrada.sitracker.fragment.AuthorsFragment;
-import com.andrada.sitracker.fragment.AuthorsFragment.OnAuthorSelectedListener;
 import com.andrada.sitracker.fragment.PublicationsFragment;
 import com.andrada.sitracker.tasks.UpdateAuthorsTask_;
-import com.andrada.sitracker.tasks.filters.MarkAsReadMessageFilter;
 import com.andrada.sitracker.tasks.filters.UpdateStatusMessageFilter;
-import com.andrada.sitracker.tasks.receivers.MarkedAsReadReceiver;
 import com.andrada.sitracker.tasks.receivers.UpdateStatusReceiver;
 import com.google.analytics.tracking.android.EasyTracker;
 
@@ -33,6 +29,7 @@ import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.ViewById;
+import org.androidannotations.annotations.res.StringRes;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 
@@ -40,7 +37,7 @@ import de.keyboardsurfer.android.widget.crouton.Crouton;
 @EActivity(R.layout.activity_main)
 @OptionsMenu(R.menu.main_menu)
 public class MainActivity extends SherlockFragmentActivity implements
-        OnAuthorSelectedListener, AuthorsFragment.OnAuthorsUpdatingListener {
+        AuthorsFragment.OnAuthorsUpdatingListener {
 
     @FragmentById(R.id.fragment_publications)
     PublicationsFragment mPubFragment;
@@ -59,13 +56,8 @@ public class MainActivity extends SherlockFragmentActivity implements
 
     PendingIntent updatePendingIntent;
 
+    @StringRes(R.string.app_name)
     private String mAppName;
-
-    @Override
-    public void onAuthorSelected(long id) {
-        // Capture the publications fragment from the activity layout
-        mPubFragment.updatePublicationsView(id);
-    }
 
     @AfterViews
     public void afterViews() {
@@ -74,8 +66,8 @@ public class MainActivity extends SherlockFragmentActivity implements
         slidingPane.openPane();
         slidingPane.setParallaxDistance(100);
 
+
         slidingPane.getViewTreeObserver().addOnGlobalLayoutListener(globalLayoutListener);
-        mAppName = getResources().getString(R.string.app_name);
         mAuthorsFragment.setUpdatingListener(this);
         Intent intent = UpdateAuthorsTask_.intent(this.getApplicationContext()).get();
         this.updatePendingIntent = PendingIntent.getService(this.getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -92,7 +84,12 @@ public class MainActivity extends SherlockFragmentActivity implements
     }
 
     private BroadcastReceiver updateStatusReceiver;
-    private BroadcastReceiver markAsReadReceiver;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Integer i = 10 + 2;
+    }
 
     @Override
     protected void onResume() {
@@ -102,15 +99,10 @@ public class MainActivity extends SherlockFragmentActivity implements
             updateStatusReceiver = new UpdateStatusReceiver(mAuthorsFragment);
             updateStatusReceiver.setOrderedHint(true);
         }
-        if (markAsReadReceiver == null) {
-            markAsReadReceiver = new MarkedAsReadReceiver(mPubFragment, mAuthorsFragment);
-        }
 
         UpdateStatusMessageFilter filter = new UpdateStatusMessageFilter();
         filter.setPriority(1);
         registerReceiver(updateStatusReceiver, filter);
-        LocalBroadcastManager.getInstance(getApplicationContext())
-                .registerReceiver(markAsReadReceiver, new MarkAsReadMessageFilter());
         EasyTracker.getInstance().activityStart(this);
     }
 
@@ -118,7 +110,6 @@ public class MainActivity extends SherlockFragmentActivity implements
     protected void onPause() {
         super.onPause();
         unregisterReceiver(updateStatusReceiver);
-        LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(markAsReadReceiver);
         EasyTracker.getInstance().activityStop(this);
     }
 

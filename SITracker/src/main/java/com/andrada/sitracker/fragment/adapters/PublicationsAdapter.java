@@ -3,7 +3,6 @@ package com.andrada.sitracker.fragment.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -16,11 +15,11 @@ import com.andrada.sitracker.contracts.IsNewItemTappedListener;
 import com.andrada.sitracker.db.beans.Publication;
 import com.andrada.sitracker.db.dao.PublicationDao;
 import com.andrada.sitracker.db.manager.SiDBHelper;
+import com.andrada.sitracker.events.PublicationMarkedAsReadEvent;
 import com.andrada.sitracker.fragment.components.PublicationCategoryItemView;
 import com.andrada.sitracker.fragment.components.PublicationCategoryItemView_;
 import com.andrada.sitracker.fragment.components.PublicationItemView;
 import com.andrada.sitracker.fragment.components.PublicationItemView_;
-import com.andrada.sitracker.tasks.messages.PublicationMarkedAsReadMessage;
 import com.google.analytics.tracking.android.EasyTracker;
 
 import org.androidannotations.annotations.Background;
@@ -34,6 +33,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by ggodonoga on 05/06/13.
@@ -189,7 +190,7 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
             pub.setOldSize(0);
             try {
                 publicationsDao.update(pub);
-                LocalBroadcastManager.getInstance(context).sendBroadcast(new PublicationMarkedAsReadMessage(pub.getId()));
+                EventBus.getDefault().post(new PublicationMarkedAsReadEvent(pub.getId()));
             } catch (SQLException e) {
                 EasyTracker.getTracker().sendException("Publication Set update", e, false);
             }

@@ -1,7 +1,6 @@
 package com.andrada.sitracker.fragment.adapters;
 
 import android.content.Context;
-import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -11,9 +10,9 @@ import com.andrada.sitracker.contracts.IsNewItemTappedListener;
 import com.andrada.sitracker.db.beans.Author;
 import com.andrada.sitracker.db.dao.AuthorDao;
 import com.andrada.sitracker.db.manager.SiDBHelper;
+import com.andrada.sitracker.events.AuthorMarkedAsReadEvent;
 import com.andrada.sitracker.fragment.components.AuthorItemView;
 import com.andrada.sitracker.fragment.components.AuthorItemView_;
-import com.andrada.sitracker.tasks.messages.AuthorMarkedAsReadMessage;
 import com.google.analytics.tracking.android.EasyTracker;
 
 import org.androidannotations.annotations.AfterInject;
@@ -23,6 +22,8 @@ import org.androidannotations.annotations.RootContext;
 
 import java.sql.SQLException;
 import java.util.List;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by ggodonoga on 05/06/13.
@@ -102,7 +103,7 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
                     authors.get(position).isUpdated()) {
                 try {
                     authorDao.markAsRead(authors.get(position));
-                    LocalBroadcastManager.getInstance(context).sendBroadcast(new AuthorMarkedAsReadMessage(authors.get(position).getId()));
+                    EventBus.getDefault().post(new AuthorMarkedAsReadEvent(authors.get(position).getId()));
                 } catch (SQLException e) {
                     //surface error
                     EasyTracker.getTracker().sendException("Author Mark as read thread", e, false);

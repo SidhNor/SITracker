@@ -1,7 +1,5 @@
 package com.andrada.sitracker.fragment;
 
-import android.app.Activity;
-import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -21,8 +19,9 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.AuthorUpdateStatusListener;
-import com.andrada.sitracker.contracts.PublicationMarkedAsReadListener;
 import com.andrada.sitracker.db.beans.Author;
+import com.andrada.sitracker.events.AuthorSelectedEvent;
+import com.andrada.sitracker.events.PublicationMarkedAsReadEvent;
 import com.andrada.sitracker.fragment.adapters.AuthorsAdapter;
 import com.andrada.sitracker.fragment.dialog.AddAuthorDialog;
 import com.andrada.sitracker.tasks.AddAuthorTask;
@@ -46,6 +45,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import de.greenrobot.event.EventBus;
 import de.keyboardsurfer.android.widget.crouton.Configuration;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
@@ -54,11 +54,7 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 @OptionsMenu(R.menu.authors_menu)
 public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.IAuthorTaskCallback,
         AuthorUpdateStatusListener, AddAuthorDialog.OnAuthorLinkSuppliedListener,
-        PublicationMarkedAsReadListener, MultiChoiceModeListener, View.OnClickListener {
-
-    public interface OnAuthorSelectedListener {
-        public void onAuthorSelected(long id);
-    }
+        MultiChoiceModeListener, View.OnClickListener {
 
     public interface OnAuthorsUpdatingListener {
         void onUpdateStarted();
@@ -66,7 +62,6 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
         void onUpdateStopped();
     }
 
-    OnAuthorSelectedListener mCallback;
     OnAuthorsUpdatingListener updatingListener;
 
     @ViewById
@@ -82,7 +77,7 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
     ConnectivityManager connectivityManager;
 
     @InstanceState
-    long currentAuthorIndex = 0;
+    long currentAuthorIndex = -1;
 
     private Crouton mNoNetworkCrouton;
 
@@ -96,39 +91,25 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+        EventBus.getDefault().register(this);
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        list.setBackgroundResource(R.drawable.authors_list_background);
-        list.setEmptyView(empty);
         getSherlockActivity().invalidateOptionsMenu();
-        currentAuthorIndex = adapter.getFirstAuthorId();
-        mCallback.onAuthorSelected(currentAuthorIndex);
+        currentAuthorIndex = currentAuthorIndex == -1 ? adapter.getFirstAuthorId() : currentAuthorIndex;
+        EventBus.getDefault().post(new AuthorSelectedEvent(currentAuthorIndex));
         // Set the item as checked to be highlighted
         adapter.setSelectedItem(currentAuthorIndex);
         adapter.notifyDataSetChanged();
+
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-
-        try {
-            // This makes sure that the container activity has implemented
-            // the callback interface. If not, it throws an exception.
-            mCallback = (OnAuthorSelectedListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnAuthorSelectedListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mCallback = null;
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 
     //endregion
@@ -197,20 +178,22 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
     void bindAdapter() {
         list.setAdapter(adapter);
         ActionMode.setMultiChoiceMode(list, getSherlockActivity(), this);
+        list.setBackgroundResource(R.drawable.authors_list_background);
+        list.setEmptyView(empty);
     }
 
     protected void tryAddAuthor(String url) {
         if (updatingListener != null) {
             updatingListener.onUpdateStarted();
         }
-        new AddAuthorTask((Context) mCallback, this).execute(url);
+        new AddAuthorTask(getSherlockActivity(), this).execute(url);
     }
 
     @ItemClick
     public void listItemClicked(int position) {
         // Notify the parent activity of selected item
         currentAuthorIndex = list.getItemIdAtPosition(position);
-        mCallback.onAuthorSelected(currentAuthorIndex);
+        EventBus.getDefault().post(new AuthorSelectedEvent(currentAuthorIndex));
         // Set the item as checked to be highlighted
         adapter.setSelectedItem(currentAuthorIndex);
         adapter.notifyDataSetChanged();
@@ -287,7 +270,7 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
 
         if (currentAuthorIndex == -1) {
             currentAuthorIndex = adapter.getFirstAuthorId();
-            mCallback.onAuthorSelected(currentAuthorIndex);
+            EventBus.getDefault().post(new AuthorSelectedEvent(currentAuthorIndex));
             // Set the item as checked to be highlighted
             adapter.setSelectedItem(currentAuthorIndex);
             adapter.notifyDataSetChanged();
@@ -356,7 +339,7 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
                     Constants.GA_EVENT_AUTHOR_REMOVED, (long) mSelectedAuthors.size());
             EasyTracker.getInstance().dispatch();
             adapter.removeAuthors(mSelectedAuthors);
-            mCallback.onAuthorSelected(adapter.getSelectedAuthorId());
+            EventBus.getDefault().post(new AuthorSelectedEvent(currentAuthorIndex));
             return true;
         }
         return false;
@@ -380,8 +363,7 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
         this.updatingListener = updatingListener;
     }
 
-    @Override
-    public void onPublicationMarkedAsRead(long publicationId) {
+    public void onEvent(PublicationMarkedAsReadEvent publicationId) {
         //ensure we update the new status of the author if he has no new publications
         EasyTracker.getTracker().sendEvent(
                 Constants.GA_UI_CATEGORY,
@@ -389,7 +371,6 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
                 Constants.GA_EVENT_AUTHOR_MANUAL_READ, null);
         EasyTracker.getInstance().dispatch();
         adapter.notifyDataSetChanged();
-
     }
 
     private void showNoNetworkCroutonMessage() {
