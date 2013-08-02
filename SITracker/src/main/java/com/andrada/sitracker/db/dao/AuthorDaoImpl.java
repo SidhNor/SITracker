@@ -22,7 +22,8 @@ public class AuthorDaoImpl extends BaseDaoImpl<Author, Integer>
     public int getNewAuthorsCount() throws SQLException {
 
         return (int) this.queryRawValue(
-                "SELECT COUNT(DISTINCT authors.id) FROM authors, publications WHERE authors.id = publications.author_id AND publications.isNew = 1");
+                "SELECT COUNT(DISTINCT authors.id) FROM authors, publications " +
+                        "WHERE authors.id = publications.author_id AND publications.isNew = 1");
     }
 
     @Override

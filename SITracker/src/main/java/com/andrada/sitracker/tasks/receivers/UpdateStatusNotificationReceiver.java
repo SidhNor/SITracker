@@ -1,5 +1,6 @@
 package com.andrada.sitracker.tasks.receivers;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -50,6 +51,8 @@ public class UpdateStatusNotificationReceiver extends BroadcastReceiver {
                         .setContentTitle(context.getResources().getString(R.string.notification_title))
                         .setContentText(context.getResources().getQuantityString(R.plurals.authors_updated, number, number))
                         .setAutoCancel(true)
+                        .setOnlyAlertOnce(true)
+                        .setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND)
                         .setNumber(number);
         // Creates an explicit intent for an Activity in your app
         Intent resultIntent = new Intent(context, MainActivity_.class);

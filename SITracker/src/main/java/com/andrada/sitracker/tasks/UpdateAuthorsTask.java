@@ -80,7 +80,7 @@ public class UpdateAuthorsTask extends IntentService {
                 //Sleep for 5 seconds to avoid ban from samlib
                 Thread.sleep(5000);
             }
-            this.updatedAuthors = authorDao.getNewAuthorsCount();
+
             //Success
             //Do a broadcast
             broadCastResult(true);
@@ -125,18 +125,19 @@ public class UpdateAuthorsTask extends IntentService {
 
         ForeignCollection<Publication> oldItems = author.getPublications();
         List<Publication> newItems = SamlibPageParser.getPublications(body, author);
-        if (newItems.size() == 0 && oldItems.size() > 1) {
+
+        HashMap<String, Publication> oldItemsMap = new HashMap<String, Publication>();
+        for (Publication oldPub : oldItems) {
+            oldItemsMap.put(oldPub.getUrl(), oldPub);
+        }
+
+        if (newItems.size() == 0 && oldItemsMap.size() > 1) {
             StringBuilder sb = new StringBuilder("Publications are empty. Response code: ");
             sb.append(request.code());
             sb.append(". Response size:");
             sb.append(request.body().getBytes().length);
             EasyTracker.getTracker().sendException(sb.toString(), false);
             Log.w(Constants.APP_TAG, "Something went wrong. No publications found for author that already exists");
-        }
-
-        HashMap<String, Publication> oldItemsMap = new HashMap<String, Publication>();
-        for (Publication oldPub : oldItems) {
-            oldItemsMap.put(oldPub.getUrl(), oldPub);
         }
 
         for (Publication pub : newItems) {
@@ -153,6 +154,7 @@ public class UpdateAuthorsTask extends IntentService {
                     //Swap the ids, do an update in DB
                     pub.setId(old.getId());
                     pub.setNew(true);
+                    this.updatedAuthors++;
                     publicationsDao.update(pub);
                     //Mark author new, update in DB
                     author.setUpdateDate(new Date());
@@ -164,6 +166,7 @@ public class UpdateAuthorsTask extends IntentService {
                 authorDao.update(author);
                 //Mark publication new, create in DB
                 pub.setNew(true);
+                this.updatedAuthors++;
                 publicationsDao.create(pub);
             }
         }
