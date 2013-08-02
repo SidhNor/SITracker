@@ -61,8 +61,9 @@ public class UpdateAuthorsTask extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
 
+        boolean isNetworkIgnore = intent.getBooleanExtra(Constants.UPDATE_IGNORES_NETWORK, false);
+
         EasyTracker.getInstance().setContext(this.getApplicationContext());
-        // Get a reference to tracker.
 
         //Check for updates
         this.updatedAuthors = 0;
@@ -72,7 +73,8 @@ public class UpdateAuthorsTask extends IntentService {
                 boolean useWiFiOnly = PreferenceManager.getDefaultSharedPreferences(this)
                         .getBoolean(Constants.UPDATE_NETWORK_KEY, false);
                 if (this.isConnected() &&
-                        (!useWiFiOnly || this.isConnectedToWiFi())) {
+                        (isNetworkIgnore ||
+                                (!useWiFiOnly || this.isConnectedToWiFi()))) {
                     updateAuthor(author);
                 }
                 //Sleep for 5 seconds to avoid ban from samlib

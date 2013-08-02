@@ -152,7 +152,7 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
     }
 
     public Author getCurrentlySelectedAuthor() {
-        if (authors.size() > 0)
+        if (mSelectedItem < authors.size() && mSelectedItem >= 0)
             return authors.get(mSelectedItem);
         return null;
     }

@@ -59,7 +59,7 @@
     <string name="pref_updates_check_summ">Automatically update authors in background at the
         specified interval
     </string>
-    <string name="pref_update_wifi_only">Download via Wi-Fi only</string>
+    <string name="pref_update_wifi_only">Update via Wi-Fi only</string>
     <string name="pref_update_wifi_only_summ">To reduce network provider data charges, don\'t
         download over mobile networks
     </string>

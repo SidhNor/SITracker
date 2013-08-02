@@ -1,5 +1,6 @@
 package com.andrada.sitracker.fragment;
 
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -137,7 +138,9 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
         if (!mIsUpdating && adapter.getCount() > 0) {
             final NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
             if (activeNetwork != null && activeNetwork.isConnected()) {
-                UpdateAuthorsTask_.intent(getActivity()).start();
+                Intent updateIntent = new Intent(getSherlockActivity(), UpdateAuthorsTask_.class);
+                updateIntent.putExtra(Constants.UPDATE_IGNORES_NETWORK, true);
+                getSherlockActivity().startService(updateIntent);
                 EasyTracker.getTracker().sendEvent(
                         Constants.GA_UI_CATEGORY,
                         Constants.GA_EVENT_AUTHORS_MANUAL_REFRESH,
@@ -339,6 +342,7 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
                     Constants.GA_EVENT_AUTHOR_REMOVED, (long) mSelectedAuthors.size());
             EasyTracker.getInstance().dispatch();
             adapter.removeAuthors(mSelectedAuthors);
+            currentAuthorIndex = adapter.getSelectedAuthorId();
             EventBus.getDefault().post(new AuthorSelectedEvent(currentAuthorIndex));
             return true;
         }
