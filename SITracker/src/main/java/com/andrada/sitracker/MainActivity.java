@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.preference.PreferenceManager;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SlidingPaneLayout;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -94,6 +95,8 @@ public class MainActivity extends SherlockFragmentActivity implements
             updateStatusReceiver.setOrderedHint(true);
         }
 
+        getSupportFragmentManager().addOnBackStackChangedListener(backStackListener);
+
         UpdateStatusMessageFilter filter = new UpdateStatusMessageFilter();
         filter.setPriority(1);
         registerReceiver(updateStatusReceiver, filter);
@@ -104,6 +107,7 @@ public class MainActivity extends SherlockFragmentActivity implements
     protected void onPause() {
         super.onPause();
         unregisterReceiver(updateStatusReceiver);
+        getSupportFragmentManager().removeOnBackStackChangedListener(backStackListener);
         EasyTracker.getInstance().activityStop(this);
     }
 
@@ -142,7 +146,7 @@ public class MainActivity extends SherlockFragmentActivity implements
 
     @OptionsItem(R.id.action_settings)
     void menuSettingsSelected() {
-        startActivity(SettingsActivity_.intent(this).get());
+        startActivity(com.andrada.sitracker.SettingsActivity_.intent(this).get());
     }
 
     /**
@@ -167,6 +171,21 @@ public class MainActivity extends SherlockFragmentActivity implements
         }
     };
 
+    /**
+     * This back stack listener is used to simulate standard fragment backstack behavior
+     * for back button when panes are slid back and forth.
+     */
+    FragmentManager.OnBackStackChangedListener backStackListener = new FragmentManager.OnBackStackChangedListener() {
+        @Override
+        public void onBackStackChanged() {
+            if (slidingPane.isSlideable() &&
+                    !slidingPane.isOpen() &&
+                    getSupportFragmentManager().getBackStackEntryCount() == 0) {
+                slidingPane.openPane();
+            }
+        }
+    };
+
 
     SlidingPaneLayout.SimplePanelSlideListener slidingPaneListener = new SlidingPaneLayout.SimplePanelSlideListener() {
 
@@ -174,6 +193,7 @@ public class MainActivity extends SherlockFragmentActivity implements
             EasyTracker.getTracker().sendView(Constants.GA_SCREEN_AUTHORS);
             if (slidingPane.isSlideable()) {
                 updateActionBarWithHomeBackNavigation();
+                getSupportFragmentManager().popBackStack();
             }
         }
 
@@ -181,6 +201,7 @@ public class MainActivity extends SherlockFragmentActivity implements
             EasyTracker.getTracker().sendView(Constants.GA_SCREEN_PUBLICATIONS);
             //This is called only on phones and 7 inch tablets in portrait
             updateActionBarWithoutLandingNavigation();
+            getSupportFragmentManager().beginTransaction().addToBackStack(null).commit();
         }
     };
 
