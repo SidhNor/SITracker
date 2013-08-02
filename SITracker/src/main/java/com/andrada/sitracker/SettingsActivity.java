@@ -30,7 +30,12 @@ public class SettingsActivity extends SherlockPreferenceActivity implements
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        addPreferencesFromResource(R.xml.preferences);
+        if (getPackageManager().hasSystemFeature(getPackageManager().FEATURE_TELEPHONY)) {
+            addPreferencesFromResource(R.xml.preferences);
+        } else {
+            addPreferencesFromResource(R.xml.preferences_no3g);
+        }
+
         setSummary();
         ActionBar actionBar = getSherlock().getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);

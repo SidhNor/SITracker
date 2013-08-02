@@ -57,7 +57,7 @@ public class MainActivity extends SherlockFragmentActivity implements
     PendingIntent updatePendingIntent;
 
     @StringRes(R.string.app_name)
-    private String mAppName;
+    String mAppName;
 
     @AfterViews
     public void afterViews() {
@@ -84,12 +84,6 @@ public class MainActivity extends SherlockFragmentActivity implements
     }
 
     private BroadcastReceiver updateStatusReceiver;
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Integer i = 10 + 2;
-    }
 
     @Override
     protected void onResume() {

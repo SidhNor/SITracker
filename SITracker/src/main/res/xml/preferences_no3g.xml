@@ -14,11 +14,4 @@
             android:entries="@array/pref_update_interval_human"
             android:entryValues="@array/pref_update_interval_value"
             android:defaultValue="12800000L"/>
-    <CheckBoxPreference
-            android:dependency="pref_updates"
-            android:key="pref_wifi_only"
-            android:title="@string/pref_update_wifi_only"
-            android:summary="@string/pref_update_wifi_only_summ"
-            android:defaultValue="false"/>
-
 </PreferenceScreen>

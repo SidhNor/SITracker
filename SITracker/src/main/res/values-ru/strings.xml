@@ -79,6 +79,11 @@
     <string name="pref_updates_check">Автоматическое обновление</string>
     <string name="pref_updates_check_summ">Автоматическое обновление авторов с заданным интервалом
     </string>
+    <string name="pref_update_wifi_only">Загрузка по Wi-Fi</string>
+    <string name="pref_update_wifi_only_summ">Не качать через мобильные интернет соединения дабы
+        уменьшить потребление траффика
+    </string>
+
     <string name="pref_update_interval">Интервал обновлений</string>
     <string name="pref_header_title">Настройки</string>
 </resources>

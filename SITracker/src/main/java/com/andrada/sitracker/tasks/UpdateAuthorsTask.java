@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.andrada.sitracker.Constants;
@@ -68,7 +69,12 @@ public class UpdateAuthorsTask extends IntentService {
         try {
             List<Author> authors = authorDao.queryForAll();
             for (Author author : authors) {
-                updateAuthor(author);
+                boolean useWiFiOnly = PreferenceManager.getDefaultSharedPreferences(this)
+                        .getBoolean(Constants.UPDATE_NETWORK_KEY, false);
+                if (this.isConnected() &&
+                        (!useWiFiOnly || this.isConnectedToWiFi())) {
+                    updateAuthor(author);
+                }
                 //Sleep for 5 seconds to avoid ban from samlib
                 Thread.sleep(5000);
             }
@@ -89,9 +95,6 @@ public class UpdateAuthorsTask extends IntentService {
     }
 
     private boolean updateAuthor(Author author) throws SQLException {
-        if (!this.isConnected())
-            return false;
-
         HttpRequest request = null;
         try {
             request = HttpRequest.get(new URL(author.getUrl()));
@@ -180,6 +183,13 @@ public class UpdateAuthorsTask extends IntentService {
     private boolean isConnected() {
         final NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
         return (activeNetwork != null && activeNetwork.isConnected());
+    }
+
+    private boolean isConnectedToWiFi() {
+        final NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
+        return (activeNetwork != null &&
+                activeNetwork.isConnected() &&
+                activeNetwork.getType() == ConnectivityManager.TYPE_WIFI);
     }
 
     private void trackException(String message) {
