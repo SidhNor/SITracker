@@ -55,13 +55,13 @@
     </plurals>
 
     <!--Preferences -->
-    <string name="pref_updates_check">Automatically update</string>
-    <string name="pref_updates_check_summ">Automatically update authors in background at the
+    <string name="pref_updates_check">Automatic updates</string>
+    <string name="pref_updates_check_summ">Automatic authors updates in background at the
         specified interval
     </string>
     <string name="pref_update_wifi_only">Update via Wi-Fi only</string>
     <string name="pref_update_wifi_only_summ">To reduce network provider data charges, don\'t
-        download over mobile networks
+        update over mobile networks
     </string>
     <string name="pref_update_interval">Update interval</string>
     <string name="pref_header_title">Settings</string>
