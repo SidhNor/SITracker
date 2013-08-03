@@ -76,7 +76,7 @@ public class AuthorsFragment extends SherlockFragment implements AuthorUpdateSta
 
     private boolean mIsUpdating = false;
 
-    private List<Author> mSelectedAuthors = new ArrayList<Author>();
+    private final List<Author> mSelectedAuthors = new ArrayList<Author>();
 
     //region Fragment lifecycle overrides
 

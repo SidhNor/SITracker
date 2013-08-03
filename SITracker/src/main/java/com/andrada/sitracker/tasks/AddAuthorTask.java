@@ -25,7 +25,7 @@ import de.greenrobot.event.EventBus;
 
 public class AddAuthorTask extends AsyncTask<String, Integer, String> {
 
-    private Context context;
+    private final Context context;
     private SiDBHelper helper;
 
 

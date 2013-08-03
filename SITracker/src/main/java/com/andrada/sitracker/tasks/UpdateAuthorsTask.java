@@ -97,7 +97,7 @@ public class UpdateAuthorsTask extends IntentService {
     }
 
     private boolean updateAuthor(Author author) throws SQLException {
-        HttpRequest request = null;
+        HttpRequest request;
         try {
             request = HttpRequest.get(new URL(author.getUrl()));
             if (request.code() == 404) {
@@ -132,11 +132,9 @@ public class UpdateAuthorsTask extends IntentService {
         }
 
         if (newItems.size() == 0 && oldItemsMap.size() > 1) {
-            StringBuilder sb = new StringBuilder("Publications are empty. Response code: ");
-            sb.append(request.code());
-            sb.append(". Response size:");
-            sb.append(request.body().getBytes().length);
-            EasyTracker.getTracker().sendException(sb.toString(), false);
+            EasyTracker.getTracker().sendException(
+                    "Publications are empty. Response code: " + request.code() +
+                            ". Response size:" + request.body().getBytes().length, false);
             Log.w(Constants.APP_TAG, "Something went wrong. No publications found for author that already exists");
         }
 

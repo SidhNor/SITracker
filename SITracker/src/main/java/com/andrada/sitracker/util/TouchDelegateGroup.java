@@ -77,7 +77,7 @@ public class TouchDelegateGroup extends TouchDelegate {
                 break;
         }
 
-        return delegate == null ? false : delegate.onTouchEvent(event);
+        return delegate != null && delegate.onTouchEvent(event);
     }
 
 }

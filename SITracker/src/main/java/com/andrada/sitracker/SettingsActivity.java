@@ -4,6 +4,7 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.PreferenceManager;
@@ -30,7 +31,7 @@ public class SettingsActivity extends SherlockPreferenceActivity implements
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getPackageManager().hasSystemFeature(getPackageManager().FEATURE_TELEPHONY)) {
+        if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_TELEPHONY)) {
             addPreferencesFromResource(R.xml.preferences);
         } else {
             addPreferencesFromResource(R.xml.preferences_no3g);

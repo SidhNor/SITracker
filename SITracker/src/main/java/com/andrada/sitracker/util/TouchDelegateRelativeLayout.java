@@ -40,7 +40,7 @@ public class TouchDelegateRelativeLayout extends RelativeLayout {
      * This is a mandatory field
      * Should contain all the views and their respective configs for delegated touch input
      */
-    protected HashMap<ViewConfig, View> delegatedTouchViews = new HashMap<ViewConfig, View>();
+    protected final HashMap<ViewConfig, View> delegatedTouchViews = new HashMap<ViewConfig, View>();
 
     public static boolean TapRegionHighlighted = false;
 
@@ -241,8 +241,8 @@ public class TouchDelegateRelativeLayout extends RelativeLayout {
 
 
     private static class TouchDelegateRecord {
-        public Rect rect;
-        public int color;
+        public final Rect rect;
+        public final int color;
 
         public TouchDelegateRecord(Rect _rect, int _color) {
             rect = _rect;
@@ -264,7 +264,7 @@ public class TouchDelegateRelativeLayout extends RelativeLayout {
     }
 
     public TouchDelegateRelativeLayout(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs);
+        super(context, attrs, defStyle);
         init(context);
     }
 

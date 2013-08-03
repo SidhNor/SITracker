@@ -78,10 +78,7 @@ public class MainActivity extends SherlockFragmentActivity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         //Do not show menu in actionbar if authors are updating
-        if (mAuthorsFragment != null) {
-            return !mAuthorsFragment.isUpdating();
-        }
-        return true;
+        return mAuthorsFragment == null || !mAuthorsFragment.isUpdating();
     }
 
     private BroadcastReceiver updateStatusReceiver;
@@ -162,7 +159,7 @@ public class MainActivity extends SherlockFragmentActivity {
      * of the UI that adapt based on available space after they have had the
      * opportunity to measure and layout.
      */
-    ViewTreeObserver.OnGlobalLayoutListener globalLayoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
+    final ViewTreeObserver.OnGlobalLayoutListener globalLayoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
         @Override
         public void onGlobalLayout() {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
@@ -182,7 +179,7 @@ public class MainActivity extends SherlockFragmentActivity {
      * This back stack listener is used to simulate standard fragment backstack behavior
      * for back button when panes are slid back and forth.
      */
-    FragmentManager.OnBackStackChangedListener backStackListener = new FragmentManager.OnBackStackChangedListener() {
+    final FragmentManager.OnBackStackChangedListener backStackListener = new FragmentManager.OnBackStackChangedListener() {
         @Override
         public void onBackStackChanged() {
             if (slidingPane.isSlideable() &&
@@ -194,7 +191,7 @@ public class MainActivity extends SherlockFragmentActivity {
     };
 
 
-    SlidingPaneLayout.SimplePanelSlideListener slidingPaneListener = new SlidingPaneLayout.SimplePanelSlideListener() {
+    final SlidingPaneLayout.SimplePanelSlideListener slidingPaneListener = new SlidingPaneLayout.SimplePanelSlideListener() {
 
         public void onPanelOpened(View view) {
             EasyTracker.getTracker().sendView(Constants.GA_SCREEN_AUTHORS);
