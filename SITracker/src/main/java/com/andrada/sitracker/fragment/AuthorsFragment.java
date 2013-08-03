@@ -21,11 +21,12 @@ import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.AuthorUpdateStatusListener;
 import com.andrada.sitracker.db.beans.Author;
+import com.andrada.sitracker.events.AuthorAddedEvent;
 import com.andrada.sitracker.events.AuthorSelectedEvent;
+import com.andrada.sitracker.events.ProgressBarToggleEvent;
 import com.andrada.sitracker.events.PublicationMarkedAsReadEvent;
 import com.andrada.sitracker.fragment.adapters.AuthorsAdapter;
 import com.andrada.sitracker.fragment.dialog.AddAuthorDialog;
-import com.andrada.sitracker.tasks.AddAuthorTask;
 import com.andrada.sitracker.tasks.UpdateAuthorsTask_;
 import com.andrada.sitracker.util.actionmodecompat.ActionMode;
 import com.andrada.sitracker.util.actionmodecompat.MultiChoiceModeListener;
@@ -53,17 +54,8 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 
 @EFragment(R.layout.fragment_authors)
 @OptionsMenu(R.menu.authors_menu)
-public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.IAuthorTaskCallback,
-        AuthorUpdateStatusListener, AddAuthorDialog.OnAuthorLinkSuppliedListener,
+public class AuthorsFragment extends SherlockFragment implements AuthorUpdateStatusListener,
         MultiChoiceModeListener, View.OnClickListener {
-
-    public interface OnAuthorsUpdatingListener {
-        void onUpdateStarted();
-
-        void onUpdateStopped();
-    }
-
-    OnAuthorsUpdatingListener updatingListener;
 
     @ViewById
     ListView list;
@@ -127,7 +119,6 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
     @OptionsItem(R.id.action_add)
     void menuAddSelected() {
         AddAuthorDialog authorDialog = new AddAuthorDialog();
-        authorDialog.setOnAuthorLinkSuppliedListener(this);
         authorDialog.show(getActivity().getSupportFragmentManager(),
                 Constants.DIALOG_ADD_AUTHOR);
         EasyTracker.getTracker().sendView(Constants.GA_SCREEN_ADD_DIALOG);
@@ -185,13 +176,6 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
         list.setEmptyView(empty);
     }
 
-    protected void tryAddAuthor(String url) {
-        if (updatingListener != null) {
-            updatingListener.onUpdateStarted();
-        }
-        new AddAuthorTask(getSherlockActivity(), this).execute(url);
-    }
-
     @ItemClick
     public void listItemClicked(int position) {
         // Notify the parent activity of selected item
@@ -210,10 +194,7 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
         bar.setDisplayShowTitleEnabled(!mIsUpdating);
         bar.setDisplayShowCustomEnabled(mIsUpdating);
 
-        if (this.updatingListener != null) {
-            if (mIsUpdating) updatingListener.onUpdateStarted();
-            else updatingListener.onUpdateStopped();
-        }
+        EventBus.getDefault().post(new ProgressBarToggleEvent(mIsUpdating));
         if (mIsUpdating) {
             View mLogoView = LayoutInflater.from(getActivity()).inflate(R.layout.updating_actionbar_layout, null);
 
@@ -240,48 +221,6 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
     }
 
     //endregion
-
-
-    //region AddAuthorTask.IAuthorTaskCallback callbacks
-
-    @Override
-    public void onAuthorAddCompleted(String message) {
-        if (updatingListener != null) {
-            updatingListener.onUpdateStopped();
-        }
-        EasyTracker.getTracker().sendEvent(
-                Constants.GA_UI_CATEGORY,
-                Constants.GA_EVENT_AUTHOR_ADDED,
-                Constants.GA_EVENT_AUTHOR_ADDED, null);
-        EasyTracker.getInstance().dispatch();
-
-        //Stop progress bar
-
-        Style.Builder alertStyle = new Style.Builder()
-                .setTextAppearance(android.R.attr.textAppearanceLarge)
-                .setPaddingInPixels(25);
-
-        if (message.length() == 0) {
-            //This is success
-            adapter.reloadAuthors();
-            alertStyle.setBackgroundColorValue(Style.holoGreenLight);
-            message = getResources().getString(R.string.author_add_success_crouton_message);
-        } else {
-            alertStyle.setBackgroundColorValue(Style.holoRedLight);
-        }
-        Crouton.makeText(getSherlockActivity(), message, alertStyle.build()).show();
-
-        if (currentAuthorIndex == -1) {
-            currentAuthorIndex = adapter.getFirstAuthorId();
-            EventBus.getDefault().post(new AuthorSelectedEvent(currentAuthorIndex));
-            // Set the item as checked to be highlighted
-            adapter.setSelectedItem(currentAuthorIndex);
-            adapter.notifyDataSetChanged();
-        }
-    }
-
-    //endregion
-
 
     //region AuthorUpdateStatusListener callbacks
     @Override
@@ -355,18 +294,6 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
 
     //endregion
 
-
-    //region AddAuthorDialog.OnAuthorLinkSuppliedListener callbacks
-    @Override
-    public void onLinkSupplied(String url) {
-        tryAddAuthor(url);
-    }
-    //endregion
-
-    public void setUpdatingListener(OnAuthorsUpdatingListener updatingListener) {
-        this.updatingListener = updatingListener;
-    }
-
     public void onEvent(PublicationMarkedAsReadEvent publicationId) {
         //ensure we update the new status of the author if he has no new publications
         EasyTracker.getTracker().sendEvent(
@@ -376,6 +303,47 @@ public class AuthorsFragment extends SherlockFragment implements AddAuthorTask.I
         EasyTracker.getInstance().dispatch();
         adapter.notifyDataSetChanged();
     }
+
+
+    //region AuthorAddedEvent handler
+
+    public void onEvent(AuthorAddedEvent event) {
+        EasyTracker.getTracker().sendEvent(
+                Constants.GA_UI_CATEGORY,
+                Constants.GA_EVENT_AUTHOR_ADDED,
+                Constants.GA_EVENT_AUTHOR_ADDED, null);
+        EasyTracker.getInstance().dispatch();
+
+        EventBus.getDefault().post(new ProgressBarToggleEvent(false));
+        String message = event.message;
+
+        //Stop progress bar
+
+        Style.Builder alertStyle = new Style.Builder()
+                .setTextAppearance(android.R.attr.textAppearanceLarge)
+                .setPaddingInPixels(25);
+
+        if (message.length() == 0) {
+            //This is success
+            adapter.reloadAuthors();
+            alertStyle.setBackgroundColorValue(Style.holoGreenLight);
+            message = getResources().getString(R.string.author_add_success_crouton_message);
+        } else {
+            alertStyle.setBackgroundColorValue(Style.holoRedLight);
+        }
+        Crouton.makeText(getSherlockActivity(), message, alertStyle.build()).show();
+
+        if (currentAuthorIndex == -1) {
+            currentAuthorIndex = adapter.getFirstAuthorId();
+            EventBus.getDefault().post(new AuthorSelectedEvent(currentAuthorIndex));
+            // Set the item as checked to be highlighted
+            adapter.setSelectedItem(currentAuthorIndex);
+            adapter.notifyDataSetChanged();
+        }
+    }
+
+    //endregion
+
 
     private void showNoNetworkCroutonMessage() {
         View view = getLayoutInflater(null).inflate(R.layout.crouton_no_network, null);

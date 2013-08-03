@@ -16,6 +16,7 @@ import android.widget.ProgressBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.andrada.sitracker.events.ProgressBarToggleEvent;
 import com.andrada.sitracker.fragment.AuthorsFragment;
 import com.andrada.sitracker.fragment.PublicationsFragment;
 import com.andrada.sitracker.tasks.UpdateAuthorsTask_;
@@ -32,13 +33,13 @@ import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.res.StringRes;
 
+import de.greenrobot.event.EventBus;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 
 
 @EActivity(R.layout.activity_main)
 @OptionsMenu(R.menu.main_menu)
-public class MainActivity extends SherlockFragmentActivity implements
-        AuthorsFragment.OnAuthorsUpdatingListener {
+public class MainActivity extends SherlockFragmentActivity {
 
     @FragmentById(R.id.fragment_publications)
     PublicationsFragment mPubFragment;
@@ -69,7 +70,6 @@ public class MainActivity extends SherlockFragmentActivity implements
 
 
         slidingPane.getViewTreeObserver().addOnGlobalLayoutListener(globalLayoutListener);
-        mAuthorsFragment.setUpdatingListener(this);
         Intent intent = UpdateAuthorsTask_.intent(this.getApplicationContext()).get();
         this.updatePendingIntent = PendingIntent.getService(this.getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         ensureUpdatesAreRunningOnSchedule(PreferenceManager.getDefaultSharedPreferences(this));
@@ -85,6 +85,12 @@ public class MainActivity extends SherlockFragmentActivity implements
     }
 
     private BroadcastReceiver updateStatusReceiver;
+
+    @Override
+    protected void onCreate(android.os.Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
+    }
 
     @Override
     protected void onResume() {
@@ -114,6 +120,7 @@ public class MainActivity extends SherlockFragmentActivity implements
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        EventBus.getDefault().unregister(this);
         Crouton.cancelAllCroutons();
     }
 
@@ -220,13 +227,12 @@ public class MainActivity extends SherlockFragmentActivity implements
         getSupportActionBar().setTitle(mAppName);
     }
 
-    @Override
-    public void onUpdateStarted() {
-        this.globalProgress.setVisibility(View.VISIBLE);
+    public void onEventMainThread(ProgressBarToggleEvent event) {
+        if (event.showProgress) {
+            this.globalProgress.setVisibility(View.VISIBLE);
+        } else {
+            this.globalProgress.setVisibility(View.GONE);
+        }
     }
 
-    @Override
-    public void onUpdateStopped() {
-        this.globalProgress.setVisibility(View.GONE);
-    }
 }
