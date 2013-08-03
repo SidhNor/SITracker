@@ -95,19 +95,15 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
     }
 
     @Override
-    public void onIsNewItemTapped(View checkBox) {
-        if (listView != null) {
-            final int position = listView.getPositionForView(checkBox);
-            if (position != ListView.INVALID_POSITION &&
-                    position < authors.size() &&
-                    authors.get(position).isUpdated()) {
-                try {
-                    authorDao.markAsRead(authors.get(position));
-                    EventBus.getDefault().post(new AuthorMarkedAsReadEvent(authors.get(position).getId()));
-                } catch (SQLException e) {
-                    //surface error
-                    EasyTracker.getTracker().sendException("Author Mark as read thread", e, false);
-                }
+    public void onIsNewItemTapped(View starButton) {
+        Author auth = (Author) starButton.getTag();
+        if (auth != null) {
+            try {
+                authorDao.markAsRead(auth);
+                EventBus.getDefault().post(new AuthorMarkedAsReadEvent(auth.getId()));
+            } catch (SQLException e) {
+                //surface error
+                EasyTracker.getTracker().sendException("Author Mark as read thread", e, false);
             }
         }
     }

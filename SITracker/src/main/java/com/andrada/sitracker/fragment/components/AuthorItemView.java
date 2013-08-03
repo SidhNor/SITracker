@@ -65,6 +65,7 @@ public class AuthorItemView extends CheckedRelativeLayout {
             this.setChecked(isSelected);
         }
         mIsNew = author.isUpdated();
+        author_updated.setTag(author);
         author_title.setText(author.getName());
         author_update_date.setText(
                 DateFormatterUtil.getFriendlyDateRelativeToToday(author.getUpdateDate(),
