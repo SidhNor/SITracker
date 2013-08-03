@@ -90,6 +90,7 @@ public class AuthorsFragment extends SherlockFragment implements AuthorUpdateSta
     @Override
     public void onStart() {
         super.onStart();
+        mIsUpdating = false;
         getSherlockActivity().invalidateOptionsMenu();
         currentAuthorIndex = currentAuthorIndex == -1 ? adapter.getFirstAuthorId() : currentAuthorIndex;
         EventBus.getDefault().post(new AuthorSelectedEvent(currentAuthorIndex));
