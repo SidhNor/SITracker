@@ -2,15 +2,18 @@ package com.andrada.sitracker.util;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by Gleb on 03.06.13.
  */
 public final class DateFormatterUtil {
 
-    public static String getFriendlyDateRelativeToToday(Date date) {
+    public static String getFriendlyDateRelativeToToday(Date date, Locale currentLocale) {
 
         Date today = new Date();
+
+        String localeBasedFmt = currentLocale.getISO3Country().equals("RUS") ? "d MMM" : "MMM d";
         //Check if the same day this year
         SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd");
         //Check if the say year
@@ -19,7 +22,7 @@ public final class DateFormatterUtil {
         if (fmt.format(today).equals(fmt.format(date))) {
             formatToUse = new SimpleDateFormat("HH:mm");
         } else if (fmtYear.format(today).equals(fmtYear.format(date))){
-            formatToUse = new SimpleDateFormat("MMM dd");
+            formatToUse = new SimpleDateFormat(localeBasedFmt);
         } else {
             formatToUse = new SimpleDateFormat("dd/MM/yyyy");
         }

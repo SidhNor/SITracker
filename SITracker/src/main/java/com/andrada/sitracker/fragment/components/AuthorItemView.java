@@ -66,7 +66,9 @@ public class AuthorItemView extends CheckedRelativeLayout {
         }
         mIsNew = author.isUpdated();
         author_title.setText(author.getName());
-        author_update_date.setText(DateFormatterUtil.getFriendlyDateRelativeToToday(author.getUpdateDate()));
+        author_update_date.setText(
+                DateFormatterUtil.getFriendlyDateRelativeToToday(author.getUpdateDate(),
+                        getResources().getConfiguration().locale));
         setOldNewBackgrounds();
     }
 

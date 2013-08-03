@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
-    <string name="app_name">SITracker</string>
+    <string name="app_name">SI Tracker</string>
     <string name="action_settings">Settings</string>
     <string name="action_refresh">Update authors</string>
     <string name="action_add">Add author</string>

@@ -63,7 +63,9 @@ public class PublicationItemView extends TouchDelegateRelativeLayout {
         item_title.setText(publication.getName());
         item_updated.setImageResource(mIsNew ? R.drawable.star_selected : R.drawable.star_unselected);
         item_updated.setTag(publication);
-        item_update_date.setText(DateFormatterUtil.getFriendlyDateRelativeToToday(publication.getUpdateDate()));
+        item_update_date.setText(
+                DateFormatterUtil.getFriendlyDateRelativeToToday(publication.getUpdateDate(),
+                        getResources().getConfiguration().locale));
         item_description.setText(publication.getDescription());
 
         StringBuilder builder = new StringBuilder();

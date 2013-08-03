@@ -42,7 +42,7 @@ public class TouchDelegateRelativeLayout extends RelativeLayout {
      */
     protected HashMap<ViewConfig, View> delegatedTouchViews = new HashMap<ViewConfig, View>();
 
-    private boolean tapRegionHighlighted = true;
+    public static boolean TapRegionHighlighted = false;
 
     private static final int[] HIGHLIGHT_COLOR_ARRAY = {
             Color.argb(50, 255, 0, 0),
@@ -271,7 +271,7 @@ public class TouchDelegateRelativeLayout extends RelativeLayout {
     private void init(Context context) {
         setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
         mTouchDelegateGroup = new TouchDelegateGroup(this);
-        if (BuildConfig.DEBUG) {
+        if (BuildConfig.DEBUG && TapRegionHighlighted) {
             mPaint.setStyle(Paint.Style.FILL);
         }
 
@@ -384,14 +384,12 @@ public class TouchDelegateRelativeLayout extends RelativeLayout {
 
     private void addTouchDelegate(Rect rect, int color, View delegateView) {
         mTouchDelegateGroup.addTouchDelegate(new TouchDelegate(rect, delegateView));
-        if (tapRegionHighlighted) {
-            mTouchDelegateRecords.add(new TouchDelegateRecord(rect, color));
-        }
+        mTouchDelegateRecords.add(new TouchDelegateRecord(rect, color));
     }
 
     @Override
     protected void dispatchDraw(Canvas canvas) {
-        if (BuildConfig.DEBUG) {
+        if (BuildConfig.DEBUG && TapRegionHighlighted) {
             for (TouchDelegateRecord record : mTouchDelegateRecords) {
                 mPaint.setColor(record.color);
                 canvas.drawRect(record.rect, mPaint);
