@@ -25,8 +25,8 @@ ext.androidAnnotationsVersion = '3.0-SNAPSHOT';
 
 dependencies {
     compile project(":libraries:actionbarsherlock")
-    compile "org.androidannotations:androidannotations-api:${androidAnnotationsVersion}"
     androidannotations "org.androidannotations:androidannotations:${androidAnnotationsVersion}"
+    compile "org.androidannotations:androidannotations-api:${androidAnnotationsVersion}"
     compile 'com.j256.ormlite:ormlite-android:4.45'
     compile 'com.github.kevinsawicki:http-request:4.2'
     compile 'de.greenrobot:eventbus:2.0.2'
@@ -60,11 +60,15 @@ android {
 
 afterEvaluate { project ->
     android.applicationVariants.each { variant ->
+        def andAnnOutput = file("${project.buildDir}/source/r/${variant.dirName}")
+        variant.renderscriptCompile.resOutputDir = andAnnOutput
+
         variant.javaCompile.options.compilerArgs += [
                 '-classpath', configurations.compile.asPath,
                 '-processorpath', configurations.androidannotations.asPath,
                 '-processor', 'org.androidannotations.AndroidAnnotationProcessor',
-                '-AandroidManifestFile=' + variant.processResources.manifestFile
+                '-AandroidManifestFile=' + variant.processResources.manifestFile,
+                '-s', andAnnOutput
         ]
     }
 }

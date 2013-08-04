@@ -65,7 +65,7 @@ public class SettingsActivity extends SherlockPreferenceActivity implements
         PendingIntent pi = PendingIntent.getService(this.getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         alarmManager.cancel(pi);
-        long updateInterval = Long.getLong(sharedPreferences.getString(Constants.UPDATE_INTERVAL_KEY, "3600000L"), 3600000L);
+        long updateInterval = sharedPreferences.getLong(Constants.UPDATE_INTERVAL_KEY, 14400000L);
         if (isSyncing) {
             alarmManager.setInexactRepeating(AlarmManager.RTC, System.currentTimeMillis(), updateInterval, pi);
         }
