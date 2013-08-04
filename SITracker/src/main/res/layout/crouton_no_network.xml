@@ -50,7 +50,7 @@
                 android:text="@string/no_network_retry"
                 style="?android:attr/buttonStyleSmall"
                 android:background="@drawable/crouton_button_selector"
-                android:textColor="@color/abs__primary_text_holo_dark"
+                android:textColor="@color/gray_foreground"
                 android:textStyle="bold"
                 android:paddingRight="15dp"
                 android:paddingLeft="20dp"/>
