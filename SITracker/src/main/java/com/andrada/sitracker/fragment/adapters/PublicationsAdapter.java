@@ -78,16 +78,6 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
                 }
                 newChildren.add(categoryList);
             }
-
-            for (List<Publication> category : newChildren) {
-                //sort the category list by new and date
-                Collections.sort(category, new Comparator<Publication>() {
-                    public int compare(Publication o1, Publication o2) {
-                        return o2.getNew().compareTo(o1.getNew());
-                    }
-                });
-            }
-
             updateAdapterDataSet(newCategories, newChildren);
         } catch (SQLException e) {
             e.printStackTrace();

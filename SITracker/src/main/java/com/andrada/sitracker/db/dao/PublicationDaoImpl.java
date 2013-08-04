@@ -59,8 +59,9 @@ public class PublicationDaoImpl extends BaseDaoImpl<Publication, Integer>
     @Override
     public List<Publication> getSortedPublicationsForAuthorId(long authorId) throws SQLException {
         return this.queryBuilder()
+                .orderBy("isNew", false)
+                .orderBy("updateDate", false)
                 .orderBy("category", true)
-                .orderBy("isNew", true)
                 .where().eq("author_id", authorId)
                 .query();
     }
