@@ -6,7 +6,7 @@
     <dimen name="divider_margin_top">4dp</dimen>
     <dimen name="divider_margin_bottom">4dp</dimen>
     <dimen name="list_left_padding">6dp</dimen>
-    <dimen name="group_heading_margin_top">8dp</dimen>
+    <dimen name="group_heading_margin_top">4dp</dimen>
     <dimen name="crouton_corner_radius">5dp</dimen>
 </resources>
 
