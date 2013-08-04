@@ -75,7 +75,9 @@ public class UpdateAuthorsTask extends IntentService {
                 if (this.isConnected() &&
                         (isNetworkIgnore ||
                                 (!useWiFiOnly || this.isConnectedToWiFi()))) {
-                    updateAuthor(author);
+                    if (updateAuthor(author)) {
+                        this.updatedAuthors++;
+                    }
                 }
                 //Sleep for 5 seconds to avoid ban from samlib
                 Thread.sleep(5000);
@@ -97,6 +99,7 @@ public class UpdateAuthorsTask extends IntentService {
     }
 
     private boolean updateAuthor(Author author) throws SQLException {
+        boolean authorUpdated = false;
         HttpRequest request;
         try {
             request = HttpRequest.get(new URL(author.getUrl()));
@@ -152,7 +155,7 @@ public class UpdateAuthorsTask extends IntentService {
                     //Swap the ids, do an update in DB
                     pub.setId(old.getId());
                     pub.setNew(true);
-                    this.updatedAuthors++;
+                    authorUpdated = true;
                     publicationsDao.update(pub);
                     //Mark author new, update in DB
                     author.setUpdateDate(new Date());
@@ -164,12 +167,12 @@ public class UpdateAuthorsTask extends IntentService {
                 authorDao.update(author);
                 //Mark publication new, create in DB
                 pub.setNew(true);
-                this.updatedAuthors++;
+                authorUpdated = true;
                 publicationsDao.create(pub);
             }
         }
 
-        return true;
+        return authorUpdated;
     }
 
     private void broadCastResult(boolean success) {
