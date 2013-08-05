@@ -14,5 +14,7 @@ public interface AuthorDao extends Dao<Author, Integer> {
 
     void markAsRead(Author author) throws SQLException;
 
-    List<Author> getAllAuthorsSorted() throws SQLException;
+    List<Author> getAllAuthorsSortedNew() throws SQLException;
+
+    List<Author> getAllAuthorsSortedAZ() throws SQLException;
 }
