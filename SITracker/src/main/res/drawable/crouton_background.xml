@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#CC666666"/>
+
+    <padding
+            android:left="1dp"
+            android:top="1dp"
+            android:right="1dp"
+            android:bottom="1dp"
+            />
+
+    <corners
+            android:bottomRightRadius="@dimen/crouton_corner_radius"
+            android:bottomLeftRadius="@dimen/crouton_corner_radius"
+            android:topLeftRadius="@dimen/crouton_corner_radius"
+            android:topRightRadius="@dimen/crouton_corner_radius"/>
+</shape>

@@ -14,3 +14,7 @@ build/
 
 #Project specific
 /libraries
+
+SITracker/*.apk
+
+device-screenshots

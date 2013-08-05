@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
+    <string name="app_name">СИ Трекер
+    </string>
+    <string name="action_settings">Настройки
+    </string>
+    <string name="action_refresh">Обновить
+    </string>
+    <string name="action_add">Добавить автора
+    </string>
+    <string name="action_delete">Удалить автора</string>
+    <string name="add_author_placeholder">samlib link
+    </string>
+    <string name="designtime_placeholder_long">Lorem ipsum dolor sit amet, consectetur adipiscing
+        elit. Aenean fringilla
+        luctus tellus, in tristique ligula adipiscing id. Proin tempor purus sit amet orci iaculis
+        in accumsan justo
+        ultricies
+    </string>
+    <string name="designtime_placeholder_short">Lorem ipsum dolor</string>
+    <string name="designtime_placeholder_size">615+3kb</string>
+    <string name="designtime_placeholder_date">Май 28</string>
+    <string name="cannot_add_author">Невозможно добавить автора.</string>
+    <string name="cannot_add_author_internal">Невозможно добавить автора. Непредвиденная ошибка.
+    </string>
+    <string name="cannot_add_author_malformed">Невозможно добавить автора. Удостоверьтесь что адрес
+        страницы автора правильный.
+    </string>
+    <string name="cannot_add_author_network">Невозможно добавить автора. Проверьте Ваше
+        соединение.
+    </string>
+    <string name="cannot_add_author_already_exits">Автор уже существует.</string>
+    <string name="cannot_add_author_no_update_date">Невозможно добавить автора. Не найдена дата
+        обновления.
+    </string>
+    <string name="cannot_add_author_no_name">Невозможно добавить автора. Не найдено имя автора.
+    </string>
+    <string name="cannot_add_author_unknown">Невозможно добавить автора. Непредвиденная ошибка.
+    </string>
+    <string name="cannot_add_author_no_publications">Невозможно добавить автора. Не найдено
+        произведений.
+    </string>
+    <string name="check_for_updates">Проверка обновлений</string>
+    <string name="action_add_ok">Добавить</string>
+    <string name="notification_title">Прода</string>
+    <string name="update_failed_crouton_message">Не удалось обновить авторов.</string>
+    <string name="author_add_success_crouton_message">Автор добавлен</string>
+    <string name="no_authors">Вы пока не добавили никаких авторов</string>
+
+    <plurals name="authors_selected">
+        <item quantity="one">1 выбранный</item>
+        <item quantity="few">
+            <xliff:g id="num_authors">%1$d</xliff:g>
+            выбранных
+        </item>
+        <item quantity="many">
+            <xliff:g id="num_authors">%1$d</xliff:g>
+            выбранных
+        </item>
+    </plurals>
+
+    <plurals name="authors_updated">
+        <item quantity="one">Автор обновился</item>
+        <item quantity="few">
+            <xliff:g id="num_updates">%1$d</xliff:g>
+            автора обновились
+        </item>
+        <item quantity="many">
+            <xliff:g id="num_updates">%1$d</xliff:g>
+            авторов обновились
+        </item>
+    </plurals>
+
+    <string name="no_network_error">Нет соединения</string>
+    <string name="no_network_retry">ЕЩЕ РАЗ</string>
+
+    <!--Preferences -->
+    <string name="pref_updates_check">Автоматическое обновление</string>
+    <string name="pref_updates_check_summ">Автоматическое обновление авторов с заданным интервалом
+    </string>
+    <string name="pref_update_wifi_only">Обновления только по Wi-Fi</string>
+    <string name="pref_update_wifi_only_summ">Не обновлять через мобильные интернет соединения дабы
+        уменьшить потребление траффика
+    </string>
+
+    <string name="pref_update_interval">Интервал обновлений</string>
+    <string name="pref_header_title">Настройки</string>
+</resources>

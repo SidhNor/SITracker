@@ -11,7 +11,8 @@ public class AddAuthorException extends Exception {
         AUTHOR_UNKNOWN,
         AUTHOR_NAME_NOT_FOUND,
         AUTHOR_DATE_NOT_FOUND,
-        AUTHOR_ALREADY_EXISTS
+        AUTHOR_ALREADY_EXISTS,
+        AUTHOR_NO_PUBLICATIONS
     }
 
     public AddAuthorException(AuthorAddErrors error) {

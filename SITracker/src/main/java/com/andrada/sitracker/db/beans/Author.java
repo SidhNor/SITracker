@@ -1,48 +1,56 @@
 package com.andrada.sitracker.db.beans;
 
+import com.andrada.sitracker.db.dao.AuthorDaoImpl;
+import com.google.analytics.tracking.android.EasyTracker;
+import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
+import com.j256.ormlite.table.DatabaseTable;
 
+import java.sql.SQLException;
 import java.util.Date;
 
+@DatabaseTable(daoClass = AuthorDaoImpl.class, tableName = "authors")
 public class Author {
-	@DatabaseField(generatedId = true)
-	int id;
-    @DatabaseField(canBeNull = false)
-	String name;
-	@DatabaseField(unique = true)
-	String url;
-    @DatabaseField(canBeNull = false)
+    @DatabaseField(generatedId = true, useGetSet = true)
+    int id;
+    @DatabaseField(canBeNull = false, useGetSet = true)
+    String name;
+    @DatabaseField(unique = true, useGetSet = true)
+    String url;
+    @DatabaseField(canBeNull = false, useGetSet = true)
     Date updateDate;
-    @DatabaseField(defaultValue = "false", canBeNull = false)
-    Boolean updated;
+
+    @ForeignCollectionField(eager = false)
+    ForeignCollection<Publication> publications;
 
     public Author() {
         updateDate = new Date();
     }
 
-	public int getId() {
-		return id;
-	}
+    public int getId() {
+        return id;
+    }
 
-	public void setId(int id) {
-		this.id = id;
-	}
+    public void setId(int id) {
+        this.id = id;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public String getUrl() {
-		return url;
-	}
+    public String getUrl() {
+        return url;
+    }
 
-	public void setUrl(String url) {
-		this.url = url;
-	}
+    public void setUrl(String url) {
+        this.url = url;
+    }
 
     public Date getUpdateDate() {
         return updateDate;
@@ -52,13 +60,38 @@ public class Author {
         this.updateDate = updateDate;
     }
 
+    public ForeignCollection<Publication> getPublications() {
+        return publications;
+    }
+
+    public void setPublications(ForeignCollection<Publication> publications) {
+        this.publications = publications;
+    }
+
     public Boolean isUpdated() {
-        return updated;
+        boolean isUpdated = false;
+        for (Publication pub : this.publications) {
+            if (pub.isNew) {
+                isUpdated = true;
+                break;
+            }
+        }
+        return isUpdated;
     }
 
     public void setUpdated(Boolean updated) {
-        this.updated = updated;
+        if (!updated) {
+            for (Publication pub : this.publications) {
+                pub.setNew(false);
+                pub.setOldSize(0);
+                try {
+                    this.publications.update(pub);
+                } catch (SQLException e) {
+                    //surface error
+                    EasyTracker.getTracker().sendException("Author Set updated", e, false);
+                }
+            }
+
+        }
     }
-
-
 }

@@ -1,30 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.andrada.sitracker"
-    android:versionCode="1"
-    android:versionName="1.0" >
+          package="com.andrada.sitracker"
+          android:installLocation="auto"
+          android:versionCode="5"
+          android:versionName="1.0">
 
     <uses-sdk
-        android:minSdkVersion="8"
-        android:targetSdkVersion="17" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <application
-        android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
-        <activity
-            android:name="com.andrada.sitracker.MainActivity_"
-            android:label="@string/app_name" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+            android:minSdkVersion="8"
+            android:targetSdkVersion="18"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+
+    <application
+            android:allowBackup="true"
+            android:icon="@drawable/ic_launcher"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme">
+        <activity
+                android:name="com.andrada.sitracker.MainActivity_"
+                android:launchMode="singleTask"
+                android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".phoneactivities.PublicationsActivity_" />
-        <service android:name=".task.UpdateAuthorsIntentService_" />
+        <activity
+                android:name=".SettingsActivity_"
+                android:label="@string/app_name"
+                android:parentActivityName="com.andrada.sitracker.MainActivity_">
+            <!-- Parent activity meta-data to support API level 7+ -->
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value="com.andrada.sitracker.MainActivity_"/>
+        </activity>
+
+        <receiver
+                android:name=".tasks.receivers.UpdateStatusNotificationReceiver"
+                android:exported="false">
+            <intent-filter android:priority="0">
+                <action android:name="com.andrada.sitracker.UPDATE_SUCCESS_ACTION"/>
+                <action android:name="com.andrada.sitracker.UPDATE_FAILED_ACTION"/>
+            </intent-filter>
+        </receiver>
+        <service android:name=".tasks.UpdateAuthorsTask_"/>
     </application>
 
 </manifest>

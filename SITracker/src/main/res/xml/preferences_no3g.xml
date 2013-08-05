@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <CheckBoxPreference
+            android:key="pref_updates"
+            android:title="@string/pref_updates_check"
+            android:summary="@string/pref_updates_check_summ"
+            android:defaultValue="true"/>
+    <ListPreference
+            android:dependency="pref_updates"
+            android:key="pref_update_period"
+            android:title="@string/pref_update_interval"
+            android:dialogTitle="@string/pref_update_interval"
+            android:entries="@array/pref_update_interval_human"
+            android:entryValues="@array/pref_update_interval_value"
+            android:defaultValue="14400000L"/>
+</PreferenceScreen>

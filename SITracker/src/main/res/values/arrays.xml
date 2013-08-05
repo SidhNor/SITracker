@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="pref_update_interval_human">
+        <item>every hour</item>
+        <item>every 2 hours</item>
+        <item>every 4 hours</item>
+        <item>every 6 hours</item>
+        <item>every 8 hours</item>
+        <item>twice a day</item>
+        <item>once a day</item>
+    </string-array>
+    <string-array name="pref_update_interval_value">
+        <item>3600000L</item>
+        <item>7200000L</item>
+        <item>14400000L</item>
+        <item>21600000L</item>
+        <item>28800000L</item>
+        <item>43200000L</item>
+        <item>86400000L</item>
+    </string-array>
+</resources>

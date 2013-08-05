@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="pref_update_interval_human">
+        <item>каждый час</item>
+        <item>каждые 2 часа</item>
+        <item>каждые 4 часа</item>
+        <item>каждые 6 часов</item>
+        <item>каждые 8 часов</item>
+        <item>дважды в день</item>
+        <item>раз в день</item>
+    </string-array>
+    <string-array name="pref_update_interval_value">
+        <item>3600000L</item>
+        <item>7200000L</item>
+        <item>14400000L</item>
+        <item>21600000L</item>
+        <item>28800000L</item>
+        <item>43200000L</item>
+        <item>86400000L</item>
+    </string-array>
+</resources>

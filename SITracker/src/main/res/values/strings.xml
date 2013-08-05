@@ -1,28 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
-    <string name="app_name" >SITracker
-    </string>
-    <string name="action_settings" >Settings
-    </string>
-    <string name="action_refresh">Refresh
-    </string>
-    <string name="action_add">Add
-    </string>
+    <string name="app_name">SI Tracker</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_refresh">Update authors</string>
+    <string name="action_add">Add author</string>
+    <string name="action_delete">Delete author</string>
     <string name="add_author_placeholder">samlib link
     </string>
-    <string name="designtime_placeholder_long">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean fringilla
-        luctus tellus, in tristique ligula adipiscing id. Proin tempor purus sit amet orci iaculis in accumsan justo
+    <string name="designtime_placeholder_long">Lorem ipsum dolor sit amet, consectetur adipiscing
+        elit. Aenean fringilla
+        luctus tellus, in tristique ligula adipiscing id. Proin tempor purus sit amet orci iaculis
+        in accumsan justo
         ultricies
     </string>
     <string name="designtime_placeholder_short">Lorem ipsum dolor</string>
+    <string name="designtime_placeholder_size">615+3kb</string>
     <string name="designtime_placeholder_date">May 28</string>
     <string name="cannot_add_author">Cannot add author.</string>
-    <string name="cannot_add_author_internal">Cannot add author. Some internal error occurred.</string>
-    <string name="cannot_add_author_malformed">Cannot add author. Make sure the link is correct.</string>
-    <string name="cannot_add_author_network">Cannot add author. Check your internet connection.</string>
+    <string name="cannot_add_author_internal">Cannot add author. Some internal error occurred.
+    </string>
+    <string name="cannot_add_author_malformed">Cannot add author. Make sure the link is correct.
+    </string>
+    <string name="cannot_add_author_network">Cannot add author. Check your internet connection.
+    </string>
     <string name="cannot_add_author_already_exits">Author already exists.</string>
-    <string name="cannot_add_author_no_update_date">Cannot add author. No update date found.</string>
+    <string name="cannot_add_author_no_update_date">Cannot add author. No update date found.
+    </string>
     <string name="cannot_add_author_no_name">Cannot add author. No author name found.</string>
-    <string name="cannot_add_author_unknown">Cannot add author. An unexpected error occurred.</string>
+    <string name="cannot_add_author_unknown">Cannot add author. An unexpected error occurred.
+    </string>
+    <string name="cannot_add_author_no_publications">Cannot add author. No publications found.
+    </string>
+    <string name="check_for_updates">Checking for updates</string>
+    <string name="action_add_ok">Add</string>
+    <string name="notification_title">SITracker Updates</string>
+    <string name="update_failed_crouton_message">Update failed for an unexpected reason.</string>
+    <string name="author_add_success_crouton_message">Author added</string>
+    <string name="no_authors">You haven\'t added any authors yet</string>
+
+    <plurals name="authors_selected">
+        <item quantity="one">1 selected</item>
+        <item quantity="other">
+            <xliff:g id="num_authors">%1$d</xliff:g>
+            selected
+        </item>
+    </plurals>
+    <plurals name="authors_updated">
+        <item quantity="one">Author updated</item>
+        <item quantity="other">
+            <xliff:g id="num_updates">%1$d</xliff:g>
+            authors updated
+        </item>
+    </plurals>
+
+    <!--Preferences -->
+    <string name="pref_updates_check">Automatic updates</string>
+    <string name="pref_updates_check_summ">Automatic authors updates in background at the
+        specified interval
+    </string>
+    <string name="pref_update_wifi_only">Update via Wi-Fi only</string>
+    <string name="pref_update_wifi_only_summ">To reduce network provider data charges, don\'t
+        update over mobile networks
+    </string>
+    <string name="pref_update_interval">Update interval</string>
+    <string name="pref_header_title">Settings</string>
+
+    <string name="no_network_error">No network</string>
+    <string name="no_network_retry">RETRY</string>
+
+    <!--Image descriptors -->
+    <string name="crouton_image_desc">info</string>
+
 </resources>

@@ -1,9 +1,7 @@
 package com.andrada.sitracker.util;
 
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.os.Build;
 

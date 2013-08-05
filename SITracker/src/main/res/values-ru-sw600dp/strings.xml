@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
+    <plurals name="authors_selected">
+        <item quantity="one">1 выбранный автор</item>
+        <item quantity="few">
+            <xliff:g id="num_authors">%1$d</xliff:g>
+            выбранных автора
+        </item>
+        <item quantity="many">
+            <xliff:g id="num_authors">%1$d</xliff:g>
+            выбранных авторов
+        </item>
+    </plurals>
+
+</resources>
