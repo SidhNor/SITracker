@@ -67,8 +67,8 @@ afterEvaluate { project ->
                 '-classpath', configurations.compile.asPath,
                 '-processorpath', configurations.androidannotations.asPath,
                 '-processor', 'org.androidannotations.AndroidAnnotationProcessor',
-                '-AandroidManifestFile=' + variant.processResources.manifestFile,
-                '-s', andAnnOutput
+                '-AandroidManifestFile=' + variant.processResources.manifestFile
+
         ]
     }
 }
