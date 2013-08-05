@@ -125,7 +125,7 @@ public class MainActivity extends SherlockFragmentActivity {
         Boolean isSyncing = sharedPreferences.getBoolean(Constants.UPDATE_PREFERENCE_KEY, true);
         alarmManager.cancel(this.updatePendingIntent);
         if (isSyncing) {
-            long updateInterval = Long.getLong(sharedPreferences.getString(Constants.UPDATE_INTERVAL_KEY, "3600000L"), 3600000L);
+            long updateInterval = Long.parseLong(sharedPreferences.getString(Constants.UPDATE_INTERVAL_KEY, "14400000"));
             alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP,
                     System.currentTimeMillis(),
                     updateInterval,

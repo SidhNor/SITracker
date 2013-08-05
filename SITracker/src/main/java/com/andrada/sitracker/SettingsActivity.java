@@ -11,11 +11,14 @@ import android.preference.PreferenceManager;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
+import com.andrada.sitracker.events.AuthorSortMethodChanged;
 import com.andrada.sitracker.tasks.UpdateAuthorsTask_;
 import com.google.analytics.tracking.android.EasyTracker;
 
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.SystemService;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by ggodonoga on 22/07/13.
@@ -37,7 +40,8 @@ public class SettingsActivity extends SherlockPreferenceActivity implements
             addPreferencesFromResource(R.xml.preferences_no3g);
         }
 
-        setSummary();
+        setUpdateIntervalSummary();
+        setAuthorSortSummary();
         ActionBar actionBar = getSherlock().getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
@@ -65,13 +69,18 @@ public class SettingsActivity extends SherlockPreferenceActivity implements
         PendingIntent pi = PendingIntent.getService(this.getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         alarmManager.cancel(pi);
-        long updateInterval = sharedPreferences.getLong(Constants.UPDATE_INTERVAL_KEY, 14400000L);
+        long updateInterval = Long.parseLong(sharedPreferences.getString(Constants.UPDATE_INTERVAL_KEY, "14400000"));
         if (isSyncing) {
             alarmManager.setInexactRepeating(AlarmManager.RTC, System.currentTimeMillis(), updateInterval, pi);
         }
 
+        if (key.equals(Constants.AUTHOR_SORT_TYPE_KEY)) {
+            EventBus.getDefault().post(new AuthorSortMethodChanged());
+            setAuthorSortSummary();
+        }
+
         if (key.equals(Constants.UPDATE_INTERVAL_KEY)) {
-            setSummary();
+            setUpdateIntervalSummary();
             EasyTracker.getTracker().sendEvent(
                     Constants.GA_UI_CATEGORY,
                     Constants.GA_EVENT_CHANGED_UPDATE_INTERVAL,
@@ -80,12 +89,20 @@ public class SettingsActivity extends SherlockPreferenceActivity implements
         }
     }
 
-    private void setSummary() {
+    private void setUpdateIntervalSummary() {
         ListPreference updateInterval = (ListPreference) findPreference(Constants.UPDATE_INTERVAL_KEY);
         // Set summary to be the user-description for the selected value
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         int index = updateInterval.findIndexOfValue(sharedPreferences.getString(Constants.UPDATE_INTERVAL_KEY, ""));
         if (index >= 0 && index < updateInterval.getEntries().length)
             updateInterval.setSummary(updateInterval.getEntries()[index]);
+    }
+
+    private void setAuthorSortSummary() {
+        ListPreference authorsSortType = (ListPreference) findPreference(Constants.AUTHOR_SORT_TYPE_KEY);
+        int sortType = Integer.parseInt(
+                PreferenceManager.getDefaultSharedPreferences(this)
+                        .getString(Constants.AUTHOR_SORT_TYPE_KEY, "0"));
+        authorsSortType.setSummary(authorsSortType.getEntries()[sortType]);
     }
 }

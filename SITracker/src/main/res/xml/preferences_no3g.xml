@@ -1,17 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <CheckBoxPreference
-            android:key="pref_updates"
-            android:title="@string/pref_updates_check"
-            android:summary="@string/pref_updates_check_summ"
-            android:defaultValue="true"/>
-    <ListPreference
-            android:dependency="pref_updates"
-            android:key="pref_update_period"
-            android:title="@string/pref_update_interval"
-            android:dialogTitle="@string/pref_update_interval"
-            android:entries="@array/pref_update_interval_human"
-            android:entryValues="@array/pref_update_interval_value"
-            android:defaultValue="14400000L"/>
+    <PreferenceCategory
+            android:title="@string/pref_authors_category_title"
+            android:key="pref_key_authors_settings">
+        <ListPreference
+                android:key="pref_authors_sort_type"
+                android:title="@string/pref_authors_sort"
+                android:dialogTitle="@string/pref_authors_sort"
+                android:entries="@array/pref_authors_sort_type_human"
+                android:entryValues="@array/pref_authors_sort_type"
+                android:defaultValue="0"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory
+            android:title="@string/pref_update_category_title"
+            android:key="pref_key_update_settings">
+        <CheckBoxPreference
+                android:key="pref_updates"
+                android:title="@string/pref_updates_check"
+                android:summary="@string/pref_updates_check_summ"
+                android:defaultValue="true"/>
+        <ListPreference
+                android:dependency="pref_updates"
+                android:key="pref_update_period"
+                android:title="@string/pref_update_interval"
+                android:dialogTitle="@string/pref_update_interval"
+                android:entries="@array/pref_update_interval_human"
+                android:entryValues="@array/pref_update_interval_value"
+                android:defaultValue="14400000"/>
+    </PreferenceCategory>
 </PreferenceScreen>

@@ -1,11 +1,13 @@
 package com.andrada.sitracker.fragment.adapters;
 
 import android.content.Context;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 
+import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.contracts.IsNewItemTappedListener;
 import com.andrada.sitracker.db.beans.Author;
 import com.andrada.sitracker.db.dao.AuthorDao;
@@ -52,7 +54,14 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
 
     public void reloadAuthors() {
         try {
-            authors = authorDao.getAllAuthorsSorted();
+            int sortType = Integer.parseInt(
+                    PreferenceManager.getDefaultSharedPreferences(context)
+                            .getString(Constants.AUTHOR_SORT_TYPE_KEY, "0"));
+            if (sortType == 0) {
+                authors = authorDao.getAllAuthorsSortedAZ();
+            } else {
+                authors = authorDao.getAllAuthorsSortedNew();
+            }
             mNewAuthors = authorDao.getNewAuthorsCount();
             setSelectedItem(mSelectedAuthorId);
             notifyDataSetChanged();
