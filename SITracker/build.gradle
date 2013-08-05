@@ -60,14 +60,15 @@ android {
 
 afterEvaluate { project ->
     android.applicationVariants.each { variant ->
-        def andAnnOutput = file("${project.buildDir}/source/r/${variant.dirName}")
+        def andAnnOutput = file("${project.buildDir}/source/aaGen/${variant.dirName}")
         variant.renderscriptCompile.resOutputDir = andAnnOutput
 
         variant.javaCompile.options.compilerArgs += [
                 '-classpath', configurations.compile.asPath,
                 '-processorpath', configurations.androidannotations.asPath,
                 '-processor', 'org.androidannotations.AndroidAnnotationProcessor',
-                '-AandroidManifestFile=' + variant.processResources.manifestFile
+                '-AandroidManifestFile=' + variant.processResources.manifestFile,
+                '-s', andAnnOutput
 
         ]
     }
