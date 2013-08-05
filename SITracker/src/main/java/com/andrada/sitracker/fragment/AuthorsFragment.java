@@ -23,6 +23,7 @@ import com.andrada.sitracker.contracts.AuthorUpdateStatusListener;
 import com.andrada.sitracker.db.beans.Author;
 import com.andrada.sitracker.events.AuthorAddedEvent;
 import com.andrada.sitracker.events.AuthorSelectedEvent;
+import com.andrada.sitracker.events.AuthorSortMethodChanged;
 import com.andrada.sitracker.events.ProgressBarToggleEvent;
 import com.andrada.sitracker.events.PublicationMarkedAsReadEvent;
 import com.andrada.sitracker.fragment.adapters.AuthorsAdapter;
@@ -307,6 +308,10 @@ public class AuthorsFragment extends SherlockFragment implements AuthorUpdateSta
 
 
     //region AuthorAddedEvent handler
+
+    public void onEvent(AuthorSortMethodChanged event) {
+        adapter.reloadAuthors();
+    }
 
     public void onEvent(AuthorAddedEvent event) {
         EasyTracker.getTracker().sendEvent(

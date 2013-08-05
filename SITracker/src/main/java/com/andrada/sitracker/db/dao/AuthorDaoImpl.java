@@ -27,8 +27,13 @@ public class AuthorDaoImpl extends BaseDaoImpl<Author, Integer>
     }
 
     @Override
-    public List<Author> getAllAuthorsSorted() throws SQLException {
+    public List<Author> getAllAuthorsSortedAZ() throws SQLException {
         return this.queryBuilder().orderBy("name", true).query();
+    }
+
+    @Override
+    public List<Author> getAllAuthorsSortedNew() throws SQLException {
+        return this.queryBuilder().orderBy("updateDate", false).query();
     }
 
     @Override

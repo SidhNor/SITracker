@@ -55,6 +55,10 @@
     </plurals>
 
     <!--Preferences -->
+    <string name="pref_authors_category_title">Authors</string>
+    <string name="pref_authors_sort">Authors sort</string>
+
+    <string name="pref_update_category_title">Updates</string>
     <string name="pref_updates_check">Automatic updates</string>
     <string name="pref_updates_check_summ">Automatic authors updates in background at the
         specified interval
