@@ -39,9 +39,6 @@ public class AddAuthorTask extends AsyncTask<String, Integer, String> {
         for (String url : args) {
             message = this.processAuthorAdd(url);
         }
-        if (!message.equals("")) {
-            EasyTracker.getTracker().sendException(message, false);
-        }
         return message;
     }
 
