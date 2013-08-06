@@ -6,8 +6,7 @@
     <string name="action_refresh">Update authors</string>
     <string name="action_add">Add author</string>
     <string name="action_delete">Delete author</string>
-    <string name="add_author_placeholder">samlib link
-    </string>
+    <string name="add_author_placeholder">samlib.ru/y/your_author</string>
     <string name="designtime_placeholder_long">Lorem ipsum dolor sit amet, consectetur adipiscing
         elit. Aenean fringilla
         luctus tellus, in tristique ligula adipiscing id. Proin tempor purus sit amet orci iaculis

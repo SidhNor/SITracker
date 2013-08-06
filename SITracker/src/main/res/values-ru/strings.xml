@@ -10,8 +10,7 @@
     <string name="action_add">Добавить автора
     </string>
     <string name="action_delete">Удалить автора</string>
-    <string name="add_author_placeholder">samlib link
-    </string>
+    <string name="add_author_placeholder">samlib.ru/a/avtor</string>
     <string name="designtime_placeholder_long">Lorem ipsum dolor sit amet, consectetur adipiscing
         elit. Aenean fringilla
         luctus tellus, in tristique ligula adipiscing id. Proin tempor purus sit amet orci iaculis
