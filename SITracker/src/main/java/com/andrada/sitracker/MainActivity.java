@@ -23,6 +23,7 @@ import com.andrada.sitracker.tasks.UpdateAuthorsTask_;
 import com.andrada.sitracker.tasks.filters.UpdateStatusMessageFilter;
 import com.andrada.sitracker.tasks.receivers.UpdateStatusReceiver;
 import com.google.analytics.tracking.android.EasyTracker;
+import com.google.analytics.tracking.android.GoogleAnalytics;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
@@ -87,6 +88,9 @@ public class MainActivity extends SherlockFragmentActivity {
     protected void onCreate(android.os.Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
+        if (BuildConfig.DEBUG) {
+            GoogleAnalytics.getInstance(getApplicationContext()).setAppOptOut(true);
+        }
     }
 
     @Override
