@@ -36,6 +36,8 @@ dependencies {
         compile 'com.android.support:support-v4:+'
     }
     compile files("../libraries/libGoogleAnalyticsV2.jar")
+
+    instrumentTestCompile 'com.squareup:fest-android:1.0.5'
 }
 
 tasks.withType(Compile) {

@@ -2,9 +2,10 @@ package com.andrada.sitracker.test;
 
 import android.support.v4.widget.SlidingPaneLayout;
 import android.test.ActivityInstrumentationTestCase2;
-import android.view.View;
+import android.test.UiThreadTest;
 import android.widget.ProgressBar;
 
+import com.actionbarsherlock.app.ActionBar;
 import com.andrada.sitracker.MainActivity_;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.events.ProgressBarToggleEvent;
@@ -12,6 +13,8 @@ import com.andrada.sitracker.events.ProgressBarToggleEvent;
 import de.greenrobot.event.EventBus;
 
 import static android.test.ViewAsserts.assertOnScreen;
+import static org.fest.assertions.api.ANDROID.assertThat;
+import static org.fest.assertions.api.Assertions.assertThat;
 
 /**
  * Created by ggodonoga on 05/08/13.
@@ -20,8 +23,9 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 
     private MainActivity_ mMainActivity;
     private ProgressBar mProgressBar;
-
-    SlidingPaneLayout slidingPane;
+    private ActionBar mActionBar;
+    private SlidingPaneLayout slidingPane;
+    private String appName;
 
     public MainActivityTest() {
         super(MainActivity_.class);
@@ -34,16 +38,22 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         mMainActivity = getActivity();
         mProgressBar = (ProgressBar) mMainActivity.findViewById(R.id.globalProgress);
         slidingPane = (SlidingPaneLayout) mMainActivity.findViewById(R.id.fragment_container);
+        mActionBar = mMainActivity.getSupportActionBar();
+        appName = mMainActivity.getResources().getString(R.string.app_name);
     }
 
-    // Methods whose names are prefixed with test will automatically be run
-    public void testProgressBarPresent() {
+    public void testPreconditions() {
+        assertThat(mMainActivity).isNotNull();
+        assertThat(mProgressBar).isNotNull();
+        assertThat(slidingPane).isNotNull();
+        assertThat(mActionBar).isNotNull();
+        assertThat(appName).isIn("SI Tracker", "СИ Трекер");
+        assertOnScreen(mMainActivity.getWindow().getDecorView(), slidingPane);
         assertOnScreen(mMainActivity.getWindow().getDecorView(), mProgressBar);
     }
 
-
     public void testProgressBarVisibilityGone() {
-        assertTrue(mProgressBar.getVisibility() == View.GONE);
+        assertThat(mProgressBar).isGone();
     }
 
 
@@ -52,21 +62,26 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         EventBus.getDefault().post(new ProgressBarToggleEvent(true));
         getInstrumentation().waitForIdleSync();
 
-        assertTrue(mProgressBar.getVisibility() == View.VISIBLE);
+        assertThat(mProgressBar).isVisible().isIndeterminate();
 
         EventBus.getDefault().post(new ProgressBarToggleEvent(false));
 
         getInstrumentation().waitForIdleSync();
 
-        assertTrue(mProgressBar.getVisibility() == View.GONE);
-    }
-
-
-    public void testSlidingPaneIsUp() {
-        assertOnScreen(mMainActivity.getWindow().getDecorView(), slidingPane);
+        assertThat(mProgressBar).isGone();
     }
 
     public void testSlidingPaneIsInitiallyOpened() {
-        assertTrue(slidingPane.isOpen());
+        assertThat(slidingPane.isOpen()).isTrue();
     }
+
+    public void testActionBarHasAppTitle() {
+        assertThat(mActionBar.getTitle()).isIn("SI Tracker", "СИ Трекер");
+    }
+
+    public void testActionBarHasDisabledHome() {
+        assertThat(mActionBar.getDisplayOptions())
+                .isNotEqualTo(ActionBar.DISPLAY_HOME_AS_UP | ActionBar.DISPLAY_SHOW_HOME);
+    }
+
 }
