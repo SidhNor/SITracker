@@ -2,6 +2,7 @@ package com.andrada.sitracker.test;
 
 import android.test.ActivityInstrumentationTestCase2;
 
+import com.actionbarsherlock.app.ActionBar;
 import com.andrada.sitracker.MainActivity_;
 
 /**
@@ -10,6 +11,8 @@ import com.andrada.sitracker.MainActivity_;
 public class MainActivityBaseTestCase extends ActivityInstrumentationTestCase2<MainActivity_> {
 
     protected MainActivity_ mMainActivity;
+    protected ActionBar mActionBar;
+
 
     public MainActivityBaseTestCase() {
         super(MainActivity_.class);
@@ -18,7 +21,7 @@ public class MainActivityBaseTestCase extends ActivityInstrumentationTestCase2<M
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-
         mMainActivity = getActivity();
+        mActionBar = mMainActivity.getSupportActionBar();
     }
 }
