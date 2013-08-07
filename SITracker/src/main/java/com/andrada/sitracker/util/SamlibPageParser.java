@@ -52,34 +52,34 @@ public class SamlibPageParser {
             item.setAuthor(author);
             item.setUpdateDate(new Date());
             //Group 1 - LinkToText
-            String itemURL = matcher.group(1) == null ? "" : matcher.group(1);
+            String itemURL = matcher.group(3) == null ? "" : matcher.group(3);
             item.setUrl(baseUrl + "/" + itemURL);
             //Group 2 - NameOfText
-            String itemTitle = matcher.group(2) == null ? "" : matcher.group(2);
+            String itemTitle = matcher.group(4) == null ? "" : matcher.group(4);
             item.setName(escapeHTML(itemTitle));
             //Group 3 - SizeOfText
-            String sizeOfText = matcher.group(3) == null ? "0" : matcher.group(3);
+            String sizeOfText = matcher.group(5) == null ? "0" : matcher.group(5);
             item.setSize(Integer.parseInt(sizeOfText));
             //Group 4 - DescriptionOfRating
-            String descriptionOfRating = matcher.group(4) == null ? "" : matcher.group(4);
+            String descriptionOfRating = matcher.group(6) == null ? "" : matcher.group(6);
             item.setRating(escapeHTML(descriptionOfRating));
             //Group 5 - Rating
-            String rating = matcher.group(5) == null ? "0" : matcher.group(5);
+            String rating = matcher.group(7) == null ? "0" : matcher.group(7);
             //Group 6 - Section
-            String categoryName = matcher.group(6) == null ? "" : matcher.group(6);
+            String categoryName = matcher.group(8) == null ? "" : matcher.group(8);
             item.setCategory(escapeHTML(categoryName).replace("@", ""));
             //Group 7 - Genres
-            String genre = matcher.group(7) == null ? "" : matcher.group(7);
+            String genre = matcher.group(9) == null ? "" : matcher.group(9);
             //Group 8 - Link to Comments
-            String commentsUrl = matcher.group(8) == null ? "" : matcher.group(8);
+            String commentsUrl = matcher.group(10) == null ? "" : matcher.group(10);
             item.setCommentUrl(commentsUrl);
             //Group 9 - CommentsDescription
-            String commentsDescription = matcher.group(9) == null ? "" : matcher.group(9);
+            String commentsDescription = matcher.group(11) == null ? "" : matcher.group(11);
             //Group 10 - CommentsCount
-            String commentsCount = matcher.group(10) == null ? "0" : matcher.group(10);
+            String commentsCount = matcher.group(12) == null ? "0" : matcher.group(12);
             item.setCommentsCount(Integer.parseInt(commentsCount));
             //Group 11 - Description
-            String itemDescription = matcher.group(11) == null ? "" : matcher.group(11);
+            String itemDescription = matcher.group(13) == null ? "" : matcher.group(13);
             item.setDescription(escapeHTML(itemDescription).trim());
             publicationList.add(item);
         }
