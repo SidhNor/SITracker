@@ -38,7 +38,7 @@ public class AuthorDaoImpl extends BaseDaoImpl<Author, Integer>
 
     @Override
     public void markAsRead(Author author) throws SQLException {
-        author.setUpdated(false);
+        author.markRead();
         this.update(author);
     }
 }

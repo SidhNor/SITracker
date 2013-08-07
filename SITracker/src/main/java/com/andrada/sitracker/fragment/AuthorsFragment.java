@@ -361,4 +361,12 @@ public class AuthorsFragment extends SherlockFragment implements AuthorUpdateSta
         this.mNoNetworkCrouton.show();
     }
 
+    public AuthorsAdapter getAdapter() {
+        return adapter;
+    }
+
+    public ListView getListView() {
+        return list;
+    }
+
 }

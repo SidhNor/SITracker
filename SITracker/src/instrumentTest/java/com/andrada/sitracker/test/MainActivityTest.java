@@ -2,7 +2,6 @@ package com.andrada.sitracker.test;
 
 import android.support.v4.widget.SlidingPaneLayout;
 import android.test.ActivityInstrumentationTestCase2;
-import android.test.UiThreadTest;
 import android.widget.ProgressBar;
 
 import com.actionbarsherlock.app.ActionBar;
@@ -19,23 +18,16 @@ import static org.fest.assertions.api.Assertions.assertThat;
 /**
  * Created by ggodonoga on 05/08/13.
  */
-public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActivity_> {
+public class MainActivityTest extends MainActivityBaseTestCase {
 
-    private MainActivity_ mMainActivity;
     private ProgressBar mProgressBar;
     private ActionBar mActionBar;
     private SlidingPaneLayout slidingPane;
     private String appName;
 
-    public MainActivityTest() {
-        super(MainActivity_.class);
-    }
-
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-
-        mMainActivity = getActivity();
         mProgressBar = (ProgressBar) mMainActivity.findViewById(R.id.globalProgress);
         slidingPane = (SlidingPaneLayout) mMainActivity.findViewById(R.id.fragment_container);
         mActionBar = mMainActivity.getSupportActionBar();

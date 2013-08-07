@@ -236,4 +236,11 @@ public class MainActivity extends SherlockFragmentActivity {
         }
     }
 
+    public AuthorsFragment getAuthorsFragment() {
+        return mAuthorsFragment;
+    }
+
+    public PublicationsFragment getPubFragment() {
+        return mPubFragment;
+    }
 }

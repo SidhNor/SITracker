@@ -79,19 +79,16 @@ public class Author {
         return isUpdated;
     }
 
-    public void setUpdated(Boolean updated) {
-        if (!updated) {
-            for (Publication pub : this.publications) {
-                pub.setNew(false);
-                pub.setOldSize(0);
-                try {
-                    this.publications.update(pub);
-                } catch (SQLException e) {
-                    //surface error
-                    EasyTracker.getTracker().sendException("Author Set updated", e, false);
-                }
+    public void markRead() {
+        for (Publication pub : this.publications) {
+            pub.setNew(false);
+            pub.setOldSize(0);
+            try {
+                this.publications.update(pub);
+            } catch (SQLException e) {
+                //surface error
+                EasyTracker.getTracker().sendException("Author Set updated", e, false);
             }
-
         }
     }
 }
