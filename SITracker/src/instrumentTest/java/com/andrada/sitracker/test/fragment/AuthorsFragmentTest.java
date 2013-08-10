@@ -1,3 +1,19 @@
+/*
+ * Copyright 2013 Gleb Godonoga.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.andrada.sitracker.test.fragment;
 
 import android.test.UiThreadTest;
@@ -7,7 +23,7 @@ import com.andrada.sitracker.R;
 import com.andrada.sitracker.events.AuthorSelectedEvent;
 import com.andrada.sitracker.fragment.AuthorsFragment_;
 import com.andrada.sitracker.fragment.adapters.AuthorsAdapter;
-import com.andrada.sitracker.test.MainActivityBaseTestCase;
+import com.andrada.sitracker.test.HomeActivityBaseTestCase;
 import com.andrada.sitracker.test.util.DBTestSetupUtil;
 
 import de.greenrobot.event.EventBus;
@@ -18,7 +34,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
 /**
  * Created by ggodonoga on 06/08/13.
  */
-public class AuthorsFragmentTest extends MainActivityBaseTestCase {
+public class AuthorsFragmentTest extends HomeActivityBaseTestCase {
 
     private AuthorsFragment_ authorsFragment;
     private AuthorsAdapter authorsAdapter;

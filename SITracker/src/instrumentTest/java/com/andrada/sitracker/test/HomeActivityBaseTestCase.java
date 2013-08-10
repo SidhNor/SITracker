@@ -14,32 +14,30 @@
  * limitations under the License.
  */
 
-package com.andrada.sitracker.test.fragment;
+package com.andrada.sitracker.test;
 
-import com.andrada.sitracker.R;
-import com.andrada.sitracker.fragment.PublicationsFragment_;
-import com.andrada.sitracker.test.HomeActivityBaseTestCase;
+import android.test.ActivityInstrumentationTestCase2;
 
-import static org.fest.assertions.api.ANDROID.assertThat;
+import com.actionbarsherlock.app.ActionBar;
+import com.andrada.sitracker.HomeActivity_;
 
 /**
  * Created by ggodonoga on 06/08/13.
  */
-public class PublicationsFragmentTest extends HomeActivityBaseTestCase {
+public class HomeActivityBaseTestCase extends ActivityInstrumentationTestCase2<HomeActivity_> {
 
-    private PublicationsFragment_ publicationsFragment;
+    protected HomeActivity_ mMainActivity;
+    protected ActionBar mActionBar;
+
+
+    public HomeActivityBaseTestCase() {
+        super(HomeActivity_.class);
+    }
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        publicationsFragment = (PublicationsFragment_) mMainActivity.getPubFragment();
+        mMainActivity = getActivity();
+        mActionBar = mMainActivity.getSupportActionBar();
     }
-
-    public void testPreconditions() {
-        assertThat(mMainActivity).isNotNull();
-        assertThat(publicationsFragment).isNotNull()
-                .isAdded()
-                .hasId(R.id.fragment_publications);
-    }
-
 }

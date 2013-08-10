@@ -17,13 +17,11 @@
 package com.andrada.sitracker;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SlidingPaneLayout;
@@ -31,7 +29,6 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ProgressBar;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.andrada.sitracker.events.ProgressBarToggleEvent;
@@ -40,9 +37,9 @@ import com.andrada.sitracker.fragment.PublicationsFragment;
 import com.andrada.sitracker.tasks.UpdateAuthorsTask_;
 import com.andrada.sitracker.tasks.filters.UpdateStatusMessageFilter;
 import com.andrada.sitracker.tasks.receivers.UpdateStatusReceiver;
+import com.andrada.sitracker.ui.BaseActivity;
 import com.andrada.sitracker.util.UIUtils;
 import com.google.analytics.tracking.android.EasyTracker;
-import com.google.analytics.tracking.android.GoogleAnalytics;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
@@ -59,7 +56,7 @@ import de.keyboardsurfer.android.widget.crouton.Crouton;
 
 @EActivity(R.layout.activity_main)
 @OptionsMenu(R.menu.main_menu)
-public class MainActivity extends SherlockFragmentActivity {
+public class HomeActivity extends BaseActivity {
 
     @FragmentById(R.id.fragment_publications)
     PublicationsFragment mPubFragment;
@@ -107,9 +104,10 @@ public class MainActivity extends SherlockFragmentActivity {
     protected void onCreate(android.os.Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
-        if (BuildConfig.DEBUG) {
-            GoogleAnalytics.getInstance(getApplicationContext()).setAppOptOut(true);
+        if (isFinishing()) {
+            return;
         }
+        UIUtils.enableDisableActivitiesByFormFactor(this);
     }
 
     @Override
@@ -126,7 +124,6 @@ public class MainActivity extends SherlockFragmentActivity {
         UpdateStatusMessageFilter filter = new UpdateStatusMessageFilter();
         filter.setPriority(1);
         registerReceiver(updateStatusReceiver, filter);
-        EasyTracker.getInstance().activityStart(this);
     }
 
     @Override
@@ -134,7 +131,6 @@ public class MainActivity extends SherlockFragmentActivity {
         super.onPause();
         unregisterReceiver(updateStatusReceiver);
         getSupportFragmentManager().removeOnBackStackChangedListener(backStackListener);
-        EasyTracker.getInstance().activityStop(this);
     }
 
     @Override

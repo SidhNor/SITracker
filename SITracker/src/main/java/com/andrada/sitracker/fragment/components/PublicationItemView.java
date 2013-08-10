@@ -25,6 +25,7 @@ import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.IsNewItemTappedListener;
 import com.andrada.sitracker.db.beans.Publication;
 import com.andrada.sitracker.util.DateFormatterUtil;
+import com.andrada.sitracker.util.SamlibPageParser;
 import com.andrada.sitracker.util.TouchDelegateRelativeLayout;
 import com.andrada.sitracker.util.UIUtils;
 
@@ -85,7 +86,8 @@ public class PublicationItemView extends TouchDelegateRelativeLayout {
                         getResources().getConfiguration().locale));
 
         UIUtils.setTextMaybeHtml(item_description,
-                publication.getDescription());
+                SamlibPageParser.stripDescriptionOfImages(publication.getDescription()));
+
 
         StringBuilder builder = new StringBuilder();
         int oldSize = publication.getOldSize();
