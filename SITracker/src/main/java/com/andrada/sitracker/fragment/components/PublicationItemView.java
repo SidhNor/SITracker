@@ -24,9 +24,10 @@ import android.widget.TextView;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.IsNewItemTappedListener;
 import com.andrada.sitracker.db.beans.Publication;
+import com.andrada.sitracker.ui.widget.EllipsizedTextView;
+import com.andrada.sitracker.ui.widget.TouchDelegateRelativeLayout;
 import com.andrada.sitracker.util.DateFormatterUtil;
 import com.andrada.sitracker.util.SamlibPageParser;
-import com.andrada.sitracker.util.TouchDelegateRelativeLayout;
 import com.andrada.sitracker.util.UIUtils;
 
 import org.androidannotations.annotations.AfterViews;
@@ -49,7 +50,7 @@ public class PublicationItemView extends TouchDelegateRelativeLayout {
     ImageButton item_updated;
 
     @ViewById
-    TextView item_description;
+    EllipsizedTextView item_description;
 
     @ViewById
     View publication_item_divider;
@@ -70,6 +71,7 @@ public class PublicationItemView extends TouchDelegateRelativeLayout {
         this.delegatedTouchViews.put(
                 ViewConfig.wholeRight(),
                 item_updated);
+        item_description.setMaxLines(3);
     }
 
     public void setListener(IsNewItemTappedListener listener) {

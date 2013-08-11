@@ -25,7 +25,7 @@ import android.widget.TextView;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.IsNewItemTappedListener;
 import com.andrada.sitracker.db.beans.Author;
-import com.andrada.sitracker.util.CheckedRelativeLayout;
+import com.andrada.sitracker.ui.widget.CheckedRelativeLayout;
 import com.andrada.sitracker.util.DateFormatterUtil;
 import com.andrada.sitracker.util.UIUtils;
 
