@@ -35,6 +35,7 @@ import com.andrada.sitracker.fragment.components.AuthorItemView_;
 import com.google.analytics.tracking.android.EasyTracker;
 
 import org.androidannotations.annotations.AfterInject;
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.OrmLiteDao;
 import org.androidannotations.annotations.RootContext;
@@ -132,17 +133,13 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
     }
 
     @Override
+    @Background
     public void onIsNewItemTapped(View starButton) {
         Author auth = (Author) starButton.getTag();
         if (auth != null) {
-            try {
-                authorDao.markAsRead(auth);
-                EventBus.getDefault().post(new AuthorMarkedAsReadEvent(auth.getId()));
-            } catch (SQLException e) {
-                //surface error
-                EasyTracker.getTracker().sendException("Author Mark as read thread", e, false);
-            }
-        }
+            auth.markRead();
+            EventBus.getDefault().post(new AuthorMarkedAsReadEvent(auth.getId()));
+       }
     }
 
     public void removeAuthors(List<Author> authorsToRemove) {
