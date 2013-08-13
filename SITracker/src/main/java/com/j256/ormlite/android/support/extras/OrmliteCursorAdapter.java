@@ -16,8 +16,6 @@
 
 package com.j256.ormlite.android.support.extras;
 
-import java.sql.SQLException;
-
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
@@ -25,6 +23,8 @@ import android.view.View;
 
 import com.j256.ormlite.android.AndroidDatabaseResults;
 import com.j256.ormlite.stmt.PreparedQuery;
+
+import java.sql.SQLException;
 
 public abstract class OrmliteCursorAdapter<T> extends CursorAdapter {
     protected PreparedQuery<T> mQuery;
@@ -42,7 +42,21 @@ public abstract class OrmliteCursorAdapter<T> extends CursorAdapter {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
 
+    @Override
+    public T getItem(int position) {
+        if (position >= mCursor.getCount()) {
+            return null;
+        }
+        this.getCursor().moveToPosition(position);
+        T item = null;
+        try {
+            item = mQuery.mapRow(new AndroidDatabaseResults(this.getCursor(), null));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return item;
     }
 
     public void setQuery(PreparedQuery<T> query) {

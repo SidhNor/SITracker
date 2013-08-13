@@ -18,29 +18,23 @@ package com.andrada.sitracker.fragment.adapters;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.ListView;
 
-import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.contracts.IsNewItemTappedListener;
 import com.andrada.sitracker.db.beans.Author;
-import com.andrada.sitracker.db.dao.AuthorDao;
-import com.andrada.sitracker.db.manager.SiDBHelper;
+import com.andrada.sitracker.db.dao.AuthorDaoImpl;
 import com.andrada.sitracker.events.AuthorMarkedAsReadEvent;
 import com.andrada.sitracker.fragment.components.AuthorItemView;
 import com.andrada.sitracker.fragment.components.AuthorItemView_;
 import com.google.analytics.tracking.android.EasyTracker;
+import com.j256.ormlite.android.support.extras.OrmliteCursorAdapter;
 
-import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.OrmLiteDao;
 import org.androidannotations.annotations.RootContext;
 
 import java.sql.SQLException;
-import java.util.List;
+import java.util.Collection;
 
 import de.greenrobot.event.EventBus;
 
@@ -49,14 +43,7 @@ import de.greenrobot.event.EventBus;
  */
 
 @EBean
-public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListener {
-
-    List<Author> authors;
-    long mNewAuthors;
-    ListView listView = null;
-
-    @OrmLiteDao(helper = SiDBHelper.class, model = Author.class)
-    AuthorDao authorDao;
+public class AuthorsAdapter extends OrmliteCursorAdapter<Author> implements IsNewItemTappedListener {
 
     @RootContext
     Context context;
@@ -64,60 +51,16 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
 
     private long mSelectedAuthorId = 0;
 
-    @AfterInject
-    void initAdapter() {
-        reloadAuthors();
+    public AuthorsAdapter(Context context) {
+        super(context, null, null);
     }
-
-    public void reloadAuthors() {
-        try {
-            int sortType = Integer.parseInt(
-                    PreferenceManager.getDefaultSharedPreferences(context)
-                            .getString(Constants.AUTHOR_SORT_TYPE_KEY, "0"));
-            if (sortType == 0) {
-                authors = authorDao.getAllAuthorsSortedAZ();
-            } else {
-                authors = authorDao.getAllAuthorsSortedNew();
-            }
-            mNewAuthors = authorDao.getNewAuthorsCount();
-            setSelectedItem(mSelectedAuthorId);
-            notifyDataSetChanged();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
 
     @Override
     public int getCount() {
-        return authors.size();
-    }
-
-    @Override
-    public Object getItem(int position) {
-        return authors.get(position);
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return authors.get(position).getId();
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-
-        if (listView == null) {
-            listView = (ListView) parent;
+        if (mCursor != null) {
+            return mCursor.getCount();
         }
-        AuthorItemView authorsItemView;
-        if (convertView == null) {
-            authorsItemView = AuthorItemView_.build(context);
-            authorsItemView.setListener(this);
-        } else {
-            authorsItemView = (AuthorItemView) convertView;
-        }
-        authorsItemView.bind(authors.get(position), position == mSelectedItem);
-        return authorsItemView;
+        return 0;
     }
 
     public View newView(Context context, Cursor cursor, ViewGroup viewGroup) {
@@ -135,19 +78,15 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
     public void onIsNewItemTapped(View starButton) {
         Author auth = (Author) starButton.getTag();
         if (auth != null) {
-            try {
-                authorDao.markAsRead(auth);
-                EventBus.getDefault().post(new AuthorMarkedAsReadEvent(auth.getId()));
-            } catch (SQLException e) {
-                //surface error
-                EasyTracker.getTracker().sendException("Author Mark as read thread", e, false);
-            }
+            auth.markRead();
+            EventBus.getDefault().post(new AuthorMarkedAsReadEvent(auth.getId()));
         }
     }
 
-    public void removeAuthors(List<Author> authorsToRemove) {
+    public void removeAuthors(Collection<Author> authorsToRemove, AuthorDaoImpl authorDao) {
         try {
             authorDao.delete(authorsToRemove);
+            authorDao.notifyContentChange();
         } catch (SQLException e) {
             EasyTracker.getTracker().sendException("Author Remove thread", e, false);
         }
@@ -157,7 +96,6 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
             if (anAuthorToRemove.getId() == mSelectedAuthorId) {
                 removingCurrentlySelected = true;
             }
-            authors.remove(anAuthorToRemove);
         }
         if (removingCurrentlySelected) {
             //Try select the first one
@@ -165,12 +103,11 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
         } else {
             setSelectedItem(mSelectedAuthorId);
         }
-        notifyDataSetChanged();
     }
 
     public long getFirstAuthorId() {
-        if (authors.size() > 0) {
-            return authors.get(0).getId();
+        if (mCursor != null && mCursor.getCount() > 0) {
+            return this.getItemId(0);
         }
         return -1;
     }
@@ -185,15 +122,19 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
     }
 
     public Author getCurrentlySelectedAuthor() {
-        if (mSelectedItem < authors.size() && mSelectedItem >= 0)
-            return authors.get(mSelectedItem);
+        if (mCursor != null) {
+            if (mSelectedItem < mCursor.getCount() && mSelectedItem >= 0)
+                return this.getItem(mSelectedItem);
+        }
         return null;
     }
 
     private int getItemPositionByAuthorId(long authorId) {
-        for (int i = 0; i < authors.size(); i++) {
-            if (authors.get(i).getId() == authorId) {
-                return i;
+        if (mCursor != null) {
+            for (int i = 0; i < mCursor.getCount(); i++) {
+                if (this.getItemId(i) == authorId) {
+                    return i;
+                }
             }
         }
         return -1;

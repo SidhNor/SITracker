@@ -17,9 +17,13 @@
 package com.andrada.sitracker.fragment;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -37,6 +41,8 @@ import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.AuthorUpdateStatusListener;
 import com.andrada.sitracker.db.beans.Author;
+import com.andrada.sitracker.db.dao.AuthorDaoImpl;
+import com.andrada.sitracker.db.manager.SiDBHelper;
 import com.andrada.sitracker.events.AuthorAddedEvent;
 import com.andrada.sitracker.events.AuthorSelectedEvent;
 import com.andrada.sitracker.events.AuthorSortMethodChanged;
@@ -56,11 +62,12 @@ import org.androidannotations.annotations.InstanceState;
 import org.androidannotations.annotations.ItemClick;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
+import org.androidannotations.annotations.OrmLiteDao;
 import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.ViewById;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -71,7 +78,9 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 
 @EFragment(R.layout.fragment_authors)
 @OptionsMenu(R.menu.authors_menu)
-public class AuthorsFragment extends SherlockFragment implements AuthorUpdateStatusListener,
+public class AuthorsFragment extends SherlockFragment implements
+        LoaderManager.LoaderCallbacks<Cursor>,
+        AuthorUpdateStatusListener,
         MultiChoiceModeListener, View.OnClickListener {
 
     @ViewById
@@ -83,6 +92,9 @@ public class AuthorsFragment extends SherlockFragment implements AuthorUpdateSta
     @Bean
     AuthorsAdapter adapter;
 
+    @OrmLiteDao(helper = SiDBHelper.class, model = Author.class)
+    AuthorDaoImpl authorDao;
+
     @SystemService
     ConnectivityManager connectivityManager;
 
@@ -93,7 +105,7 @@ public class AuthorsFragment extends SherlockFragment implements AuthorUpdateSta
 
     private boolean mIsUpdating = false;
 
-    private final List<Author> mSelectedAuthors = new ArrayList<Author>();
+    private final HashMap<Integer, Author> mSelectedAuthors = new HashMap<Integer, Author>();
 
     //region Fragment lifecycle overrides
 
@@ -109,11 +121,6 @@ public class AuthorsFragment extends SherlockFragment implements AuthorUpdateSta
         super.onStart();
         mIsUpdating = false;
         getSherlockActivity().invalidateOptionsMenu();
-        currentAuthorIndex = currentAuthorIndex == -1 ? adapter.getFirstAuthorId() : currentAuthorIndex;
-        EventBus.getDefault().post(new AuthorSelectedEvent(currentAuthorIndex));
-        // Set the item as checked to be highlighted
-        adapter.setSelectedItem(currentAuthorIndex);
-        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -187,6 +194,19 @@ public class AuthorsFragment extends SherlockFragment implements AuthorUpdateSta
 
     @AfterViews
     void bindAdapter() {
+        try {
+            getLoaderManager().restartLoader(0, null, this);
+            int sortType = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(getSherlockActivity())
+                    .getString(Constants.AUTHOR_SORT_TYPE_KEY, "0"));
+            if (sortType == 0) {
+                adapter.setQuery(authorDao.getAllAuthorsSortedAZQuery());
+            } else {
+                adapter.setQuery(authorDao.getAllAuthorsSortedNewQuery());
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         list.setAdapter(adapter);
         ActionMode.setMultiChoiceMode(list, getSherlockActivity(), this);
         list.setBackgroundResource(R.drawable.authors_list_background);
@@ -245,7 +265,7 @@ public class AuthorsFragment extends SherlockFragment implements AuthorUpdateSta
         if (isUpdating()) {
             toggleUpdatingState();
         }
-        adapter.reloadAuthors();
+        authorDao.notifyContentChange();
     }
 
     @Override
@@ -263,10 +283,11 @@ public class AuthorsFragment extends SherlockFragment implements AuthorUpdateSta
     @Override
     public void onItemCheckedStateChanged(com.andrada.sitracker.util.actionmodecompat.ActionMode mode,
                                           int position, long id, boolean checked) {
+        Author item = adapter.getItem(position);
         if (checked) {
-            mSelectedAuthors.add((Author) adapter.getItem(position));
-        } else {
-            mSelectedAuthors.remove(adapter.getItem(position));
+            mSelectedAuthors.put(item.getId(), item);
+        } else if (item != null) {
+            mSelectedAuthors.remove(item.getId());
         }
         int numSelectedAuthors = mSelectedAuthors.size();
         mode.setTitle(getResources().getQuantityString(
@@ -297,7 +318,7 @@ public class AuthorsFragment extends SherlockFragment implements AuthorUpdateSta
                     Constants.GA_EVENT_AUTHOR_REMOVED,
                     Constants.GA_EVENT_AUTHOR_REMOVED, (long) mSelectedAuthors.size());
             EasyTracker.getInstance().dispatch();
-            adapter.removeAuthors(mSelectedAuthors);
+            adapter.removeAuthors(mSelectedAuthors.values(), authorDao);
             currentAuthorIndex = adapter.getSelectedAuthorId();
             EventBus.getDefault().post(new AuthorSelectedEvent(currentAuthorIndex));
             return true;
@@ -325,7 +346,7 @@ public class AuthorsFragment extends SherlockFragment implements AuthorUpdateSta
     //region AuthorAddedEvent handler
 
     public void onEvent(AuthorSortMethodChanged event) {
-        adapter.reloadAuthors();
+        getLoaderManager().restartLoader(0, null, this);
     }
 
     public void onEvent(AuthorAddedEvent event) {
@@ -346,7 +367,7 @@ public class AuthorsFragment extends SherlockFragment implements AuthorUpdateSta
 
         if (message.length() == 0) {
             //This is success
-            adapter.reloadAuthors();
+            authorDao.notifyContentChange();
             alertStyle.setBackgroundColorValue(Style.holoGreenLight);
             message = getResources().getString(R.string.author_add_success_crouton_message);
         } else {
@@ -384,4 +405,32 @@ public class AuthorsFragment extends SherlockFragment implements AuthorUpdateSta
         return list;
     }
 
+    @Override
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        try {
+            int sortType = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(getSherlockActivity())
+                    .getString(Constants.AUTHOR_SORT_TYPE_KEY, "0"));
+            return authorDao.getSQLCursorLoader(
+                    this.getSherlockActivity(), sortType == 0 ?
+                    authorDao.getAllAuthorsSortedAZQuery() : authorDao.getAllAuthorsSortedNewQuery()
+            );
+        } catch (SQLException e) {
+            return null;
+        }
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+        adapter.changeCursor(cursor);
+        currentAuthorIndex = currentAuthorIndex == -1 ? adapter.getFirstAuthorId() : currentAuthorIndex;
+        EventBus.getDefault().post(new AuthorSelectedEvent(currentAuthorIndex));
+        // Set the item as checked to be highlighted
+        adapter.setSelectedItem(currentAuthorIndex);
+        adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> cursorLoader) {
+        adapter.swapCursor(null);
+    }
 }
