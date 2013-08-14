@@ -32,7 +32,7 @@ import java.sql.SQLException;
 public class SiDBHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "siinformer.db";
-    private static final int DATABASE_VERSION = 8;
+    private static final int DATABASE_VERSION = 6;
 
     private PublicationDao publicationDao;
     private AuthorDao authorDao;
@@ -66,20 +66,23 @@ public class SiDBHelper extends OrmLiteSqliteOpenHelper {
                         getPublicationDao().executeRaw("CREATE INDEX 'fk_author_publication' ON 'publication' ('authorID' ASC)");
                         break;
                     }
-                    case 4:
-                    case 5:
-                    case 6:
-                    case 7: {
+                    case 5: {
                         getAuthorDao().executeRaw(
                                 "ALTER TABLE authors RENAME TO tmp_authors;");
                         TableUtils.createTableIfNotExists(connectionSource, Author.class);
                         getAuthorDao().executeRaw(
                                 "INSERT INTO authors(_id, name, url, updateDate) " +
                                         "SELECT id, name, url, updateDate " +
-                                        "FROM tmp_authors;" +
-                                        "DROP TABLE tmp_authors;"
+                                        "FROM tmp_authors;"
                         );
-                        break;
+                        //Look at all author publications and update accordingly
+                        getAuthorDao().executeRaw(
+                                "UPDATE authors SET isNew = 1 " +
+                                        "(SELECT DISTINCT(author_id) FROM publications WHERE publications.isNew = 1) newAuthors " +
+                                        "WHERE authors.id = newAuthors.author_id"
+                        );
+                        getAuthorDao().executeRaw("DROP TABLE tmp_authors;");
+
                     }
                 }
             }

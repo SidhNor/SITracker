@@ -44,6 +44,7 @@ import com.andrada.sitracker.db.beans.Author;
 import com.andrada.sitracker.db.dao.AuthorDaoImpl;
 import com.andrada.sitracker.db.manager.SiDBHelper;
 import com.andrada.sitracker.events.AuthorAddedEvent;
+import com.andrada.sitracker.events.AuthorMarkedAsReadEvent;
 import com.andrada.sitracker.events.AuthorSelectedEvent;
 import com.andrada.sitracker.events.AuthorSortMethodChanged;
 import com.andrada.sitracker.events.ProgressBarToggleEvent;
@@ -284,7 +285,7 @@ public class AuthorsFragment extends SherlockFragment implements
     public void onItemCheckedStateChanged(com.andrada.sitracker.util.actionmodecompat.ActionMode mode,
                                           int position, long id, boolean checked) {
         Author item = adapter.getItem(position);
-        if (checked) {
+        if (checked && item != null) {
             mSelectedAuthors.put(item.getId(), item);
         } else if (item != null) {
             mSelectedAuthors.remove(item.getId());
@@ -347,6 +348,15 @@ public class AuthorsFragment extends SherlockFragment implements
 
     public void onEvent(AuthorSortMethodChanged event) {
         getLoaderManager().restartLoader(0, null, this);
+    }
+
+    public void onEvent(AuthorMarkedAsReadEvent event) {
+        try {
+            authorDao.update(event.author);
+        } catch (SQLException e) {
+            //TODO handle exception
+            e.printStackTrace();
+        }
     }
 
     public void onEvent(AuthorAddedEvent event) {

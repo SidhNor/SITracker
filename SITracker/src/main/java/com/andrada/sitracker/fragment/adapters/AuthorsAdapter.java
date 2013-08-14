@@ -30,6 +30,7 @@ import com.andrada.sitracker.fragment.components.AuthorItemView_;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.j256.ormlite.android.support.extras.OrmliteCursorAdapter;
 
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 
@@ -78,9 +79,14 @@ public class AuthorsAdapter extends OrmliteCursorAdapter<Author> implements IsNe
     public void onIsNewItemTapped(View starButton) {
         Author auth = (Author) starButton.getTag();
         if (auth != null) {
-            auth.markRead();
-            EventBus.getDefault().post(new AuthorMarkedAsReadEvent(auth.getId()));
+            markAuthorRead(auth);
         }
+    }
+
+    @Background
+    protected void markAuthorRead(Author author) {
+        author.markRead();
+        EventBus.getDefault().post(new AuthorMarkedAsReadEvent(author));
     }
 
     public void removeAuthors(Collection<Author> authorsToRemove, AuthorDaoImpl authorDao) {

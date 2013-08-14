@@ -36,6 +36,8 @@ public class Author {
     String url;
     @DatabaseField(canBeNull = false, useGetSet = true)
     Date updateDate;
+    @DatabaseField(defaultValue = "false", canBeNull = false, columnName = "_id")
+    Boolean isNew;
 
     @ForeignCollectionField(eager = false)
     ForeignCollection<Publication> publications;
@@ -84,7 +86,17 @@ public class Author {
         this.publications = publications;
     }
 
+    public Boolean getNew() {
+        return isNew;
+    }
+
+    public void setNew(Boolean aNew) {
+        isNew = aNew;
+    }
+
+    /*
     public Boolean isUpdated() {
+        //TODO REMOVE this - its killing performance
         boolean isUpdated = false;
         for (Publication pub : this.publications) {
             if (pub.isNew) {
@@ -93,9 +105,10 @@ public class Author {
             }
         }
         return isUpdated;
-    }
+    }*/
 
     public void markRead() {
+        this.setNew(false);
         for (Publication pub : this.publications) {
             pub.setNew(false);
             pub.setOldSize(0);
@@ -103,7 +116,7 @@ public class Author {
                 this.publications.update(pub);
             } catch (SQLException e) {
                 //surface error
-                EasyTracker.getTracker().sendException("Author Set updated", e, false);
+                EasyTracker.getTracker().sendException("Author mark as read", e, false);
             }
         }
     }
