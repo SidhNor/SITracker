@@ -66,7 +66,7 @@ public class SiDBHelper extends OrmLiteSqliteOpenHelper {
                         getPublicationDao().executeRaw("CREATE INDEX 'fk_author_publication' ON 'publication' ('authorID' ASC)");
                         break;
                     }
-                    case 5: {
+                    case 6: {
                         getAuthorDao().executeRaw(
                                 "ALTER TABLE authors RENAME TO tmp_authors;");
                         TableUtils.createTableIfNotExists(connectionSource, Author.class);
@@ -78,11 +78,11 @@ public class SiDBHelper extends OrmLiteSqliteOpenHelper {
                         //Look at all author publications and update accordingly
                         getAuthorDao().executeRaw(
                                 "UPDATE authors SET isNew = 1 " +
-                                        "(SELECT DISTINCT(author_id) FROM publications WHERE publications.isNew = 1) newAuthors " +
-                                        "WHERE authors.id = newAuthors.author_id"
+                                        "WHERE _id IN " +
+                                        "(SELECT DISTINCT(author_id) FROM " +
+                                        "publications WHERE publications.isNew = 1)"
                         );
                         getAuthorDao().executeRaw("DROP TABLE tmp_authors;");
-
                     }
                 }
             }

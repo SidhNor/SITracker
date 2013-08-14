@@ -36,7 +36,7 @@ public class Author {
     String url;
     @DatabaseField(canBeNull = false, useGetSet = true)
     Date updateDate;
-    @DatabaseField(defaultValue = "false", canBeNull = false, columnName = "_id")
+    @DatabaseField(defaultValue = "false", canBeNull = false)
     Boolean isNew;
 
     @ForeignCollectionField(eager = false)
