@@ -353,9 +353,9 @@ public class AuthorsFragment extends SherlockFragment implements
     public void onEvent(AuthorMarkedAsReadEvent event) {
         try {
             authorDao.update(event.author);
+            authorDao.notifyContentChange();
         } catch (SQLException e) {
-            //TODO handle exception
-            e.printStackTrace();
+            EasyTracker.getTracker().sendException("Author mark as read: " + e.getMessage(), false);
         }
     }
 
