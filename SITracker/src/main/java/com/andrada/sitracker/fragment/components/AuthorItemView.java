@@ -82,7 +82,7 @@ public class AuthorItemView extends CheckedRelativeLayout {
         } else {
             this.setChecked(isSelected);
         }
-        mIsNew = author.isUpdated();
+        mIsNew = author.getNew();
         author_updated.setTag(author);
         author_title.setText(author.getName());
         author_update_date.setText(
