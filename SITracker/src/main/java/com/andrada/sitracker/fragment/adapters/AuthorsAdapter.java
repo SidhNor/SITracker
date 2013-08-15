@@ -17,7 +17,6 @@
 package com.andrada.sitracker.fragment.adapters;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,20 +38,18 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.OrmLiteDao;
 import org.androidannotations.annotations.RootContext;
+import org.androidannotations.annotations.UiThread;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
-/**
- * Created by ggodonoga on 05/06/13.
- */
-
 @EBean
 public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListener {
 
-    List<Author> authors;
+    List<Author> authors = new ArrayList<Author>();
     long mNewAuthors;
     ListView listView = null;
 
@@ -70,6 +67,10 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
         reloadAuthors();
     }
 
+    /**
+     * Reloads authors in background posting changeset notification to UI Thread
+     */
+    @Background
     public void reloadAuthors() {
         try {
             int sortType = Integer.parseInt(
@@ -82,10 +83,15 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
             }
             mNewAuthors = authorDao.getNewAuthorsCount();
             setSelectedItem(mSelectedAuthorId);
-            notifyDataSetChanged();
+            postDataSetChanged();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    @UiThread
+    protected void postDataSetChanged() {
+        notifyDataSetChanged();
     }
 
 
@@ -121,27 +127,23 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
         return authorsItemView;
     }
 
-    public View newView(Context context, Cursor cursor, ViewGroup viewGroup) {
-        AuthorItemView authorsItemView = AuthorItemView_.build(context);
-        authorsItemView.setListener(this);
-        return authorsItemView;
-    }
-
-    public void bindView(View itemView, Context context, Author item) {
-        AuthorItemView authorsItemView = (AuthorItemView) itemView;
-        authorsItemView.bind(item, mSelectedAuthorId == item.getId());
-    }
-
     @Override
     @Background
     public void onIsNewItemTapped(View starButton) {
         Author auth = (Author) starButton.getTag();
         if (auth != null) {
             auth.markRead();
-            EventBus.getDefault().post(new AuthorMarkedAsReadEvent(auth.getId()));
-       }
+            try {
+                authorDao.update(auth);
+                EventBus.getDefault().post(new AuthorMarkedAsReadEvent(auth));
+            } catch (SQLException e) {
+                EasyTracker.getTracker().sendException("Author mark as read: " + e.getMessage(), false);
+            }
+
+        }
     }
 
+    @Background
     public void removeAuthors(List<Author> authorsToRemove) {
         try {
             authorDao.delete(authorsToRemove);
@@ -162,7 +164,7 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
         } else {
             setSelectedItem(mSelectedAuthorId);
         }
-        notifyDataSetChanged();
+        postDataSetChanged();
     }
 
     public long getFirstAuthorId() {

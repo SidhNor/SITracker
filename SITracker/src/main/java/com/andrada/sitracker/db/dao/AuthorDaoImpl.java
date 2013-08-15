@@ -17,8 +17,7 @@
 package com.andrada.sitracker.db.dao;
 
 import com.andrada.sitracker.db.beans.Author;
-import com.j256.ormlite.android.support.extras.AndroidBaseDaoImpl;
-import com.j256.ormlite.stmt.PreparedQuery;
+import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.support.ConnectionSource;
 
 import java.sql.SQLException;
@@ -27,7 +26,7 @@ import java.util.List;
 /**
  * Created by ggodonoga on 07/06/13.
  */
-public class AuthorDaoImpl extends AndroidBaseDaoImpl<Author, Integer>
+public class AuthorDaoImpl extends BaseDaoImpl<Author, Integer>
         implements AuthorDao {
 
     public AuthorDaoImpl(ConnectionSource connectionSource)
@@ -39,8 +38,8 @@ public class AuthorDaoImpl extends AndroidBaseDaoImpl<Author, Integer>
     public int getNewAuthorsCount() throws SQLException {
 
         return (int) this.queryRawValue(
-                "SELECT COUNT(DISTINCT authors.id) FROM authors, publications " +
-                        "WHERE authors.id = publications.author_id AND publications.isNew = 1");
+                "SELECT COUNT(DISTINCT authors._id) FROM authors, publications " +
+                        "WHERE authors._id = publications.author_id AND publications.isNew = 1");
     }
 
     @Override
@@ -49,18 +48,8 @@ public class AuthorDaoImpl extends AndroidBaseDaoImpl<Author, Integer>
     }
 
     @Override
-    public PreparedQuery<Author> getAllAuthorsSortedAZQuery() throws SQLException {
-        return this.queryBuilder().orderBy("name", true).prepare();
-    }
-
-    @Override
     public List<Author> getAllAuthorsSortedNew() throws SQLException {
         return this.queryBuilder().orderBy("updateDate", false).query();
-    }
-
-    @Override
-    public PreparedQuery<Author> getAllAuthorsSortedNewQuery() throws SQLException {
-        return this.queryBuilder().orderBy("updateDate", false).prepare();
     }
 
     @Override

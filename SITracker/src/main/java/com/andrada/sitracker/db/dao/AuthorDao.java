@@ -18,7 +18,6 @@ package com.andrada.sitracker.db.dao;
 
 import com.andrada.sitracker.db.beans.Author;
 import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.stmt.PreparedQuery;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -34,9 +33,4 @@ public interface AuthorDao extends Dao<Author, Integer> {
     List<Author> getAllAuthorsSortedNew() throws SQLException;
 
     List<Author> getAllAuthorsSortedAZ() throws SQLException;
-
-    public PreparedQuery<Author> getAllAuthorsSortedAZQuery() throws SQLException;
-
-    public PreparedQuery<Author> getAllAuthorsSortedNewQuery() throws SQLException;
-
 }
