@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.andrada.sitracker.fragment.components;
+package com.andrada.sitracker.ui.components;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

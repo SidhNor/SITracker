@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.andrada.sitracker.fragment;
+package com.andrada.sitracker.ui.fragment;
 
 import android.os.Bundle;
 import android.view.View;
@@ -24,7 +24,7 @@ import com.actionbarsherlock.app.SherlockFragment;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.events.AuthorMarkedAsReadEvent;
 import com.andrada.sitracker.events.AuthorSelectedEvent;
-import com.andrada.sitracker.fragment.adapters.PublicationsAdapter;
+import com.andrada.sitracker.ui.fragment.adapters.PublicationsAdapter;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;

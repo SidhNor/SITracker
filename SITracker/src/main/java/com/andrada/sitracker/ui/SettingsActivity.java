@@ -1,4 +1,20 @@
-package com.andrada.sitracker;
+/*
+ * Copyright 2013 Gleb Godonoga.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.andrada.sitracker.ui;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -11,6 +27,8 @@ import android.preference.PreferenceManager;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
+import com.andrada.sitracker.Constants;
+import com.andrada.sitracker.R;
 import com.andrada.sitracker.events.AuthorSortMethodChanged;
 import com.andrada.sitracker.tasks.UpdateAuthorsTask_;
 import com.google.analytics.tracking.android.EasyTracker;
@@ -20,9 +38,6 @@ import org.androidannotations.annotations.SystemService;
 
 import de.greenrobot.event.EventBus;
 
-/**
- * Created by ggodonoga on 22/07/13.
- */
 @EActivity
 public class SettingsActivity extends SherlockPreferenceActivity implements
         SharedPreferences.OnSharedPreferenceChangeListener {

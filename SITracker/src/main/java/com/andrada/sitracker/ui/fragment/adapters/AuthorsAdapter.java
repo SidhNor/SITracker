@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.andrada.sitracker.fragment.adapters;
+package com.andrada.sitracker.ui.fragment.adapters;
 
 import android.content.Context;
 import android.preference.PreferenceManager;
@@ -29,8 +29,8 @@ import com.andrada.sitracker.db.beans.Author;
 import com.andrada.sitracker.db.dao.AuthorDao;
 import com.andrada.sitracker.db.manager.SiDBHelper;
 import com.andrada.sitracker.events.AuthorMarkedAsReadEvent;
-import com.andrada.sitracker.fragment.components.AuthorItemView;
-import com.andrada.sitracker.fragment.components.AuthorItemView_;
+import com.andrada.sitracker.ui.components.AuthorItemView;
+import com.andrada.sitracker.ui.components.AuthorItemView_;
 import com.google.analytics.tracking.android.EasyTracker;
 
 import org.androidannotations.annotations.AfterInject;
@@ -139,7 +139,6 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
             } catch (SQLException e) {
                 EasyTracker.getTracker().sendException("Author mark as read: " + e.getMessage(), false);
             }
-
         }
     }
 

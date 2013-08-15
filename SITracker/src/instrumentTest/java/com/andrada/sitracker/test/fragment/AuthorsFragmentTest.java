@@ -22,9 +22,9 @@ import android.widget.ListView;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.events.AuthorSelectedEvent;
 import com.andrada.sitracker.fragment.AuthorsFragment_;
-import com.andrada.sitracker.fragment.adapters.AuthorsAdapter;
 import com.andrada.sitracker.test.HomeActivityBaseTestCase;
 import com.andrada.sitracker.test.util.DBTestSetupUtil;
+import com.andrada.sitracker.ui.fragment.adapters.AuthorsAdapter;
 
 import de.greenrobot.event.EventBus;
 
