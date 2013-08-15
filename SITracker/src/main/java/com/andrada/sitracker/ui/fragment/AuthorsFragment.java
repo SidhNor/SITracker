@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.andrada.sitracker.fragment;
+package com.andrada.sitracker.ui.fragment;
 
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -42,9 +42,8 @@ import com.andrada.sitracker.events.AuthorSelectedEvent;
 import com.andrada.sitracker.events.AuthorSortMethodChanged;
 import com.andrada.sitracker.events.ProgressBarToggleEvent;
 import com.andrada.sitracker.events.PublicationMarkedAsReadEvent;
-import com.andrada.sitracker.fragment.adapters.AuthorsAdapter;
-import com.andrada.sitracker.fragment.dialog.AddAuthorDialog;
 import com.andrada.sitracker.tasks.UpdateAuthorsTask_;
+import com.andrada.sitracker.ui.fragment.adapters.AuthorsAdapter;
 import com.andrada.sitracker.util.actionmodecompat.ActionMode;
 import com.andrada.sitracker.util.actionmodecompat.MultiChoiceModeListener;
 import com.google.analytics.tracking.android.EasyTracker;

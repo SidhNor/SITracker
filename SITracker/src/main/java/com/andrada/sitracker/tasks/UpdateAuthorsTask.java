@@ -21,7 +21,6 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.db.beans.Author;
@@ -31,6 +30,7 @@ import com.andrada.sitracker.db.dao.PublicationDao;
 import com.andrada.sitracker.db.manager.SiDBHelper;
 import com.andrada.sitracker.tasks.messages.UpdateFailedIntentMessage;
 import com.andrada.sitracker.tasks.messages.UpdateSuccessfulIntentMessage;
+import com.andrada.sitracker.util.LogUtils;
 import com.andrada.sitracker.util.SamlibPageParser;
 import com.github.kevinsawicki.http.HttpRequest;
 import com.google.analytics.tracking.android.EasyTracker;
@@ -46,10 +46,6 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-
-/**
- * Created by Gleb on 03.06.13.
- */
 
 @EService
 public class UpdateAuthorsTask extends IntentService {
@@ -154,7 +150,7 @@ public class UpdateAuthorsTask extends IntentService {
             EasyTracker.getTracker().sendException(
                     "Publications are empty. Response code: " + request.code() +
                             ". Response size:" + request.body().getBytes().length, false);
-            Log.w(Constants.APP_TAG, "Something went wrong. No publications found for author that already exists");
+            LogUtils.LOGW(Constants.APP_TAG, "Something went wrong. No publications found for author that already exists");
         }
 
         for (Publication pub : newItems) {

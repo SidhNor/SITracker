@@ -26,7 +26,7 @@ import android.widget.TextView;
  * A simple {@link android.widget.TextView} subclass that uses {@link android.text.TextUtils#ellipsize(CharSequence,
  * android.text.TextPaint, float, android.text.TextUtils.TruncateAt, boolean,
  * android.text.TextUtils.EllipsizeCallback)} to truncate the displayed text. This is used in
- * {@link com.andrada.sitracker.fragment.components.PublicationItemView} when displaying publication description
+ * {@link com.andrada.sitracker.ui.components.PublicationItemView} when displaying publication description
  * which is converted from HTML to a {@link android.text.SpannableString} and sometimes causes
  * issues for the built-in TextView ellipsize function.
  */

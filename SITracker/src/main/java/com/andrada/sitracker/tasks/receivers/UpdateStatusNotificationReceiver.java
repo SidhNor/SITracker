@@ -26,10 +26,10 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 
 import com.andrada.sitracker.Constants;
-import com.andrada.sitracker.HomeActivity_;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.tasks.messages.UpdateFailedIntentMessage;
 import com.andrada.sitracker.tasks.messages.UpdateSuccessfulIntentMessage;
+import com.andrada.sitracker.ui.HomeActivity_;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.Tracker;
 

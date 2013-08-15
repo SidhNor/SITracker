@@ -39,7 +39,7 @@
             android:name="com.andrada.sitracker.SITrackerApp"
             android:theme="@style/AppTheme">
         <activity
-                android:name="com.andrada.sitracker.HomeActivity_"
+                android:name="com.andrada.sitracker.ui.HomeActivity_"
                 android:launchMode="singleTask"
                 android:label="@string/app_name">
             <intent-filter>
@@ -48,13 +48,13 @@
             </intent-filter>
         </activity>
         <activity
-                android:name=".SettingsActivity_"
+                android:name=".ui.SettingsActivity_"
                 android:label="@string/app_name"
-                android:parentActivityName="com.andrada.sitracker.HomeActivity_">
+                android:parentActivityName="com.andrada.sitracker.ui.HomeActivity_">
             <!-- Parent activity meta-data to support API level 7+ -->
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
-                    android:value="com.andrada.sitracker.HomeActivity_"/>
+                    android:value="com.andrada.sitracker.ui.HomeActivity_"/>
         </activity>
 
         <receiver

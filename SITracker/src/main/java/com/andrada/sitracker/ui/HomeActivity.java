@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.andrada.sitracker;
+package com.andrada.sitracker.ui;
 
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
@@ -31,13 +31,14 @@ import android.widget.ProgressBar;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.andrada.sitracker.Constants;
+import com.andrada.sitracker.R;
 import com.andrada.sitracker.events.ProgressBarToggleEvent;
-import com.andrada.sitracker.fragment.AuthorsFragment;
-import com.andrada.sitracker.fragment.PublicationsFragment;
 import com.andrada.sitracker.tasks.UpdateAuthorsTask_;
 import com.andrada.sitracker.tasks.filters.UpdateStatusMessageFilter;
 import com.andrada.sitracker.tasks.receivers.UpdateStatusReceiver;
-import com.andrada.sitracker.ui.BaseActivity;
+import com.andrada.sitracker.ui.fragment.AuthorsFragment;
+import com.andrada.sitracker.ui.fragment.PublicationsFragment;
 import com.andrada.sitracker.util.UIUtils;
 import com.google.analytics.tracking.android.EasyTracker;
 
@@ -169,7 +170,7 @@ public class HomeActivity extends BaseActivity {
 
     @OptionsItem(R.id.action_settings)
     void menuSettingsSelected() {
-        startActivity(com.andrada.sitracker.SettingsActivity_.intent(this).get());
+        startActivity(com.andrada.sitracker.ui.SettingsActivity_.intent(this).get());
     }
 
     /**
