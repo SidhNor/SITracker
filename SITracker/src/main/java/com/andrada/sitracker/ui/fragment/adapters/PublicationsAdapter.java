@@ -184,13 +184,12 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
         }
     }
 
-    private void updateStatusOfPublication(Publication pub) {
+    @Background
+    protected void updateStatusOfPublication(Publication pub) {
         if (pub != null && pub.getNew()) {
-            pub.setNew(false);
-            pub.setOldSize(0);
             try {
-                publicationsDao.update(pub);
-                EventBus.getDefault().post(new PublicationMarkedAsReadEvent(pub.getId()));
+                boolean authorNewChanged = publicationsDao.markPublicationRead(pub);
+                EventBus.getDefault().post(new PublicationMarkedAsReadEvent(authorNewChanged));
             } catch (SQLException e) {
                 EasyTracker.getTracker().sendException("Publication Set update", e, false);
             }

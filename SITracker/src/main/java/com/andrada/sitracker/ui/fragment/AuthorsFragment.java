@@ -310,14 +310,16 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
 
     //endregion
 
-    public void onEvent(PublicationMarkedAsReadEvent publicationId) {
+    public void onEvent(PublicationMarkedAsReadEvent event) {
         //ensure we update the new status of the author if he has no new publications
         EasyTracker.getTracker().sendEvent(
                 Constants.GA_UI_CATEGORY,
                 Constants.GA_EVENT_AUTHOR_MANUAL_READ,
                 Constants.GA_EVENT_AUTHOR_MANUAL_READ, null);
         EasyTracker.getInstance().dispatch();
-        adapter.notifyDataSetChanged();
+        if (event.refreshAuthor) {
+            adapter.reloadAuthors();
+        }
     }
 
 
