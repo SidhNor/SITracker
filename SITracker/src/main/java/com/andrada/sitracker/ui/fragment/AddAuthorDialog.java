@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnShowListener;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -29,7 +30,6 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.events.ProgressBarToggleEvent;
 import com.andrada.sitracker.tasks.AddAuthorTask;
@@ -37,7 +37,7 @@ import com.andrada.sitracker.util.ClipboardHelper;
 
 import de.greenrobot.event.EventBus;
 
-public class AddAuthorDialog extends SherlockDialogFragment implements
+public class AddAuthorDialog extends DialogFragment implements
         android.content.DialogInterface.OnClickListener {
 
     EditText mAuthorEditText;
@@ -93,7 +93,7 @@ public class AddAuthorDialog extends SherlockDialogFragment implements
 
     private void doPositiveClick() {
         EventBus.getDefault().post(new ProgressBarToggleEvent(true));
-        new AddAuthorTask(getSherlockActivity()).execute(mAuthorEditText.getText().toString());
+        new AddAuthorTask(getActivity()).execute(mAuthorEditText.getText().toString());
     }
 
     @Override

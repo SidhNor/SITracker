@@ -19,12 +19,10 @@ package com.andrada.sitracker.ui;
 
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.andrada.sitracker.BuildConfig;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.util.UIUtils;
@@ -36,7 +34,7 @@ import static com.andrada.sitracker.util.LogUtils.makeLogTag;
 /**
  * A base activity that handles common functionality in the app.
  */
-public abstract class BaseActivity extends SherlockFragmentActivity {
+public abstract class BaseActivity extends ActionBarActivity {
 
     private static final String TAG = makeLogTag(BaseActivity.class);
 

@@ -16,6 +16,7 @@
 
 package com.andrada.sitracker.ui;
 
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Intent;
@@ -23,14 +24,14 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.ListPreference;
+import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.events.AuthorSortMethodChanged;
 import com.andrada.sitracker.tasks.UpdateAuthorsTask_;
+import com.andrada.sitracker.util.UIUtils;
 import com.google.analytics.tracking.android.EasyTracker;
 
 import org.androidannotations.annotations.EActivity;
@@ -39,12 +40,13 @@ import org.androidannotations.annotations.SystemService;
 import de.greenrobot.event.EventBus;
 
 @EActivity
-public class SettingsActivity extends SherlockPreferenceActivity implements
+public class SettingsActivity extends PreferenceActivity implements
         SharedPreferences.OnSharedPreferenceChangeListener {
 
     @SystemService
     AlarmManager alarmManager;
 
+    @SuppressLint("NewApi")
     @SuppressWarnings("deprecation")
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,8 +59,9 @@ public class SettingsActivity extends SherlockPreferenceActivity implements
 
         setUpdateIntervalSummary();
         setAuthorSortSummary();
-        ActionBar actionBar = getSherlock().getActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        if (UIUtils.hasHoneycomb()) {
+            getActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
     }
 
