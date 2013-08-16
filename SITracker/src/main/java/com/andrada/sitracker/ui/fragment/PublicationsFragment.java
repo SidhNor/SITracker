@@ -17,10 +17,10 @@
 package com.andrada.sitracker.ui.fragment;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.View;
 import android.widget.ExpandableListView;
 
-import com.actionbarsherlock.app.SherlockFragment;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.events.AuthorMarkedAsReadEvent;
 import com.andrada.sitracker.events.AuthorSelectedEvent;
@@ -35,7 +35,7 @@ import org.androidannotations.annotations.ViewById;
 import de.greenrobot.event.EventBus;
 
 @EFragment(R.layout.fragment_publications)
-public class PublicationsFragment extends SherlockFragment implements ExpandableListView.OnChildClickListener {
+public class PublicationsFragment extends Fragment implements ExpandableListView.OnChildClickListener {
 
     @Bean
     PublicationsAdapter adapter;

@@ -16,6 +16,12 @@
 
 
 
+
+
+
+
+
+
 buildscript {
     repositories {
         maven { url 'http://repo1.maven.org/maven2' }
@@ -42,7 +48,8 @@ configurations {
 ext.androidAnnotationsVersion = '3.0-SNAPSHOT';
 
 dependencies {
-    compile project(":libraries:actionbarsherlock")
+    compile 'com.android.support:support-v4:18+'
+    compile 'com.android.support:appcompat-v7:18+'
     androidannotations "org.androidannotations:androidannotations:${androidAnnotationsVersion}"
     compile "org.androidannotations:androidannotations-api:${androidAnnotationsVersion}"
     compile 'org.apache.commons:commons-lang3:3.0'

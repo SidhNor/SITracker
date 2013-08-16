@@ -24,9 +24,6 @@ import com.j256.ormlite.support.ConnectionSource;
 import java.sql.SQLException;
 import java.util.List;
 
-/**
- * Created by ggodonoga on 07/06/13.
- */
 public class PublicationDaoImpl extends BaseDaoImpl<Publication, Integer>
         implements PublicationDao {
 
@@ -80,5 +77,20 @@ public class PublicationDaoImpl extends BaseDaoImpl<Publication, Integer>
                 .orderBy("category", true)
                 .where().eq("author_id", authorId)
                 .query();
+    }
+
+    @Override
+    public boolean markPublicationRead(Publication pub) throws SQLException {
+        long authId = pub.getAuthor().getId();
+        pub.setNew(false);
+        pub.setOldSize(0);
+        this.update(pub);
+        int newPubCount = (int) this.queryRawValue("SELECT COUNT(id) FROM publications " +
+                "WHERE publications.author_id = " + authId +
+                " AND publications.isNew = 1");
+        if (newPubCount == 0) {
+            this.executeRaw("UPDATE authors SET isNew=0 WHERE _id = " + authId);
+        }
+        return newPubCount == 0;
     }
 }
