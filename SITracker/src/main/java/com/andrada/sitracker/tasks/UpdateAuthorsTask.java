@@ -148,8 +148,7 @@ public class UpdateAuthorsTask extends IntentService {
 
         if (newItems.size() == 0 && oldItemsMap.size() > 1) {
             EasyTracker.getTracker().sendException(
-                    "Publications are empty. Response code: " + request.code() +
-                            ". Response size:" + request.body().getBytes().length, false);
+                    "Publications are empty. Response code: " + request.code(), false);
             LogUtils.LOGW(Constants.APP_TAG, "Something went wrong. No publications found for author that already exists");
         }
 
