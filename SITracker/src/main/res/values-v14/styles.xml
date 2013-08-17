@@ -22,7 +22,33 @@
         res/values-v11/styles.xml on API 14+ devices.
     -->
     <style name="AppBaseTheme" parent="Theme.AppCompat.Light">
-        <!-- API 14 theme customizations can go here. -->
+        <item name="android:actionBarItemBackground">@drawable/selectable_background_si</item>
+        <item name="android:popupMenuStyle">@style/PopupMenu.Si</item>
+        <item name="android:dropDownListViewStyle">@style/DropDownListView.Si</item>
+        <item name="android:actionBarTabStyle">@style/ActionBarTabStyle.Si</item>
+        <item name="android:actionDropDownStyle">@style/DropDownNav.Si</item>
+        <item name="android:actionBarStyle">@style/ActionBar.Solid.Si</item>
+        <item name="android:actionModeBackground">@drawable/cab_background_top_si</item>
+        <item name="android:actionModeSplitBackground">@drawable/cab_background_bottom_si</item>
+        <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Si</item>
+    </style>
+
+    <style name="ActionBar.Solid.Si" parent="@style/Widget.AppCompat.Light.ActionBar.Solid">
+        <item name="android:background">@drawable/ab_solid</item>
+        <item name="android:backgroundStacked">@drawable/ab_stacked_solid_si</item>
+        <item name="android:backgroundSplit">@drawable/ab_bottom_solid_si</item>
+        <item name="android:progressBarStyle">@style/ProgressBar.Si</item>
+    </style>
+
+    <style name="ActionBar.Transparent.Si" parent="@style/Widget.AppCompat.Light.ActionBar">
+        <item name="android:background">@drawable/ab_transparent_si</item>
+        <item name="android:progressBarStyle">@style/ProgressBar.Si</item>
+    </style>
+
+    <!-- this style is only referenced in a Light.DarkActionBar based theme -->
+    <style name="Theme.Si.Widget" parent="@style/Theme.AppCompat">
+        <item name="android:popupMenuStyle">@style/PopupMenu.Si</item>
+        <item name="android:dropDownListViewStyle">@style/DropDownListView.Si</item>
     </style>
 
 </resources>
