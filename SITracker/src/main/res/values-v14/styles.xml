@@ -16,7 +16,7 @@
 
 <resources>
 
-    <style name="FrameworkRoot.Theme" parent="Theme.AppCompat.Light">
+    <style name="FrameworkRoot.Theme" parent="FrameworkRoot.Base">
         <!-- API 11+ -->
         <item name="buttonBarStyle">?android:buttonBarStyle</item>
         <item name="buttonBarButtonStyle">?android:buttonBarButtonStyle</item>
@@ -25,6 +25,29 @@
         <item name="listPreferredItemPaddingLeft">?android:listPreferredItemPaddingLeft</item>
         <item name="listPreferredItemPaddingRight">?android:listPreferredItemPaddingRight</item>
         <item name="listPreferredItemHeightSmall">?android:listPreferredItemHeightSmall</item>
+    </style>
+
+    <style name="AppTheme" parent="FrameworkRoot.Theme">
+        <item name="android:actionBarItemBackground">@drawable/selectable_background_si</item>
+        <item name="android:popupMenuStyle">@style/PopupMenu</item>
+        <item name="android:dropDownListViewStyle">@style/DropDownListView</item>
+        <item name="android:actionBarTabStyle">@style/ActionBar.TabView</item>
+        <item name="android:actionDropDownStyle">@style/DropDownNav</item>
+        <item name="android:actionBarStyle">@style/ActionBar</item>
+        <item name="android:actionModeStyle">@style/ActionMode</item>
+        <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode</item>
+    </style>
+
+    <style name="ActionBar" parent="FrameworkRoot.ActionBar">
+        <item name="android:background">@drawable/ab_solid</item>
+        <item name="android:backgroundStacked">@drawable/ab_stacked_solid_si</item>
+        <item name="android:backgroundSplit">@drawable/ab_bottom_solid_si</item>
+        <item name="android:progressBarStyle">@style/ProgressBar</item>
+    </style>
+
+    <style name="ActionMode" parent="FrameworkRoot.ActionMode">
+        <item name="android:background">@drawable/cab_background_top_si</item>
+        <item name="android:backgroundSplit">@drawable/cab_background_bottom_si</item>
     </style>
 
 </resources>

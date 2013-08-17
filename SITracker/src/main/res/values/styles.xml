@@ -41,6 +41,8 @@
 
     <style name="FrameworkRoot.ActionBar" parent="Widget.AppCompat.Light.ActionBar"/>
 
+    <style name="FrameworkRoot.ActionMode" parent="Widget.AppCompat.ActionMode"/>
+
     <style name="FrameworkRoot.ActionBar.TabBar" parent="Widget.AppCompat.Base.ActionBar.TabBar"/>
 
     <style name="FrameworkRoot.ActionBar.TabView" parent="Widget.AppCompat.ActionBar.TabView"/>
@@ -63,8 +65,7 @@
         <item name="actionBarTabStyle">@style/ActionBar.TabView</item>
         <item name="actionDropDownStyle">@style/DropDownNav</item>
         <item name="actionBarStyle">@style/ActionBar</item>
-        <item name="actionModeBackground">@drawable/cab_background_top_si</item>
-        <item name="actionModeSplitBackground">@drawable/cab_background_bottom_si</item>
+        <item name="actionModeStyle">@style/ActionMode</item>
         <item name="actionModeCloseButtonStyle">@style/ActionButton.CloseMode</item>
     </style>
 
@@ -76,30 +77,36 @@
         <item name="progressBarStyle">@style/ProgressBar</item>
     </style>
 
+    <style name="ActionMode" parent="FrameworkRoot.ActionMode">
+        <item name="background">@drawable/cab_background_top_si</item>
+        <item name="backgroundSplit">@drawable/cab_background_bottom_si</item>
+    </style>
+
+
     <style name="PopupMenu" parent="FrameworkRoot.PopupMenu">
-    <item name="android:popupBackground">@drawable/menu_dropdown_panel_si</item>
+        <item name="android:popupBackground">@drawable/menu_dropdown_panel_si</item>
     </style>
 
     <style name="DropDownListView" parent="FrameworkRoot.DropDownListView">
-    <item name="android:listSelector">@drawable/selectable_background_si</item>
+        <item name="android:listSelector">@drawable/selectable_background_si</item>
     </style>
 
     <style name="ActionBar.TabView" parent="FrameworkRoot.ActionBar.TabView">
-    <item name="android:background">@drawable/tab_indicator_ab_si</item>
+        <item name="android:background">@drawable/tab_indicator_ab_si</item>
     </style>
 
     <style name="DropDownNav" parent="FrameworkRoot.DropDownNav">
-    <item name="android:background">@drawable/spinner_background_ab_si</item>
+        <item name="android:background">@drawable/spinner_background_ab_si</item>
         <item name="android:popupBackground">@drawable/menu_dropdown_panel_si</item>
         <item name="android:dropDownSelector">@drawable/selectable_background_si</item>
     </style>
 
     <style name="ProgressBar" parent="FrameworkRoot.ProgressBar.Horizontal">
-    <item name="android:progressDrawable">@drawable/progress_horizontal_si</item>
+        <item name="android:progressDrawable">@drawable/progress_horizontal_si</item>
     </style>
 
     <style name="ActionButton.CloseMode" parent="FrameworkRoot.ActionButton.CloseMode">
-    <item name="android:background">@drawable/btn_cab_done_si</item>
+        <item name="android:background">@drawable/btn_cab_done_si</item>
     </style>
 
     <style name="DividerThick">`
