@@ -20,8 +20,18 @@
         Base application theme for API 11+. This theme completely replaces
         AppBaseTheme from res/values/styles.xml on API 11+ devices.
     -->
-    <style name="AppBaseTheme" parent="Theme.AppCompat.Light">
-        <!-- API 11 theme customizations can go here. -->
+    <style name="FrameworkRoot.Theme" parent="Theme.AppCompat.Light">
+        <!-- API 11+ -->
+        <item name="buttonBarStyle">?android:buttonBarStyle</item>
+        <item name="buttonBarButtonStyle">?android:buttonBarButtonStyle</item>
+        <item name="indeterminateProgressStyle">?android:indeterminateProgressStyle</item>
+        <!-- API 14+ (compatibility) -->
+        <item name="listPreferredItemPaddingLeft">@dimen/compat_list_preferred_item_padding_left
+        </item>
+        <item name="listPreferredItemPaddingRight">@dimen/compat_list_preferred_item_padding_right
+        </item>
+        <item name="listPreferredItemHeightSmall">@dimen/compat_list_preferred_item_height_small
+        </item>
     </style>
 
 </resources>
