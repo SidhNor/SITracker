@@ -1,4 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2013 Gleb Godonoga.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
     <string name="app_name">SI Tracker</string>
@@ -6,6 +22,7 @@
     <string name="action_refresh">Update authors</string>
     <string name="action_add">Add author</string>
     <string name="action_delete">Delete author</string>
+    <string name="action_markread">Mark as read</string>
     <string name="add_author_placeholder">samlib.ru/y/your_author</string>
     <string name="designtime_placeholder_long">Lorem ipsum dolor sit amet, consectetur adipiscing
         elit. Aenean fringilla
@@ -37,7 +54,7 @@
     <string name="update_failed_crouton_message">Update failed for an unexpected reason.</string>
     <string name="author_add_success_crouton_message">Author added</string>
     <string name="no_authors">You haven\'t added any authors yet</string>
-
+    <string name="no_newpubs">There is nothing new :(</string>
     <plurals name="authors_selected">
         <item quantity="one">1 selected</item>
         <item quantity="other">

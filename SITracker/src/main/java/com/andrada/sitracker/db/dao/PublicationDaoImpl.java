@@ -44,6 +44,14 @@ public class PublicationDaoImpl extends BaseDaoImpl<Publication, Integer>
     }
 
     @Override
+    public List<Publication> getNewPublications() throws SQLException {
+        return this.queryBuilder()
+                .orderBy("updateDate", false)
+                .where()
+                .eq("isNew", true).query();
+    }
+
+    @Override
     public List<Publication> getNewPublicationsForAuthor(Author author) throws SQLException {
         return getNewPublicationsForAuthorId(author.getId());
     }

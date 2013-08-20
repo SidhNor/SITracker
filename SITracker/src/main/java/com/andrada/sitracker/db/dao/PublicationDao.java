@@ -42,4 +42,6 @@ public interface PublicationDao extends Dao<Publication, Integer> {
     long getNewPublicationsCountForAuthorId(long authorId) throws SQLException;
 
     boolean markPublicationRead(Publication pub) throws SQLException;
+
+    List<Publication> getNewPublications() throws SQLException;
 }
