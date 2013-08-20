@@ -68,7 +68,7 @@ import de.keyboardsurfer.android.widget.crouton.Configuration;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
-@EFragment(R.layout.fragment_authors)
+@EFragment(R.layout.fragment_listview_with_empty)
 @OptionsMenu(R.menu.authors_menu)
 public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListener,
         MultiChoiceModeListener, View.OnClickListener {
@@ -189,6 +189,7 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
         list.setAdapter(adapter);
         ActionMode.setMultiChoiceMode(list, getActivity(), this);
         list.setBackgroundResource(R.drawable.authors_list_background);
+        empty.setLayoutResource(R.layout.empty_authors);
         list.setEmptyView(empty);
     }
 
