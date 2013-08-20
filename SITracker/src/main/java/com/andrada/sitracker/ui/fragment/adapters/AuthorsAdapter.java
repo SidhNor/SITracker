@@ -21,7 +21,6 @@ import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ListView;
 
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.contracts.IsNewItemTappedListener;
@@ -51,7 +50,6 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
 
     List<Author> authors = new ArrayList<Author>();
     long mNewAuthors;
-    ListView listView = null;
 
     @OrmLiteDao(helper = SiDBHelper.class, model = Author.class)
     AuthorDao authorDao;
@@ -112,10 +110,6 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-
-        if (listView == null) {
-            listView = (ListView) parent;
-        }
         AuthorItemView authorsItemView;
         if (convertView == null) {
             authorsItemView = AuthorItemView_.build(context);
