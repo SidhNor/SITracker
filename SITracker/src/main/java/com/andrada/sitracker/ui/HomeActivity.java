@@ -39,6 +39,7 @@ import com.andrada.sitracker.tasks.filters.UpdateStatusMessageFilter;
 import com.andrada.sitracker.tasks.receivers.UpdateStatusReceiver;
 import com.andrada.sitracker.ui.fragment.AuthorsFragment;
 import com.andrada.sitracker.ui.fragment.PublicationsFragment;
+import com.andrada.sitracker.util.ImageLoader;
 import com.andrada.sitracker.util.UIUtils;
 import com.google.analytics.tracking.android.EasyTracker;
 
@@ -57,7 +58,7 @@ import de.keyboardsurfer.android.widget.crouton.Crouton;
 
 @EActivity(R.layout.activity_main)
 @OptionsMenu(R.menu.main_menu)
-public class HomeActivity extends BaseActivity {
+public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoaderProvider {
 
     @FragmentById(R.id.fragment_publications)
     PublicationsFragment mPubFragment;
@@ -76,6 +77,8 @@ public class HomeActivity extends BaseActivity {
 
     PendingIntent updatePendingIntent;
 
+    private ImageLoader mImageLoader;
+
     @StringRes(R.string.app_name)
     String mAppName;
 
@@ -91,6 +94,10 @@ public class HomeActivity extends BaseActivity {
         Intent intent = UpdateAuthorsTask_.intent(this.getApplicationContext()).get();
         this.updatePendingIntent = PendingIntent.getService(this.getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         ensureUpdatesAreRunningOnSchedule(PreferenceManager.getDefaultSharedPreferences(this));
+
+        mImageLoader = new ImageLoader(this, R.drawable.ab_solid_si)
+                .setMaxImageSize(getResources().getDimensionPixelSize(R.dimen.publication_pixel_size))
+                .setFadeInImage(UIUtils.hasHoneycombMR1());
     }
 
     @Override
@@ -261,5 +268,10 @@ public class HomeActivity extends BaseActivity {
 
     public PublicationsFragment getPubFragment() {
         return mPubFragment;
+    }
+
+    @Override
+    public ImageLoader getImageLoaderInstance() {
+        return mImageLoader;
     }
 }

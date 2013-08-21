@@ -17,10 +17,26 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:showDividers="middle"
                 android:orientation="vertical"
                 android:minHeight="65dp">
+
+    <RelativeLayout
+            android:id="@+id/pub_img_container"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+        <ImageView
+                android:id="@+id/publication_image"
+                android:layout_width="@dimen/publication_pixel_size"
+                android:layout_height="wrap_content"
+                android:scaleType="fitCenter"
+                android:src="@drawable/authors_list_item_background_checked"
+                android:layout_centerVertical="true"
+                android:visibility="visible"/>
+    </RelativeLayout>
+
 
     <TextView
             android:id="@+id/item_title"
@@ -28,7 +44,7 @@
             android:layout_height="wrap_content"
             android:paddingLeft="@dimen/list_left_padding"
             android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
+            android:layout_toRightOf="@+id/pub_img_container"
             android:layout_toLeftOf="@+id/actions_view"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="?android:attr/textColorPrimary"
@@ -43,7 +59,7 @@
             android:layout_height="wrap_content"
             android:paddingLeft="@dimen/list_left_padding"
             android:id="@+id/item_description"
-            android:layout_alignParentLeft="true"
+            android:layout_toRightOf="@+id/pub_img_container"
             android:layout_toLeftOf="@+id/actions_view"
             android:layout_below="@+id/item_title"
             android:textAppearance="?android:attr/textAppearanceSmall"

@@ -50,6 +50,7 @@ public class UIUtils {
      * semicolon. (Example: &amp;amp;)
      */
     private static final Pattern REGEX_HTML_ESCAPE = Pattern.compile(".*&\\S;.*");
+    public static final int ANIMATION_FADE_IN_TIME = 250;
 
     /**
      * Populate the given {@link android.widget.TextView} with the requested text, formatting

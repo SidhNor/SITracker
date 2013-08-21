@@ -36,6 +36,7 @@ import com.andrada.sitracker.ui.components.PublicationCategoryItemView;
 import com.andrada.sitracker.ui.components.PublicationCategoryItemView_;
 import com.andrada.sitracker.ui.components.PublicationItemView;
 import com.andrada.sitracker.ui.components.PublicationItemView_;
+import com.andrada.sitracker.util.ImageLoader;
 import com.google.analytics.tracking.android.EasyTracker;
 
 import org.androidannotations.annotations.Background;
@@ -125,7 +126,10 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
             publicationItemView = (PublicationItemView) convertView;
         }
         Boolean isLast = mChildren.get(groupPosition).size() - 1 == childPosition;
-        publicationItemView.bind((Publication) getChild(groupPosition, childPosition), isLast);
+        publicationItemView.bind(
+                (Publication) getChild(groupPosition, childPosition),
+                isLast,
+                ((ImageLoader.ImageLoaderProvider) context).getImageLoaderInstance());
 
         return publicationItemView;
     }
