@@ -97,9 +97,24 @@ public class SamlibPageParser {
             //Group 11 - Description
             String itemDescription = matcher.group(13) == null ? "" : matcher.group(13);
             item.setDescription(itemDescription.trim());
+            item.setImageUrl(extractImage(itemDescription.trim()));
             publicationList.add(item);
         }
         return publicationList;
+    }
+
+    private static String extractImage(String itemDescription) {
+        String imgUrl = null;
+
+        Pattern pattern = Pattern.compile("(<a[^>]*>)?\\s*?<img src=[\"'](.*?)[\"'][^>]*>\\s?(</a>)?");
+        Matcher matcher = pattern.matcher(itemDescription);
+        if (matcher.find()) {
+            String match = matcher.group(2);
+            if (match != null) {
+                imgUrl = match.trim();
+            }
+        }
+        return imgUrl;
     }
 
     public static String sanitizeHTML(String value) {
