@@ -91,7 +91,7 @@ public class UpdateAuthorsTask extends IntentService {
                         this.updatedAuthors++;
                     }
                 }
-                //Sleep for 5 seconds to avoid ban from samlib
+                //Sleep for 5 seconds to avoid ban
                 Thread.sleep(5000);
             }
 
@@ -114,10 +114,16 @@ public class UpdateAuthorsTask extends IntentService {
         boolean authorUpdated = false;
         HttpRequest request;
         try {
-            request = HttpRequest.get(new URL(author.getUrl()));
+            URL authorURL = new URL(author.getUrl());
+            request = HttpRequest.get(authorURL);
             if (request.code() == 404) {
                 //skip this author
                 //Not available atm
+                return false;
+            }
+            if (!authorURL.getHost().equals(request.url().getHost())) {
+                //We are being redirected hell knows where.
+                //Skip
                 return false;
             }
             EasyTracker.getTracker().sendEvent(
@@ -148,8 +154,10 @@ public class UpdateAuthorsTask extends IntentService {
 
         if (newItems.size() == 0 && oldItemsMap.size() > 1) {
             EasyTracker.getTracker().sendException(
-                    "Publications are empty. Response code: " + request.code(), false);
+                    "Something went wrong. Publications are empty.", false);
             LogUtils.LOGW(Constants.APP_TAG, "Something went wrong. No publications found for author that already exists");
+            //Just skip for now to be on the safe side.
+            return false;
         }
 
         for (Publication pub : newItems) {
