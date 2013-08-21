@@ -117,7 +117,9 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
         } else {
             authorsItemView = (AuthorItemView) convertView;
         }
-        authorsItemView.bind(authors.get(position), position == mSelectedItem);
+        if (position < authors.size()) {
+            authorsItemView.bind(authors.get(position), position == mSelectedItem);
+        }
         return authorsItemView;
     }
 
