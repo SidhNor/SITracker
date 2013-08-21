@@ -94,19 +94,6 @@ public class Author {
         isNew = aNew;
     }
 
-    /*
-    public Boolean isUpdated() {
-        //TODO REMOVE this - its killing performance
-        boolean isUpdated = false;
-        for (Publication pub : this.publications) {
-            if (pub.isNew) {
-                isUpdated = true;
-                break;
-            }
-        }
-        return isUpdated;
-    }*/
-
     public void markRead() {
         this.setNew(false);
         for (Publication pub : this.publications) {
