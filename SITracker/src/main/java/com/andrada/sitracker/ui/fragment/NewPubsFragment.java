@@ -17,15 +17,16 @@
 package com.andrada.sitracker.ui.fragment;
 
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewStub;
 import android.widget.ListView;
 
 import com.andrada.sitracker.R;
+import com.andrada.sitracker.ui.MultiSelectionUtil;
 import com.andrada.sitracker.ui.fragment.adapters.NewPubsAdapter;
-import com.andrada.sitracker.util.actionmodecompat.ActionMode;
-import com.andrada.sitracker.util.actionmodecompat.MultiChoiceModeListener;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
@@ -34,10 +35,12 @@ import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
 
+import de.greenrobot.event.EventBus;
+
 
 @EFragment(R.layout.fragment_listview_with_empty)
 @OptionsMenu(R.menu.newpubs_menu)
-public class NewPubsFragment extends Fragment implements MultiChoiceModeListener {
+public class NewPubsFragment extends Fragment implements MultiSelectionUtil.MultiChoiceModeListener {
 
     @ViewById
     ListView list;
@@ -48,10 +51,25 @@ public class NewPubsFragment extends Fragment implements MultiChoiceModeListener
     @Bean
     NewPubsAdapter adapter;
 
+    private MultiSelectionUtil.Controller mMultiSelectionController;
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mMultiSelectionController != null) {
+            mMultiSelectionController.finish();
+        }
+        mMultiSelectionController = null;
+    }
+
+
     @AfterViews
     void bindAdapter() {
         list.setAdapter(adapter);
-        ActionMode.setMultiChoiceMode(list, getActivity(), this);
+        mMultiSelectionController = MultiSelectionUtil.attachMultiSelectionController(
+                list,
+                (ActionBarActivity) getActivity(),
+                this);
         list.setBackgroundResource(R.drawable.authors_list_background);
         empty.setLayoutResource(R.layout.empty_newpubs);
         list.setEmptyView(empty);

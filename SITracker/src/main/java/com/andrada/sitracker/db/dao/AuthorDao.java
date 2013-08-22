@@ -33,4 +33,6 @@ public interface AuthorDao extends Dao<Author, Integer> {
     List<Author> getAllAuthorsSortedNew() throws SQLException;
 
     List<Author> getAllAuthorsSortedAZ() throws SQLException;
+
+    void removeAuthor(long id) throws SQLException;
 }

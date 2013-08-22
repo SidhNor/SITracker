@@ -139,19 +139,21 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
     }
 
     @Background
-    public void removeAuthors(List<Author> authorsToRemove) {
+    public void removeAuthors(List<Long> authorsToRemove) {
         try {
-            authorDao.delete(authorsToRemove);
+            for(int i = 0; i < authorsToRemove.size(); i++) {
+                authorDao.removeAuthor(authorsToRemove.get(i));
+            }
         } catch (SQLException e) {
             EasyTracker.getTracker().sendException("Author Remove thread", e, false);
         }
 
         boolean removingCurrentlySelected = false;
-        for (Author anAuthorToRemove : authorsToRemove) {
-            if (anAuthorToRemove.getId() == mSelectedAuthorId) {
+        for (Long anAuthorToRemove : authorsToRemove) {
+            if (anAuthorToRemove == mSelectedAuthorId) {
                 removingCurrentlySelected = true;
             }
-            authors.remove(anAuthorToRemove);
+            authors.remove(getAuthorById(anAuthorToRemove));
         }
         if (removingCurrentlySelected) {
             //Try select the first one
@@ -181,6 +183,15 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
     public Author getCurrentlySelectedAuthor() {
         if (mSelectedItem < authors.size() && mSelectedItem >= 0)
             return authors.get(mSelectedItem);
+        return null;
+    }
+
+    private Author getAuthorById(long authorId) {
+        for (int i = 0; i < authors.size(); i++) {
+            if (authors.get(i).getId() == authorId) {
+                return authors.get(i);
+            }
+        }
         return null;
     }
 

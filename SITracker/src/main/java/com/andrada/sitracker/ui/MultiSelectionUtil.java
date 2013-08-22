@@ -61,6 +61,10 @@ public class MultiSelectionUtil {
 
         public static Controller attach(ListView listView, ActionBarActivity activity,
                                         MultiChoiceModeListener listener) {
+            if (listView.getChoiceMode() == AbsListView.CHOICE_MODE_MULTIPLE ||
+                listView.getChoiceMode() == AbsListView.CHOICE_MODE_MULTIPLE_MODAL) {
+                throw new IllegalArgumentException("ListView CHOICE_MODE_MULTIPLE or CHOICE_MODE_MULTIPLE_MODAL is not allowed. Everything is handled by this class.");
+            }
             Controller controller = new Controller();
             controller.mListView = listView;
             controller.mActivity = activity;
@@ -69,21 +73,18 @@ public class MultiSelectionUtil {
             return controller;
         }
 
-        private void readInstanceState(Bundle savedInstanceState) {
+        private void readInstanceState(long[] itemIds) {
             mTempIdsToCheckOnRestore = null;
-            if (savedInstanceState != null) {
-                long[] checkedIds = savedInstanceState.getLongArray(getStateKey());
-                if (checkedIds != null && checkedIds.length > 0) {
-                    mTempIdsToCheckOnRestore = new HashSet<Long>();
-                    for (long id : checkedIds) {
-                        mTempIdsToCheckOnRestore.add(id);
-                    }
+            if (itemIds != null && itemIds.length > 0) {
+                mTempIdsToCheckOnRestore = new HashSet<Long>();
+                for (long id : itemIds) {
+                    mTempIdsToCheckOnRestore.add(id);
                 }
             }
         }
 
-        public void tryRestoreInstanceState(Bundle savedInstanceState) {
-            readInstanceState(savedInstanceState);
+        public void tryRestoreInstanceState(long[] itemIds) {
+            readInstanceState(itemIds);
             tryRestoreInstanceState();
         }
 
