@@ -23,6 +23,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -43,9 +44,8 @@ import com.andrada.sitracker.events.AuthorSortMethodChanged;
 import com.andrada.sitracker.events.ProgressBarToggleEvent;
 import com.andrada.sitracker.events.PublicationMarkedAsReadEvent;
 import com.andrada.sitracker.tasks.UpdateAuthorsTask_;
+import com.andrada.sitracker.ui.MultiSelectionUtil;
 import com.andrada.sitracker.ui.fragment.adapters.AuthorsAdapter;
-import com.andrada.sitracker.util.actionmodecompat.ActionMode;
-import com.andrada.sitracker.util.actionmodecompat.MultiChoiceModeListener;
 import com.google.analytics.tracking.android.EasyTracker;
 
 import org.androidannotations.annotations.AfterViews;
@@ -57,6 +57,7 @@ import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.ViewById;
+import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,7 +72,7 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 @EFragment(R.layout.fragment_listview_with_empty)
 @OptionsMenu(R.menu.authors_menu)
 public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListener,
-        MultiChoiceModeListener, View.OnClickListener {
+        MultiSelectionUtil.MultiChoiceModeListener, View.OnClickListener {
 
     @ViewById
     ListView list;
@@ -92,7 +93,12 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
 
     private boolean mIsUpdating = false;
 
-    private final List<Author> mSelectedAuthors = new ArrayList<Author>();
+    @InstanceState
+    long[] checkedItems;
+
+    private final ArrayList<Long> mSelectedAuthors = new ArrayList<Long>();
+
+    private MultiSelectionUtil.Controller mMultiSelectionController;
 
     //region Fragment lifecycle overrides
 
@@ -119,6 +125,10 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
     public void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
+        if (mMultiSelectionController != null) {
+            mMultiSelectionController.finish();
+        }
+        mMultiSelectionController = null;
     }
 
     //endregion
@@ -187,10 +197,15 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
     @AfterViews
     void bindAdapter() {
         list.setAdapter(adapter);
-        ActionMode.setMultiChoiceMode(list, getActivity(), this);
+        mMultiSelectionController = MultiSelectionUtil.attachMultiSelectionController(
+                list,
+                (ActionBarActivity) getActivity(),
+                this);
+        //ActionMode.setMultiChoiceMode(list, getActivity(), this);
         list.setBackgroundResource(R.drawable.authors_list_background);
         empty.setLayoutResource(R.layout.empty_authors);
         list.setEmptyView(empty);
+        mMultiSelectionController.tryRestoreInstanceState(checkedItems);
     }
 
     @ItemClick
@@ -264,15 +279,15 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
     public void onItemCheckedStateChanged(ActionMode mode,
                                           int position, long id, boolean checked) {
         if (checked) {
-            mSelectedAuthors.add((Author) adapter.getItem(position));
+            mSelectedAuthors.add(((Author) adapter.getItem(position)).getId());
         } else {
-            mSelectedAuthors.remove(adapter.getItem(position));
+            mSelectedAuthors.remove(((Author)adapter.getItem(position)).getId());
         }
         int numSelectedAuthors = mSelectedAuthors.size();
         mode.setTitle(getResources().getQuantityString(
                 R.plurals.authors_selected,
                 numSelectedAuthors, numSelectedAuthors));
-
+        checkedItems = ArrayUtils.toPrimitive(mSelectedAuthors.toArray(new Long[0]));
     }
 
     @Override
@@ -307,6 +322,7 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
 
     @Override
     public void onDestroyActionMode(ActionMode mode) {
+        checkedItems = null;
     }
 
     //endregion

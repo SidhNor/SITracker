@@ -26,8 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_alignParentBottom="true"
-            android:cacheColorHint="@color/light_color_hint"
-            android:choiceMode="multipleChoiceModal"/>
+            android:cacheColorHint="@color/light_color_hint"/>
 
     <ViewStub
             android:id="@+id/empty"

@@ -29,7 +29,7 @@ import java.util.Date;
 @DatabaseTable(daoClass = AuthorDaoImpl.class, tableName = "authors")
 public class Author {
     @DatabaseField(generatedId = true, useGetSet = true, columnName = "_id")
-    int id;
+    long id;
     @DatabaseField(canBeNull = false, useGetSet = true)
     String name;
     @DatabaseField(unique = true, useGetSet = true)
@@ -46,11 +46,11 @@ public class Author {
         updateDate = new Date();
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

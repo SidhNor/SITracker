@@ -18,6 +18,7 @@ package com.andrada.sitracker.db.dao;
 
 import com.andrada.sitracker.db.beans.Author;
 import com.j256.ormlite.dao.BaseDaoImpl;
+import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.support.ConnectionSource;
 
 import java.sql.SQLException;
@@ -56,5 +57,12 @@ public class AuthorDaoImpl extends BaseDaoImpl<Author, Integer>
     public void markAsRead(Author author) throws SQLException {
         author.markRead();
         this.update(author);
+    }
+
+    @Override
+    public void removeAuthor(long id) throws SQLException {
+        DeleteBuilder<Author, Integer> delBuilder = this.deleteBuilder();
+        delBuilder.where().eq("_id", id);
+        delBuilder.delete();
     }
 }
