@@ -25,16 +25,17 @@
     <RelativeLayout
             android:id="@+id/pub_img_container"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true">
 
         <ImageView
                 android:id="@+id/publication_image"
                 android:layout_width="@dimen/publication_pixel_size"
-                android:layout_height="wrap_content"
-                android:scaleType="fitCenter"
+                android:layout_height="@dimen/publication_pixel_size"
+                android:scaleType="centerInside"
                 android:src="@drawable/authors_list_item_background_checked"
-                android:layout_centerVertical="true"
-                android:visibility="visible"/>
+                android:visibility="visible"
+                android:layout_centerInParent="true"/>
     </RelativeLayout>
 
 

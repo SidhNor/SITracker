@@ -95,7 +95,7 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
         this.updatePendingIntent = PendingIntent.getService(this.getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         ensureUpdatesAreRunningOnSchedule(PreferenceManager.getDefaultSharedPreferences(this));
 
-        mImageLoader = new ImageLoader(this, R.drawable.ab_solid_si)
+        mImageLoader = new ImageLoader(this, R.drawable.blank_book)
                 .setMaxImageSize(getResources().getDimensionPixelSize(R.dimen.publication_pixel_size))
                 .setFadeInImage(UIUtils.hasHoneycombMR1());
     }
