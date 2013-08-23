@@ -37,26 +37,46 @@
     <string name="designtime_placeholder_short">Lorem ipsum dolor</string>
     <string name="designtime_placeholder_size">615+3kb</string>
     <string name="designtime_placeholder_date">Май 28</string>
-    <string name="cannot_add_author">Невозможно добавить автора.</string>
-    <string name="cannot_add_author_internal">Невозможно добавить автора. Непредвиденная ошибка.
+    <string name="cannot_add_author">Не удалось добавить автора.</string>
+    <string name="cannot_add_author_internal">Не удалось добавить автора. Непредвиденная ошибка.
     </string>
-    <string name="cannot_add_author_malformed">Невозможно добавить автора. Удостоверьтесь что адрес
+    <string name="cannot_add_author_malformed">Не удалось добавить автора. Удостоверьтесь что адрес
         страницы автора правильный.
     </string>
-    <string name="cannot_add_author_network">Невозможно добавить автора. Проверьте Ваше
+    <string name="cannot_add_author_network">Не удалось добавить автора. Проверьте Ваше
         соединение.
     </string>
+
     <string name="cannot_add_author_already_exits">Автор уже существует.</string>
     <string name="cannot_add_author_no_update_date">Невозможно добавить автора. Не найдена дата
         обновления.
     </string>
-    <string name="cannot_add_author_no_name">Невозможно добавить автора. Не найдено имя автора.
+    <string name="cannot_add_author_no_name">Не удалось добавить автора. Не найдено имя автора.
     </string>
-    <string name="cannot_add_author_unknown">Невозможно добавить автора. Непредвиденная ошибка.
+    <string name="cannot_add_author_unknown">Не удалось добавить автора. Непредвиденная ошибка.
     </string>
-    <string name="cannot_add_author_no_publications">Невозможно добавить автора. Не найдено
+    <string name="cannot_add_author_no_publications">Не удалось добавить автора. Не найдено
         произведений.
     </string>
+
+    <string name="cannot_download_publication">Не удалось скачать произведение. Проверьте Ваше
+        соединение.
+    </string>
+    <string name="publication_error_url">Не удалось скачать произведение. У произведения
+        неправильная ссылка. Единственное что может помочь в этом случае: удаление и повторное
+        добавление автора.
+    </string>
+    <string name="publication_error_save">Не удалось сохранить произведение. Проверьте если у вас
+        достаточно свободного места на телефоне.
+    </string>
+    <string name="publication_error_storage">Не удалось сохранить произведение. Ваше устройство
+        хранения данных недоступно.
+    </string>
+    <string name="publication_error_unknown">Не удалось скачать произведение. Непредвиденная
+        ошибка.
+    </string>
+    <string name="publications_downloading">Качаем произведение…</string>
+
     <string name="check_for_updates">Проверка обновлений</string>
     <string name="action_add_ok">Добавить</string>
     <string name="notification_title">Прода</string>

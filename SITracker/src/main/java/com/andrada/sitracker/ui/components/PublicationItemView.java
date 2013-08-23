@@ -18,6 +18,7 @@ package com.andrada.sitracker.ui.components;
 
 import android.content.Context;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -48,6 +49,9 @@ public class PublicationItemView extends TouchDelegateRelativeLayout {
 
     @ViewById
     ImageButton item_updated;
+
+    @ViewById
+    ViewGroup downloadProgress;
 
     @ViewById
     EllipsizedTextView item_description;
@@ -106,11 +110,8 @@ public class PublicationItemView extends TouchDelegateRelativeLayout {
         builder.append("kb");
         itemSize.setText(builder.toString());
 
-        if (isLast) {
-            publication_item_divider.setVisibility(View.GONE);
-        } else {
-            publication_item_divider.setVisibility(View.VISIBLE);
-        }
+        publication_item_divider.setVisibility(isLast ? GONE : VISIBLE);
+        downloadProgress.setVisibility(publication.getLoading() ? VISIBLE : GONE);
     }
 
     @Override

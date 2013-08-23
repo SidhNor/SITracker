@@ -100,4 +100,36 @@
             android:layout_marginBottom="6dp"
             android:layout_marginTop="4dp"/>
 
+    <RelativeLayout
+            android:id="@+id/downloadProgress"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:minHeight="65dp"
+            android:background="#FFFFFFFF"
+            android:visibility="gone"
+            android:layout_above="@+id/publication_item_divider">
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="?android:attr/textColorPrimary"
+                android:text="@string/publications_downloading"
+                android:layout_marginLeft="15dp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"/>
+
+        <ProgressBar
+                android:indeterminate="true"
+                android:indeterminateOnly="true"
+                android:indeterminateDrawable="@drawable/progress_indeterminate_horizontal_holo"
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
+                android:paddingEnd="50dp"
+                android:paddingStart="15dp"
+                android:layout_alignParentEnd="false"
+                android:layout_alignParentBottom="true"/>
+    </RelativeLayout>
+
 </RelativeLayout>

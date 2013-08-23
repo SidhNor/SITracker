@@ -1,3 +1,19 @@
+/*
+ * Copyright 2013 Gleb Godonoga.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.andrada.sitracker.db.beans;
 
 import com.andrada.sitracker.db.dao.PublicationDaoImpl;
@@ -9,7 +25,7 @@ import java.util.Date;
 @DatabaseTable(daoClass = PublicationDaoImpl.class, tableName = "publications")
 public class Publication {
     @DatabaseField(generatedId = true, useGetSet = true)
-    int id;
+    long id;
     @DatabaseField(canBeNull = false, useGetSet = true)
     String name;
     @DatabaseField(useGetSet = true)
@@ -37,6 +53,7 @@ public class Publication {
     @DatabaseField(canBeNull = false, useGetSet = true)
     Date updateDate;
 
+    boolean isLoading = false;
 
     public Publication() {
         updateDate = new Date();
@@ -83,11 +100,11 @@ public class Publication {
         this.description = description;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -170,6 +187,16 @@ public class Publication {
     public void setNew(Boolean aNew) {
         isNew = aNew;
     }
+
+    public boolean getLoading() {
+        return isLoading;
+    }
+
+    public void setLoading(Boolean loading) {
+        isLoading = loading;
+    }
+
+
     //endregion
 
 }
