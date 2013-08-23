@@ -17,13 +17,14 @@
 package com.andrada.sitracker.test.fragment;
 
 import android.test.UiThreadTest;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.events.AuthorSelectedEvent;
-import com.andrada.sitracker.fragment.AuthorsFragment_;
 import com.andrada.sitracker.test.HomeActivityBaseTestCase;
 import com.andrada.sitracker.test.util.DBTestSetupUtil;
+import com.andrada.sitracker.ui.fragment.AuthorsFragment_;
 import com.andrada.sitracker.ui.fragment.adapters.AuthorsAdapter;
 
 import de.greenrobot.event.EventBus;
@@ -60,7 +61,7 @@ public class AuthorsFragmentTest extends HomeActivityBaseTestCase {
                 .hasId(R.id.fragment_authors);
         assertThat(authorsAdapter).isNotNull()
                 .hasCount(DBTestSetupUtil.AUTHORS_COUNT);
-        assertThat(listView).isNotNull()
+        assertThat((AdapterView) listView).isNotNull()
                 .hasAdapter(authorsAdapter)
                 .hasCount(DBTestSetupUtil.AUTHORS_COUNT)
                 .hasId(R.id.list).hasSelectedItemPosition(0);
