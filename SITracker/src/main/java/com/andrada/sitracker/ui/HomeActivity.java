@@ -81,7 +81,6 @@ public class HomeActivity extends BaseActivity {
 
     @AfterViews
     public void afterViews() {
-        slidingPane.setPanelSlideListener(slidingPaneListener);
         //Make sure the authors are opened
         slidingPane.openPane();
         slidingPane.setParallaxDistance(100);
@@ -119,7 +118,7 @@ public class HomeActivity extends BaseActivity {
             updateStatusReceiver = new UpdateStatusReceiver(mAuthorsFragment);
             updateStatusReceiver.setOrderedHint(true);
         }
-
+        slidingPane.setPanelSlideListener(slidingPaneListener);
         getSupportFragmentManager().addOnBackStackChangedListener(backStackListener);
 
         UpdateStatusMessageFilter filter = new UpdateStatusMessageFilter();
@@ -130,6 +129,7 @@ public class HomeActivity extends BaseActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        slidingPane.setPanelSlideListener(null);
         unregisterReceiver(updateStatusReceiver);
         getSupportFragmentManager().removeOnBackStackChangedListener(backStackListener);
     }
