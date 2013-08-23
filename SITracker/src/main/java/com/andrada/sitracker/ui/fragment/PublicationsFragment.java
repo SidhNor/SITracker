@@ -34,6 +34,7 @@ import com.github.kevinsawicki.http.HttpRequest;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.InstanceState;
 import org.androidannotations.annotations.UiThread;
@@ -116,6 +117,7 @@ public class PublicationsFragment extends Fragment implements ExpandableListView
     }
 
     @Override
+    @Background
     public void publicationShare(Publication pub, boolean forceDownload) {
         HttpRequest request;
         String pubUrl = pub.getUrl();
