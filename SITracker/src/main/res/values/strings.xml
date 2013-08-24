@@ -89,9 +89,19 @@
     </plurals>
 
     <!--Preferences -->
+
+    <!--Authors-->
     <string name="pref_authors_category_title">Authors</string>
     <string name="pref_authors_sort">Authors sort</string>
 
+    <!--Content-->
+    <string name="pref_content_title">Content</string>
+    <string name="pref_content_img_display">Display publication images</string>
+    <string name="pref_content_img_display_summ">Download and display related publication images if
+        available
+    </string>
+
+    <!--Updates-->
     <string name="pref_update_category_title">Updates</string>
     <string name="pref_updates_check">Automatic updates</string>
     <string name="pref_updates_check_summ">Automatic authors updates in background at the

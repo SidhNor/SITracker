@@ -280,12 +280,18 @@ public class ImageLoader extends com.android.volley.toolbox.ImageLoader {
 
         // TODO: getCacheDir() should be moved to a background thread as it attempts to create the
         // directory if it does not exist (no disk access should happen on the main/UI thread).
-        final String cachePath =
-                Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState()) ||
-                        !Environment.isExternalStorageRemovable()
-                        ? getExternalCacheDir(context).getPath()
-                        : context.getCacheDir().getPath();
+        LogUtils.LOGW("SITracker", "External storage mounted: " + Environment.getExternalStorageState());
+        LogUtils.LOGW("SITracker", "External storage removable: " + Environment.isExternalStorageRemovable());
 
+        String cachePath;
+
+        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState()) ||
+                !Environment.isExternalStorageRemovable()) {
+            File dir = getExternalCacheDir(context);
+            cachePath = dir == null ? context.getCacheDir().getPath() : getExternalCacheDir(context).getPath();
+        } else {
+            cachePath = context.getCacheDir().getPath();
+        }
         return new File(cachePath + File.separator + uniqueName);
     }
 

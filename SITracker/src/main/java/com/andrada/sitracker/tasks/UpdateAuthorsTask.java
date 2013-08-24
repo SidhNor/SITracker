@@ -20,9 +20,9 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.preference.PreferenceManager;
 
 import com.andrada.sitracker.Constants;
+import com.andrada.sitracker.contracts.SIPrefs_;
 import com.andrada.sitracker.db.beans.Author;
 import com.andrada.sitracker.db.beans.Publication;
 import com.andrada.sitracker.db.dao.AuthorDao;
@@ -39,6 +39,7 @@ import com.j256.ormlite.dao.ForeignCollection;
 import org.androidannotations.annotations.EService;
 import org.androidannotations.annotations.OrmLiteDao;
 import org.androidannotations.annotations.SystemService;
+import org.androidannotations.annotations.sharedpreferences.Pref;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -55,6 +56,9 @@ public class UpdateAuthorsTask extends IntentService {
 
     @OrmLiteDao(helper = SiDBHelper.class, model = Publication.class)
     PublicationDao publicationsDao;
+
+    @Pref
+    SIPrefs_ prefs;
 
     @SystemService
     ConnectivityManager connectivityManager;
@@ -82,8 +86,7 @@ public class UpdateAuthorsTask extends IntentService {
         try {
             List<Author> authors = authorDao.queryForAll();
             for (Author author : authors) {
-                boolean useWiFiOnly = PreferenceManager.getDefaultSharedPreferences(this)
-                        .getBoolean(Constants.UPDATE_NETWORK_KEY, false);
+                boolean useWiFiOnly = prefs.updateOnlyWiFi().get();
                 if (this.isConnected() &&
                         (isNetworkIgnore ||
                                 (!useWiFiOnly || this.isConnectedToWiFi()))) {

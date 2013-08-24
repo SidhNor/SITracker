@@ -103,7 +103,7 @@ public class PublicationItemView extends TouchDelegateRelativeLayout {
         item_update_date.setText(
                 DateFormatterUtil.getFriendlyDateRelativeToToday(publication.getUpdateDate(),
                         getResources().getConfiguration().locale));
-        if (publication.getImageUrl() != null) {
+        if (loader != null && publication.getImageUrl() != null) {
             publication_image.setVisibility(VISIBLE);
             loader.get(publication.getImageUrl(), publication_image);
         } else {

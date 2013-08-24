@@ -26,10 +26,12 @@ import android.widget.ListView;
 
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.contracts.IsNewItemTappedListener;
+import com.andrada.sitracker.contracts.SIPrefs_;
 import com.andrada.sitracker.db.beans.Publication;
 import com.andrada.sitracker.db.dao.PublicationDao;
 import com.andrada.sitracker.db.manager.SiDBHelper;
 import com.andrada.sitracker.events.PublicationMarkedAsReadEvent;
+import com.andrada.sitracker.ui.HomeActivity;
 import com.andrada.sitracker.ui.components.PublicationCategoryItemView;
 import com.andrada.sitracker.ui.components.PublicationCategoryItemView_;
 import com.andrada.sitracker.ui.components.PublicationItemView;
@@ -42,6 +44,7 @@ import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.OrmLiteDao;
 import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.UiThread;
+import org.androidannotations.annotations.sharedpreferences.Pref;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -67,16 +70,26 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
     @RootContext
     Context context;
 
+    @Pref
+    SIPrefs_ prefs;
+
     private PublicationShareAttemptListener listener;
 
     private final HashMap<Long, Publication> mDownloadingPublications = new HashMap<Long, Publication>();
+
+    ImageLoader mLoader;
 
     ListView listView = null;
 
     @Background
     public void reloadPublicationsForAuthorId(long id) {
         try {
-
+            boolean shouldShowImages = prefs.displayPubImages().get();
+            if (shouldShowImages) {
+                mLoader = ((HomeActivity) context).getImageLoaderInstance();
+            } else {
+                mLoader = null;
+            }
             List<Publication> pubs = publicationsDao.getSortedPublicationsForAuthorId(id);
             List<String> newCategories = new ArrayList<String>();
             List<List<Publication>> newChildren = new ArrayList<List<Publication>>();
@@ -135,8 +148,7 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
         } else {
             publicationItemView = (PublicationItemView) convertView;
         }
-        publicationItemView.bind(pub, isLast,
-                ((ImageLoader.ImageLoaderProvider) context).getImageLoaderInstance());
+        publicationItemView.bind(pub, isLast, mLoader);
         return publicationItemView;
     }
 

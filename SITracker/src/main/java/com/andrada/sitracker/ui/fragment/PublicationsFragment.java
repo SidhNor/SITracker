@@ -23,6 +23,7 @@ import android.view.View;
 import android.widget.ExpandableListView;
 
 import com.andrada.sitracker.R;
+import com.andrada.sitracker.contracts.SIPrefs_;
 import com.andrada.sitracker.db.beans.Publication;
 import com.andrada.sitracker.events.AuthorMarkedAsReadEvent;
 import com.andrada.sitracker.events.AuthorSelectedEvent;
@@ -39,6 +40,7 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.InstanceState;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
+import org.androidannotations.annotations.sharedpreferences.Pref;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -59,6 +61,9 @@ public class PublicationsFragment extends Fragment implements ExpandableListView
 
     @InstanceState
     long mCurrentId = -1;
+
+    @Pref
+    SIPrefs_ prefs;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -111,7 +116,6 @@ public class PublicationsFragment extends Fragment implements ExpandableListView
     public void onEvent(AuthorSelectedEvent event) {
         updatePublicationsView(event.authorId);
     }
-
 
     @Override
     public boolean onChildClick(ExpandableListView expandableListView,
