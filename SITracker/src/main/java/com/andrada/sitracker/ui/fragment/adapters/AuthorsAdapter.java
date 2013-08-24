@@ -127,6 +127,22 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
     @Background
     public void onIsNewItemTapped(View starButton) {
         Author auth = (Author) starButton.getTag();
+        dismissAuthor(auth);
+    }
+
+    @Background
+    public void markAuthorsRead(List<Long> authorsToMarkAsRead) {
+        for (long authId : authorsToMarkAsRead) {
+            dismissAuthor(this.getAuthorById(authId));
+        }
+    }
+
+    /**
+     * Should be called on background thread only
+     *
+     * @param auth Author to mark as read
+     */
+    private void dismissAuthor(Author auth) {
         if (auth != null) {
             auth.markRead();
             try {
@@ -141,7 +157,7 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
     @Background
     public void removeAuthors(List<Long> authorsToRemove) {
         try {
-            for(int i = 0; i < authorsToRemove.size(); i++) {
+            for (int i = 0; i < authorsToRemove.size(); i++) {
                 authorDao.removeAuthor(authorsToRemove.get(i));
             }
         } catch (SQLException e) {

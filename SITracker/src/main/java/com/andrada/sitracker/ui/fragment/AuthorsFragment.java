@@ -60,7 +60,6 @@ import org.androidannotations.annotations.ViewById;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -293,7 +292,7 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
     @Override
     public boolean onCreateActionMode(ActionMode mode, Menu menu) {
         MenuInflater inflater = mode.getMenuInflater();
-        inflater.inflate(R.menu.context, menu);
+        inflater.inflate(R.menu.context_authors, menu);
         mSelectedAuthors.clear();
         return true;
     }
@@ -315,6 +314,9 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
             adapter.removeAuthors(mSelectedAuthors);
             currentAuthorIndex = adapter.getSelectedAuthorId();
             EventBus.getDefault().post(new AuthorSelectedEvent(currentAuthorIndex));
+            return true;
+        } else if (item.getItemId() == R.id.action_markread) {
+            adapter.markAuthorsRead(mSelectedAuthors);
             return true;
         }
         return false;

@@ -1,0 +1,28 @@
+Love to read? Having trouble following your best authors on samlib.ru?
+
+SI Tracker allows you to stay informed of any updates your authors post. 
+Use it comfortably on devices of any size with responsive buttery UI.
+
+Planed features:
+
+• Publication description with ratings.
+• Updated publications in a separate tab
+• Publication details
+• samlib user profile
+• View publication related images
+• Reading, posting and tracking comments.
+
+***Intended for use with http://samlib.ru only
+If you encounter any issue, please feel free to report it.
+
+
+What's new:
+
+Alert: all publications will be marked as new after the update
+
+• Added new permission "Storage" for saving publications
+• On long item press, publication is saved to device for viewing in html reader apps like CoolReader or AIReader (even offline). Publications are downloaded again only if they are new. "Open in browser" functionality was removed and will be added later after a small redesign.
+• Publication description is save in html format now with working links
+• Performance improvements
+• Fixed several issues related to poor connection
+• Added author multiselection for devices with Android < 3.0
