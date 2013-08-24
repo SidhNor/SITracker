@@ -1,21 +1,114 @@
+<!--
+  Copyright 2013 Gleb Godonoga.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
 <resources>
 
+    <style name="NoParent"/>
     <!--
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
     -->
-    <style name="AppBaseTheme" parent="Theme.Sherlock.Light">
-        <!--
-            Theme customizations available in newer API levels can go in
-            res/values-vXX/styles.xml, while customizations related to
-            backward-compatibility can go here.
-        -->
+    <style name="FrameworkRoot.Base" parent="Theme.AppCompat.Light">
     </style>
 
-    <!-- Application theme. -->
-    <style name="AppTheme" parent="AppBaseTheme">
-        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+    <!-- Root styles that vary by API level -->
+    <style name="FrameworkRoot.Theme" parent="FrameworkRoot.Base">
+        <!-- API 11+ (compatibility) -->
+        <item name="buttonBarStyle">@style/Compat.ButtonBar</item>
+        <item name="buttonBarButtonStyle">@style/Compat.ButtonBarButton</item>
+        <item name="indeterminateProgressStyle">@style/Compat.IndeterminateProgress</item>
+        <!-- API 14+ (compatibility) -->
+        <item name="listPreferredItemPaddingLeft">@dimen/compat_list_preferred_item_padding_left
+        </item>
+        <item name="listPreferredItemPaddingRight">@dimen/compat_list_preferred_item_padding_right
+        </item>
+        <item name="listPreferredItemHeightSmall">@dimen/compat_list_preferred_item_height_small
+        </item>
     </style>
+
+    <style name="FrameworkRoot.ActionBar" parent="Widget.AppCompat.Light.ActionBar"/>
+
+    <style name="FrameworkRoot.ActionMode" parent="Widget.AppCompat.ActionMode"/>
+
+    <style name="FrameworkRoot.ActionBar.TabBar" parent="Widget.AppCompat.Base.ActionBar.TabBar"/>
+
+    <style name="FrameworkRoot.ActionBar.TabView" parent="Widget.AppCompat.ActionBar.TabView"/>
+
+    <style name="FrameworkRoot.PopupMenu" parent="Widget.AppCompat.Light.PopupMenu"/>
+
+    <style name="FrameworkRoot.DropDownListView" parent="Widget.AppCompat.Light.ListView.DropDown"/>
+
+    <style name="FrameworkRoot.DropDownNav" parent="Widget.AppCompat.Light.Spinner.DropDown.ActionBar"/>
+
+    <style name="FrameworkRoot.ProgressBar.Horizontal" parent="Widget.AppCompat.ProgressBar.Horizontal"/>
+
+    <style name="FrameworkRoot.ActionButton.CloseMode" parent="Widget.AppCompat.Light.ActionButton.CloseMode"/>
+
+    <!-- Application theme. -->
+    <style name="AppTheme" parent="FrameworkRoot.Theme">
+        <item name="actionBarItemBackground">@drawable/selectable_background_si</item>
+        <item name="popupMenuStyle">@style/PopupMenu</item>
+        <item name="dropDownListViewStyle">@style/DropDownListView</item>
+        <item name="actionBarTabStyle">@style/ActionBar.TabView</item>
+        <item name="actionDropDownStyle">@style/DropDownNav</item>
+        <item name="actionBarStyle">@style/ActionBar</item>
+        <item name="actionModeStyle">@style/ActionMode</item>
+        <item name="actionModeCloseButtonStyle">@style/ActionButton.CloseMode</item>
+    </style>
+
+
+    <style name="ActionBar" parent="FrameworkRoot.ActionBar">
+        <item name="background">@drawable/ab_solid</item>
+        <item name="backgroundStacked">@drawable/ab_stacked_solid_si</item>
+        <item name="backgroundSplit">@drawable/ab_bottom_solid_si</item>
+        <item name="progressBarStyle">@style/ProgressBar</item>
+    </style>
+
+    <style name="ActionMode" parent="FrameworkRoot.ActionMode">
+        <item name="background">@drawable/cab_background_top_si</item>
+        <item name="backgroundSplit">@drawable/cab_background_bottom_si</item>
+    </style>
+
+
+    <style name="PopupMenu" parent="FrameworkRoot.PopupMenu">
+        <item name="android:popupBackground">@drawable/menu_dropdown_panel_si</item>
+    </style>
+
+    <style name="DropDownListView" parent="FrameworkRoot.DropDownListView">
+        <item name="android:listSelector">@drawable/selectable_background_si</item>
+    </style>
+
+    <style name="ActionBar.TabView" parent="FrameworkRoot.ActionBar.TabView">
+        <item name="android:background">@drawable/tab_indicator_ab_si</item>
+    </style>
+
+    <style name="DropDownNav" parent="FrameworkRoot.DropDownNav">
+        <item name="android:background">@drawable/spinner_background_ab_si</item>
+        <item name="android:popupBackground">@drawable/menu_dropdown_panel_si</item>
+        <item name="android:dropDownSelector">@drawable/selectable_background_si</item>
+    </style>
+
+    <style name="ProgressBar" parent="FrameworkRoot.ProgressBar.Horizontal">
+        <item name="android:progressDrawable">@drawable/progress_horizontal_si</item>
+    </style>
+
+    <style name="ActionButton.CloseMode" parent="FrameworkRoot.ActionButton.CloseMode">
+        <item name="android:background">@drawable/btn_cab_done_si</item>
+    </style>
+
     <style name="DividerThick">`
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">2dp</item>

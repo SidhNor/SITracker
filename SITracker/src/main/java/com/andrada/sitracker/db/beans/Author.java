@@ -1,3 +1,19 @@
+/*
+ * Copyright 2013 Gleb Godonoga.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.andrada.sitracker.db.beans;
 
 import com.andrada.sitracker.db.dao.AuthorDaoImpl;
@@ -12,14 +28,16 @@ import java.util.Date;
 
 @DatabaseTable(daoClass = AuthorDaoImpl.class, tableName = "authors")
 public class Author {
-    @DatabaseField(generatedId = true, useGetSet = true)
-    int id;
+    @DatabaseField(generatedId = true, useGetSet = true, columnName = "_id")
+    long id;
     @DatabaseField(canBeNull = false, useGetSet = true)
     String name;
     @DatabaseField(unique = true, useGetSet = true)
     String url;
     @DatabaseField(canBeNull = false, useGetSet = true)
     Date updateDate;
+    @DatabaseField(defaultValue = "false", canBeNull = false)
+    Boolean isNew;
 
     @ForeignCollectionField(eager = false)
     ForeignCollection<Publication> publications;
@@ -28,11 +46,11 @@ public class Author {
         updateDate = new Date();
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -68,30 +86,25 @@ public class Author {
         this.publications = publications;
     }
 
-    public Boolean isUpdated() {
-        boolean isUpdated = false;
-        for (Publication pub : this.publications) {
-            if (pub.isNew) {
-                isUpdated = true;
-                break;
-            }
-        }
-        return isUpdated;
+    public Boolean getNew() {
+        return isNew;
     }
 
-    public void setUpdated(Boolean updated) {
-        if (!updated) {
-            for (Publication pub : this.publications) {
-                pub.setNew(false);
-                pub.setOldSize(0);
-                try {
-                    this.publications.update(pub);
-                } catch (SQLException e) {
-                    //surface error
-                    EasyTracker.getTracker().sendException("Author Set updated", e, false);
-                }
-            }
+    public void setNew(Boolean aNew) {
+        isNew = aNew;
+    }
 
+    public void markRead() {
+        this.setNew(false);
+        for (Publication pub : this.publications) {
+            pub.setNew(false);
+            pub.setOldSize(0);
+            try {
+                this.publications.update(pub);
+            } catch (SQLException e) {
+                //surface error
+                EasyTracker.getTracker().sendException("Author mark as read", e, false);
+            }
         }
     }
 }

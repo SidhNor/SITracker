@@ -1,3 +1,19 @@
+/*
+ * Copyright 2013 Gleb Godonoga.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.andrada.sitracker.util;
 
 import com.andrada.sitracker.Constants;
@@ -80,7 +96,7 @@ public class SamlibPageParser {
             item.setCommentsCount(Integer.parseInt(commentsCount));
             //Group 11 - Description
             String itemDescription = matcher.group(13) == null ? "" : matcher.group(13);
-            item.setDescription(escapeHTML(itemDescription).trim());
+            item.setDescription(itemDescription.trim());
             publicationList.add(item);
         }
         return publicationList;
@@ -110,6 +126,13 @@ public class SamlibPageParser {
                 .replaceAll("<[^>]*>", "")
                 .replaceAll("(?si)\\n[\\p{Z}\\t]+\\n", "\n\n")
                 .replaceAll("(?si)\\n\\n+", "\\n\\n");
+        return value;
+    }
+
+    public static String stripDescriptionOfImages(String value) {
+        value = value.replaceAll("(<a[^>]*>)?\\s*?<img[^>]*>\\s?(</a>)?", "")
+                .replaceAll("<br/?>", "")
+                .replaceAll("<a[^>]*>\\s?Иллюстрации.[^>]*a>", "");
         return value;
     }
 }

@@ -13,7 +13,8 @@ public final class DateFormatterUtil {
 
         Date today = new Date();
 
-        String localeBasedFmt = currentLocale.getISO3Country().equals("RUS") ? "d MMM" : "MMM d";
+        String localeBasedFmt = currentLocale.getLanguage().equals("ru") ? "d MMM" : "MMM d";
+
         //Check if the same day this year
         SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd");
         //Check if the say year
@@ -21,7 +22,7 @@ public final class DateFormatterUtil {
         SimpleDateFormat formatToUse;
         if (fmt.format(today).equals(fmt.format(date))) {
             formatToUse = new SimpleDateFormat("HH:mm");
-        } else if (fmtYear.format(today).equals(fmtYear.format(date))){
+        } else if (fmtYear.format(today).equals(fmtYear.format(date))) {
             formatToUse = new SimpleDateFormat(localeBasedFmt);
         } else {
             formatToUse = new SimpleDateFormat("dd/MM/yyyy");
