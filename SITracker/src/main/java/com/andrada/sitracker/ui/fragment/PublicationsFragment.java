@@ -33,8 +33,8 @@ import com.andrada.sitracker.util.UIUtils;
 import com.github.kevinsawicki.http.HttpRequest;
 
 import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Background;
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.InstanceState;
 import org.androidannotations.annotations.UiThread;
@@ -100,7 +100,11 @@ public class PublicationsFragment extends Fragment implements ExpandableListView
         //Stop loading progress in adapter
         adapter.stopProgressOnPublication(id);
         if (!success) {
-            Crouton.showText(getActivity(), errorMessage, Style.ALERT);
+            Style.Builder alertStyle = new Style.Builder()
+                    .setTextAppearance(android.R.attr.textAppearanceLarge)
+                    .setPaddingInPixels(25);
+            alertStyle.setBackgroundColorValue(Style.holoRedLight);
+            Crouton.makeText(getActivity(), errorMessage, alertStyle.build()).show();
         }
     }
 
