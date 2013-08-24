@@ -25,7 +25,7 @@ import java.util.Date;
 @DatabaseTable(daoClass = PublicationDaoImpl.class, tableName = "publications")
 public class Publication {
     @DatabaseField(generatedId = true, useGetSet = true)
-    int id;
+    long id;
     @DatabaseField(canBeNull = false, useGetSet = true)
     String name;
     @DatabaseField(useGetSet = true)
@@ -55,6 +55,7 @@ public class Publication {
     @DatabaseField(canBeNull = true, useGetSet = true)
     String imageUrl;
 
+    boolean isLoading = false;
 
     public Publication() {
         updateDate = new Date();
@@ -101,11 +102,11 @@ public class Publication {
         this.description = description;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -196,6 +197,16 @@ public class Publication {
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }
+
+    public boolean getLoading() {
+        return isLoading;
+    }
+
+    public void setLoading(Boolean loading) {
+        isLoading = loading;
+    }
+
+
     //endregion
 
 }

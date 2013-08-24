@@ -17,8 +17,6 @@
 package com.andrada.sitracker.ui.fragment.adapters;
 
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -47,6 +45,7 @@ import org.androidannotations.annotations.UiThread;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -54,6 +53,10 @@ import de.greenrobot.event.EventBus;
 @EBean
 public class PublicationsAdapter extends BaseExpandableListAdapter implements
         IsNewItemTappedListener, AdapterView.OnItemLongClickListener {
+
+    public interface PublicationShareAttemptListener {
+        void publicationShare(Publication pub, boolean forceDownload);
+    }
 
     List<String> mCategories = new ArrayList<String>();
     List<List<Publication>> mChildren = new ArrayList<List<Publication>>();
@@ -63,6 +66,10 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
 
     @RootContext
     Context context;
+
+    private PublicationShareAttemptListener listener;
+
+    private final HashMap<Long, Publication> mDownloadingPublications = new HashMap<Long, Publication>();
 
     ListView listView = null;
 
@@ -118,6 +125,9 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
     public View getChildView(int groupPosition, int childPosition,
                              boolean isLastChild, View convertView, ViewGroup parent) {
 
+        Boolean isLast = mChildren.get(groupPosition).size() - 1 == childPosition;
+        Publication pub = (Publication) getChild(groupPosition, childPosition);
+
         PublicationItemView publicationItemView;
         if (convertView == null) {
             publicationItemView = PublicationItemView_.build(context);
@@ -125,12 +135,8 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
         } else {
             publicationItemView = (PublicationItemView) convertView;
         }
-        Boolean isLast = mChildren.get(groupPosition).size() - 1 == childPosition;
-        publicationItemView.bind(
-                (Publication) getChild(groupPosition, childPosition),
-                isLast,
+        publicationItemView.bind(pub, isLast,
                 ((ImageLoader.ImageLoaderProvider) context).getImageLoaderInstance());
-
         return publicationItemView;
     }
 
@@ -188,6 +194,16 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
         }
     }
 
+    public void stopProgressOnPublication(long id) {
+        mDownloadingPublications.get(id).setLoading(false);
+        mDownloadingPublications.remove(id);
+        notifyDataSetChanged();
+    }
+
+    public void setShareListener(PublicationShareAttemptListener listener) {
+        this.listener = listener;
+    }
+
     @Background
     protected void updateStatusOfPublication(Publication pub) {
         if (pub != null && pub.getNew()) {
@@ -208,16 +224,30 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
             int childPosition = ExpandableListView.getPackedPositionChild(packedPosition);
             List<Publication> items = mChildren.get(groupPosition);
             Publication pub = items.get(childPosition);
-            updateStatusOfPublication(pub);
 
-            Intent i = new Intent(Intent.ACTION_VIEW);
-            i.setData(Uri.parse(pub.getUrl()));
-            context.startActivity(i);
-            EasyTracker.getTracker().sendEvent(
-                    Constants.GA_UI_CATEGORY,
-                    Constants.GA_EVENT_AUTHOR_PUB_OPEN,
-                    Constants.GA_EVENT_AUTHOR_PUB_OPEN, null);
-            EasyTracker.getInstance().dispatch();
+            if (pub.getLoading()) {
+                //Ignore if it is loading now
+                return true;
+            }
+            if (listener != null) {
+                //Mark item as loading
+                mDownloadingPublications.put(pub.getId(), pub);
+                pub.setLoading(true);
+                notifyDataSetChanged();
+
+                //Attempt to open or download publication
+                listener.publicationShare(pub, pub.getNew());
+
+                EasyTracker.getTracker().sendEvent(
+                        Constants.GA_UI_CATEGORY,
+                        Constants.GA_EVENT_AUTHOR_PUB_OPEN,
+                        Constants.GA_EVENT_AUTHOR_PUB_OPEN, null);
+                EasyTracker.getInstance().dispatch();
+
+                updateStatusOfPublication(pub);
+            }
+
+
             // Return true as we are handling the event.
             return true;
         }

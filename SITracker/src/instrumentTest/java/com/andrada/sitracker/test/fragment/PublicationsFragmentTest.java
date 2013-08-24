@@ -17,8 +17,8 @@
 package com.andrada.sitracker.test.fragment;
 
 import com.andrada.sitracker.R;
-import com.andrada.sitracker.fragment.PublicationsFragment_;
 import com.andrada.sitracker.test.HomeActivityBaseTestCase;
+import com.andrada.sitracker.ui.fragment.PublicationsFragment_;
 
 import static org.fest.assertions.api.ANDROID.assertThat;
 

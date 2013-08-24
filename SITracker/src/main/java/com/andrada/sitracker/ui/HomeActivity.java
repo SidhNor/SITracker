@@ -84,7 +84,6 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
 
     @AfterViews
     public void afterViews() {
-        slidingPane.setPanelSlideListener(slidingPaneListener);
         //Make sure the authors are opened
         slidingPane.openPane();
         slidingPane.setParallaxDistance(100);
@@ -126,7 +125,7 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
             updateStatusReceiver = new UpdateStatusReceiver(mAuthorsFragment);
             updateStatusReceiver.setOrderedHint(true);
         }
-
+        slidingPane.setPanelSlideListener(slidingPaneListener);
         getSupportFragmentManager().addOnBackStackChangedListener(backStackListener);
 
         UpdateStatusMessageFilter filter = new UpdateStatusMessageFilter();
@@ -137,6 +136,7 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
     @Override
     protected void onPause() {
         super.onPause();
+        slidingPane.setPanelSlideListener(null);
         unregisterReceiver(updateStatusReceiver);
         getSupportFragmentManager().removeOnBackStackChangedListener(backStackListener);
     }

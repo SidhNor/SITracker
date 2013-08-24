@@ -48,6 +48,24 @@
     </string>
     <string name="cannot_add_author_no_publications">Cannot add author. No publications found.
     </string>
+
+    <string name="cannot_download_publication">Cannot download publication. Check your internet
+        connection.
+    </string>
+    <string name="publication_error_url">Cannot download publication. Publications seems to have a
+        wrong url. The only thing that could help is to remove and re-add the author
+    </string>
+    <string name="publication_error_save">Cannot save publication. Check if there is free space on
+        your device.
+    </string>
+    <string name="publication_error_storage">Cannot save publication. Your external storage seems to
+        be inaccessible.
+    </string>
+    <string name="publication_error_unknown">Cannot download publication. Some internal error
+        occurred.
+    </string>
+    <string name="publications_downloading">Downloading publication…</string>
+
     <string name="check_for_updates">Checking for updates</string>
     <string name="action_add_ok">Add</string>
     <string name="notification_title">SITracker Updates</string>

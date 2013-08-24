@@ -16,10 +16,10 @@
 
 package com.andrada.sitracker.test;
 
+import android.support.v7.app.ActionBar;
 import android.test.ActivityInstrumentationTestCase2;
 
-import com.actionbarsherlock.app.ActionBar;
-import com.andrada.sitracker.HomeActivity_;
+import com.andrada.sitracker.ui.HomeActivity_;
 
 /**
  * Created by ggodonoga on 06/08/13.

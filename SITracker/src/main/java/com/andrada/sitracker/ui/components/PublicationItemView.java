@@ -18,6 +18,9 @@ package com.andrada.sitracker.ui.components;
 
 import android.content.Context;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -49,6 +52,9 @@ public class PublicationItemView extends TouchDelegateRelativeLayout {
     ImageButton item_updated;
 
     @ViewById
+    ViewGroup downloadProgress;
+
+    @ViewById
     EllipsizedTextView item_description;
 
     @ViewById
@@ -60,12 +66,19 @@ public class PublicationItemView extends TouchDelegateRelativeLayout {
     @ViewById
     TextView itemSize;
 
+    @ViewById
+    ViewGroup backgroundPane;
+
+    Animation scaleFadeOutAnim;
+    Animation fadeInAnim;
+
     private boolean mIsNew = false;
 
     private IsNewItemTappedListener mListener;
 
     public PublicationItemView(Context context) {
         super(context);
+
     }
 
     @AfterViews
@@ -74,6 +87,8 @@ public class PublicationItemView extends TouchDelegateRelativeLayout {
                 ViewConfig.wholeRight(),
                 item_updated);
         item_description.setMaxLines(3);
+        scaleFadeOutAnim = AnimationUtils.loadAnimation(getContext(), R.anim.item_fade_scale_down);
+        fadeInAnim = AnimationUtils.loadAnimation(getContext(), R.anim.item_fade_in);
     }
 
     public void setListener(IsNewItemTappedListener listener) {
@@ -114,11 +129,18 @@ public class PublicationItemView extends TouchDelegateRelativeLayout {
         builder.append("kb");
         itemSize.setText(builder.toString());
 
-        if (isLast) {
-            publication_item_divider.setVisibility(View.GONE);
+        publication_item_divider.setVisibility(isLast ? GONE : VISIBLE);
+
+        downloadProgress.clearAnimation();
+        backgroundPane.clearAnimation();
+        if (publication.getLoading()) {
+            downloadProgress.setVisibility(VISIBLE);
+            downloadProgress.startAnimation(fadeInAnim);
+            backgroundPane.startAnimation(scaleFadeOutAnim);
         } else {
-            publication_item_divider.setVisibility(View.VISIBLE);
+            downloadProgress.setVisibility(GONE);
         }
+
     }
 
     @Override

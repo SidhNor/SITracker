@@ -17,9 +17,9 @@
 package com.andrada.sitracker.test;
 
 import android.support.v4.widget.SlidingPaneLayout;
+import android.support.v7.app.ActionBar;
 import android.widget.ProgressBar;
 
-import com.actionbarsherlock.app.ActionBar;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.events.ProgressBarToggleEvent;
 
