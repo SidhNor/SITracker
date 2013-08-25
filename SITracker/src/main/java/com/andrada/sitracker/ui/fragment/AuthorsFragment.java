@@ -349,14 +349,15 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
     }
 
     public void onEvent(AuthorAddedEvent event) {
-        EasyTracker.getTracker().sendEvent(
-                Constants.GA_UI_CATEGORY,
-                Constants.GA_EVENT_AUTHOR_ADDED,
-                Constants.GA_EVENT_AUTHOR_ADDED, null);
-        EasyTracker.getInstance().dispatch();
 
         EventBus.getDefault().post(new ProgressBarToggleEvent(false));
         String message = event.message;
+
+        EasyTracker.getTracker().sendEvent(
+                Constants.GA_UI_CATEGORY,
+                Constants.GA_EVENT_AUTHOR_ADDED,
+                Constants.GA_EVENT_AUTHOR_ADDED, (long) message.length());
+        EasyTracker.getInstance().dispatch();
 
         //Stop progress bar
 
