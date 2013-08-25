@@ -23,6 +23,7 @@
     <string name="action_add">Add author</string>
     <string name="action_delete">Delete author</string>
     <string name="action_markread">Mark as read</string>
+    <string name="action_clear_saved_pubs">Clear cached</string>
     <string name="add_author_placeholder">samlib.ru/y/your_author</string>
     <string name="designtime_placeholder_long">Lorem ipsum dolor sit amet, consectetur adipiscing
         elit. Aenean fringilla

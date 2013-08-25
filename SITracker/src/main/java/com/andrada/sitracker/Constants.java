@@ -65,4 +65,5 @@ public class Constants {
     public static final String GA_EVENT_AUTHOR_MANUAL_READ = "author_manual_marked_read";
     public static final String GA_EVENT_AUTHOR_PUB_OPEN = "publication_opened";
     public static final String GA_EVENT_CHANGED_UPDATE_INTERVAL = "update_interval_changed";
+    public static final String GA_EVENT_CLEAR_CACHED_PUBS = "clear_cached_publications";
 }

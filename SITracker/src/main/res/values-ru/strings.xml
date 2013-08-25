@@ -26,6 +26,7 @@
     <string name="action_add">Добавить автора
     </string>
     <string name="action_markread">Отметить как прочитаное</string>
+    <string name="action_clear_saved_pubs">Удалить кэшированные</string>
     <string name="action_delete">Удалить автора</string>
     <string name="add_author_placeholder">samlib.ru/a/avtor</string>
     <string name="designtime_placeholder_long">Lorem ipsum dolor sit amet, consectetur adipiscing

@@ -43,15 +43,29 @@ public final class ShareHelper {
      * @return The file or null if storage is not accessible.
      */
     public static File getPublicationStorageFile(Context context, String hashedPublicationName) {
+
+        File storageDir = getPublicationStorageDirectory(context);
+        if (storageDir == null) {
+            return storageDir;
+        }
+
+        return new File(storageDir, hashedPublicationName + ".html");
+    }
+
+    /**
+     * Get a the external directory name.
+     *
+     * @param context The context to use
+     * @return external directory path, null if directory not available
+     */
+    public static File getPublicationStorageDirectory(Context context) {
         // Check if media is mounted or storage is built-in, if so, try and use external cache dir
         // otherwise return null
-
         if (!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState()) &&
                 Environment.isExternalStorageRemovable()) {
             return null;
         }
-
-        return new File(context.getExternalFilesDir(null), hashedPublicationName + ".html");
+        return context.getExternalFilesDir(null);
     }
 
     /**
