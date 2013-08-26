@@ -14,19 +14,12 @@
  * limitations under the License.
  */
 
-package com.andrada.sitracker.ui.tablet;
+package com.andrada.sitracker.ui.fragment;
 
-import android.support.v4.widget.SlidingPaneLayout;
+import android.support.v4.app.Fragment;
 
-import com.andrada.sitracker.R;
-import com.andrada.sitracker.ui.BaseActivity;
+import org.androidannotations.annotations.EFragment;
 
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.ViewById;
-
-@EActivity(R.layout.activity_comments)
-public class CommentsMultiPaneActivity extends BaseActivity {
-
-    @ViewById(R.id.sliding_pane_layout)
-    SlidingPaneLayout mSlidingPaneLayout;
+@EFragment
+public class AuthFragment extends Fragment {
 }

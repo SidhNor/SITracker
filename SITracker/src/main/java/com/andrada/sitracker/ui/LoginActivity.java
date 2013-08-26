@@ -14,19 +14,11 @@
  * limitations under the License.
  */
 
-package com.andrada.sitracker.ui.tablet;
-
-import android.support.v4.widget.SlidingPaneLayout;
-
-import com.andrada.sitracker.R;
-import com.andrada.sitracker.ui.BaseActivity;
+package com.andrada.sitracker.ui;
 
 import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.ViewById;
 
-@EActivity(R.layout.activity_comments)
-public class CommentsMultiPaneActivity extends BaseActivity {
+@EActivity
+public class LoginActivity extends BaseActivity {
 
-    @ViewById(R.id.sliding_pane_layout)
-    SlidingPaneLayout mSlidingPaneLayout;
 }

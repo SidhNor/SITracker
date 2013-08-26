@@ -62,7 +62,7 @@ public class MultiSelectionUtil {
         public static Controller attach(ListView listView, ActionBarActivity activity,
                                         MultiChoiceModeListener listener) {
             if (listView.getChoiceMode() == AbsListView.CHOICE_MODE_MULTIPLE ||
-                listView.getChoiceMode() == AbsListView.CHOICE_MODE_MULTIPLE_MODAL) {
+                    listView.getChoiceMode() == AbsListView.CHOICE_MODE_MULTIPLE_MODAL) {
                 throw new IllegalArgumentException("ListView CHOICE_MODE_MULTIPLE or CHOICE_MODE_MULTIPLE_MODAL is not allowed. Everything is handled by this class.");
             }
             Controller controller = new Controller();

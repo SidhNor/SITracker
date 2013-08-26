@@ -16,11 +16,17 @@
 
 package com.andrada.sitracker.ui.tablet;
 
+import android.support.v4.widget.SlidingPaneLayout;
+
+import com.andrada.sitracker.R;
 import com.andrada.sitracker.ui.BaseActivity;
 
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.ViewById;
 
-@EActivity
+@EActivity(R.layout.activity_publications)
 public class PublicationsMultiPaneActivity extends BaseActivity {
 
+    @ViewById(R.id.sliding_pane_layout)
+    SlidingPaneLayout mSlidingPaneLayout;
 }
