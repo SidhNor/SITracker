@@ -17,14 +17,15 @@
 
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
-    <string name="app_name">СИ Трекер
-    </string>
-    <string name="action_settings">Настройки
-    </string>
-    <string name="action_refresh">Обновить
-    </string>
-    <string name="action_add">Добавить автора
-    </string>
+    <string name="app_name">СИ Трекер</string>
+    <string name="title_settings">Настройки</string>
+    <string name="title_publications">Произведения</string>
+    <string name="title_publications_details">Детали произведения</string>
+    <string name="title_comment_stream">Комментарии</string>
+
+    <string name="action_settings">Настройки</string>
+    <string name="action_refresh">Обновить</string>
+    <string name="action_add">Добавить автора</string>
     <string name="action_markread">Отметить как прочитаное</string>
     <string name="action_clear_saved_pubs">Удалить кэшированные</string>
     <string name="action_delete">Удалить автора</string>
