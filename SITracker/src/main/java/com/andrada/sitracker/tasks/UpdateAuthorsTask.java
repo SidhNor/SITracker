@@ -146,6 +146,11 @@ public class UpdateAuthorsTask extends IntentService {
             return false;
         }
         String body = SamlibPageParser.sanitizeHTML(request.body());
+        String authImgUrl = SamlibPageParser.getAuthorImageUrl(body, author.getUrl());
+        String authDescription = SamlibPageParser.getAuthorDescription(body);
+        if (authImgUrl != null) author.setAuthorImageUrl(authImgUrl);
+        if (authDescription != null) author.setAuthorDescription(authDescription);
+        authorDao.update(author);
 
         ForeignCollection<Publication> oldItems = author.getPublications();
         List<Publication> newItems = SamlibPageParser.getPublications(body, author);

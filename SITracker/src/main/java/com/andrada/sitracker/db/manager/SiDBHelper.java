@@ -32,7 +32,7 @@ import java.sql.SQLException;
 public class SiDBHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "siinformer.db";
-    private static final int DATABASE_VERSION = 7;
+    private static final int DATABASE_VERSION = 8;
 
     private PublicationDao publicationDao;
     private AuthorDao authorDao;
@@ -87,6 +87,11 @@ public class SiDBHelper extends OrmLiteSqliteOpenHelper {
                     }
                     case 7: {
                         getPublicationDao().executeRaw("ALTER TABLE 'publications' ADD COLUMN imageUrl TEXT;");
+                        break;
+                    }
+                    case 8: {
+                        getAuthorDao().executeRaw("ALTER TABLE 'authors' ADD COLUMN authorImageUrl TEXT;");
+                        getAuthorDao().executeRaw("ALTER TABLE 'authors' ADD COLUMN authorDescription TEXT;");
                         break;
                     }
                 }

@@ -31,7 +31,39 @@ import java.util.regex.Pattern;
 
 public class SamlibPageParser {
 
-    public static String getAuthor(String pageContent) throws AddAuthorException {
+    public static Author getAuthor(String pageContent, String url) throws AddAuthorException {
+        Author author = new Author();
+        author.setUrl(url);
+        author.setName(getAuthorName(pageContent));
+        author.setUpdateDate(getAuthorUpdateDate(pageContent));
+        author.setAuthorDescription(getAuthorDescription(pageContent));
+        author.setAuthorImageUrl(getAuthorImageUrl(pageContent, url));
+        return author;
+    }
+
+    public static String getAuthorImageUrl(String pageContent, String authorUrl) {
+        authorUrl = authorUrl.replace(Constants.AUTHOR_PAGE_URL_ENDING_WO_SLASH, "");
+        Pattern pattern = Pattern.compile(Constants.AUTHOR_IMAGE_REGEX, Pattern.MULTILINE);
+        Matcher matcher = pattern.matcher(pageContent);
+        String imageUrl = null;
+        if (matcher.find()) {
+            imageUrl = (matcher.group(2));
+            if (imageUrl != null) imageUrl = authorUrl + imageUrl;
+        }
+        return imageUrl;
+    }
+
+    public static String getAuthorDescription(String pageContent) {
+        Pattern pattern = Pattern.compile(Constants.AUTHOR_DESCRIPTION_TEXT_REGEX, Pattern.MULTILINE);
+        Matcher matcher = pattern.matcher(pageContent);
+        String descriptionText = null;
+        if (matcher.find()) {
+            descriptionText = (matcher.group(1));
+        }
+        return descriptionText;
+    }
+
+    public static String getAuthorName(String pageContent) throws AddAuthorException {
         int index = pageContent.indexOf('.', pageContent.indexOf("<title>")) + 1;
         int secondPointIndex = pageContent.indexOf(".", index);
         String authorName = pageContent.substring(index, secondPointIndex);
@@ -129,6 +161,7 @@ public class SamlibPageParser {
                 .replaceAll("(?i)&copy;?", "(c)")
                 .replaceAll("(?i)&reg;?", "(r)")
                 .replaceAll("(?i)&nbsp;?", " ")
+                .replaceAll("(?si)[\\r\\n\\x85\\f]+", "")
                 .replaceAll("(?i)&quot;?", "\"");
         return value;
     }

@@ -36,6 +36,10 @@ public class Author {
     String url;
     @DatabaseField(canBeNull = false, useGetSet = true)
     Date updateDate;
+    @DatabaseField(canBeNull = true, useGetSet = true)
+    String authorImageUrl;
+    @DatabaseField(canBeNull = true, useGetSet = true)
+    String authorDescription;
     @DatabaseField(defaultValue = "false", canBeNull = false)
     Boolean isNew;
 
@@ -84,6 +88,22 @@ public class Author {
 
     public void setPublications(ForeignCollection<Publication> publications) {
         this.publications = publications;
+    }
+
+    public String getAuthorImageUrl() {
+        return authorImageUrl;
+    }
+
+    public void setAuthorImageUrl(String authorImageUrl) {
+        this.authorImageUrl = authorImageUrl;
+    }
+
+    public String getAuthorDescription() {
+        return authorDescription;
+    }
+
+    public void setAuthorDescription(String authorDescription) {
+        this.authorDescription = authorDescription;
     }
 
     public Boolean getNew() {
