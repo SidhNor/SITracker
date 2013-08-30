@@ -207,8 +207,11 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
     }
 
     public void stopProgressOnPublication(long id) {
-        mDownloadingPublications.get(id).setLoading(false);
-        mDownloadingPublications.remove(id);
+        Publication loadingPub = mDownloadingPublications.get(id);
+        if (loadingPub != null) {
+            loadingPub.setLoading(false);
+            mDownloadingPublications.remove(id);
+        }
         notifyDataSetChanged();
     }
 

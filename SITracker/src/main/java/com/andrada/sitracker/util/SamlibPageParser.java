@@ -65,7 +65,13 @@ public class SamlibPageParser {
 
     public static String getAuthorName(String pageContent) throws AddAuthorException {
         int index = pageContent.indexOf('.', pageContent.indexOf("<title>")) + 1;
+        if (index == -1) {
+            throw new AddAuthorException(AddAuthorException.AuthorAddErrors.AUTHOR_NAME_NOT_FOUND);
+        }
         int secondPointIndex = pageContent.indexOf(".", index);
+        if (secondPointIndex == -1) {
+            throw new AddAuthorException(AddAuthorException.AuthorAddErrors.AUTHOR_NAME_NOT_FOUND);
+        }
         String authorName = pageContent.substring(index, secondPointIndex);
         if (authorName == null || "".equals(authorName.trim())) {
             throw new AddAuthorException(AddAuthorException.AuthorAddErrors.AUTHOR_NAME_NOT_FOUND);
