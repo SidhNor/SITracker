@@ -116,6 +116,7 @@ public class UpdateAuthorsTask extends IntentService {
     private boolean updateAuthor(Author author) throws SQLException {
         boolean authorUpdated = false;
         HttpRequest request;
+        String body;
         try {
             URL authorURL = new URL(author.getUrl());
             request = HttpRequest.get(authorURL);
@@ -129,6 +130,8 @@ public class UpdateAuthorsTask extends IntentService {
                 //Skip
                 return false;
             }
+            body = SamlibPageParser.sanitizeHTML(request.body());
+
             EasyTracker.getTracker().sendEvent(
                     Constants.GA_BGR_CATEGORY,
                     Constants.GA_EVENT_AUTHOR_UPDATE,
@@ -145,7 +148,7 @@ public class UpdateAuthorsTask extends IntentService {
             trackException(e.getMessage());
             return false;
         }
-        String body = SamlibPageParser.sanitizeHTML(request.body());
+
         String authImgUrl = SamlibPageParser.getAuthorImageUrl(body, author.getUrl());
         String authDescription = SamlibPageParser.getAuthorDescription(body);
         if (authImgUrl != null) author.setAuthorImageUrl(authImgUrl);
