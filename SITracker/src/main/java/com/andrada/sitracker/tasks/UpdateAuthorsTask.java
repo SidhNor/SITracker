@@ -131,7 +131,8 @@ public class UpdateAuthorsTask extends IntentService {
                 return false;
             }
             body = SamlibPageParser.sanitizeHTML(request.body());
-
+            //We go a blank response but no exception, skip author
+            if (body == null) return false;
             EasyTracker.getTracker().sendEvent(
                     Constants.GA_BGR_CATEGORY,
                     Constants.GA_EVENT_AUTHOR_UPDATE,

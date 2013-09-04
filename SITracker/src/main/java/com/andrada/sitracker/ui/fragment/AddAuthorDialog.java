@@ -59,7 +59,7 @@ public class AddAuthorDialog extends DialogFragment implements
         mAuthorEditText = (EditText) layout.findViewById(R.id.et_add_author);
         CharSequence clipboardChars = ClipboardHelper.getClipboardText(getActivity().getApplicationContext());
 
-        if (clipboardChars != null && clipboardChars.length() > 0) {
+        if (clipboardChars != null && clipboardChars.length() > 0 && clipboardChars.toString().contains("samlib.ru")) {
             mAuthorEditText.setText(clipboardChars);
         }
 
