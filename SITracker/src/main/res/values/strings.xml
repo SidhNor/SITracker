@@ -108,6 +108,9 @@
     </string>
     <string name="pref_content_download_summ_short">Publications are downloaded to:</string>
 
+    <string name="pref_content_clear_saved_title">Clear saved publications</string>
+    <string name="pref_content_clear_saved_summ">Only the default folder will be cleared</string>
+
     <string name="pref_content_img_display">Display publication images</string>
     <string name="pref_content_img_display_summ">Download and display related publication images if
         available

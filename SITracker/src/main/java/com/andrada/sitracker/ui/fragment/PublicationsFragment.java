@@ -22,26 +22,22 @@ import android.support.v4.app.Fragment;
 import android.view.View;
 import android.widget.ExpandableListView;
 
-import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.SIPrefs_;
 import com.andrada.sitracker.db.beans.Publication;
 import com.andrada.sitracker.events.AuthorMarkedAsReadEvent;
 import com.andrada.sitracker.events.AuthorSelectedEvent;
 import com.andrada.sitracker.exceptions.SharePublicationException;
-import com.andrada.sitracker.tasks.ClearPublicationCacheTask;
 import com.andrada.sitracker.ui.fragment.adapters.PublicationsAdapter;
 import com.andrada.sitracker.util.ShareHelper;
 import com.andrada.sitracker.util.UIUtils;
 import com.github.kevinsawicki.http.HttpRequest;
-import com.google.analytics.tracking.android.EasyTracker;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.InstanceState;
-import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
@@ -121,14 +117,6 @@ public class PublicationsFragment extends Fragment implements ExpandableListView
 
     public void onEvent(AuthorSelectedEvent event) {
         updatePublicationsView(event.authorId);
-    }
-
-    @OptionsItem(R.id.action_clear_saved_pubs)
-    void menuClearCachedSelected() {
-        new ClearPublicationCacheTask(getActivity()).execute();
-        EasyTracker.getTracker().sendEvent(Constants.GA_UI_CATEGORY,
-                Constants.GA_EVENT_CLEAR_CACHED_PUBS,
-                Constants.GA_EVENT_CLEAR_CACHED_PUBS, 0L);
     }
 
     @Override

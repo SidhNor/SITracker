@@ -16,11 +16,4 @@
   limitations under the License.
   -->
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:sitracker="http://schemas.android.com/apk/res-auto">
-    <item
-            android:id="@+id/action_clear_saved_pubs"
-            android:orderInCategory="99"
-            sitracker:showAsAction="never"
-            android:title="@string/action_clear_saved_pubs"/>
-</menu>
+<menu></menu>

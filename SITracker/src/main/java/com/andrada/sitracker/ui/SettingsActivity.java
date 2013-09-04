@@ -26,12 +26,14 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
+import android.preference.Preference;
 import android.preference.PreferenceActivity;
 
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.SIPrefs_;
 import com.andrada.sitracker.events.AuthorSortMethodChanged;
+import com.andrada.sitracker.tasks.ClearPublicationCacheTask;
 import com.andrada.sitracker.tasks.UpdateAuthorsTask_;
 import com.andrada.sitracker.util.ShareHelper;
 import com.andrada.sitracker.util.UIUtils;
@@ -71,13 +73,23 @@ public class SettingsActivity extends PreferenceActivity implements
         if (UIUtils.hasHoneycomb()) {
             getActionBar().setDisplayHomeAsUpEnabled(true);
         }
-
     }
+
+    private final Preference.OnPreferenceClickListener clickListener = new Preference.OnPreferenceClickListener() {
+        @Override
+        public boolean onPreferenceClick(Preference preference) {
+            Intent updateIntent = new Intent(getApplicationContext(), ClearPublicationCacheTask.class);
+            getApplicationContext().startService(updateIntent);
+            return true;
+        }
+    };
 
     @Override
     protected void onResume() {
         super.onResume();
         getSharedPreferences(Constants.SI_PREF_NAME, MODE_MULTI_PROCESS).registerOnSharedPreferenceChangeListener(this);
+        Preference pref = findPreference(Constants.PREF_CLEAR_SAVED_PUBS_KEY);
+        pref.setOnPreferenceClickListener(clickListener);
         EasyTracker.getInstance().activityStart(this);
     }
 
@@ -85,6 +97,8 @@ public class SettingsActivity extends PreferenceActivity implements
     protected void onPause() {
         super.onPause();
         getSharedPreferences(Constants.SI_PREF_NAME, MODE_MULTI_PROCESS).unregisterOnSharedPreferenceChangeListener(this);
+        Preference pref = findPreference(Constants.PREF_CLEAR_SAVED_PUBS_KEY);
+        pref.setOnPreferenceClickListener(null);
         EasyTracker.getInstance().activityStop(this);
     }
 

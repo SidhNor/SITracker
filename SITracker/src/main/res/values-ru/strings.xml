@@ -127,6 +127,11 @@
     </string>
     <string name="pref_content_download_summ_short">Произведения храняться в:</string>
 
+    <string name="pref_content_clear_saved_title">Очистить сохраненные произведения</string>
+    <string name="pref_content_clear_saved_summ">Очищает только папку приложения. Если вы сохраняли
+        произведения в другом месте, они остануться нетронутыми.
+    </string>
+
     <string name="pref_content_img_display">Показывать обложки произведений</string>
     <string name="pref_content_img_display_summ">Скачивать и показывать обложки произведений если
         таковые доступны

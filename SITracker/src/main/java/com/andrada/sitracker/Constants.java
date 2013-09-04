@@ -45,6 +45,7 @@ public class Constants {
 
     public final static String UPDATES_ENABLED_KEY = "updatesEnabled";
     public final static String CONTENT_DOWNLOAD_FOLDER_KEY = "downloadFolder";
+    public static final String PREF_CLEAR_SAVED_PUBS_KEY = "clearSavedPubs";
     public final static String UPDATE_INTERVAL_KEY = "updateInterval";
     public final static String UPDATE_IGNORES_NETWORK = "update_service_ignores_network_constraints";
     public final static String AUTHOR_SORT_TYPE_KEY = "authorsSortType";
@@ -69,4 +70,5 @@ public class Constants {
     public static final String GA_EVENT_AUTHOR_PUB_OPEN = "publication_opened";
     public static final String GA_EVENT_CHANGED_UPDATE_INTERVAL = "update_interval_changed";
     public static final String GA_EVENT_CLEAR_CACHED_PUBS = "clear_cached_publications";
+
 }

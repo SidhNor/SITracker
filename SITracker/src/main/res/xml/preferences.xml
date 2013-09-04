@@ -38,6 +38,10 @@
             android:title="@string/pref_content_download_title"
             android:summary="@string/pref_content_download_summ"
             android:defaultValue="" />
+        <Preference
+            android:key="clearSavedPubs"
+            android:title="@string/pref_content_clear_saved_title"
+            android:summary="@string/pref_content_clear_saved_summ" />
         <CheckBoxPreference
             android:key="displayPubImages"
             android:title="@string/pref_content_img_display"

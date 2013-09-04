@@ -16,31 +16,30 @@
 
 package com.andrada.sitracker.tasks;
 
-import android.content.Context;
-import android.os.AsyncTask;
+import android.app.IntentService;
+import android.content.Intent;
 
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.exceptions.SharePublicationException;
 import com.andrada.sitracker.util.ShareHelper;
+import com.google.analytics.tracking.android.EasyTracker;
 
 import java.io.File;
 
-public class ClearPublicationCacheTask extends AsyncTask<String, Integer, String> {
+public class ClearPublicationCacheTask extends IntentService {
 
-    private final Context context;
-
-
-    public ClearPublicationCacheTask(Context context) {
-        this.context = context;
+    public ClearPublicationCacheTask() {
+        super(ClearPublicationCacheTask.class.getSimpleName());
     }
 
     @Override
-    protected String doInBackground(String... args) {
+    protected void onHandleIntent(Intent intent) {
         String errorMessage = "";
-
+        EasyTracker.getInstance().setContext(this.getApplicationContext());
+        int failedFiles = 0;
         try {
-            File dir = ShareHelper.getPublicationStorageDirectory(context);
-            int failedFiles = 0;
+            File dir = ShareHelper.getPublicationStorageDirectory(this);
+
             if (dir == null) {
                 throw new SharePublicationException(
                         SharePublicationException.SharePublicationErrors.STORAGE_NOT_ACCESSIBLE_FOR_PERSISTANCE);
@@ -49,10 +48,10 @@ public class ClearPublicationCacheTask extends AsyncTask<String, Integer, String
                 if (!file.delete()) failedFiles++;
             }
         } catch (SharePublicationException e) {
-            errorMessage = context.getResources().getString(R.string.publication_error_storage);
+            errorMessage = this.getResources().getString(R.string.publication_error_storage);
         }
-
-        return errorMessage;
+        if (!errorMessage.equals("")) {
+            EasyTracker.getTracker().sendException("Failed to remove files.", false);
+        }
     }
-
 }
