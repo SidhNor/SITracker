@@ -16,8 +16,11 @@
 
 package com.andrada.sitracker.ui;
 
+import android.annotation.SuppressLint;
+
 import org.androidannotations.annotations.EActivity;
 
+@SuppressLint("Registered")
 @EActivity
 public class LoginActivity extends BaseActivity {
 

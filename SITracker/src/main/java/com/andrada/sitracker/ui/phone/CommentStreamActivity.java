@@ -16,6 +16,7 @@
 
 package com.andrada.sitracker.ui.phone;
 
+import android.annotation.SuppressLint;
 import android.support.v4.app.Fragment;
 
 import com.andrada.sitracker.ui.SimpleSinglePaneActivity;
@@ -23,6 +24,7 @@ import com.andrada.sitracker.ui.fragment.CommentStreamFragment_;
 
 import org.androidannotations.annotations.EActivity;
 
+@SuppressLint("Registered")
 @EActivity
 public class CommentStreamActivity extends SimpleSinglePaneActivity {
 

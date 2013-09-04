@@ -40,7 +40,7 @@ import de.greenrobot.event.EventBus;
 public class AddAuthorDialog extends DialogFragment implements
         android.content.DialogInterface.OnClickListener {
 
-    EditText mAuthorEditText;
+    private EditText mAuthorEditText;
     private AlertDialog mDialog;
 
     @Override

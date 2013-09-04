@@ -280,13 +280,13 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
         if (checked) {
             mSelectedAuthors.add(((Author) adapter.getItem(position)).getId());
         } else {
-            mSelectedAuthors.remove(((Author)adapter.getItem(position)).getId());
+            mSelectedAuthors.remove(((Author) adapter.getItem(position)).getId());
         }
         int numSelectedAuthors = mSelectedAuthors.size();
         mode.setTitle(getResources().getQuantityString(
                 R.plurals.authors_selected,
                 numSelectedAuthors, numSelectedAuthors));
-        checkedItems = ArrayUtils.toPrimitive(mSelectedAuthors.toArray(new Long[0]));
+        checkedItems = ArrayUtils.toPrimitive(mSelectedAuthors.toArray(new Long[mSelectedAuthors.size()]));
     }
 
     @Override
@@ -344,6 +344,7 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
 
     //region AuthorAddedEvent handler
 
+    @SuppressWarnings("UnusedParameters")
     public void onEvent(AuthorSortMethodChanged event) {
         adapter.reloadAuthors();
     }

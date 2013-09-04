@@ -56,6 +56,7 @@ import de.greenrobot.event.EventBus;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 
 
+@SuppressLint("Registered")
 @EActivity(R.layout.activity_main)
 @OptionsMenu(R.menu.main_menu)
 public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoaderProvider {
@@ -197,6 +198,7 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
             if (UIUtils.hasJellyBean()) {
                 slidingPane.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             } else {
+                //noinspection deprecation
                 slidingPane.getViewTreeObserver().removeGlobalOnLayoutListener(this);
             }
 

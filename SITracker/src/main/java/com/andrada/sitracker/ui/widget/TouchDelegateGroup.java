@@ -23,9 +23,6 @@ import android.view.View;
 
 import java.util.ArrayList;
 
-/**
- * Created by ggodonoga on 27/07/13.
- */
 public class TouchDelegateGroup extends TouchDelegate {
 
     private static final Rect USELESS_HACKY_RECT = new Rect();

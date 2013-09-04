@@ -69,7 +69,7 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
     }
 
     /**
-     * Reloads authors in background posting changeset notification to UI Thread
+     * Reloads authors in background posting change set notification to UI Thread
      */
     @Background
     public void reloadAuthors() {
@@ -158,8 +158,8 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
     @Background
     public void removeAuthors(List<Long> authorsToRemove) {
         try {
-            for (int i = 0; i < authorsToRemove.size(); i++) {
-                authorDao.removeAuthor(authorsToRemove.get(i));
+            for (Long anAuthorsToRemove : authorsToRemove) {
+                authorDao.removeAuthor(anAuthorsToRemove);
             }
         } catch (SQLException e) {
             EasyTracker.getTracker().sendException("Author Remove thread", e, false);
@@ -204,9 +204,9 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
     }
 
     private Author getAuthorById(long authorId) {
-        for (int i = 0; i < authors.size(); i++) {
-            if (authors.get(i).getId() == authorId) {
-                return authors.get(i);
+        for (Author author : authors) {
+            if (author.getId() == authorId) {
+                return author;
             }
         }
         return null;

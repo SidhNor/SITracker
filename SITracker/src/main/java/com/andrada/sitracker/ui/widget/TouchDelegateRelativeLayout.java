@@ -58,7 +58,7 @@ public class TouchDelegateRelativeLayout extends RelativeLayout {
      */
     protected final HashMap<ViewConfig, View> delegatedTouchViews = new HashMap<ViewConfig, View>();
 
-    public static boolean TapRegionHighlighted = false;
+    public static final boolean TapRegionHighlighted = false;
 
     private static final int[] HIGHLIGHT_COLOR_ARRAY = {
             Color.argb(50, 255, 0, 0),
@@ -346,7 +346,7 @@ public class TouchDelegateRelativeLayout extends RelativeLayout {
     }
 
     private Rect computeRectFor(int parentWidth, int parentHeight, View childView, ViewConfig config) {
-        int x = 0, y = 0, w = parentWidth, h = parentHeight;
+        int x, y, w, h;
 
         if (config.getHExpanding() == ViewGroup.LayoutParams.MATCH_PARENT) {
             //We can ignore horizontal position.we will use full width of the parent component

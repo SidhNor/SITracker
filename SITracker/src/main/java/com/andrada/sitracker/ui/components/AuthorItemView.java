@@ -33,10 +33,6 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
 
-/**
- * Created by Gleb on 04.06.13.
- */
-
 @EViewGroup(R.layout.authors_list_item)
 public class AuthorItemView extends CheckedRelativeLayout {
 
@@ -54,7 +50,6 @@ public class AuthorItemView extends CheckedRelativeLayout {
     private IsNewItemTappedListener mListener;
 
     private final int REGULAR_BACKGROUND = R.drawable.authors_list_item_selector_normal;
-    private final int NEW_BACKGROUND = R.drawable.authors_list_item_selector_new;
 
     private int currentBackground = REGULAR_BACKGROUND;
 
@@ -116,6 +111,7 @@ public class AuthorItemView extends CheckedRelativeLayout {
     }
 
     private void setOldNewBackgrounds() {
+        final int NEW_BACKGROUND = R.drawable.authors_list_item_selector_new;
         if (mIsNew && currentBackground != NEW_BACKGROUND) {
             this.setBackgroundResource(NEW_BACKGROUND);
             author_updated.setImageResource(R.drawable.star_selected);

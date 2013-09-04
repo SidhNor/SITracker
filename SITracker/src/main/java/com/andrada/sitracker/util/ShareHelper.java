@@ -55,7 +55,7 @@ public final class ShareHelper {
     }
 
     public static File getPublicationStorageFileWithPath(Context context, String path, String filename) {
-        File storageDir = getExternalDirectoryBasedOnPath(context, path);
+        File storageDir = getExternalDirectoryBasedOnPath(path);
         if (storageDir == null) {
             return storageDir;
         }
@@ -64,7 +64,7 @@ public final class ShareHelper {
     }
 
     private static String sanitizeFileName(String badFileName) {
-        final String pattern = "[^0-9\\s_\\p{L}\\(\\)\\%\\-\\.]";
+        final String pattern = "[^0-9\\s_\\p{L}\\(\\)%\\-\\.]";
         StringBuffer cleanFileName = new StringBuffer();
         Pattern filePattern = Pattern.compile(pattern);
         Matcher fileMatcher = filePattern.matcher(badFileName);
@@ -96,11 +96,10 @@ public final class ShareHelper {
     /**
      * Get the external sd card directory based on the specified path.
      *
-     * @param context to use
-     * @param path    path to try
+     * @param path path to try
      * @return File instance or null if storage is not accessible or path is invalid
      */
-    public static File getExternalDirectoryBasedOnPath(Context context, String path) {
+    public static File getExternalDirectoryBasedOnPath(String path) {
         //Sanity check 1
         if (path == null) {
             return null;
@@ -146,7 +145,7 @@ public final class ShareHelper {
                     "<head><meta http-equiv=\"Content-Type\" content=\"text/html;charset=UTF-8\">");
         }
         try {
-            BufferedOutputStream bs = null;
+            BufferedOutputStream bs;
             FileOutputStream fs = new FileOutputStream(file);
             bs = new BufferedOutputStream(fs);
             bs.write(content.getBytes(charSet));

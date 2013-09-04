@@ -45,6 +45,8 @@ import org.androidannotations.annotations.sharedpreferences.Pref;
 
 import de.greenrobot.event.EventBus;
 
+@SuppressWarnings("deprecation")
+@SuppressLint("Registered")
 @EActivity
 public class SettingsActivity extends PreferenceActivity implements
         SharedPreferences.OnSharedPreferenceChangeListener {
@@ -56,7 +58,6 @@ public class SettingsActivity extends PreferenceActivity implements
     SIPrefs_ prefs;
 
     @SuppressLint("NewApi")
-    @SuppressWarnings("deprecation")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -132,7 +133,7 @@ public class SettingsActivity extends PreferenceActivity implements
         } else if (key.equals(Constants.CONTENT_DOWNLOAD_FOLDER_KEY)) {
             String path = prefs.downloadFolder().get();
             //Perform validation
-            if (ShareHelper.getExternalDirectoryBasedOnPath(this, path) != null) {
+            if (ShareHelper.getExternalDirectoryBasedOnPath(path) != null) {
                 setDownloadFolderSummary(path);
             } else {
                 final AlertDialog.Builder builder = new AlertDialog.Builder(this);

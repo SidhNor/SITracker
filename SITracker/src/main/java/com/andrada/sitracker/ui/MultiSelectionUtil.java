@@ -47,7 +47,7 @@ public class MultiSelectionUtil {
             ActionMode.Callback,
             AdapterView.OnItemClickListener,
             AdapterView.OnItemLongClickListener {
-        private Handler mHandler = new Handler();
+        private final Handler mHandler = new Handler();
         private ActionMode mActionMode;
         private ListView mListView = null;
         private ActionBarActivity mActivity = null;
@@ -184,7 +184,7 @@ public class MultiSelectionUtil {
             mHandler.post(mSetChoiceModeNoneRunnable);
         }
 
-        private Runnable mSetChoiceModeNoneRunnable = new Runnable() {
+        private final Runnable mSetChoiceModeNoneRunnable = new Runnable() {
             @Override
             public void run() {
                 mListView.setChoiceMode(AbsListView.CHOICE_MODE_NONE);

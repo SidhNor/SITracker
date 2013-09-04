@@ -16,6 +16,7 @@
 
 package com.andrada.sitracker.tasks;
 
+import android.annotation.SuppressLint;
 import android.app.IntentService;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -48,6 +49,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+@SuppressLint("Registered")
 @EService
 public class UpdateAuthorsTask extends IntentService {
 

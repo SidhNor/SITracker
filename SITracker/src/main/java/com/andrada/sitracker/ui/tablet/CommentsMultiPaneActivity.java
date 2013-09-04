@@ -16,6 +16,7 @@
 
 package com.andrada.sitracker.ui.tablet;
 
+import android.annotation.SuppressLint;
 import android.support.v4.widget.SlidingPaneLayout;
 
 import com.andrada.sitracker.R;
@@ -24,6 +25,7 @@ import com.andrada.sitracker.ui.BaseActivity;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
 
+@SuppressLint("Registered")
 @EActivity(R.layout.activity_comments)
 public class CommentsMultiPaneActivity extends BaseActivity {
 
