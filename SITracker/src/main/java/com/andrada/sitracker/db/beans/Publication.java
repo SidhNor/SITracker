@@ -34,7 +34,7 @@ public class Publication {
     int oldSize;
     @DatabaseField(useGetSet = true)
     String category;
-    @DatabaseField(canBeNull = false, foreign = true)
+    @DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)
     Author author;
     @DatabaseField(useGetSet = true)
     String date;

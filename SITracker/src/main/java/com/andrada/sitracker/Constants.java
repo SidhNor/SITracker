@@ -43,11 +43,10 @@ public class Constants {
 
     public final static String SI_PREF_NAME = "SIPrefs";
 
-    public final static String CONTENT_DISPLAY_PUB_IMAGES = "displayPubImages";
-
+    public final static String UPDATES_ENABLED_KEY = "updatesEnabled";
+    public final static String CONTENT_DOWNLOAD_FOLDER_KEY = "downloadFolder";
     public final static String UPDATE_INTERVAL_KEY = "updateInterval";
     public final static String UPDATE_IGNORES_NETWORK = "update_service_ignores_network_constraints";
-    public final static String UPDATE_NETWORK_KEY = "updateOnlyWiFi";
     public final static String AUTHOR_SORT_TYPE_KEY = "authorsSortType";
 
     public static final String NUMBER_OF_UPDATED_AUTHORS = "number_of_updated_authors";

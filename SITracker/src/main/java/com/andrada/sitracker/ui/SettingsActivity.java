@@ -18,11 +18,13 @@ package com.andrada.sitracker.ui;
 
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
+import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.PreferenceActivity;
 
@@ -31,6 +33,7 @@ import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.SIPrefs_;
 import com.andrada.sitracker.events.AuthorSortMethodChanged;
 import com.andrada.sitracker.tasks.UpdateAuthorsTask_;
+import com.andrada.sitracker.util.ShareHelper;
 import com.andrada.sitracker.util.UIUtils;
 import com.google.analytics.tracking.android.EasyTracker;
 
@@ -62,8 +65,9 @@ public class SettingsActivity extends PreferenceActivity implements
             addPreferencesFromResource(R.xml.preferences_no3g);
         }
 
-        setUpdateIntervalSummary();
-        setAuthorSortSummary();
+        setUpdateIntervalSummary(prefs.updateInterval().get());
+        setAuthorSortSummary(prefs.authorsSortType().get());
+        setDownloadFolderSummary(prefs.downloadFolder().get());
         if (UIUtils.hasHoneycomb()) {
             getActionBar().setDisplayHomeAsUpEnabled(true);
         }
@@ -86,43 +90,66 @@ public class SettingsActivity extends PreferenceActivity implements
 
 
     @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        Boolean isSyncing = prefs.updatesEnabled().get();
+    public void onSharedPreferenceChanged(SharedPreferences preference, String key) {
+
+        if (key == null) return;
+
         Intent intent = UpdateAuthorsTask_.intent(this.getApplicationContext()).get();
         PendingIntent pi = PendingIntent.getService(this.getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        alarmManager.cancel(pi);
-        long updateInterval = Long.parseLong(prefs.updateInterval().get());
-        if (isSyncing) {
+        if (key.equals(Constants.UPDATES_ENABLED_KEY)) {
+            Boolean isSyncing = prefs.updatesEnabled().get();
+            if (!isSyncing) {
+                alarmManager.cancel(pi);
+            }
+        } else if (key.equals(Constants.UPDATE_INTERVAL_KEY)) {
+            alarmManager.cancel(pi);
+            long updateInterval = Long.parseLong(prefs.updateInterval().get());
             alarmManager.setInexactRepeating(AlarmManager.RTC, System.currentTimeMillis(), updateInterval, pi);
-        }
-
-        if (key.equals(Constants.AUTHOR_SORT_TYPE_KEY)) {
-            EventBus.getDefault().post(new AuthorSortMethodChanged());
-            setAuthorSortSummary();
-        }
-
-        if (key.equals(Constants.UPDATE_INTERVAL_KEY)) {
-            setUpdateIntervalSummary();
+            setUpdateIntervalSummary(prefs.updateInterval().get());
             EasyTracker.getTracker().sendEvent(
                     Constants.GA_UI_CATEGORY,
                     Constants.GA_EVENT_CHANGED_UPDATE_INTERVAL,
                     Constants.GA_EVENT_CHANGED_UPDATE_INTERVAL, updateInterval);
             EasyTracker.getInstance().dispatch();
+        } else if (key.equals(Constants.AUTHOR_SORT_TYPE_KEY)) {
+            EventBus.getDefault().post(new AuthorSortMethodChanged());
+            setAuthorSortSummary(prefs.authorsSortType().get());
+        } else if (key.equals(Constants.CONTENT_DOWNLOAD_FOLDER_KEY)) {
+            String path = prefs.downloadFolder().get();
+            //Perform validation
+            if (ShareHelper.getExternalDirectoryBasedOnPath(this, path) != null) {
+                setDownloadFolderSummary(path);
+            } else {
+                final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Invalid directory");
+                builder.setMessage("Your directory is invalid");
+                builder.setPositiveButton(android.R.string.ok, null);
+                builder.show();
+            }
         }
     }
 
-    private void setUpdateIntervalSummary() {
+    private void setDownloadFolderSummary(String newValue) {
+        EditTextPreference pref = (EditTextPreference) findPreference(Constants.CONTENT_DOWNLOAD_FOLDER_KEY);
+        if (newValue == null || newValue.length() == 0) {
+            pref.setSummary(getResources().getString(R.string.pref_content_download_summ));
+        } else {
+            pref.setSummary(getResources().getString(R.string.pref_content_download_summ_short) + newValue);
+        }
+    }
+
+    private void setUpdateIntervalSummary(String newValue) {
         ListPreference updateInterval = (ListPreference) findPreference(Constants.UPDATE_INTERVAL_KEY);
         // Set summary to be the user-description for the selected value
-        int index = updateInterval.findIndexOfValue(prefs.updateInterval().get());
+        int index = updateInterval.findIndexOfValue(newValue);
         if (index >= 0 && index < updateInterval.getEntries().length)
             updateInterval.setSummary(updateInterval.getEntries()[index]);
     }
 
-    private void setAuthorSortSummary() {
+    private void setAuthorSortSummary(String newValue) {
         ListPreference authorsSortType = (ListPreference) findPreference(Constants.AUTHOR_SORT_TYPE_KEY);
-        int sortType = Integer.parseInt(prefs.authorsSortType().get());
+        int sortType = Integer.parseInt(newValue);
         authorsSortType.setSummary(authorsSortType.getEntries()[sortType]);
     }
 }

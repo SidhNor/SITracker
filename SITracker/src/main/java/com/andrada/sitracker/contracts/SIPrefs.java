@@ -38,4 +38,7 @@ public interface SIPrefs {
     @DefaultString("14400000")
     String updateInterval();
 
+    @DefaultString("")
+    String downloadFolder();
+
 }

@@ -143,7 +143,15 @@ public class PublicationsFragment extends Fragment implements ExpandableListView
     public void publicationShare(Publication pub, boolean forceDownload) {
         HttpRequest request;
         String pubUrl = pub.getUrl();
-        File file = ShareHelper.getPublicationStorageFile(getActivity(), UIUtils.hashKeyForDisk(pubUrl));
+        String pubFolder = prefs.downloadFolder().get();
+
+        File file;
+        if (pubFolder.equals("")) {
+            file = ShareHelper.getPublicationStorageFile(getActivity(), UIUtils.hashKeyForDisk(pubUrl));
+        } else {
+            file = ShareHelper.getPublicationStorageFileWithPath(getActivity(), pubFolder,
+                    pub.getAuthor().getName() + "_" + pub.getName());
+        }
 
         String errorMessage = "";
         boolean shareResult = true;

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright 2013 Gleb Godonoga.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -102,6 +101,13 @@
 
     <!--Content-->
     <string name="pref_content_title">Content</string>
+
+    <string name="pref_content_download_title">Download folder</string>
+    <string name="pref_content_download_summ">You can specify a folder where publications will be
+        downloaded. If left blank, the default app folder is used.
+    </string>
+    <string name="pref_content_download_summ_short">Publications are downloaded to:</string>
+
     <string name="pref_content_img_display">Display publication images</string>
     <string name="pref_content_img_display_summ">Download and display related publication images if
         available
