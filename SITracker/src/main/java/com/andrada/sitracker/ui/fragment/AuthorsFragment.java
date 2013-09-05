@@ -315,7 +315,7 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
             currentAuthorIndex = adapter.getSelectedAuthorId();
             EventBus.getDefault().post(new AuthorSelectedEvent(currentAuthorIndex));
             return true;
-        } else if (item.getItemId() == R.id.action_markread) {
+        } else if (item.getItemId() == R.id.action_mark_read) {
             adapter.markAuthorsRead(mSelectedAuthors);
             return true;
         }
