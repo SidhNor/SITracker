@@ -18,10 +18,7 @@ If you encounter any issue, please feel free to report it.
 
 What's new:
 
-Alert: all publications will be marked as new after the update
-
-• Added permission "Storage" for saving publications
-• On long press, publication is downloaded for viewing in apps like CoolReader or AIReader. "Open in browser" functionality was removed and will be added back later.
-• Publication description is save in html format now with working links
-• Fixed several issues related to poor connection
-• Added author multiselection for devices with Android < 3.0
+• Added option of configuring download directory for publications
+• Fixed several issues on with bad connection and samlib being unavailable
+• Added option of clearing saved publications. (Clears only the default directory)
+• Added optional publication images when available
