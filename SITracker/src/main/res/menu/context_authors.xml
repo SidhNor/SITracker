@@ -19,15 +19,21 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:sitracker="http://schemas.android.com/apk/res-auto">
     <item
-            android:id="@+id/action_mark_read"
-            android:orderInCategory="99"
-            sitracker:showAsAction="ifRoom"
-            android:icon="@drawable/ic_action_mark_read"
-            android:title="@string/action_markread"/>
+        android:id="@+id/action_mark_read"
+        android:orderInCategory="99"
+        sitracker:showAsAction="ifRoom"
+        android:icon="@drawable/ic_action_mark_read"
+        android:title="@string/action_markread" />
     <item
-            android:id="@+id/action_remove"
-            android:orderInCategory="100"
-            sitracker:showAsAction="always"
-            android:icon="@drawable/ic_action_delete"
-            android:title="@string/action_delete"/>
+        android:id="@+id/action_open_authors_browser"
+        sitracker:showAsAction="ifRoom"
+        android:orderInCategory="100"
+        android:icon="@drawable/ic_action_open_outside"
+        android:title="@string/action_open_in_browser" />
+    <item
+        android:id="@+id/action_remove"
+        android:orderInCategory="101"
+        sitracker:showAsAction="always"
+        android:icon="@drawable/ic_action_delete"
+        android:title="@string/action_delete" />
 </menu>

@@ -19,6 +19,7 @@ package com.andrada.sitracker.ui.fragment;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
@@ -317,6 +318,15 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
             return true;
         } else if (item.getItemId() == R.id.action_mark_read) {
             adapter.markAuthorsRead(mSelectedAuthors);
+            return true;
+        } else if (item.getItemId() == R.id.action_open_authors_browser) {
+            for (int i = 0; i < adapter.getCount(); i++) {
+                if (mSelectedAuthors.contains(adapter.getItemId(i))) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setData(Uri.parse(((Author) adapter.getItem(i)).getUrl()));
+                    getActivity().startActivity(intent);
+                }
+            }
             return true;
         }
         return false;
