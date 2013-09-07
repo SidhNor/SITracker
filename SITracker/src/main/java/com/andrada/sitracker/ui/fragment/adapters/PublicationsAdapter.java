@@ -138,7 +138,6 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
     public View getChildView(int groupPosition, int childPosition,
                              boolean isLastChild, View convertView, ViewGroup parent) {
 
-        Boolean isLast = mChildren.get(groupPosition).size() - 1 == childPosition;
         Publication pub = (Publication) getChild(groupPosition, childPosition);
 
         PublicationItemView publicationItemView;
@@ -148,7 +147,7 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
         } else {
             publicationItemView = (PublicationItemView) convertView;
         }
-        publicationItemView.bind(pub, isLast, mLoader);
+        publicationItemView.bind(pub, mLoader);
         return publicationItemView;
     }
 

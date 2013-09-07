@@ -58,9 +58,6 @@ public class PublicationItemView extends TouchDelegateRelativeLayout {
     EllipsizedTextView item_description;
 
     @ViewById
-    View publication_item_divider;
-
-    @ViewById
     ImageView publication_image;
 
     @ViewById
@@ -95,7 +92,7 @@ public class PublicationItemView extends TouchDelegateRelativeLayout {
         mListener = listener;
     }
 
-    public void bind(Publication publication, Boolean isLast, ImageLoader loader) {
+    public void bind(Publication publication, ImageLoader loader) {
         mIsNew = publication.getNew();
         item_title.setText(publication.getName());
         item_updated.setImageResource(mIsNew ? R.drawable.star_selected : R.drawable.star_unselected);
@@ -129,15 +126,15 @@ public class PublicationItemView extends TouchDelegateRelativeLayout {
         builder.append("kb");
         itemSize.setText(builder.toString());
 
-        publication_item_divider.setVisibility(isLast ? GONE : VISIBLE);
-
-        downloadProgress.clearAnimation();
-        backgroundPane.clearAnimation();
         if (publication.getLoading()) {
-            downloadProgress.setVisibility(VISIBLE);
-            downloadProgress.startAnimation(fadeInAnim);
-            backgroundPane.startAnimation(scaleFadeOutAnim);
+            if (downloadProgress.getVisibility() == GONE) {
+                downloadProgress.setVisibility(VISIBLE);
+                downloadProgress.startAnimation(fadeInAnim);
+                backgroundPane.startAnimation(scaleFadeOutAnim);
+            }
         } else {
+            downloadProgress.clearAnimation();
+            backgroundPane.clearAnimation();
             downloadProgress.setVisibility(GONE);
         }
 

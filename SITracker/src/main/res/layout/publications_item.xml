@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright 2013 Gleb Godonoga.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,143 +15,138 @@
   -->
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:showDividers="middle"
-                android:orientation="vertical"
-                android:minHeight="65dp">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:showDividers="middle"
+    android:orientation="vertical">
 
     <RelativeLayout
-            android:id="@+id/backgroundPane"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        android:id="@+id/backgroundPane"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/default_grid_margin"
+        android:paddingBottom="@dimen/default_grid_margin">
 
         <RelativeLayout
-                android:id="@+id/pub_img_container"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true">
+            android:id="@+id/pub_img_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true">
 
             <ImageView
-                    android:id="@+id/publication_image"
-                    android:layout_width="@dimen/publication_pixel_size"
-                    android:layout_height="@dimen/publication_pixel_size"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/authors_list_item_background_checked"
-                    android:visibility="visible"
-                    android:layout_centerInParent="true"/>
+                android:id="@+id/publication_image"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/publication_pixel_size"
+                android:scaleType="centerInside"
+                android:src="@drawable/blank_book"
+                android:visibility="visible"
+                android:layout_centerInParent="true"
+                android:paddingRight="@dimen/default_grid_margin" />
         </RelativeLayout>
 
 
         <TextView
-                android:id="@+id/item_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="@dimen/list_left_padding"
-                android:layout_alignParentTop="true"
-                android:layout_toRightOf="@+id/pub_img_container"
-                android:layout_toLeftOf="@+id/actions_view"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="?android:attr/textColorPrimary"
-                android:fontFamily="sans-serif-condensed"
-                android:text="@string/designtime_placeholder_short"
-                android:lines="1"
-                android:scrollHorizontally="true"
-                android:ellipsize="end"/>
+            android:id="@+id/item_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/pub_img_container"
+            android:layout_toLeftOf="@+id/actions_view"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="?android:attr/textColorPrimary"
+            android:fontFamily="sans-serif-condensed"
+            android:text="@string/designtime_placeholder_short"
+            android:lines="1"
+            android:scrollHorizontally="true"
+            android:ellipsize="end"
+            android:layout_marginBottom="@dimen/text_vertical_spacing" />
 
         <com.andrada.sitracker.ui.widget.EllipsizedTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="@dimen/list_left_padding"
-                android:id="@+id/item_description"
-                android:layout_toRightOf="@+id/pub_img_container"
-                android:layout_toLeftOf="@+id/actions_view"
-                android:layout_below="@+id/item_title"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="?android:attr/textColorSecondary"
-                android:layout_gravity="left|center_vertical"
-                android:text="@string/designtime_placeholder_long"
-                android:singleLine="false"
-                android:maxLines="3"
-                android:ellipsize="end"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/item_description"
+            android:layout_toRightOf="@+id/pub_img_container"
+            android:layout_toLeftOf="@+id/actions_view"
+            android:layout_below="@+id/item_title"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="?android:attr/textColorSecondary"
+            android:layout_gravity="left|center_vertical"
+            android:text="@string/designtime_placeholder_long"
+            android:singleLine="false"
+            android:maxLines="3"
+            android:ellipsize="end" />
 
         <LinearLayout
-                android:id="@+id/actions_view"
+            android:id="@+id/actions_view"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginLeft="@dimen/default_grid_margin">
+
+            <TextView
+                android:id="@+id/item_update_date"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentRight="true">
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:text="@string/designtime_placeholder_date"
+                android:textAlignment="viewEnd"
+                android:layout_gravity="right"
+                android:layout_marginBottom="@dimen/text_vertical_spacing" />
 
             <TextView
-                    android:id="@+id/item_update_date"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="12sp"
-                    android:text="@string/designtime_placeholder_date"
-                    android:textAlignment="viewEnd"
-                    android:layout_gravity="right"/>
-
-            <TextView
-                    android:id="@+id/itemSize"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/designtime_placeholder_size"
-                    android:textAlignment="viewEnd"
-                    android:layout_marginTop="2dp"
-                    android:layout_marginBottom="2dp"
-                    android:layout_gravity="right"/>
+                android:id="@+id/itemSize"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/designtime_placeholder_size"
+                android:textAlignment="viewEnd"
+                android:layout_marginBottom="@dimen/text_vertical_spacing"
+                android:layout_gravity="right" />
 
             <ImageButton
-                    android:id="@+id/item_updated"
-                    android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:layout_gravity="end"
-                    android:background="@null"
-                    android:src="@drawable/star_unselected"
-                    android:contentDescription="@string/notification_title"/>
+                android:id="@+id/item_updated"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_gravity="end"
+                android:background="@null"
+                android:src="@drawable/star_unselected"
+                android:contentDescription="@string/notification_title" />
         </LinearLayout>
 
-        <View
-                android:id="@+id/publication_item_divider"
-                android:layout_alignParentBottom="true"
-                android:layout_below="@id/item_description"
-                style="@style/DividerThin"
-                android:layout_marginBottom="6dp"
-                android:layout_marginTop="4dp"/>
     </RelativeLayout>
 
     <RelativeLayout
-            android:id="@+id/downloadProgress"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignParentTop="true"
-            android:minHeight="65dp"
-            android:background="#FFFFFFFF"
-            android:visibility="gone"
-            android:layout_alignBottom="@+id/backgroundPane">
+        android:id="@+id/downloadProgress"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:minHeight="65dp"
+        android:background="#FFFFFFFF"
+        android:visibility="gone"
+        android:layout_alignBottom="@+id/backgroundPane">
 
-    <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="?android:attr/textColorPrimary"
-                android:text="@string/publications_downloading"
-                android:layout_marginLeft="15dp"
-                android:layout_centerVertical="true"
-                android:layout_alignParentLeft="true"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="?android:attr/textColorPrimary"
+            android:text="@string/publications_downloading"
+            android:layout_marginLeft="15dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true" />
 
         <ProgressBar
-                android:indeterminate="true"
-                android:indeterminateOnly="true"
-                android:indeterminateDrawable="@drawable/progress_indeterminate_horizontal_holo"
-                android:layout_width="match_parent"
-                android:layout_height="10dp"
-                android:paddingEnd="50dp"
-                android:paddingStart="15dp"
-                android:layout_alignParentEnd="false"
-                android:layout_alignParentBottom="true"/>
+            android:indeterminate="true"
+            android:indeterminateOnly="true"
+            android:indeterminateDrawable="@drawable/progress_indeterminate_horizontal_holo"
+            android:layout_width="match_parent"
+            android:layout_height="10dp"
+            android:paddingEnd="50dp"
+            android:paddingStart="15dp"
+            android:layout_alignParentEnd="false"
+            android:layout_alignParentBottom="true" />
     </RelativeLayout>
 
 </RelativeLayout>
