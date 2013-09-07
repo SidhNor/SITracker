@@ -206,11 +206,14 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
         }
     }
 
-    public void stopProgressOnPublication(long id) {
+    public void stopProgressOnPublication(long id, boolean success) {
         Publication loadingPub = mDownloadingPublications.get(id);
         if (loadingPub != null) {
             loadingPub.setLoading(false);
             mDownloadingPublications.remove(id);
+            if (success) {
+                updateStatusOfPublication(loadingPub);
+            }
         }
         notifyDataSetChanged();
     }
@@ -258,8 +261,6 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
                         Constants.GA_EVENT_AUTHOR_PUB_OPEN,
                         Constants.GA_EVENT_AUTHOR_PUB_OPEN, null);
                 EasyTracker.getInstance().dispatch();
-
-                updateStatusOfPublication(pub);
             }
 
 
