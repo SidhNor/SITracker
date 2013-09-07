@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.andrada.sitracker.R;
@@ -30,6 +31,7 @@ import com.andrada.sitracker.db.beans.Publication;
 import com.andrada.sitracker.ui.widget.EllipsizedTextView;
 import com.andrada.sitracker.ui.widget.TouchDelegateRelativeLayout;
 import com.andrada.sitracker.util.DateFormatterUtil;
+import com.andrada.sitracker.util.ImageLoader;
 import com.andrada.sitracker.util.SamlibPageParser;
 import com.andrada.sitracker.util.UIUtils;
 
@@ -37,9 +39,6 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
 
-/**
- * Created by ggodonoga on 05/06/13.
- */
 @EViewGroup(R.layout.publications_item)
 public class PublicationItemView extends TouchDelegateRelativeLayout {
 
@@ -60,6 +59,9 @@ public class PublicationItemView extends TouchDelegateRelativeLayout {
 
     @ViewById
     View publication_item_divider;
+
+    @ViewById
+    ImageView publication_image;
 
     @ViewById
     TextView itemSize;
@@ -93,7 +95,7 @@ public class PublicationItemView extends TouchDelegateRelativeLayout {
         mListener = listener;
     }
 
-    public void bind(Publication publication, Boolean isLast) {
+    public void bind(Publication publication, Boolean isLast, ImageLoader loader) {
         mIsNew = publication.getNew();
         item_title.setText(publication.getName());
         item_updated.setImageResource(mIsNew ? R.drawable.star_selected : R.drawable.star_unselected);
@@ -101,6 +103,12 @@ public class PublicationItemView extends TouchDelegateRelativeLayout {
         item_update_date.setText(
                 DateFormatterUtil.getFriendlyDateRelativeToToday(publication.getUpdateDate(),
                         getResources().getConfiguration().locale));
+        if (loader != null && publication.getImageUrl() != null) {
+            publication_image.setVisibility(VISIBLE);
+            loader.get(publication.getImageUrl(), publication_image);
+        } else {
+            publication_image.setVisibility(GONE);
+        }
 
         UIUtils.setTextMaybeHtml(item_description,
                 SamlibPageParser.stripDescriptionOfImages(publication.getDescription()));

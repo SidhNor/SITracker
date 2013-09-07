@@ -16,12 +16,10 @@
   limitations under the License.
   -->
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:sitracker="http://schemas.android.com/apk/res-auto">
-    <item
-            android:id="@+id/action_remove"
-            android:orderInCategory="100"
-            sitracker:showAsAction="always"
-            android:icon="@drawable/ic_action_delete"
-            android:title="@string/action_delete"/>
-</menu>
+<android.support.v4.widget.SlidingPaneLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/sliding_pane_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+</android.support.v4.widget.SlidingPaneLayout>

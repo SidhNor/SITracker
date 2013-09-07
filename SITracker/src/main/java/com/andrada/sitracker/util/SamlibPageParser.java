@@ -31,9 +31,47 @@ import java.util.regex.Pattern;
 
 public class SamlibPageParser {
 
-    public static String getAuthor(String pageContent) throws AddAuthorException {
+    public static Author getAuthor(String pageContent, String url) throws AddAuthorException {
+        Author author = new Author();
+        author.setUrl(url);
+        author.setName(getAuthorName(pageContent));
+        author.setUpdateDate(getAuthorUpdateDate(pageContent));
+        author.setAuthorDescription(getAuthorDescription(pageContent));
+        author.setAuthorImageUrl(getAuthorImageUrl(pageContent, url));
+        return author;
+    }
+
+    public static String getAuthorImageUrl(String pageContent, String authorUrl) {
+        authorUrl = authorUrl.replace(Constants.AUTHOR_PAGE_URL_ENDING_WO_SLASH, "");
+        Pattern pattern = Pattern.compile(Constants.AUTHOR_IMAGE_REGEX, Pattern.MULTILINE);
+        Matcher matcher = pattern.matcher(pageContent);
+        String imageUrl = null;
+        if (matcher.find()) {
+            imageUrl = (matcher.group(2));
+            if (imageUrl != null) imageUrl = authorUrl + imageUrl;
+        }
+        return imageUrl;
+    }
+
+    public static String getAuthorDescription(String pageContent) {
+        Pattern pattern = Pattern.compile(Constants.AUTHOR_DESCRIPTION_TEXT_REGEX, Pattern.MULTILINE);
+        Matcher matcher = pattern.matcher(pageContent);
+        String descriptionText = null;
+        if (matcher.find()) {
+            descriptionText = (matcher.group(1));
+        }
+        return descriptionText;
+    }
+
+    public static String getAuthorName(String pageContent) throws AddAuthorException {
         int index = pageContent.indexOf('.', pageContent.indexOf("<title>")) + 1;
+        if (index == -1) {
+            throw new AddAuthorException(AddAuthorException.AuthorAddErrors.AUTHOR_NAME_NOT_FOUND);
+        }
         int secondPointIndex = pageContent.indexOf(".", index);
+        if (secondPointIndex == -1) {
+            throw new AddAuthorException(AddAuthorException.AuthorAddErrors.AUTHOR_NAME_NOT_FOUND);
+        }
         String authorName = pageContent.substring(index, secondPointIndex);
         if (authorName == null || "".equals(authorName.trim())) {
             throw new AddAuthorException(AddAuthorException.AuthorAddErrors.AUTHOR_NAME_NOT_FOUND);
@@ -97,9 +135,24 @@ public class SamlibPageParser {
             //Group 11 - Description
             String itemDescription = matcher.group(13) == null ? "" : matcher.group(13);
             item.setDescription(itemDescription.trim());
+            item.setImageUrl(extractImage(itemDescription.trim()));
             publicationList.add(item);
         }
         return publicationList;
+    }
+
+    private static String extractImage(String itemDescription) {
+        String imgUrl = null;
+
+        Pattern pattern = Pattern.compile("(<a[^>]*>)?\\s*?<img src=[\"'](.*?)[\"'][^>]*>\\s?(</a>)?");
+        Matcher matcher = pattern.matcher(itemDescription);
+        if (matcher.find()) {
+            String match = matcher.group(2);
+            if (match != null) {
+                imgUrl = match.trim();
+            }
+        }
+        return imgUrl;
     }
 
     public static String sanitizeHTML(String value) {
@@ -114,6 +167,7 @@ public class SamlibPageParser {
                 .replaceAll("(?i)&copy;?", "(c)")
                 .replaceAll("(?i)&reg;?", "(r)")
                 .replaceAll("(?i)&nbsp;?", " ")
+                .replaceAll("(?si)[\\r\\n\\x85\\f]+", "")
                 .replaceAll("(?i)&quot;?", "\"");
         return value;
     }

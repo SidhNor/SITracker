@@ -1,3 +1,19 @@
+/*
+ * Copyright 2013 Gleb Godonoga.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.andrada.sitracker.tasks;
 
 import android.content.Context;
@@ -13,7 +29,6 @@ import com.andrada.sitracker.exceptions.AddAuthorException;
 import com.andrada.sitracker.util.SamlibPageParser;
 import com.github.kevinsawicki.http.HttpRequest;
 import com.github.kevinsawicki.http.HttpRequest.HttpRequestException;
-import com.google.analytics.tracking.android.EasyTracker;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 
 import java.net.MalformedURLException;
@@ -78,10 +93,7 @@ public class AddAuthorTask extends AsyncTask<String, Integer, String> {
                 throw new MalformedURLException();
             }
             String body = SamlibPageParser.sanitizeHTML(request.body());
-            author = new Author();
-            author.setName(SamlibPageParser.getAuthor(body));
-            author.setUpdateDate(SamlibPageParser.getAuthorUpdateDate(body));
-            author.setUrl(url);
+            author = SamlibPageParser.getAuthor(body, url);
             helper.getAuthorDao().create(author);
             List<Publication> items = SamlibPageParser.getPublications(body, author);
             if (items.size() == 0) {

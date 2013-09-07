@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright 2013 Gleb Godonoga.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,16 +16,19 @@
 
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
-    <string name="app_name">СИ Трекер
-    </string>
-    <string name="action_settings">Настройки
-    </string>
-    <string name="action_refresh">Обновить
-    </string>
-    <string name="action_add">Добавить автора
-    </string>
+    <string name="app_name">СИ Трекер</string>
+    <string name="title_settings">Настройки</string>
+    <string name="title_publications">Произведения</string>
+    <string name="title_publications_details">Детали произведения</string>
+    <string name="title_comment_stream">Комментарии</string>
+
+    <string name="action_settings">Настройки</string>
+    <string name="action_refresh">Обновить</string>
+    <string name="action_add">Добавить автора</string>
     <string name="action_markread">Отметить как прочитаное</string>
+    <string name="action_clear_saved_pubs">Удалить кэшированные</string>
     <string name="action_delete">Удалить автора</string>
+    <string name="action_open_in_browser">Открыть выбранных в браузере</string>
     <string name="add_author_placeholder">samlib.ru/a/avtor</string>
     <string name="designtime_placeholder_long">Lorem ipsum dolor sit amet, consectetur adipiscing
         elit. Aenean fringilla
@@ -112,9 +114,31 @@
     <string name="no_network_retry">ЕЩЕ РАЗ</string>
 
     <!--Preferences -->
+
+    <!--Authors-->
     <string name="pref_authors_category_title">Авторы</string>
     <string name="pref_authors_sort">Сортировка авторов</string>
 
+    <!--Content-->
+    <string name="pref_content_title">Соделжание</string>
+
+    <string name="pref_content_download_title">Папка для скачиваний</string>
+    <string name="pref_content_download_summ">Вы можете указать папку куда будут сохраняться
+        произведения. Если поле пустое, произведения храняться в папке приложения.
+    </string>
+    <string name="pref_content_download_summ_short">Произведения храняться в:</string>
+
+    <string name="pref_content_clear_saved_title">Очистить сохраненные произведения</string>
+    <string name="pref_content_clear_saved_summ">Очищает только папку приложения. Если вы сохраняли
+        произведения в другом месте, они остануться нетронутыми.
+    </string>
+
+    <string name="pref_content_img_display">Показывать обложки произведений</string>
+    <string name="pref_content_img_display_summ">Скачивать и показывать обложки произведений если
+        таковые доступны
+    </string>
+
+    <!--Updates-->
     <string name="pref_update_category_title">Обновления</string>
     <string name="pref_updates_check">Автоматическое обновление</string>
     <string name="pref_updates_check_summ">Автоматическое обновление авторов с заданным интервалом

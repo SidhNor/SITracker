@@ -18,9 +18,6 @@ package com.andrada.sitracker.events;
 
 import com.andrada.sitracker.db.beans.Author;
 
-/**
- * Created by ggodonoga on 11/06/13.
- */
 public class AuthorMarkedAsReadEvent {
 
     public final Author author;

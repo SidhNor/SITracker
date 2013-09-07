@@ -16,13 +16,14 @@
 
 package com.andrada.sitracker.tasks;
 
+import android.annotation.SuppressLint;
 import android.app.IntentService;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.preference.PreferenceManager;
 
 import com.andrada.sitracker.Constants;
+import com.andrada.sitracker.contracts.SIPrefs_;
 import com.andrada.sitracker.db.beans.Author;
 import com.andrada.sitracker.db.beans.Publication;
 import com.andrada.sitracker.db.dao.AuthorDao;
@@ -39,6 +40,7 @@ import com.j256.ormlite.dao.ForeignCollection;
 import org.androidannotations.annotations.EService;
 import org.androidannotations.annotations.OrmLiteDao;
 import org.androidannotations.annotations.SystemService;
+import org.androidannotations.annotations.sharedpreferences.Pref;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -47,6 +49,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+@SuppressLint("Registered")
 @EService
 public class UpdateAuthorsTask extends IntentService {
 
@@ -55,6 +58,9 @@ public class UpdateAuthorsTask extends IntentService {
 
     @OrmLiteDao(helper = SiDBHelper.class, model = Publication.class)
     PublicationDao publicationsDao;
+
+    @Pref
+    SIPrefs_ prefs;
 
     @SystemService
     ConnectivityManager connectivityManager;
@@ -82,8 +88,7 @@ public class UpdateAuthorsTask extends IntentService {
         try {
             List<Author> authors = authorDao.queryForAll();
             for (Author author : authors) {
-                boolean useWiFiOnly = PreferenceManager.getDefaultSharedPreferences(this)
-                        .getBoolean(Constants.UPDATE_NETWORK_KEY, false);
+                boolean useWiFiOnly = prefs.updateOnlyWiFi().get();
                 if (this.isConnected() &&
                         (isNetworkIgnore ||
                                 (!useWiFiOnly || this.isConnectedToWiFi()))) {
@@ -113,6 +118,7 @@ public class UpdateAuthorsTask extends IntentService {
     private boolean updateAuthor(Author author) throws SQLException {
         boolean authorUpdated = false;
         HttpRequest request;
+        String body;
         try {
             URL authorURL = new URL(author.getUrl());
             request = HttpRequest.get(authorURL);
@@ -126,6 +132,9 @@ public class UpdateAuthorsTask extends IntentService {
                 //Skip
                 return false;
             }
+            body = SamlibPageParser.sanitizeHTML(request.body());
+            //We go a blank response but no exception, skip author
+            if (body == null) return false;
             EasyTracker.getTracker().sendEvent(
                     Constants.GA_BGR_CATEGORY,
                     Constants.GA_EVENT_AUTHOR_UPDATE,
@@ -142,7 +151,12 @@ public class UpdateAuthorsTask extends IntentService {
             trackException(e.getMessage());
             return false;
         }
-        String body = SamlibPageParser.sanitizeHTML(request.body());
+
+        String authImgUrl = SamlibPageParser.getAuthorImageUrl(body, author.getUrl());
+        String authDescription = SamlibPageParser.getAuthorDescription(body);
+        if (authImgUrl != null) author.setAuthorImageUrl(authImgUrl);
+        if (authDescription != null) author.setAuthorDescription(authDescription);
+        authorDao.update(author);
 
         ForeignCollection<Publication> oldItems = author.getPublications();
         List<Publication> newItems = SamlibPageParser.getPublications(body, author);

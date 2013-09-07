@@ -17,13 +17,12 @@
 package com.andrada.sitracker.ui.fragment.adapters;
 
 import android.content.Context;
-import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
-import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.contracts.IsNewItemTappedListener;
+import com.andrada.sitracker.contracts.SIPrefs_;
 import com.andrada.sitracker.db.beans.Author;
 import com.andrada.sitracker.db.dao.AuthorDao;
 import com.andrada.sitracker.db.manager.SiDBHelper;
@@ -38,6 +37,7 @@ import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.OrmLiteDao;
 import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.UiThread;
+import org.androidannotations.annotations.sharedpreferences.Pref;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -54,6 +54,9 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
     @OrmLiteDao(helper = SiDBHelper.class, model = Author.class)
     AuthorDao authorDao;
 
+    @Pref
+    SIPrefs_ prefs;
+
     @RootContext
     Context context;
     private int mSelectedItem = 0;
@@ -66,14 +69,12 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
     }
 
     /**
-     * Reloads authors in background posting changeset notification to UI Thread
+     * Reloads authors in background posting change set notification to UI Thread
      */
     @Background
     public void reloadAuthors() {
         try {
-            int sortType = Integer.parseInt(
-                    PreferenceManager.getDefaultSharedPreferences(context)
-                            .getString(Constants.AUTHOR_SORT_TYPE_KEY, "0"));
+            int sortType = Integer.parseInt(prefs.authorsSortType().get());
             if (sortType == 0) {
                 authors = authorDao.getAllAuthorsSortedAZ();
             } else {
@@ -127,6 +128,22 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
     @Background
     public void onIsNewItemTapped(View starButton) {
         Author auth = (Author) starButton.getTag();
+        dismissAuthor(auth);
+    }
+
+    @Background
+    public void markAuthorsRead(List<Long> authorsToMarkAsRead) {
+        for (long authId : authorsToMarkAsRead) {
+            dismissAuthor(this.getAuthorById(authId));
+        }
+    }
+
+    /**
+     * Should be called on background thread only
+     *
+     * @param auth Author to mark as read
+     */
+    private void dismissAuthor(Author auth) {
         if (auth != null) {
             auth.markRead();
             try {
@@ -141,8 +158,8 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
     @Background
     public void removeAuthors(List<Long> authorsToRemove) {
         try {
-            for(int i = 0; i < authorsToRemove.size(); i++) {
-                authorDao.removeAuthor(authorsToRemove.get(i));
+            for (Long anAuthorsToRemove : authorsToRemove) {
+                authorDao.removeAuthor(anAuthorsToRemove);
             }
         } catch (SQLException e) {
             EasyTracker.getTracker().sendException("Author Remove thread", e, false);
@@ -172,8 +189,14 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
     }
 
     public void setSelectedItem(long selectedItemId) {
-        this.mSelectedAuthorId = selectedItemId;
-        this.mSelectedItem = getItemPositionByAuthorId(selectedItemId);
+        int potentialSelectedItem = getItemPositionByAuthorId(selectedItemId);
+        long potentialAuthorId = selectedItemId;
+        if (potentialSelectedItem == -1) {
+            potentialSelectedItem = 0;
+            potentialAuthorId = getFirstAuthorId();
+        }
+        this.mSelectedAuthorId = potentialAuthorId;
+        this.mSelectedItem = potentialSelectedItem;
     }
 
     public long getSelectedAuthorId() {
@@ -187,9 +210,9 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
     }
 
     private Author getAuthorById(long authorId) {
-        for (int i = 0; i < authors.size(); i++) {
-            if (authors.get(i).getId() == authorId) {
-                return authors.get(i);
+        for (Author author : authors) {
+            if (author.getId() == authorId) {
+                return author;
             }
         }
         return null;

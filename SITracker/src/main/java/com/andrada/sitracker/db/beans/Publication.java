@@ -34,7 +34,7 @@ public class Publication {
     int oldSize;
     @DatabaseField(useGetSet = true)
     String category;
-    @DatabaseField(canBeNull = false, foreign = true)
+    @DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)
     Author author;
     @DatabaseField(useGetSet = true)
     String date;
@@ -52,6 +52,8 @@ public class Publication {
     Boolean isNew;
     @DatabaseField(canBeNull = false, useGetSet = true)
     Date updateDate;
+    @DatabaseField(canBeNull = true, useGetSet = true)
+    String imageUrl;
 
     boolean isLoading = false;
 
@@ -186,6 +188,14 @@ public class Publication {
 
     public void setNew(Boolean aNew) {
         isNew = aNew;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public boolean getLoading() {

@@ -23,6 +23,7 @@ import android.view.View;
 import android.widget.ExpandableListView;
 
 import com.andrada.sitracker.R;
+import com.andrada.sitracker.contracts.SIPrefs_;
 import com.andrada.sitracker.db.beans.Publication;
 import com.andrada.sitracker.events.AuthorMarkedAsReadEvent;
 import com.andrada.sitracker.events.AuthorSelectedEvent;
@@ -37,8 +38,10 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.InstanceState;
+import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
+import org.androidannotations.annotations.sharedpreferences.Pref;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -49,6 +52,7 @@ import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 @EFragment(R.layout.fragment_publications)
+@OptionsMenu(R.menu.publications_menu)
 public class PublicationsFragment extends Fragment implements ExpandableListView.OnChildClickListener, PublicationsAdapter.PublicationShareAttemptListener {
 
     @Bean
@@ -59,6 +63,9 @@ public class PublicationsFragment extends Fragment implements ExpandableListView
 
     @InstanceState
     long mCurrentId = -1;
+
+    @Pref
+    SIPrefs_ prefs;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -98,7 +105,7 @@ public class PublicationsFragment extends Fragment implements ExpandableListView
     @UiThread
     public void stopProgressAfterShare(boolean success, String errorMessage, long id) {
         //Stop loading progress in adapter
-        adapter.stopProgressOnPublication(id);
+        adapter.stopProgressOnPublication(id, success);
         if (!success) {
             Style.Builder alertStyle = new Style.Builder()
                     .setTextAppearance(android.R.attr.textAppearanceLarge)
@@ -112,7 +119,6 @@ public class PublicationsFragment extends Fragment implements ExpandableListView
         updatePublicationsView(event.authorId);
     }
 
-
     @Override
     public boolean onChildClick(ExpandableListView expandableListView,
                                 View view, int groupPosition, int childPosition, long l) {
@@ -125,7 +131,15 @@ public class PublicationsFragment extends Fragment implements ExpandableListView
     public void publicationShare(Publication pub, boolean forceDownload) {
         HttpRequest request;
         String pubUrl = pub.getUrl();
-        File file = ShareHelper.getPublicationStorageFile(getActivity(), UIUtils.hashKeyForDisk(pubUrl));
+        String pubFolder = prefs.downloadFolder().get();
+
+        File file;
+        if (pubFolder.equals("")) {
+            file = ShareHelper.getPublicationStorageFile(getActivity(), UIUtils.hashKeyForDisk(pubUrl));
+        } else {
+            file = ShareHelper.getPublicationStorageFileWithPath(getActivity(), pubFolder,
+                    pub.getAuthor().getName() + "_" + pub.getName());
+        }
 
         String errorMessage = "";
         boolean shareResult = true;

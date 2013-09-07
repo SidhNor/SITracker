@@ -26,14 +26,17 @@ import android.widget.ListView;
 
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.contracts.IsNewItemTappedListener;
+import com.andrada.sitracker.contracts.SIPrefs_;
 import com.andrada.sitracker.db.beans.Publication;
 import com.andrada.sitracker.db.dao.PublicationDao;
 import com.andrada.sitracker.db.manager.SiDBHelper;
 import com.andrada.sitracker.events.PublicationMarkedAsReadEvent;
+import com.andrada.sitracker.ui.HomeActivity;
 import com.andrada.sitracker.ui.components.PublicationCategoryItemView;
 import com.andrada.sitracker.ui.components.PublicationCategoryItemView_;
 import com.andrada.sitracker.ui.components.PublicationItemView;
 import com.andrada.sitracker.ui.components.PublicationItemView_;
+import com.andrada.sitracker.util.ImageLoader;
 import com.google.analytics.tracking.android.EasyTracker;
 
 import org.androidannotations.annotations.Background;
@@ -41,6 +44,7 @@ import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.OrmLiteDao;
 import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.UiThread;
+import org.androidannotations.annotations.sharedpreferences.Pref;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -66,16 +70,26 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
     @RootContext
     Context context;
 
+    @Pref
+    SIPrefs_ prefs;
+
     private PublicationShareAttemptListener listener;
 
     private final HashMap<Long, Publication> mDownloadingPublications = new HashMap<Long, Publication>();
+
+    ImageLoader mLoader;
 
     ListView listView = null;
 
     @Background
     public void reloadPublicationsForAuthorId(long id) {
         try {
-
+            boolean shouldShowImages = prefs.displayPubImages().get();
+            if (shouldShowImages) {
+                mLoader = ((HomeActivity) context).getImageLoaderInstance();
+            } else {
+                mLoader = null;
+            }
             List<Publication> pubs = publicationsDao.getSortedPublicationsForAuthorId(id);
             List<String> newCategories = new ArrayList<String>();
             List<List<Publication>> newChildren = new ArrayList<List<Publication>>();
@@ -134,7 +148,7 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
         } else {
             publicationItemView = (PublicationItemView) convertView;
         }
-        publicationItemView.bind(pub, isLast);
+        publicationItemView.bind(pub, isLast, mLoader);
         return publicationItemView;
     }
 
@@ -192,9 +206,15 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
         }
     }
 
-    public void stopProgressOnPublication(long id) {
-        mDownloadingPublications.get(id).setLoading(false);
-        mDownloadingPublications.remove(id);
+    public void stopProgressOnPublication(long id, boolean success) {
+        Publication loadingPub = mDownloadingPublications.get(id);
+        if (loadingPub != null) {
+            loadingPub.setLoading(false);
+            mDownloadingPublications.remove(id);
+            if (success) {
+                updateStatusOfPublication(loadingPub);
+            }
+        }
         notifyDataSetChanged();
     }
 
@@ -241,8 +261,6 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
                         Constants.GA_EVENT_AUTHOR_PUB_OPEN,
                         Constants.GA_EVENT_AUTHOR_PUB_OPEN, null);
                 EasyTracker.getInstance().dispatch();
-
-                updateStatusOfPublication(pub);
             }
 
 

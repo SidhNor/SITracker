@@ -25,6 +25,8 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public final class ShareHelper {
 
@@ -43,15 +45,86 @@ public final class ShareHelper {
      * @return The file or null if storage is not accessible.
      */
     public static File getPublicationStorageFile(Context context, String hashedPublicationName) {
+
+        File storageDir = getPublicationStorageDirectory(context);
+        if (storageDir == null) {
+            return storageDir;
+        }
+
+        return new File(storageDir, hashedPublicationName + ".html");
+    }
+
+    public static File getPublicationStorageFileWithPath(Context context, String path, String filename) {
+        File storageDir = getExternalDirectoryBasedOnPath(path);
+        if (storageDir == null) {
+            return storageDir;
+        }
+
+        return new File(storageDir, sanitizeFileName(filename + ".html"));
+    }
+
+    private static String sanitizeFileName(String badFileName) {
+        final String pattern = "[^0-9\\s_\\p{L}\\(\\)%\\-\\.]";
+        StringBuffer cleanFileName = new StringBuffer();
+        Pattern filePattern = Pattern.compile(pattern);
+        Matcher fileMatcher = filePattern.matcher(badFileName);
+        boolean match = fileMatcher.find();
+        while (match) {
+            fileMatcher.appendReplacement(cleanFileName, "");
+            match = fileMatcher.find();
+        }
+        fileMatcher.appendTail(cleanFileName);
+        return cleanFileName.substring(0, cleanFileName.length() > 126 ? 126 : cleanFileName.length());
+    }
+
+    /**
+     * Get a the external directory name.
+     *
+     * @param context The context to use
+     * @return external directory path, null if directory not available
+     */
+    public static File getPublicationStorageDirectory(Context context) {
         // Check if media is mounted or storage is built-in, if so, try and use external cache dir
         // otherwise return null
-
         if (!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState()) &&
                 Environment.isExternalStorageRemovable()) {
             return null;
         }
+        return context.getExternalFilesDir(null);
+    }
 
-        return new File(context.getExternalFilesDir(null), hashedPublicationName + ".html");
+    /**
+     * Get the external sd card directory based on the specified path.
+     *
+     * @param path path to try
+     * @return File instance or null if storage is not accessible or path is invalid
+     */
+    public static File getExternalDirectoryBasedOnPath(String path) {
+        //Sanity check 1
+        if (path == null) {
+            return null;
+        }
+        //Sanity check 2
+        if (path.indexOf("/") != 0) {
+            path = "/" + path;
+        }
+        //Sanity check 3
+        if (!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState()) &&
+                Environment.isExternalStorageRemovable()) {
+            return null;
+        }
+        File sdCard = Environment.getExternalStorageDirectory();
+        File dir = new File(sdCard.getAbsolutePath() + path);
+        //Make sure we create directories if they do not exist
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        //Sanity check 5
+        if (dir.exists() && dir.isDirectory()) {
+            return dir;
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -72,7 +145,7 @@ public final class ShareHelper {
                     "<head><meta http-equiv=\"Content-Type\" content=\"text/html;charset=UTF-8\">");
         }
         try {
-            BufferedOutputStream bs = null;
+            BufferedOutputStream bs;
             FileOutputStream fs = new FileOutputStream(file);
             bs = new BufferedOutputStream(fs);
             bs.write(content.getBytes(charSet));

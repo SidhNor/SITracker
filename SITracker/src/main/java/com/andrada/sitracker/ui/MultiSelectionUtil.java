@@ -47,7 +47,7 @@ public class MultiSelectionUtil {
             ActionMode.Callback,
             AdapterView.OnItemClickListener,
             AdapterView.OnItemLongClickListener {
-        private Handler mHandler = new Handler();
+        private final Handler mHandler = new Handler();
         private ActionMode mActionMode;
         private ListView mListView = null;
         private ActionBarActivity mActivity = null;
@@ -62,7 +62,7 @@ public class MultiSelectionUtil {
         public static Controller attach(ListView listView, ActionBarActivity activity,
                                         MultiChoiceModeListener listener) {
             if (listView.getChoiceMode() == AbsListView.CHOICE_MODE_MULTIPLE ||
-                listView.getChoiceMode() == AbsListView.CHOICE_MODE_MULTIPLE_MODAL) {
+                    listView.getChoiceMode() == AbsListView.CHOICE_MODE_MULTIPLE_MODAL) {
                 throw new IllegalArgumentException("ListView CHOICE_MODE_MULTIPLE or CHOICE_MODE_MULTIPLE_MODAL is not allowed. Everything is handled by this class.");
             }
             Controller controller = new Controller();
@@ -184,7 +184,7 @@ public class MultiSelectionUtil {
             mHandler.post(mSetChoiceModeNoneRunnable);
         }
 
-        private Runnable mSetChoiceModeNoneRunnable = new Runnable() {
+        private final Runnable mSetChoiceModeNoneRunnable = new Runnable() {
             @Override
             public void run() {
                 mListView.setChoiceMode(AbsListView.CHOICE_MODE_NONE);

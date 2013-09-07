@@ -21,8 +21,6 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SlidingPaneLayout;
 import android.view.Menu;
@@ -33,12 +31,14 @@ import android.widget.ProgressBar;
 
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
+import com.andrada.sitracker.contracts.SIPrefs_;
 import com.andrada.sitracker.events.ProgressBarToggleEvent;
 import com.andrada.sitracker.tasks.UpdateAuthorsTask_;
 import com.andrada.sitracker.tasks.filters.UpdateStatusMessageFilter;
 import com.andrada.sitracker.tasks.receivers.UpdateStatusReceiver;
 import com.andrada.sitracker.ui.fragment.AuthorsFragment;
 import com.andrada.sitracker.ui.fragment.PublicationsFragment;
+import com.andrada.sitracker.util.ImageLoader;
 import com.andrada.sitracker.util.UIUtils;
 import com.google.analytics.tracking.android.EasyTracker;
 
@@ -50,14 +50,16 @@ import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.res.StringRes;
+import org.androidannotations.annotations.sharedpreferences.Pref;
 
 import de.greenrobot.event.EventBus;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 
 
+@SuppressLint("Registered")
 @EActivity(R.layout.activity_main)
 @OptionsMenu(R.menu.main_menu)
-public class HomeActivity extends BaseActivity {
+public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoaderProvider {
 
     @FragmentById(R.id.fragment_publications)
     PublicationsFragment mPubFragment;
@@ -74,7 +76,12 @@ public class HomeActivity extends BaseActivity {
     @SystemService
     AlarmManager alarmManager;
 
+    @Pref
+    SIPrefs_ prefs;
+
     PendingIntent updatePendingIntent;
+
+    private ImageLoader mImageLoader;
 
     @StringRes(R.string.app_name)
     String mAppName;
@@ -89,7 +96,11 @@ public class HomeActivity extends BaseActivity {
         slidingPane.getViewTreeObserver().addOnGlobalLayoutListener(globalLayoutListener);
         Intent intent = UpdateAuthorsTask_.intent(this.getApplicationContext()).get();
         this.updatePendingIntent = PendingIntent.getService(this.getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        ensureUpdatesAreRunningOnSchedule(PreferenceManager.getDefaultSharedPreferences(this));
+        ensureUpdatesAreRunningOnSchedule();
+
+        mImageLoader = new ImageLoader(this, R.drawable.blank_book)
+                .setMaxImageSize(getResources().getDimensionPixelSize(R.dimen.publication_pixel_size))
+                .setFadeInImage(UIUtils.hasHoneycombMR1());
     }
 
     @Override
@@ -141,11 +152,11 @@ public class HomeActivity extends BaseActivity {
         Crouton.cancelAllCroutons();
     }
 
-    public void ensureUpdatesAreRunningOnSchedule(SharedPreferences sharedPreferences) {
-        Boolean isSyncing = sharedPreferences.getBoolean(Constants.UPDATE_PREFERENCE_KEY, true);
+    public void ensureUpdatesAreRunningOnSchedule() {
+        Boolean isSyncing = prefs.updatesEnabled().get();
         alarmManager.cancel(this.updatePendingIntent);
         if (isSyncing) {
-            long updateInterval = Long.parseLong(sharedPreferences.getString(Constants.UPDATE_INTERVAL_KEY, "14400000"));
+            long updateInterval = Long.parseLong(prefs.updateInterval().get());
             alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP,
                     System.currentTimeMillis(),
                     updateInterval,
@@ -187,6 +198,7 @@ public class HomeActivity extends BaseActivity {
             if (UIUtils.hasJellyBean()) {
                 slidingPane.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             } else {
+                //noinspection deprecation
                 slidingPane.getViewTreeObserver().removeGlobalOnLayoutListener(this);
             }
 
@@ -261,5 +273,10 @@ public class HomeActivity extends BaseActivity {
 
     public PublicationsFragment getPubFragment() {
         return mPubFragment;
+    }
+
+    @Override
+    public ImageLoader getImageLoaderInstance() {
+        return mImageLoader;
     }
 }

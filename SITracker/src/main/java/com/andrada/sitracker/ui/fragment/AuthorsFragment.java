@@ -19,6 +19,7 @@ package com.andrada.sitracker.ui.fragment;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
@@ -60,7 +61,6 @@ import org.androidannotations.annotations.ViewById;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -281,19 +281,19 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
         if (checked) {
             mSelectedAuthors.add(((Author) adapter.getItem(position)).getId());
         } else {
-            mSelectedAuthors.remove(((Author)adapter.getItem(position)).getId());
+            mSelectedAuthors.remove(((Author) adapter.getItem(position)).getId());
         }
         int numSelectedAuthors = mSelectedAuthors.size();
         mode.setTitle(getResources().getQuantityString(
                 R.plurals.authors_selected,
                 numSelectedAuthors, numSelectedAuthors));
-        checkedItems = ArrayUtils.toPrimitive(mSelectedAuthors.toArray(new Long[0]));
+        checkedItems = ArrayUtils.toPrimitive(mSelectedAuthors.toArray(new Long[mSelectedAuthors.size()]));
     }
 
     @Override
     public boolean onCreateActionMode(ActionMode mode, Menu menu) {
         MenuInflater inflater = mode.getMenuInflater();
-        inflater.inflate(R.menu.context, menu);
+        inflater.inflate(R.menu.context_authors, menu);
         mSelectedAuthors.clear();
         return true;
     }
@@ -315,6 +315,18 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
             adapter.removeAuthors(mSelectedAuthors);
             currentAuthorIndex = adapter.getSelectedAuthorId();
             EventBus.getDefault().post(new AuthorSelectedEvent(currentAuthorIndex));
+            return true;
+        } else if (item.getItemId() == R.id.action_mark_read) {
+            adapter.markAuthorsRead(mSelectedAuthors);
+            return true;
+        } else if (item.getItemId() == R.id.action_open_authors_browser) {
+            for (int i = 0; i < adapter.getCount(); i++) {
+                if (mSelectedAuthors.contains(adapter.getItemId(i))) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setData(Uri.parse(((Author) adapter.getItem(i)).getUrl()));
+                    getActivity().startActivity(intent);
+                }
+            }
             return true;
         }
         return false;
@@ -342,19 +354,21 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
 
     //region AuthorAddedEvent handler
 
+    @SuppressWarnings("UnusedParameters")
     public void onEvent(AuthorSortMethodChanged event) {
         adapter.reloadAuthors();
     }
 
     public void onEvent(AuthorAddedEvent event) {
-        EasyTracker.getTracker().sendEvent(
-                Constants.GA_UI_CATEGORY,
-                Constants.GA_EVENT_AUTHOR_ADDED,
-                Constants.GA_EVENT_AUTHOR_ADDED, null);
-        EasyTracker.getInstance().dispatch();
 
         EventBus.getDefault().post(new ProgressBarToggleEvent(false));
         String message = event.message;
+
+        EasyTracker.getTracker().sendEvent(
+                Constants.GA_UI_CATEGORY,
+                Constants.GA_EVENT_AUTHOR_ADDED,
+                Constants.GA_EVENT_AUTHOR_ADDED, (long) message.length());
+        EasyTracker.getInstance().dispatch();
 
         //Stop progress bar
 

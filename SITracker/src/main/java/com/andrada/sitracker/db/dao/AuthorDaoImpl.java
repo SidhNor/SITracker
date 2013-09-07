@@ -24,9 +24,6 @@ import com.j256.ormlite.support.ConnectionSource;
 import java.sql.SQLException;
 import java.util.List;
 
-/**
- * Created by ggodonoga on 07/06/13.
- */
 public class AuthorDaoImpl extends BaseDaoImpl<Author, Integer>
         implements AuthorDao {
 

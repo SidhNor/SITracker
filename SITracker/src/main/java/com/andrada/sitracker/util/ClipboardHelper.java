@@ -21,9 +21,7 @@ import android.content.ClipData;
 import android.content.Context;
 import android.os.Build;
 
-/**
- * Created by ggodonoga on 27/05/13.
- */
+@SuppressWarnings("deprecation")
 public class ClipboardHelper {
 
     public static CharSequence getClipboardText(Context context) {
