@@ -1,4 +1,4 @@
-Love to read? Having trouble following your best authors on samlib.ru?
+﻿Love to read? Having trouble following your best authors on samlib.ru?
 
 SI Tracker allows you to stay informed of any updates your authors post. 
 Use it comfortably on devices of any size with responsive buttery UI.
@@ -19,6 +19,6 @@ If you encounter any issue, please feel free to report it.
 What's new:
 
 • Added option of configuring download directory for publications
-• Fixed several issues on with bad connection and samlib being unavailable
+• Fixed several issues due to bad connection and samlib being unavailable
 • Added option of clearing saved publications. (Clears only the default directory)
 • Added optional publication images when available
