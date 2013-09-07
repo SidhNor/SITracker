@@ -32,7 +32,7 @@ import java.sql.SQLException;
 public class SiDBHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "siinformer.db";
-    private static final int DATABASE_VERSION = 8;
+    private static final int DATABASE_VERSION = 9;
 
     private PublicationDao publicationDao;
     private AuthorDao authorDao;
@@ -92,6 +92,27 @@ public class SiDBHelper extends OrmLiteSqliteOpenHelper {
                     case 8: {
                         getAuthorDao().executeRaw("ALTER TABLE 'authors' ADD COLUMN authorImageUrl TEXT;");
                         getAuthorDao().executeRaw("ALTER TABLE 'authors' ADD COLUMN authorDescription TEXT;");
+                        break;
+                    }
+                    case 9: {
+                        //Delete all orphaned publications
+                        getPublicationDao().executeRaw(
+                                "DELETE FROM publications " +
+                                        "WHERE author_id not in (SELECT _id FROM authors)");
+                        //Due to the fact that sqlite does not support ADD CONSTRAINT - recreate table
+                        getPublicationDao().executeRaw(
+                                "ALTER TABLE publications RENAME TO tmp_publications;");
+                        TableUtils.createTableIfNotExists(connectionSource, Publication.class);
+                        //Copy data back
+                        getPublicationDao().executeRaw(
+                                "INSERT INTO publications(" +
+                                        "id, name, size, oldSize, category, author_id, date, description," +
+                                        "commentUrl, url, rating, commentsCount, isNew, updateDate, imageUrl) " +
+                                        "SELECT id, name, size, oldSize, category, author_id, date, description," +
+                                        "commentUrl, url, rating, commentsCount, isNew, updateDate, imageUrl " +
+                                        "FROM tmp_publications;"
+                        );
+                        getPublicationDao().executeRaw("DROP TABLE tmp_publications;");
                         break;
                     }
                 }

@@ -34,7 +34,10 @@ public class Publication {
     int oldSize;
     @DatabaseField(useGetSet = true)
     String category;
-    @DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)
+    @DatabaseField(canBeNull = false,
+            foreign = true,
+            foreignAutoRefresh = true,
+            columnDefinition = "bigint references authors(_id) on delete cascade")
     Author author;
     @DatabaseField(useGetSet = true)
     String date;
