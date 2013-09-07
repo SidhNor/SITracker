@@ -150,7 +150,7 @@ public class SettingsActivity extends PreferenceActivity implements
         if (newValue == null || newValue.length() == 0) {
             pref.setSummary(getResources().getString(R.string.pref_content_download_summ));
         } else {
-            pref.setSummary(getResources().getString(R.string.pref_content_download_summ_short) + newValue);
+            pref.setSummary(getResources().getString(R.string.pref_content_download_summ_short) + " SDCard/" + newValue);
         }
     }
 

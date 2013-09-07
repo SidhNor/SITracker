@@ -105,7 +105,7 @@ public class PublicationsFragment extends Fragment implements ExpandableListView
     @UiThread
     public void stopProgressAfterShare(boolean success, String errorMessage, long id) {
         //Stop loading progress in adapter
-        adapter.stopProgressOnPublication(id);
+        adapter.stopProgressOnPublication(id, success);
         if (!success) {
             Style.Builder alertStyle = new Style.Builder()
                     .setTextAppearance(android.R.attr.textAppearanceLarge)

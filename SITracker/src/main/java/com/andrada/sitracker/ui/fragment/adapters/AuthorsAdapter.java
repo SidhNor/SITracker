@@ -189,8 +189,14 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
     }
 
     public void setSelectedItem(long selectedItemId) {
-        this.mSelectedAuthorId = selectedItemId;
-        this.mSelectedItem = getItemPositionByAuthorId(selectedItemId);
+        int potentialSelectedItem = getItemPositionByAuthorId(selectedItemId);
+        long potentialAuthorId = selectedItemId;
+        if (potentialSelectedItem == -1) {
+            potentialSelectedItem = 0;
+            potentialAuthorId = getFirstAuthorId();
+        }
+        this.mSelectedAuthorId = potentialAuthorId;
+        this.mSelectedItem = potentialSelectedItem;
     }
 
     public long getSelectedAuthorId() {
