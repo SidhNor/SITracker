@@ -82,6 +82,14 @@
     <string name="no_newpubs">There is nothing new :(</string>
     <plurals name="authors_selected">
         <item quantity="one">1 selected</item>
+        <item quantity="few">
+        <xliff:g id="num_authors">%1$d</xliff:g>
+            selected
+        </item>
+        <item quantity="many">
+            <xliff:g id="num_authors">%1$d</xliff:g>
+            selected
+        </item>
         <item quantity="other">
             <xliff:g id="num_authors">%1$d</xliff:g>
             selected
@@ -89,6 +97,14 @@
     </plurals>
     <plurals name="authors_updated">
         <item quantity="one">Author updated</item>
+        <item quantity="few">
+        <xliff:g id="num_updates">%1$d</xliff:g>
+            authors updated
+        </item>
+        <item quantity="many">
+            <xliff:g id="num_updates">%1$d</xliff:g>
+            authors updated
+        </item>
         <item quantity="other">
             <xliff:g id="num_updates">%1$d</xliff:g>
             authors updated

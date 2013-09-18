@@ -98,6 +98,10 @@
             <xliff:g id="num_authors">%1$d</xliff:g>
             выбранных
         </item>
+        <item quantity="other">
+            <xliff:g id="num_authors">%1$d</xliff:g>
+            выбранных
+        </item>
     </plurals>
 
     <plurals name="authors_updated">
@@ -108,6 +112,10 @@
         </item>
         <item quantity="many">
             <xliff:g id="num_updates">%1$d</xliff:g>
+            авторов обновились
+        </item>
+        <item quantity="other">
+        <xliff:g id="num_updates">%1$d</xliff:g>
             авторов обновились
         </item>
     </plurals>
