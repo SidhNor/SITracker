@@ -159,9 +159,11 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
             listView = (ListView) parent;
         }
         PublicationCategoryItemView publicationCategoryView;
-        if (convertView == null) {
+        //For some weird reason, convertView is PublicationItemView instead of PublicationCategoryItemView_
+        if (convertView == null || !(convertView instanceof PublicationCategoryItemView)) {
             publicationCategoryView = PublicationCategoryItemView_.build(context);
-        } else {
+        }
+        else {
             publicationCategoryView = (PublicationCategoryItemView) convertView;
         }
         publicationCategoryView.bind(mCategories.get(groupPosition), mChildren.get(groupPosition).size());

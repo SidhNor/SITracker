@@ -18,7 +18,5 @@ If you encounter any issue, please feel free to report it.
 
 What's new:
 
-• Added option of configuring download directory for publications
-• Fixed several issues on with bad connection and samlib being unavailable
-• Added option of clearing saved publications. (Clears only the default directory)
-• Added optional publication images when available
+Small bugfix release:
+• Multiple issue fixes. Specifically for Motorola and Asus Transformer
