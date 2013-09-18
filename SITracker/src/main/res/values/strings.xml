@@ -20,7 +20,9 @@
     <string name="title_settings">Settings</string>
     <string name="title_publications">Publications</string>
     <string name="title_publications_details">Publication Details</string>
-    <string name="title_comment_stream">Comment stream</string>
+    <string name="title_authors">AUTHORS</string>
+    <string name="title_newpubs">NEW PUBS</string>
+    <string name="title_comment_stream">COMMENT STREAM</string>
 
     <string name="action_settings">Settings</string>
     <string name="action_refresh">Update authors</string>

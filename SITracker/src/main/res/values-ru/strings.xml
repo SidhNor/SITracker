@@ -20,7 +20,9 @@
     <string name="title_settings">Настройки</string>
     <string name="title_publications">Произведения</string>
     <string name="title_publications_details">Детали произведения</string>
-    <string name="title_comment_stream">Комментарии</string>
+    <string name="title_authors">АВТОРЫ</string>
+    <string name="title_newpubs">ПРОДА</string>
+    <string name="title_comment_stream">КОММЕНТАРИИ</string>
 
     <string name="action_settings">Настройки</string>
     <string name="action_refresh">Обновить</string>

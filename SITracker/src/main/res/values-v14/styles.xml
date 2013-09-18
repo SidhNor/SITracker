@@ -36,6 +36,7 @@
         <item name="android:actionBarStyle">@style/ActionBar</item>
         <item name="android:actionModeStyle">@style/ActionMode</item>
         <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode</item>
+        <item name="android:windowBackground">@drawable/grey_background_pattern</item>
     </style>
 
     <style name="ActionBar" parent="FrameworkRoot.ActionBar">
