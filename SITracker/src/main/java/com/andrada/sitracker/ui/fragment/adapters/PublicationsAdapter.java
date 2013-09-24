@@ -161,8 +161,7 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
         //For some weird reason, convertView is PublicationItemView instead of PublicationCategoryItemView_
         if (convertView == null || !(convertView instanceof PublicationCategoryItemView)) {
             publicationCategoryView = PublicationCategoryItemView_.build(context);
-        }
-        else {
+        } else {
             publicationCategoryView = (PublicationCategoryItemView) convertView;
         }
         publicationCategoryView.bind(mCategories.get(groupPosition), mChildren.get(groupPosition).size());
@@ -263,8 +262,6 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
                         Constants.GA_EVENT_AUTHOR_PUB_OPEN, null);
                 EasyTracker.getInstance().dispatch();
             }
-
-
             // Return true as we are handling the event.
             return true;
         }

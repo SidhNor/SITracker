@@ -17,6 +17,7 @@
 package com.andrada.sitracker.ui.components;
 
 import android.content.Context;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.widget.ImageButton;
@@ -24,16 +25,18 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.andrada.sitracker.R;
+import com.andrada.sitracker.contracts.IsNewItemTappedListener;
 import com.andrada.sitracker.db.beans.Publication;
-import com.andrada.sitracker.ui.widget.CheckedRelativeLayout;
+import com.andrada.sitracker.ui.widget.TouchDelegateRelativeLayout;
 import com.andrada.sitracker.util.DateFormatterUtil;
 import com.andrada.sitracker.util.ImageLoader;
 
+import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
 
 @EViewGroup(R.layout.new_pub_list_item)
-public class NewPubItemView extends CheckedRelativeLayout {
+public class NewPubItemView extends TouchDelegateRelativeLayout {
 
     @ViewById
     TextView item_title;
@@ -67,8 +70,17 @@ public class NewPubItemView extends CheckedRelativeLayout {
 
     private boolean mIsNew = false;
 
+    private IsNewItemTappedListener mListener;
+
     public NewPubItemView(Context context) {
         super(context);
+    }
+
+    @AfterViews
+    void afterViews() {
+        this.delegatedTouchViews.put(
+                ViewConfig.wholeRight(),
+                item_updated);
     }
 
     public void bind(Publication publication, ImageLoader loader) {
@@ -113,6 +125,34 @@ public class NewPubItemView extends CheckedRelativeLayout {
             downloadProgress.clearAnimation();
             backgroundPane.clearAnimation();
             downloadProgress.setVisibility(GONE);
+        }
+    }
+
+    public void setListener(IsNewItemTappedListener listener) {
+        mListener = listener;
+    }
+
+    @Override
+    protected void onDelegatedTouchViewClicked(View view) {
+        if (mListener != null && view.getId() == R.id.item_updated) {
+            mIsNew = false;
+            item_updated.setImageResource(R.drawable.star_unselected);
+            mListener.onIsNewItemTapped(view);
+        }
+    }
+
+    @Override
+    protected void onDelegatedTouchViewDown(View view) {
+        if (mIsNew && view.getId() == R.id.item_updated) {
+            item_updated.setImageResource(R.drawable.star_selected_focused);
+        }
+    }
+
+    @Override
+    protected void onDelegatedTouchViewCancel(View view) {
+        //If we are not new, just ignore everything
+        if (mIsNew && view.getId() == R.id.item_updated) {
+            item_updated.setImageResource(mIsNew ? R.drawable.star_selected : R.drawable.star_unselected);
         }
     }
 }

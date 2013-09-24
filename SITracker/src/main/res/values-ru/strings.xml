@@ -88,6 +88,7 @@
     <string name="author_add_success_crouton_message">Автор добавлен</string>
     <string name="no_authors">Вы пока не добавили никаких авторов</string>
     <string name="no_newpubs">Проды нет :(</string>
+    <string name="no_tracked_comment_streams">Вы не следите за комментариями ни одного произведения.</string>
     <plurals name="authors_selected">
         <item quantity="one">1 выбранный</item>
         <item quantity="few">
@@ -115,7 +116,7 @@
             авторов обновились
         </item>
         <item quantity="other">
-        <xliff:g id="num_updates">%1$d</xliff:g>
+            <xliff:g id="num_updates">%1$d</xliff:g>
             авторов обновились
         </item>
     </plurals>

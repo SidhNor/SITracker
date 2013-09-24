@@ -80,10 +80,11 @@
     <string name="author_add_success_crouton_message">Author added</string>
     <string name="no_authors">You haven\'t added any authors yet</string>
     <string name="no_newpubs">There is nothing new :(</string>
+    <string name="no_tracked_comment_streams">No followed comment threads. Select a publication and start following.</string>
     <plurals name="authors_selected">
         <item quantity="one">1 selected</item>
         <item quantity="few">
-        <xliff:g id="num_authors">%1$d</xliff:g>
+            <xliff:g id="num_authors">%1$d</xliff:g>
             selected
         </item>
         <item quantity="many">
@@ -98,7 +99,7 @@
     <plurals name="authors_updated">
         <item quantity="one">Author updated</item>
         <item quantity="few">
-        <xliff:g id="num_updates">%1$d</xliff:g>
+            <xliff:g id="num_updates">%1$d</xliff:g>
             authors updated
         </item>
         <item quantity="many">
