@@ -37,6 +37,7 @@ public class Publication {
     @DatabaseField(canBeNull = false,
             foreign = true,
             foreignAutoRefresh = true,
+            indexName = "author_id_idx",
             columnDefinition = "bigint references authors(_id) on delete cascade")
     Author author;
     @DatabaseField(useGetSet = true)

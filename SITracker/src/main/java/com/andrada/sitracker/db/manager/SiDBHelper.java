@@ -32,7 +32,7 @@ import java.sql.SQLException;
 public class SiDBHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "siinformer.db";
-    private static final int DATABASE_VERSION = 9;
+    private static final int DATABASE_VERSION = 10;
 
     private PublicationDao publicationDao;
     private AuthorDao authorDao;
@@ -113,6 +113,16 @@ public class SiDBHelper extends OrmLiteSqliteOpenHelper {
                                         "FROM tmp_publications;"
                         );
                         getPublicationDao().executeRaw("DROP TABLE tmp_publications;");
+                        break;
+                    }
+                    case 10: {
+                        //Drop old index if exists that no longer references an existing column.
+                        getPublicationDao().executeRaw(
+                                "DROP INDEX IF EXISTS fk_author_publication"
+                        );
+                        getPublicationDao().executeRaw(
+                                "CREATE INDEX author_id_idx ON publications (author_id)"
+                        );
                         break;
                     }
                 }
