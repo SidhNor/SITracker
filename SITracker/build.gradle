@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Gleb Godonoga.
+ * Copyright 2014 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,15 +18,8 @@
 
 import java.util.regex.Pattern
 
-buildscript {
-    repositories {
-        maven { url 'http://repo1.maven.org/maven2' }
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:0.6.3'
-    }
-}
 apply plugin: 'android'
+apply plugin: 'android-apt'
 
 repositories {
     mavenCentral()
@@ -37,17 +30,16 @@ repositories {
 
 configurations {
     compile
-    androidannotations.extendsFrom(compile)
 }
 
 
-ext.androidAnnotationsVersion = '3.0-SNAPSHOT';
+ext.androidAnnotationsVersion = '3.0';
 
 dependencies {
     compile 'com.android.support:support-v4:18+'
     compile 'com.android.support:appcompat-v7:18+'
-    androidannotations "org.androidannotations:androidannotations:${androidAnnotationsVersion}"
-    compile "org.androidannotations:androidannotations-api:${androidAnnotationsVersion}"
+    apt "org.androidannotations:androidannotations:$androidAnnotationsVersion"
+    compile "org.androidannotations:androidannotations-api:$androidAnnotationsVersion"
     compile 'org.apache.commons:commons-lang3:3.0'
     compile 'com.j256.ormlite:ormlite-android:4.47'
     compile 'com.github.kevinsawicki:http-request:4.2'
@@ -67,12 +59,13 @@ tasks.withType(Compile) {
 }
 
 android {
-    compileSdkVersion 18
-    buildToolsVersion "18.0.1"
+    compileSdkVersion 19
+    buildToolsVersion "19.0.1"
 
     defaultConfig {
-        minSdkVersion 8
-        targetSdkVersion 18
+        minSdkVersion 10
+        targetSdkVersion 19
+        packageName 'com.andrada.sitracker'
         testPackageName 'com.andrada.sitracker.test'
         testInstrumentationRunner 'android.test.InstrumentationTestRunner'
     }
@@ -85,19 +78,10 @@ android {
     }
 }
 
-afterEvaluate { project ->
-    android.applicationVariants.each { variant ->
-        def andAnnOutput = file("${project.buildDir}/source/aaGen/${variant.dirName}")
-        variant.renderscriptCompile.resOutputDir = andAnnOutput
-
-        variant.javaCompile.options.compilerArgs += [
-                '-classpath', configurations.compile.asPath,
-                '-processorpath', configurations.androidannotations.asPath,
-                '-processor', 'org.androidannotations.AndroidAnnotationProcessor',
-                '-AandroidManifestFile=' + variant.processResources.manifestFile,
-                '-s', andAnnOutput
-
-        ]
+apt {
+    arguments {
+        resourcePackageName android.defaultConfig.packageName
+        androidManifestFile variant.processResources.manifestFile
     }
 }
 
