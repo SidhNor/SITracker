@@ -21,17 +21,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
-import com.andrada.sitracker.contracts.IsNewItemTappedListener;
-import com.andrada.sitracker.contracts.SIPrefs_;
 import com.andrada.sitracker.db.beans.Publication;
 import com.andrada.sitracker.db.dao.PublicationDao;
 import com.andrada.sitracker.db.manager.SiDBHelper;
-import com.andrada.sitracker.events.PublicationMarkedAsReadEvent;
-import com.andrada.sitracker.ui.HomeActivity;
 import com.andrada.sitracker.ui.components.NewPubItemView;
 import com.andrada.sitracker.ui.components.NewPubItemView_;
-import com.andrada.sitracker.util.ImageLoader;
-import com.google.analytics.tracking.android.EasyTracker;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Background;
@@ -39,16 +33,13 @@ import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.OrmLiteDao;
 import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.UiThread;
-import org.androidannotations.annotations.sharedpreferences.Pref;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.greenrobot.event.EventBus;
-
 @EBean
-public class NewPubsAdapter extends BaseAdapter implements IsNewItemTappedListener {
+public class NewPubsAdapter extends BaseAdapter {
 
     List<Publication> newPublications = new ArrayList<Publication>();
 
@@ -57,11 +48,6 @@ public class NewPubsAdapter extends BaseAdapter implements IsNewItemTappedListen
 
     @RootContext
     Context context;
-
-    ImageLoader mLoader;
-
-    @Pref
-    SIPrefs_ prefs;
 
     @AfterInject
     void initAdapter() {
@@ -74,12 +60,6 @@ public class NewPubsAdapter extends BaseAdapter implements IsNewItemTappedListen
     @Background
     public void reloadPublications() {
         try {
-            boolean shouldShowImages = prefs.displayPubImages().get();
-            if (shouldShowImages) {
-                mLoader = ((HomeActivity) context).getImageLoaderInstance();
-            } else {
-                mLoader = null;
-            }
             newPublications = publicationDao.getNewPublications();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -112,30 +92,10 @@ public class NewPubsAdapter extends BaseAdapter implements IsNewItemTappedListen
         NewPubItemView newPubItemView;
         if (convertView == null) {
             newPubItemView = NewPubItemView_.build(context);
-            newPubItemView.setListener(this);
         } else {
             newPubItemView = (NewPubItemView_) convertView;
         }
-        newPubItemView.bind(newPublications.get(position), mLoader);
+        newPubItemView.bind(newPublications.get(position));
         return newPubItemView;
-    }
-
-    @Override
-    public void onIsNewItemTapped(View checkBox) {
-        Publication pub = (Publication) checkBox.getTag();
-        updateStatusOfPublication(pub);
-    }
-
-    @Background
-    protected void updateStatusOfPublication(Publication pub) {
-        if (pub != null) {
-            try {
-                boolean authorNewChanged = publicationDao.markPublicationRead(pub);
-                EventBus.getDefault().post(new PublicationMarkedAsReadEvent(authorNewChanged));
-                reloadPublications();
-            } catch (SQLException e) {
-                EasyTracker.getTracker().sendException("Publication Set update", e, false);
-            }
-        }
     }
 }

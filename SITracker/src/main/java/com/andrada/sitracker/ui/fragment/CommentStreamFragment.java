@@ -17,36 +17,10 @@
 package com.andrada.sitracker.ui.fragment;
 
 import android.support.v4.app.Fragment;
-import android.view.ViewStub;
-import android.widget.ListView;
 
-import com.andrada.sitracker.R;
-import com.andrada.sitracker.ui.fragment.adapters.CommentStreamAdapter;
-
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.OptionsMenu;
-import org.androidannotations.annotations.ViewById;
 
-@EFragment(R.layout.fragment_listview_with_empty)
-@OptionsMenu(R.menu.newpubs_menu)
+@EFragment
 public class CommentStreamFragment extends Fragment {
 
-    @ViewById
-    ListView list;
-
-    @ViewById
-    ViewStub empty;
-
-    @Bean
-    CommentStreamAdapter adapter;
-
-    @AfterViews
-    void bindAdapter() {
-        list.setAdapter(adapter);
-        list.setBackgroundResource(R.drawable.authors_list_background);
-        empty.setLayoutResource(R.layout.empty_comment_stream);
-        list.setEmptyView(empty);
-    }
 }

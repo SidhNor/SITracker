@@ -16,7 +16,6 @@
 
 package com.andrada.sitracker.ui.fragment;
 
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
@@ -26,7 +25,6 @@ import android.view.ViewStub;
 import android.widget.ListView;
 
 import com.andrada.sitracker.R;
-import com.andrada.sitracker.events.AuthorMarkedAsReadEvent;
 import com.andrada.sitracker.ui.MultiSelectionUtil;
 import com.andrada.sitracker.ui.fragment.adapters.NewPubsAdapter;
 
@@ -56,20 +54,12 @@ public class NewPubsFragment extends Fragment implements MultiSelectionUtil.Mult
     private MultiSelectionUtil.Controller mMultiSelectionController;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setRetainInstance(true);
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
     public void onDestroy() {
         super.onDestroy();
         if (mMultiSelectionController != null) {
             mMultiSelectionController.finish();
         }
         mMultiSelectionController = null;
-        EventBus.getDefault().unregister(this);
     }
 
 
@@ -88,11 +78,6 @@ public class NewPubsFragment extends Fragment implements MultiSelectionUtil.Mult
     @OptionsItem(R.id.action_markread)
     void markAsReadSelected() {
 
-    }
-
-    public void onEvent(AuthorMarkedAsReadEvent event) {
-        //Just do a reload.
-        adapter.reloadPublications();
     }
 
     @Override

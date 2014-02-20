@@ -25,7 +25,7 @@
 
     <ExpandableListView
         android:id="@+id/publication_list"
-        android:divider="?android:attr/listDivider"
+        android:divider="@null"
         android:groupIndicator="@drawable/expander_group_holo_light"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
