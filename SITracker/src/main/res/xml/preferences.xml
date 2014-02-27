@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <!--
-  Copyright 2013 Gleb Godonoga.
+  Copyright 2014 Gleb Godonoga.
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@
     <PreferenceCategory
         android:title="@string/pref_content_title"
         android:key="pref_key_content_settings">
-        <EditTextPreference
+        <Preference
             android:key="downloadFolder"
             android:title="@string/pref_content_download_title"
             android:summary="@string/pref_content_download_summ"

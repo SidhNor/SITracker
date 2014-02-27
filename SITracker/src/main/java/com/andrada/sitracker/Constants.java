@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Gleb Godonoga.
+ * Copyright 2014 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,4 +71,5 @@ public class Constants {
     public static final String GA_EVENT_CHANGED_UPDATE_INTERVAL = "update_interval_changed";
     public static final String GA_EVENT_CLEAR_CACHED_PUBS = "clear_cached_publications";
 
+    public static final int REQUEST_DIRECTORY = 1681;
 }

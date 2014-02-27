@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  Copyright 2013 Gleb Godonoga.
+  Copyright 2014 Gleb Godonoga.
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -159,5 +159,17 @@
 
     <string name="pref_update_interval">Интервал обновлений</string>
     <string name="pref_header_title">Настройки</string>
+
+    <!--File picker stuff -->
+    <string name="fp_cancel_label">Отменить</string>
+    <string name="fp_confirm_label">Потвердить</string>
+    <string name="fp_selected_folder_label">Выберите папку:</string>
+    <string name="fp_create_folder_label">Создать папку</string>
+    <string name="fp_create_folder_msg">Создать папку с именем "%1$s"?</string>
+    <string name="fp_create_folder_success">Создать новую папку</string>
+    <string name="fp_create_folder_error_no_write_access">Невозможно записать в эту папку</string>
+    <string name="fp_create_folder_error_already_exists">Папка уже существует</string>
+    <string name="fp_create_folder_error">Не удалось создать папку</string>
+    <string name="fp_up_label">Вверх</string>
 
 </resources>

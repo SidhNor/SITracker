@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Gleb Godonoga.
+ * Copyright 2014 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
@@ -85,12 +84,29 @@ public class SettingsActivity extends PreferenceActivity implements
         }
     };
 
+    private final Preference.OnPreferenceClickListener dirChooserClickListener = new Preference.OnPreferenceClickListener() {
+        @Override
+        public boolean onPreferenceClick(Preference preference) {
+            final Intent chooserIntent = new Intent(getApplicationContext(), DirectoryChooserActivity.class);
+            chooserIntent.putExtra(DirectoryChooserActivity.EXTRA_NEW_DIR_NAME, "Books");
+            // REQUEST_DIRECTORY is a constant integer to identify the request, e.g. 0
+            startActivityForResult(chooserIntent, Constants.REQUEST_DIRECTORY);
+            return true;
+        }
+    };
+
     @Override
     protected void onResume() {
         super.onResume();
         getSharedPreferences(Constants.SI_PREF_NAME, MODE_MULTI_PROCESS).registerOnSharedPreferenceChangeListener(this);
         Preference pref = findPreference(Constants.PREF_CLEAR_SAVED_PUBS_KEY);
-        pref.setOnPreferenceClickListener(clickListener);
+        if (pref != null) {
+            pref.setOnPreferenceClickListener(clickListener);
+        }
+        Preference dirChooserPref = findPreference(Constants.CONTENT_DOWNLOAD_FOLDER_KEY);
+        if (dirChooserPref != null) {
+            dirChooserPref.setOnPreferenceClickListener(dirChooserClickListener);
+        }
         EasyTracker.getInstance().activityStart(this);
     }
 
@@ -99,8 +115,10 @@ public class SettingsActivity extends PreferenceActivity implements
         super.onPause();
         getSharedPreferences(Constants.SI_PREF_NAME, MODE_MULTI_PROCESS).unregisterOnSharedPreferenceChangeListener(this);
         Preference pref = findPreference(Constants.PREF_CLEAR_SAVED_PUBS_KEY);
-        pref.setOnPreferenceClickListener(null);
-        EasyTracker.getInstance().activityStop(this);
+        if (pref != null) {
+            pref.setOnPreferenceClickListener(null);
+            EasyTracker.getInstance().activityStop(this);
+        }
     }
 
 
@@ -146,11 +164,11 @@ public class SettingsActivity extends PreferenceActivity implements
     }
 
     private void setDownloadFolderSummary(String newValue) {
-        EditTextPreference pref = (EditTextPreference) findPreference(Constants.CONTENT_DOWNLOAD_FOLDER_KEY);
+        Preference pref = findPreference(Constants.CONTENT_DOWNLOAD_FOLDER_KEY);
         if (newValue == null || newValue.length() == 0) {
             pref.setSummary(getResources().getString(R.string.pref_content_download_summ));
         } else {
-            pref.setSummary(getResources().getString(R.string.pref_content_download_summ_short) + " SDCard/" + newValue);
+            pref.setSummary(getResources().getString(R.string.pref_content_download_summ_short) + " " + newValue);
         }
     }
 
@@ -166,5 +184,20 @@ public class SettingsActivity extends PreferenceActivity implements
         ListPreference authorsSortType = (ListPreference) findPreference(Constants.AUTHOR_SORT_TYPE_KEY);
         int sortType = Integer.parseInt(newValue);
         authorsSortType.setSummary(authorsSortType.getEntries()[sortType]);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == Constants.REQUEST_DIRECTORY) {
+            if (resultCode == DirectoryChooserActivity.RESULT_CODE_DIR_SELECTED) {
+                String absoluteDir = data.getStringExtra(DirectoryChooserActivity.RESULT_SELECTED_DIR);
+                SharedPreferences.Editor editor = getPreferenceManager().getSharedPreferences().edit();
+                editor.putString(Constants.CONTENT_DOWNLOAD_FOLDER_KEY, absoluteDir);
+                editor.commit();
+                setDownloadFolderSummary(absoluteDir);
+            }
+        }
     }
 }
