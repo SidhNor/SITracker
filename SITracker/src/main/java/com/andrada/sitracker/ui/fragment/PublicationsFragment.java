@@ -16,6 +16,7 @@
 
 package com.andrada.sitracker.ui.fragment;
 
+import android.app.backup.BackupManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -100,6 +101,8 @@ public class PublicationsFragment extends Fragment implements ExpandableListView
             //Just do a reload.
             updatePublicationsView(event.author.getId());
         }
+        BackupManager bm = new BackupManager(getActivity());
+        bm.dataChanged();
     }
 
     @UiThread

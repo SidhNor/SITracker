@@ -16,6 +16,7 @@
 
 package com.andrada.sitracker.ui.fragment;
 
+import android.app.backup.BackupManager;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -42,6 +43,7 @@ import com.andrada.sitracker.db.beans.Author;
 import com.andrada.sitracker.events.AuthorAddedEvent;
 import com.andrada.sitracker.events.AuthorSelectedEvent;
 import com.andrada.sitracker.events.AuthorSortMethodChanged;
+import com.andrada.sitracker.events.BackUpRestoredEvent;
 import com.andrada.sitracker.events.ProgressBarToggleEvent;
 import com.andrada.sitracker.events.PublicationMarkedAsReadEvent;
 import com.andrada.sitracker.tasks.UpdateAuthorsTask_;
@@ -57,6 +59,7 @@ import org.androidannotations.annotations.ItemClick;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.SystemService;
+import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -314,10 +317,16 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
             EasyTracker.getInstance().dispatch();
             adapter.removeAuthors(mSelectedAuthors);
             currentAuthorIndex = adapter.getSelectedAuthorId();
+            /*
+            BackupManager bm = new BackupManager(getActivity());
+            bm.dataChanged();
+            */
             EventBus.getDefault().post(new AuthorSelectedEvent(currentAuthorIndex));
             return true;
         } else if (item.getItemId() == R.id.action_mark_read) {
             adapter.markAuthorsRead(mSelectedAuthors);
+            BackupManager bm = new BackupManager(getActivity());
+            bm.dataChanged();
             return true;
         } else if (item.getItemId() == R.id.action_open_authors_browser) {
             for (int i = 0; i < adapter.getCount(); i++) {
@@ -349,6 +358,23 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
         if (event.refreshAuthor) {
             adapter.reloadAuthors();
         }
+    }
+
+    public void onEvent(BackUpRestoredEvent event) {
+        if (adapter != null) {
+            adapter.reloadAuthors();
+            this.showSuccessfulRestore();
+        }
+    }
+
+    @UiThread
+    protected void showSuccessfulRestore() {
+        String message = getResources().getString(R.string.backup_restored_crouton_message);
+        Style.Builder alertStyle = new Style.Builder()
+                .setTextAppearance(android.R.attr.textAppearanceLarge)
+                .setPaddingInPixels(25);
+        alertStyle.setBackgroundColorValue(Style.holoGreenLight);
+        Crouton.makeText(getActivity(), message, alertStyle.build()).show();
     }
 
 
@@ -393,6 +419,9 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
             adapter.setSelectedItem(currentAuthorIndex);
             adapter.notifyDataSetChanged();
         }
+
+        BackupManager bm = new BackupManager(getActivity());
+        bm.dataChanged();
     }
 
     //endregion

@@ -14,21 +14,7 @@
  * limitations under the License.
  */
 
-buildscript {
-    repositories {
-        mavenCentral();
-        maven {
-            url "https://oss.sonatype.org/content/repositories/snapshots"
-        }
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:0.8.+'
-        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.2'
-    }
-}
+package com.andrada.sitracker.events;
 
-allprojects {
-    repositories {
-        mavenCentral()
-    }
+public class BackUpRestoredEvent {
 }

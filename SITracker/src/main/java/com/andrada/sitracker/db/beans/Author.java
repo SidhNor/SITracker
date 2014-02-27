@@ -23,11 +23,15 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.Date;
 
 @DatabaseTable(daoClass = AuthorDaoImpl.class, tableName = "authors")
-public class Author {
+public class Author implements Serializable {
+
+    private static final long serialVersionUID = -4329046928579678402L;
+
     @DatabaseField(generatedId = true, useGetSet = true, columnName = "_id")
     long id;
     @DatabaseField(canBeNull = false, useGetSet = true)
@@ -44,7 +48,7 @@ public class Author {
     Boolean isNew;
 
     @ForeignCollectionField(eager = false)
-    ForeignCollection<Publication> publications;
+    transient ForeignCollection<Publication> publications;
 
     public Author() {
         updateDate = new Date();

@@ -18,6 +18,7 @@ package com.andrada.sitracker.tasks;
 
 import android.annotation.SuppressLint;
 import android.app.IntentService;
+import android.app.backup.BackupManager;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -180,7 +181,6 @@ public class UpdateAuthorsTask extends IntentService {
                 Publication old = oldItemsMap.get(pub.getUrl());
                 //Check size/name/description
                 if (pub.getSize() != old.getSize() ||
-                        !pub.getDescription().equals(old.getDescription()) ||
                         !pub.getName().equals(old.getName())) {
                     //if something differs
                     //Store the old size
@@ -215,6 +215,8 @@ public class UpdateAuthorsTask extends IntentService {
         if (success) {
             broadcastIntent.setAction(UpdateSuccessfulIntentMessage.SUCCESS_MESSAGE);
             broadcastIntent.putExtra(Constants.NUMBER_OF_UPDATED_AUTHORS, this.updatedAuthors);
+            BackupManager bm = new BackupManager(this.getApplicationContext());
+            bm.dataChanged();
         } else {
             broadcastIntent = broadcastIntent.setAction(UpdateFailedIntentMessage.FAILED_MESSAGE);
         }

@@ -33,7 +33,11 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:name="com.andrada.sitracker.SITrackerApp"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:backupAgent=".util.SiBackupAgent">
+
+        <meta-data android:name="com.google.android.backup.api_key"
+            android:value="AEdPqrEAAAAIO-o9YYeEHO2HMe1a0hktEmHxPWxJY_Rhq_BKOQ" />
 
         <!-- Activities for both phones and tablets -->
         <activity

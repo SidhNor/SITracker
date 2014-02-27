@@ -84,6 +84,7 @@
     <string name="notification_title">Прода</string>
     <string name="update_failed_crouton_message">Не удалось обновить авторов.</string>
     <string name="author_add_success_crouton_message">Автор добавлен</string>
+    <string name="backup_restored_crouton_message">Бэк-ап данных востановлен</string>
     <string name="no_authors">Вы пока не добавили никаких авторов</string>
     <string name="no_newpubs">Проды нет :(</string>
     <plurals name="authors_selected">
@@ -158,4 +159,5 @@
 
     <string name="pref_update_interval">Интервал обновлений</string>
     <string name="pref_header_title">Настройки</string>
+
 </resources>
