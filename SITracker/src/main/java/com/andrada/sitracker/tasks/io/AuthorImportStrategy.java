@@ -14,21 +14,11 @@
  * limitations under the License.
  */
 
-buildscript {
-    repositories {
-        mavenCentral();
-        maven {
-            url "https://oss.sonatype.org/content/repositories/snapshots"
-        }
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:0.9.+'
-        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.2'
-    }
-}
+package com.andrada.sitracker.tasks.io;
 
-allprojects {
-    repositories {
-        mavenCentral()
-    }
+import java.util.List;
+
+public interface AuthorImportStrategy {
+
+    List<String> extractAuthorsFromFile(String absoluteFilename);
 }

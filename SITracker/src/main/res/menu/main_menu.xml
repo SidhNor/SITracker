@@ -23,4 +23,9 @@
             android:orderInCategory="100"
             sitracker:showAsAction="never"
             android:title="@string/action_settings"/>
+    <item
+        android:id="@+id/action_import"
+        android:orderInCategory="101"
+        sitracker:showAsAction="never"
+        android:title="@string/action_import"/>
 </menu>

@@ -184,6 +184,11 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
         startActivity(com.andrada.sitracker.ui.SettingsActivity_.intent(this).get());
     }
 
+    @OptionsItem(R.id.action_import)
+    void menuImportSelected() {
+        startActivity(com.andrada.sitracker.ui.ImportAuthorsActivity_.intent(this).get());
+    }
+
     /**
      * This global layout listener is used to fire an event after first layout
      * occurs and then it is removed. This gives us a chance to configure parts

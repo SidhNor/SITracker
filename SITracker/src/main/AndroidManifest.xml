@@ -59,7 +59,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.andrada.sitracker.ui.HomeActivity_" />
         </activity>
-
+        <activity
+            android:name=".ui.ImportAuthorsActivity_"
+            android:label="@string/title_import"
+            android:parentActivityName="com.andrada.sitracker.ui.HomeActivity_">
+            <!-- Parent activity meta-data to support API level 7+ -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.andrada.sitracker.ui.HomeActivity_" />
+        </activity>
         <activity android:name="com.andrada.sitracker.ui.DirectoryChooserActivity" />
 
         <!-- Phone-only activities -->

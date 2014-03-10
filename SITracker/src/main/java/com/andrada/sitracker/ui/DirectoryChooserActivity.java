@@ -32,6 +32,7 @@ import com.andrada.sitracker.ui.fragment.DirectoryChooserFragment;
 public class DirectoryChooserActivity extends BaseActivity implements
         DirectoryChooserFragment.OnFragmentInteractionListener {
     public static final String EXTRA_NEW_DIR_NAME = "directory_name";
+    public static final String EXTRA_IS_DIRECTORY_CHOOSER = "is_directory_chooser";
 
     /**
      * Extra to define the path of the directory that will be shown first.
@@ -53,6 +54,7 @@ public class DirectoryChooserActivity extends BaseActivity implements
 
         final String newDirName = getIntent().getStringExtra(EXTRA_NEW_DIR_NAME);
         final String initialDir = getIntent().getStringExtra(EXTRA_INITIAL_DIRECTORY);
+        final Boolean isDirectoryChooser = getIntent().getBooleanExtra(EXTRA_IS_DIRECTORY_CHOOSER, true);
 
         if (newDirName == null) {
             throw new IllegalArgumentException(
@@ -61,7 +63,7 @@ public class DirectoryChooserActivity extends BaseActivity implements
 
         if (savedInstanceState == null) {
             final FragmentManager fragmentManager = getSupportFragmentManager();
-            final DirectoryChooserFragment fragment = DirectoryChooserFragment.newInstance(newDirName, initialDir);
+            final DirectoryChooserFragment fragment = DirectoryChooserFragment.newInstance(newDirName, initialDir, isDirectoryChooser);
             fragmentManager.beginTransaction().add(R.id.fp_main, fragment)
                     .commit();
         }

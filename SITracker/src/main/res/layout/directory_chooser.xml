@@ -71,7 +71,7 @@
             android:layout_marginTop="8dp"
             android:layout_toRightOf="@id/btnNavUp"
             android:text="@string/fp_selected_folder_label"
-            android:textStyle="bold"></TextView>
+            android:textStyle="bold"/>
 
         <TextView
             android:id="@+id/txtvSelectedFolder"

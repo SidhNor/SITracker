@@ -43,10 +43,10 @@ dependencies {
     }
     compile files('libs/volley.jar')
     compile files('libs/libGoogleAnalyticsV2.jar')
-    instrumentTestCompile 'com.squareup:fest-android:1.0.5'
+    androidTestCompile 'com.squareup:fest-android:1.0.5'
 }
 
-tasks.withType(Compile) {
+tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
 }
 

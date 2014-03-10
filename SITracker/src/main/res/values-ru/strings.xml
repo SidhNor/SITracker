@@ -19,6 +19,7 @@
     <string name="app_name">СИ Трекер</string>
     <string name="title_settings">Настройки</string>
     <string name="title_publications">Произведения</string>
+    <string name="title_import">Импорт авторов</string>
     <string name="title_publications_details">Детали произведения</string>
     <string name="title_comment_stream">Комментарии</string>
 
@@ -28,6 +29,7 @@
     <string name="action_markread">Отметить как прочитаное</string>
     <string name="action_clear_saved_pubs">Удалить кэшированные</string>
     <string name="action_delete">Удалить автора</string>
+    <string name="action_import">Импорт</string>
     <string name="action_open_in_browser">Открыть выбранных в браузере</string>
     <string name="add_author_placeholder">samlib.ru/a/avtor</string>
     <string name="designtime_placeholder_long">Lorem ipsum dolor sit amet, consectetur adipiscing
@@ -39,6 +41,8 @@
     <string name="designtime_placeholder_short">Lorem ipsum dolor</string>
     <string name="designtime_placeholder_size">615+3kb</string>
     <string name="designtime_placeholder_date">Май 28</string>
+
+    <string name="cannot_import_authors_from_file">Не удалось импортировать авторов из файла.</string>
     <string name="cannot_add_author">Не удалось добавить автора.</string>
     <string name="cannot_add_author_internal">Не удалось добавить автора. Непредвиденная ошибка.
     </string>
@@ -121,6 +125,9 @@
 
     <string name="no_network_error">Нет соединения</string>
     <string name="no_network_retry">ЕЩЕ РАЗ</string>
+    <string name="replace_authors_at_import">Заменить нынешних авторов при импорте</string>
+    <string name="choose_import_file">Выберите файл</string>
+    <string name="perform_import">Импорт</string>
 
     <!--Preferences -->
 
@@ -163,7 +170,8 @@
     <!--File picker stuff -->
     <string name="fp_cancel_label">Отменить</string>
     <string name="fp_confirm_label">Потвердить</string>
-    <string name="fp_selected_folder_label">Выберите папку:</string>
+    <string name="fp_selected_folder_label">Выбранная папка:</string>
+    <string name="fp_selected_file_label">Выбранный файл:</string>
     <string name="fp_create_folder_label">Создать папку</string>
     <string name="fp_create_folder_msg">Создать папку с именем "%1$s"?</string>
     <string name="fp_create_folder_success">Создать новую папку</string>
