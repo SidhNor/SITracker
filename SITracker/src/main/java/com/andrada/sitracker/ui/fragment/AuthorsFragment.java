@@ -219,7 +219,6 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
         // Set the item as checked to be highlighted
         adapter.setSelectedItem(currentAuthorIndex);
         adapter.notifyDataSetChanged();
-
     }
 
     private void toggleUpdatingState() {

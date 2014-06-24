@@ -125,7 +125,7 @@
 
     <string name="no_network_error">Нет соединения</string>
     <string name="no_network_retry">ЕЩЕ РАЗ</string>
-    <string name="replace_authors_at_import">Заменить нынешних авторов при импорте</string>
+    <string name="replace_authors_at_import">Удалить нынешних авторов при импорте</string>
     <string name="choose_import_file">Выберите файл</string>
     <string name="perform_import">Импорт</string>
 

@@ -32,6 +32,7 @@ import android.widget.TextView;
 
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
+import com.andrada.sitracker.tasks.AddAuthorTask;
 import com.andrada.sitracker.tasks.io.AuthorFileImportContext;
 import com.andrada.sitracker.tasks.io.AuthorImportStrategy;
 import com.andrada.sitracker.tasks.io.PlainTextAuthorImport;
@@ -68,6 +69,8 @@ public class ImportAuthorsActivity extends BaseActivity{
     @ViewById
     ListView list;
 
+    private List<String> authorsToImport;
+
     @Click(R.id.chooseFileButton)
     void chooseFileClicked() {
         //Make sure the authors are opened
@@ -75,6 +78,19 @@ public class ImportAuthorsActivity extends BaseActivity{
         chooserIntent.putExtra(DirectoryChooserActivity.EXTRA_NEW_DIR_NAME, "Books");
         chooserIntent.putExtra(DirectoryChooserActivity.EXTRA_IS_DIRECTORY_CHOOSER, false);
         startActivityForResult(chooserIntent, Constants.REQUEST_DIRECTORY);
+    }
+
+    @Click(R.id.performImportButton)
+    void importParsedAuthors() {
+        if (authorsToImport != null) {
+            Boolean shouldOverwrite = false;
+            if (overwriteAuthorsCheckbox.isChecked()) {
+                shouldOverwrite = true;
+            }
+            for (String author : authorsToImport) {
+                new AddAuthorTask(this).execute(author);
+            }
+        }
     }
 
 
@@ -99,6 +115,7 @@ public class ImportAuthorsActivity extends BaseActivity{
     @UiThread
     void showParseResults(List<String> authorLinks) {
         if (authorLinks != null && authorLinks.size() > 0) {
+            authorsToImport = authorLinks;
             list.setAdapter(new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1, authorLinks) {
                 @Override
                 public View getView(int position, View convertView,
@@ -112,6 +129,7 @@ public class ImportAuthorsActivity extends BaseActivity{
             performImportButton.setEnabled(true);
         } else {
             list.setAdapter(null);
+            authorsToImport = null;
             performImportButton.setEnabled(false);
             Crouton.makeText(this, getResources().getString(R.string.cannot_import_authors_from_file), Style.ALERT).show();
         }

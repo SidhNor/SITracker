@@ -113,7 +113,7 @@
         </item>
     </plurals>
 
-    <string name="replace_authors_at_import">Replace current authors during import</string>
+    <string name="replace_authors_at_import">Remove current authors during import</string>
     <string name="choose_import_file">Pick file</string>
     <string name="perform_import">Import</string>
 

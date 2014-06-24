@@ -36,7 +36,7 @@ dependencies {
     compile 'org.apache.commons:commons-lang3:3.0'
     compile 'com.j256.ormlite:ormlite-android:4.47'
     compile 'com.github.kevinsawicki:http-request:4.2'
-    compile 'de.greenrobot:eventbus:2.0.2'
+    compile 'de.greenrobot:eventbus:2.2.0'
     compile('de.keyboardsurfer.android.widget:crouton:1.8.1') {
         exclude module: 'support-v4'
         compile 'com.android.support:support-v4:+'
