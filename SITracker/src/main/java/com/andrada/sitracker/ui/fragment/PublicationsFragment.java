@@ -101,8 +101,6 @@ public class PublicationsFragment extends Fragment implements ExpandableListView
             //Just do a reload.
             updatePublicationsView(event.author.getId());
         }
-        BackupManager bm = new BackupManager(getActivity());
-        bm.dataChanged();
     }
 
     @UiThread

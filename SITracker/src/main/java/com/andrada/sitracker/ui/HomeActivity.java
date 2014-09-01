@@ -19,6 +19,7 @@ package com.andrada.sitracker.ui;
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.app.backup.BackupManager;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.support.v4.app.FragmentManager;
@@ -32,7 +33,9 @@ import android.widget.ProgressBar;
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.SIPrefs_;
+import com.andrada.sitracker.events.AuthorMarkedAsReadEvent;
 import com.andrada.sitracker.events.ProgressBarToggleEvent;
+import com.andrada.sitracker.events.PublicationMarkedAsReadEvent;
 import com.andrada.sitracker.tasks.UpdateAuthorsTask_;
 import com.andrada.sitracker.tasks.filters.UpdateStatusMessageFilter;
 import com.andrada.sitracker.tasks.receivers.UpdateStatusReceiver;
@@ -52,6 +55,9 @@ import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.res.StringRes;
 import org.androidannotations.annotations.sharedpreferences.Pref;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import de.greenrobot.event.EventBus;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 
@@ -61,30 +67,83 @@ import de.keyboardsurfer.android.widget.crouton.Crouton;
 @OptionsMenu(R.menu.main_menu)
 public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoaderProvider {
 
+    private static final long BACK_UP_DELAY = 30000L;
+    /**
+     * This global layout listener is used to fire an event after first layout
+     * occurs and then it is removed. This gives us a chance to configure parts
+     * of the UI that adapt based on available space after they have had the
+     * opportunity to measure and layout.
+     */
+    final ViewTreeObserver.OnGlobalLayoutListener globalLayoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
+        @SuppressLint("NewApi")
+        @Override
+        public void onGlobalLayout() {
+
+            if (UIUtils.hasJellyBean()) {
+                slidingPane.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            } else {
+                //noinspection deprecation
+                slidingPane.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+            }
+
+            if (slidingPane.isSlideable() && !slidingPane.isOpen()) {
+                updateActionBarWithoutLandingNavigation();
+            } else {
+                updateActionBarWithHomeBackNavigation();
+            }
+        }
+    };
+    /**
+     * This back stack listener is used to simulate standard fragment backstack behavior
+     * for back button when panes are slid back and forth.
+     */
+    final FragmentManager.OnBackStackChangedListener backStackListener = new FragmentManager.OnBackStackChangedListener() {
+        @Override
+        public void onBackStackChanged() {
+            if (slidingPane.isSlideable() &&
+                    !slidingPane.isOpen() &&
+                    getSupportFragmentManager().getBackStackEntryCount() == 0) {
+                slidingPane.openPane();
+            }
+        }
+    };
+    final SlidingPaneLayout.SimplePanelSlideListener slidingPaneListener = new SlidingPaneLayout.SimplePanelSlideListener() {
+
+        public void onPanelOpened(View view) {
+            EasyTracker.getTracker().sendView(Constants.GA_SCREEN_AUTHORS);
+            if (slidingPane.isSlideable()) {
+                updateActionBarWithHomeBackNavigation();
+                getSupportFragmentManager().popBackStack();
+            }
+        }
+
+        public void onPanelClosed(View view) {
+            EasyTracker.getTracker().sendView(Constants.GA_SCREEN_PUBLICATIONS);
+            //This is called only on phones and 7 inch tablets in portrait
+            updateActionBarWithoutLandingNavigation();
+            getSupportFragmentManager().beginTransaction().addToBackStack(null).commit();
+        }
+    };
+
+
     @FragmentById(R.id.fragment_publications)
     PublicationsFragment mPubFragment;
-
     @FragmentById(R.id.fragment_authors)
     AuthorsFragment mAuthorsFragment;
-
     @ViewById(R.id.fragment_container)
     SlidingPaneLayout slidingPane;
-
     @ViewById
     ProgressBar globalProgress;
-
     @SystemService
     AlarmManager alarmManager;
-
     @Pref
     SIPrefs_ prefs;
-
-    PendingIntent updatePendingIntent;
-
-    private ImageLoader mImageLoader;
-
     @StringRes(R.string.app_name)
     String mAppName;
+    private Timer backUpTimer = new Timer();
+    private TimerTask backUpTask;
+    private ImageLoader mImageLoader;
+    private BroadcastReceiver updateStatusReceiver;
 
     @AfterViews
     public void afterViews() {
@@ -94,8 +153,6 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
 
 
         slidingPane.getViewTreeObserver().addOnGlobalLayoutListener(globalLayoutListener);
-        Intent intent = UpdateAuthorsTask_.intent(this.getApplicationContext()).get();
-        this.updatePendingIntent = PendingIntent.getService(this.getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         ensureUpdatesAreRunningOnSchedule();
 
         mImageLoader = new ImageLoader(this, R.drawable.blank_book)
@@ -108,8 +165,6 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
         //Do not show menu in actionbar if authors are updating
         return mAuthorsFragment == null || !mAuthorsFragment.isUpdating();
     }
-
-    private BroadcastReceiver updateStatusReceiver;
 
     @Override
     protected void onCreate(android.os.Bundle savedInstanceState) {
@@ -154,13 +209,19 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
 
     public void ensureUpdatesAreRunningOnSchedule() {
         Boolean isSyncing = prefs.updatesEnabled().get();
-        alarmManager.cancel(this.updatePendingIntent);
-        if (isSyncing) {
+        Intent intent = UpdateAuthorsTask_.intent(this.getApplicationContext()).get();
+        boolean updateServiceUp = PendingIntent.getService(this.getApplicationContext(), 0, intent, PendingIntent.FLAG_NO_CREATE) != null;
+        if (isSyncing && !updateServiceUp) {
+            //We need to schedule the update
+            PendingIntent pendingInt = PendingIntent.getService(this.getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
             long updateInterval = Long.parseLong(prefs.updateInterval().get());
             alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP,
                     System.currentTimeMillis(),
                     updateInterval,
-                    this.updatePendingIntent);
+                    pendingInt);
+        } else if (!isSyncing && updateServiceUp) {
+            //We need to cancel
+            alarmManager.cancel(PendingIntent.getService(this.getApplicationContext(), 0, intent, PendingIntent.FLAG_NO_CREATE));
         }
     }
 
@@ -189,66 +250,6 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
         startActivity(com.andrada.sitracker.ui.ImportAuthorsActivity_.intent(this).get());
     }
 
-    /**
-     * This global layout listener is used to fire an event after first layout
-     * occurs and then it is removed. This gives us a chance to configure parts
-     * of the UI that adapt based on available space after they have had the
-     * opportunity to measure and layout.
-     */
-    final ViewTreeObserver.OnGlobalLayoutListener globalLayoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
-        @SuppressLint("NewApi")
-        @Override
-        public void onGlobalLayout() {
-
-            if (UIUtils.hasJellyBean()) {
-                slidingPane.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-            } else {
-                //noinspection deprecation
-                slidingPane.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-            }
-
-            if (slidingPane.isSlideable() && !slidingPane.isOpen()) {
-                updateActionBarWithoutLandingNavigation();
-            } else {
-                updateActionBarWithHomeBackNavigation();
-            }
-        }
-    };
-
-    /**
-     * This back stack listener is used to simulate standard fragment backstack behavior
-     * for back button when panes are slid back and forth.
-     */
-    final FragmentManager.OnBackStackChangedListener backStackListener = new FragmentManager.OnBackStackChangedListener() {
-        @Override
-        public void onBackStackChanged() {
-            if (slidingPane.isSlideable() &&
-                    !slidingPane.isOpen() &&
-                    getSupportFragmentManager().getBackStackEntryCount() == 0) {
-                slidingPane.openPane();
-            }
-        }
-    };
-
-
-    final SlidingPaneLayout.SimplePanelSlideListener slidingPaneListener = new SlidingPaneLayout.SimplePanelSlideListener() {
-
-        public void onPanelOpened(View view) {
-            EasyTracker.getTracker().sendView(Constants.GA_SCREEN_AUTHORS);
-            if (slidingPane.isSlideable()) {
-                updateActionBarWithHomeBackNavigation();
-                getSupportFragmentManager().popBackStack();
-            }
-        }
-
-        public void onPanelClosed(View view) {
-            EasyTracker.getTracker().sendView(Constants.GA_SCREEN_PUBLICATIONS);
-            //This is called only on phones and 7 inch tablets in portrait
-            updateActionBarWithoutLandingNavigation();
-            getSupportFragmentManager().beginTransaction().addToBackStack(null).commit();
-        }
-    };
-
     private void updateActionBarWithoutLandingNavigation() {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
@@ -270,6 +271,28 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
         } else {
             this.globalProgress.setVisibility(View.GONE);
         }
+    }
+
+    public void onEvent(AuthorMarkedAsReadEvent event) {
+        this.scheduleBackup();
+    }
+
+    public void onEvent(PublicationMarkedAsReadEvent event) {
+        this.scheduleBackup();
+    }
+
+    private void scheduleBackup() {
+        if (this.backUpTask != null) {
+            this.backUpTask.cancel();
+        }
+        this.backUpTask = new TimerTask() {
+            @Override
+            public void run() {
+                BackupManager bm = new BackupManager(getApplicationContext());
+                bm.dataChanged();
+            }
+        };
+        backUpTimer.schedule(this.backUpTask, BACK_UP_DELAY);
     }
 
     public AuthorsFragment getAuthorsFragment() {

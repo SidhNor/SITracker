@@ -74,7 +74,7 @@
     </string>
     <string name="publications_downloading">Downloading publication…</string>
 
-    <string name="check_for_kupdates">Checking for updates</string>
+    <string name="check_for_updates">Checking for updates</string>
     <string name="action_add_ok">Add</string>
     <string name="notification_title">SITracker Updates</string>
     <string name="update_failed_crouton_message">Update failed for an unexpected reason.</string>
