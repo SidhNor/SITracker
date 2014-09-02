@@ -14,21 +14,23 @@
  * limitations under the License.
  */
 
-buildscript {
-    repositories {
-        mavenCentral();
-        maven {
-            url "https://oss.sonatype.org/content/repositories/snapshots"
-        }
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:0.12.1'
-        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.4+'
-    }
-}
+package com.andrada.sitracker.reader;
 
-allprojects {
-    repositories {
-        mavenCentral()
+import com.andrada.sitracker.db.manager.SiDBHelper;
+
+public class SiteDetector {
+
+    public static SiteStrategy chooseStrategy(String url, SiDBHelper helper) {
+        url = url.toLowerCase().trim();
+        if (url.contains("samlib.ru")) {
+            return new Samlib(helper);
+        }
+        if (url.contains("zhurnal.lib.ru")) {
+            return new Samlib(helper);
+        }
+        if (url.contains("budclub.ru")) {
+            return new Samlib(helper);
+        }
+        return null;
     }
 }

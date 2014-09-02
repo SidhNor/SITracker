@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Gleb Godonoga.
+ * Copyright 2014 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.andrada.sitracker.util;
+package com.andrada.sitracker.reader;
 
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.db.beans.Author;
@@ -29,75 +29,30 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class SamlibPageParser {
+public class SamlibAuthorPageReader implements AuthorPageReader {
 
-    public static Author getAuthor(String pageContent, String url) throws AddAuthorException {
+    private String pageContent;
+
+    public SamlibAuthorPageReader(String page) {
+        this.pageContent = this.sanitizeHTML(page);
+    }
+
+    @Override
+    public Author getAuthor(String url) throws AddAuthorException {
         Author author = new Author();
         author.setUrl(url);
-        author.setName(getAuthorName(pageContent));
-        author.setUpdateDate(getAuthorUpdateDate(pageContent));
-        author.setAuthorDescription(getAuthorDescription(pageContent));
-        author.setAuthorImageUrl(getAuthorImageUrl(pageContent, url));
+        author.setName(getAuthorName());
+        author.setUpdateDate(getAuthorUpdateDate());
+        author.setAuthorDescription(getAuthorDescription());
+        author.setAuthorImageUrl(getAuthorImageUrl(url));
         return author;
     }
 
-    public static String getAuthorImageUrl(String pageContent, String authorUrl) {
-        authorUrl = authorUrl.replace(Constants.AUTHOR_PAGE_URL_ENDING_WO_SLASH, "");
-        Pattern pattern = Pattern.compile(Constants.AUTHOR_IMAGE_REGEX, Pattern.MULTILINE);
-        Matcher matcher = pattern.matcher(pageContent);
-        String imageUrl = null;
-        if (matcher.find()) {
-            imageUrl = (matcher.group(2));
-            if (imageUrl != null) imageUrl = authorUrl + imageUrl;
-        }
-        return imageUrl;
-    }
-
-    public static String getAuthorDescription(String pageContent) {
-        Pattern pattern = Pattern.compile(Constants.AUTHOR_DESCRIPTION_TEXT_REGEX, Pattern.MULTILINE);
-        Matcher matcher = pattern.matcher(pageContent);
-        String descriptionText = null;
-        if (matcher.find()) {
-            descriptionText = (matcher.group(1));
-        }
-        return descriptionText;
-    }
-
-    public static String getAuthorName(String pageContent) throws AddAuthorException {
-        int index = pageContent.indexOf('.', pageContent.indexOf("<title>")) + 1;
-        if (index == -1) {
-            throw new AddAuthorException(AddAuthorException.AuthorAddErrors.AUTHOR_NAME_NOT_FOUND);
-        }
-        int secondPointIndex = pageContent.indexOf(".", index);
-        if (secondPointIndex == -1) {
-            throw new AddAuthorException(AddAuthorException.AuthorAddErrors.AUTHOR_NAME_NOT_FOUND);
-        }
-        String authorName = pageContent.substring(index, secondPointIndex);
-        if (authorName == null || "".equals(authorName.trim())) {
-            throw new AddAuthorException(AddAuthorException.AuthorAddErrors.AUTHOR_NAME_NOT_FOUND);
-        }
-        return authorName;
-    }
-
-    public static Date getAuthorUpdateDate(String pageContent) throws AddAuthorException {
-        Pattern pattern = Pattern.compile(Constants.AUTHOR_UPDATE_DATE_REGEX, Pattern.MULTILINE);
-        Matcher matcher = pattern.matcher(pageContent);
-        Date date = new Date();
-        if (matcher.find()) {
-            SimpleDateFormat ft = new SimpleDateFormat(Constants.AUTHOR_UPDATE_DATE_FORMAT);
-            try {
-                date = ft.parse(matcher.group(1));
-            } catch (ParseException e) {
-                throw new AddAuthorException(AddAuthorException.AuthorAddErrors.AUTHOR_DATE_NOT_FOUND);
-            }
-        }
-        return date;
-    }
-
-    public static List<Publication> getPublications(String body, Author author) {
+    @Override
+    public List<Publication> getPublications(Author author) {
         ArrayList<Publication> publicationList = new ArrayList<Publication>();
         Pattern pattern = Pattern.compile(Constants.PUBLICATIONS_REGEX, Pattern.CASE_INSENSITIVE);
-        Matcher matcher = pattern.matcher(body);
+        Matcher matcher = pattern.matcher(pageContent);
         while (matcher.find()) {
 
             Publication item = new Publication();
@@ -141,21 +96,37 @@ public class SamlibPageParser {
         return publicationList;
     }
 
-    private static String extractImage(String itemDescription) {
-        String imgUrl = null;
-
-        Pattern pattern = Pattern.compile("(<a[^>]*>)?\\s*?<img src=[\"'](.*?)[\"'][^>]*>\\s?(</a>)?");
-        Matcher matcher = pattern.matcher(itemDescription);
+    @Override
+    public String getAuthorImageUrl(String authorUrl) {
+        authorUrl = authorUrl.replace(Constants.AUTHOR_PAGE_URL_ENDING_WO_SLASH, "");
+        Pattern pattern = Pattern.compile(Constants.AUTHOR_IMAGE_REGEX, Pattern.MULTILINE);
+        Matcher matcher = pattern.matcher(pageContent);
+        String imageUrl = null;
         if (matcher.find()) {
-            String match = matcher.group(2);
-            if (match != null) {
-                imgUrl = match.trim();
-            }
+            imageUrl = (matcher.group(2));
+            if (imageUrl != null) imageUrl = authorUrl + imageUrl;
         }
-        return imgUrl;
+        return imageUrl;
     }
 
-    public static String sanitizeHTML(String value) {
+    @Override
+    public String getAuthorDescription() {
+        Pattern pattern = Pattern.compile(Constants.AUTHOR_DESCRIPTION_TEXT_REGEX, Pattern.MULTILINE);
+        Matcher matcher = pattern.matcher(pageContent);
+        String descriptionText = null;
+        if (matcher.find()) {
+            descriptionText = (matcher.group(1));
+        }
+        return descriptionText;
+    }
+
+    @Override
+    public boolean isPageBlank() {
+        return pageContent == null || pageContent.length() == 0;
+    }
+
+
+    private String sanitizeHTML(String value) {
         value = value.replaceAll("(?i)<br />", "<br>")
                 .replaceAll("(?i)&bull;?", " * ")
                 .replaceAll("(?i)&lsaquo;?", "<")
@@ -172,7 +143,7 @@ public class SamlibPageParser {
         return value;
     }
 
-    public static String escapeHTML(String value) {
+    private static String escapeHTML(String value) {
         value = value.replaceAll("(?si)[\\r\\n\\x85\\f]+", "")
                 .replaceAll("(?i)<(br|li)[^>]*>", "\n")
                 .replaceAll("(?i)<td[^>]*>", "\t")
@@ -183,10 +154,48 @@ public class SamlibPageParser {
         return value;
     }
 
-    public static String stripDescriptionOfImages(String value) {
-        value = value.replaceAll("(<a[^>]*>)?\\s*?<img[^>]*>\\s?(</a>)?", "")
-                .replaceAll("<br/?>", "")
-                .replaceAll("<a[^>]*>\\s?Иллюстрации.[^>]*a>", "");
-        return value;
+    private static String extractImage(String itemDescription) {
+        String imgUrl = null;
+
+        Pattern pattern = Pattern.compile("(<a[^>]*>)?\\s*?<img src=[\"'](.*?)[\"'][^>]*>\\s?(</a>)?");
+        Matcher matcher = pattern.matcher(itemDescription);
+        if (matcher.find()) {
+            String match = matcher.group(2);
+            if (match != null) {
+                imgUrl = match.trim();
+            }
+        }
+        return imgUrl;
+    }
+
+    private String getAuthorName() throws AddAuthorException {
+        int index = pageContent.indexOf('.', pageContent.indexOf("<title>")) + 1;
+        if (index == -1) {
+            throw new AddAuthorException(AddAuthorException.AuthorAddErrors.AUTHOR_NAME_NOT_FOUND);
+        }
+        int secondPointIndex = pageContent.indexOf(".", index);
+        if (secondPointIndex == -1) {
+            throw new AddAuthorException(AddAuthorException.AuthorAddErrors.AUTHOR_NAME_NOT_FOUND);
+        }
+        String authorName = pageContent.substring(index, secondPointIndex);
+        if ("".equals(authorName.trim())) {
+            throw new AddAuthorException(AddAuthorException.AuthorAddErrors.AUTHOR_NAME_NOT_FOUND);
+        }
+        return authorName;
+    }
+
+    private Date getAuthorUpdateDate() throws AddAuthorException {
+        Pattern pattern = Pattern.compile(Constants.AUTHOR_UPDATE_DATE_REGEX, Pattern.MULTILINE);
+        Matcher matcher = pattern.matcher(pageContent);
+        Date date = new Date();
+        if (matcher.find()) {
+            SimpleDateFormat ft = new SimpleDateFormat(Constants.AUTHOR_UPDATE_DATE_FORMAT);
+            try {
+                date = ft.parse(matcher.group(1));
+            } catch (ParseException e) {
+                throw new AddAuthorException(AddAuthorException.AuthorAddErrors.AUTHOR_DATE_NOT_FOUND);
+            }
+        }
+        return date;
     }
 }

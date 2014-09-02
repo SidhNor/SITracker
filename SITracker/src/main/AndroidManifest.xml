@@ -145,6 +145,7 @@
         <service android:name=".tasks.ClearPublicationCacheTask" />
         <!-- Authors update components -->
         <service android:name=".tasks.UpdateAuthorsTask_" />
+        <service android:name=".tasks.ImportAuthorsTask_" />
         <receiver
             android:name=".tasks.receivers.UpdateStatusNotificationReceiver"
             android:exported="false">

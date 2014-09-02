@@ -14,21 +14,20 @@
  * limitations under the License.
  */
 
-buildscript {
-    repositories {
-        mavenCentral();
-        maven {
-            url "https://oss.sonatype.org/content/repositories/snapshots"
-        }
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:0.12.1'
-        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.4+'
-    }
-}
+package com.andrada.sitracker.reader;
 
-allprojects {
-    repositories {
-        mavenCentral()
-    }
+import com.andrada.sitracker.db.beans.Author;
+import com.andrada.sitracker.db.beans.Publication;
+import com.andrada.sitracker.exceptions.AddAuthorException;
+
+import java.util.List;
+
+public interface AuthorPageReader {
+
+    Author getAuthor(String url) throws AddAuthorException;
+    List<Publication> getPublications(Author author);
+    String getAuthorImageUrl(String authorUrl);
+    String getAuthorDescription();
+    boolean isPageBlank();
+
 }

@@ -14,21 +14,15 @@
  * limitations under the License.
  */
 
-buildscript {
-    repositories {
-        mavenCentral();
-        maven {
-            url "https://oss.sonatype.org/content/repositories/snapshots"
-        }
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:0.12.1'
-        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.4+'
-    }
-}
+package com.andrada.sitracker.reader;
 
-allprojects {
-    repositories {
-        mavenCentral()
-    }
+import com.andrada.sitracker.db.beans.Author;
+
+import java.sql.SQLException;
+
+public interface SiteStrategy {
+
+    int addAuthorForUrl(String url);
+    boolean updateAuthor(Author author) throws SQLException;
+
 }

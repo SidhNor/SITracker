@@ -32,7 +32,7 @@ import com.andrada.sitracker.ui.widget.EllipsizedTextView;
 import com.andrada.sitracker.ui.widget.TouchDelegateRelativeLayout;
 import com.andrada.sitracker.util.DateFormatterUtil;
 import com.andrada.sitracker.util.ImageLoader;
-import com.andrada.sitracker.util.SamlibPageParser;
+import com.andrada.sitracker.util.SamlibPageHelper;
 import com.andrada.sitracker.util.UIUtils;
 
 import org.androidannotations.annotations.AfterViews;
@@ -108,7 +108,7 @@ public class PublicationItemView extends TouchDelegateRelativeLayout {
         }
 
         UIUtils.setTextMaybeHtml(item_description,
-                SamlibPageParser.stripDescriptionOfImages(publication.getDescription()));
+                SamlibPageHelper.stripDescriptionOfImages(publication.getDescription()));
 
 
         StringBuilder builder = new StringBuilder();

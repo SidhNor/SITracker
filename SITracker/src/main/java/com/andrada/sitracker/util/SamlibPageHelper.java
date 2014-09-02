@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Gleb Godonoga.
+ * Copyright 2013 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,14 @@
  * limitations under the License.
  */
 
-buildscript {
-    repositories {
-        mavenCentral();
-        maven {
-            url "https://oss.sonatype.org/content/repositories/snapshots"
-        }
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:0.12.1'
-        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.4+'
-    }
-}
+package com.andrada.sitracker.util;
 
-allprojects {
-    repositories {
-        mavenCentral()
+public class SamlibPageHelper {
+
+    public static String stripDescriptionOfImages(String value) {
+        value = value.replaceAll("(<a[^>]*>)?\\s*?<img[^>]*>\\s?(</a>)?", "")
+                .replaceAll("<br/?>", "")
+                .replaceAll("<a[^>]*>\\s?Иллюстрации.[^>]*a>", "");
+        return value;
     }
 }

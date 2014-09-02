@@ -21,24 +21,19 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewStub;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
-import com.andrada.sitracker.tasks.AddAuthorTask;
+import com.andrada.sitracker.tasks.ImportAuthorsTask;
+import com.andrada.sitracker.tasks.ImportAuthorsTask_;
 import com.andrada.sitracker.tasks.io.AuthorFileImportContext;
-import com.andrada.sitracker.tasks.io.AuthorImportStrategy;
-import com.andrada.sitracker.tasks.io.PlainTextAuthorImport;
-import com.andrada.sitracker.tasks.io.SIInformerXMLAuthorImport;
 
-import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
@@ -52,7 +47,7 @@ import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 @EActivity(R.layout.activity_import)
-public class ImportAuthorsActivity extends BaseActivity{
+public class ImportAuthorsActivity extends BaseActivity {
 
     @ViewById
     CheckBox overwriteAuthorsCheckbox;
@@ -87,9 +82,10 @@ public class ImportAuthorsActivity extends BaseActivity{
             if (overwriteAuthorsCheckbox.isChecked()) {
                 shouldOverwrite = true;
             }
-            for (String author : authorsToImport) {
-                new AddAuthorTask(this).execute(author);
-            }
+            Intent importSvc = ImportAuthorsTask_.intent(this).get();
+            importSvc.putExtra(ImportAuthorsTask.CLEAR_CURRENT_EXTRA, shouldOverwrite);
+            importSvc.putStringArrayListExtra(ImportAuthorsTask.AUTHOR_LIST_EXTRA, new ArrayList<String>(authorsToImport));
+            this.startService(importSvc);
         }
     }
 
@@ -120,8 +116,8 @@ public class ImportAuthorsActivity extends BaseActivity{
                 @Override
                 public View getView(int position, View convertView,
                                     ViewGroup parent) {
-                    View view =super.getView(position, convertView, parent);
-                    TextView textView=(TextView) view.findViewById(android.R.id.text1);
+                    View view = super.getView(position, convertView, parent);
+                    TextView textView = (TextView) view.findViewById(android.R.id.text1);
                     textView.setTextColor(Color.BLACK);
                     return view;
                 }
@@ -134,7 +130,5 @@ public class ImportAuthorsActivity extends BaseActivity{
             Crouton.makeText(this, getResources().getString(R.string.cannot_import_authors_from_file), Style.ALERT).show();
         }
         progressBar.setVisibility(View.GONE);
-
-
     }
 }
