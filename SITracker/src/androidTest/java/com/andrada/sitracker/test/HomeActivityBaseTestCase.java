@@ -21,9 +21,6 @@ import android.test.ActivityInstrumentationTestCase2;
 
 import com.andrada.sitracker.ui.HomeActivity_;
 
-/**
- * Created by ggodonoga on 06/08/13.
- */
 public class HomeActivityBaseTestCase extends ActivityInstrumentationTestCase2<HomeActivity_> {
 
     protected HomeActivity_ mMainActivity;

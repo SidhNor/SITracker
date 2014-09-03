@@ -33,6 +33,7 @@ import com.andrada.sitracker.ui.fragment.adapters.PublicationsAdapter;
 import com.andrada.sitracker.util.ShareHelper;
 import com.andrada.sitracker.util.UIUtils;
 import com.github.kevinsawicki.http.HttpRequest;
+import com.j256.ormlite.android.apptools.OpenHelperManager;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;

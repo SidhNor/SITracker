@@ -50,6 +50,7 @@ import com.andrada.sitracker.tasks.UpdateAuthorsTask_;
 import com.andrada.sitracker.ui.MultiSelectionUtil;
 import com.andrada.sitracker.ui.fragment.adapters.AuthorsAdapter;
 import com.google.analytics.tracking.android.EasyTracker;
+import com.j256.ormlite.android.apptools.OpenHelperManager;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;

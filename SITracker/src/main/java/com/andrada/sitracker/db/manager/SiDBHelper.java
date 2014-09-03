@@ -132,16 +132,24 @@ public class SiDBHelper extends OrmLiteSqliteOpenHelper {
         }
     }
 
-    public AuthorDao getAuthorDao() throws SQLException {
+    public AuthorDao getAuthorDao() {
         if (authorDao == null) {
-            authorDao = getDao(Author.class);
+            try {
+                authorDao = getDao(Author.class);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return authorDao;
     }
 
-    public PublicationDao getPublicationDao() throws SQLException {
+    public PublicationDao getPublicationDao() {
         if (publicationDao == null) {
-            publicationDao = getDao(Publication.class);
+            try {
+                publicationDao = getDao(Publication.class);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return publicationDao;
     }

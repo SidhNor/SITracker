@@ -29,6 +29,7 @@ import com.andrada.sitracker.db.dao.PublicationDao;
 import com.andrada.sitracker.db.manager.SiDBHelper;
 import com.andrada.sitracker.events.AuthorSelectedEvent;
 import com.andrada.sitracker.events.BackUpRestoredEvent;
+import com.j256.ormlite.android.apptools.OpenHelperManager;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -103,7 +104,7 @@ public class SiBackupAgent extends BackupAgent {
                     Object possiblePubs = in.readObject();
                     if (possiblePubs instanceof List) {
                         List<Publication> publications = (List<Publication>) possiblePubs;
-                        SiDBHelper helper = new SiDBHelper(this.getApplicationContext());
+                        SiDBHelper helper = OpenHelperManager.getHelper(this.getApplicationContext(), SiDBHelper.class);
                         Map<Long, Author> authorsMap = new HashMap<Long, Author>();
                         for (Publication pub : publications) {
                             if (!authorsMap.containsKey(pub.getAuthor().getId())) {
@@ -122,6 +123,7 @@ public class SiBackupAgent extends BackupAgent {
                             pubDao.createOrUpdate(pub);
                         }
                         EventBus.getDefault().post(new BackUpRestoredEvent());
+                        OpenHelperManager.releaseHelper();
                     }
 
 

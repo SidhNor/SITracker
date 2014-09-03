@@ -18,59 +18,228 @@ package com.andrada.sitracker.tasks;
 
 import android.app.IntentService;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.net.ConnectivityManager;
+import android.os.Binder;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 
-import com.andrada.sitracker.db.beans.Author;
-import com.andrada.sitracker.db.beans.Publication;
-import com.andrada.sitracker.db.dao.AuthorDao;
-import com.andrada.sitracker.db.dao.PublicationDao;
+import com.andrada.sitracker.R;
 import com.andrada.sitracker.db.manager.SiDBHelper;
+import com.andrada.sitracker.events.ImportUpdates;
+import com.andrada.sitracker.reader.SiteDetector;
+import com.andrada.sitracker.reader.SiteStrategy;
+import com.andrada.sitracker.ui.ImportAuthorsActivity_;
+import com.j256.ormlite.android.apptools.OpenHelperManager;
+import com.j256.ormlite.support.DatabaseConnection;
 
 import org.androidannotations.annotations.EService;
-import org.androidannotations.annotations.OrmLiteDao;
 import org.androidannotations.annotations.SystemService;
 
+import java.sql.SQLException;
+import java.sql.Savepoint;
+import java.util.ArrayList;
 import java.util.List;
+
+import de.greenrobot.event.EventBus;
+
+import static com.andrada.sitracker.util.LogUtils.LOGW;
+import static com.andrada.sitracker.util.LogUtils.makeLogTag;
 
 @EService
 public class ImportAuthorsTask extends IntentService {
 
-    public static final String CLEAR_CURRENT_EXTRA = "clearCurrentAuthors";
     public static final String AUTHOR_LIST_EXTRA = "authorsList";
-
-    @OrmLiteDao(helper = SiDBHelper.class, model = Author.class)
-    AuthorDao authorDao;
-    @OrmLiteDao(helper = SiDBHelper.class, model = Publication.class)
-    PublicationDao publicationsDao;
-
+    private final static int NOTIFICATION_ID = 628986143;
+    private static final String TAG = makeLogTag(ImportAuthorsTask.class);
+    private final IBinder mBinder = new ImportAuthorsBinder();
     @SystemService
     ConnectivityManager connectivityManager;
     @SystemService
     NotificationManager notificationManager;
-
+    private volatile boolean shouldCancel = false;
+    private SiDBHelper helper;
     private List<String> authorsList;
-    private boolean clearCurrentAuthors;
+    private ImportProgress importProgress;
 
     public ImportAuthorsTask() {
         super(ImportAuthorsTask.class.getSimpleName());
     }
 
     @Override
+    public void onCreate() {
+        super.onCreate();
+        helper = OpenHelperManager.getHelper(this, SiDBHelper.class);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        OpenHelperManager.releaseHelper();
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        return mBinder;
+    }
+
+    @Override
     protected void onHandleIntent(Intent intent) {
         setupExtras(intent);
+
+        this.importProgress = new ImportProgress(authorsList.size());
+
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(android.R.drawable.stat_notify_sync)
+                        .setOngoing(true)
+                        .setAutoCancel(false)
+                        .setContentTitle(getResources().getString(R.string.notification_import_title))
+                        .setAutoCancel(true);
+
+        // Creates an explicit intent for an Activity in your app
+        Intent resultIntent = new Intent(this, ImportAuthorsActivity_.class);
+        // The stack builder object will contain an artificial back stack for the
+        // started Activity.
+        // This ensures that navigating backward from the Activity leads out of
+        // your application to the Home screen.
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        // Adds the back stack for the Intent (but not the Intent itself)
+        stackBuilder.addParentStack(ImportAuthorsActivity_.class);
+        // Adds the Intent that starts the Activity to the top of the stack
+        stackBuilder.addNextIntent(resultIntent);
+        PendingIntent resultPendingIntent =
+                stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+        mBuilder.setContentIntent(resultPendingIntent);
+
+        DatabaseConnection conn = null;
+        try {
+            conn = helper.getAuthorDao().startThreadConnection();
+            Savepoint savepoint = conn.setSavePoint(null);
+
+            for (String authUrl : authorsList) {
+                if (shouldCancel) {
+                    //Check for canceling execution - rollback
+                    break;
+                }
+                SiteStrategy strategy = SiteDetector.chooseStrategy(authUrl, helper);
+                int returnMsg = strategy.addAuthorForUrl(authUrl);
+                if (returnMsg == -1) {
+                    this.importProgress.importSuccess();
+                } else {
+                    this.importProgress.importFail(authUrl);
+                }
+                EventBus.getDefault().post(new ImportUpdates(this.importProgress));
+                mBuilder.setContentText(getResources()
+                        .getString(R.string.notification_import_progress, importProgress.getTotalProcessed(), importProgress.getTotalAuthors()))
+                        .setAutoCancel(false)
+                        .setProgress(importProgress.getTotalAuthors(), importProgress.getTotalProcessed(), false);
+                notificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+                //Sleep for 5 seconds to avoid ban
+                Thread.sleep(5000);
+            }
+            if (shouldCancel) {
+                conn.rollback(savepoint);
+                notificationManager.cancel(NOTIFICATION_ID);
+            } else {
+                conn.commit(savepoint);
+                EventBus.getDefault().post(new ImportUpdates(this.importProgress));
+            }
+
+        } catch (SQLException e) {
+            LOGW(TAG, "Error during author import", e);
+            //Post a message that something went wrong
+        } catch (InterruptedException e) {
+            LOGW(TAG, "Importing was forcibly stopped", e);
+        } finally {
+            try {
+                if (conn != null) {
+                    helper.getAuthorDao().endThreadConnection(conn);
+                }
+            } catch (SQLException e) {
+                //eat this one
+                LOGW(TAG, "Error closing connection after transaction", e);
+            }
+            if (!shouldCancel) {
+                mBuilder.setProgress(0, 0, false)
+                        .setOngoing(false)
+                        .setAutoCancel(true)
+                        .setContentTitle(getResources().getString(R.string.notification_import_complete));
+                notificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+            }
+        }
+    }
+
+    public void cancelImport() {
+        this.shouldCancel = true;
+    }
+
+    public ImportProgress getCurrentProgress() {
+        return this.importProgress;
+    }
+
+    public List<String> getAuthorsList() {
+        return authorsList;
     }
 
     private void setupExtras(Intent intent) {
         Bundle extras = intent.getExtras();
         if (extras != null) {
-            if (extras.containsKey(CLEAR_CURRENT_EXTRA)) {
-                clearCurrentAuthors = extras.getBoolean(CLEAR_CURRENT_EXTRA);
-            }
             if (extras.containsKey(AUTHOR_LIST_EXTRA)) {
                 authorsList = (List<String>) extras.getSerializable(AUTHOR_LIST_EXTRA);
             }
+        }
+    }
+
+    public class ImportAuthorsBinder extends Binder {
+        public ImportAuthorsTask getService() {
+            return ImportAuthorsTask.this;
+        }
+    }
+
+    public class ImportProgress {
+        private int totalAuthors = 0;
+        private int successfullyImported = 0;
+        private int failedImport = 0;
+        private int totalProcessed = 0;
+        private List<String> failedAuthors = new ArrayList<String>();
+
+        public ImportProgress(int totalAuthors) {
+            this.totalAuthors = totalAuthors;
+        }
+
+        public int getTotalProcessed() {
+            return totalProcessed;
+        }
+
+        public int getTotalAuthors() {
+            return totalAuthors;
+        }
+
+        public int getSuccessfullyImported() {
+            return successfullyImported;
+        }
+
+        public int getFailedImport() {
+            return failedImport;
+        }
+
+        public List<String> getFailedAuthors() {
+            return failedAuthors;
+        }
+
+        void importSuccess() {
+            this.totalProcessed++;
+            this.successfullyImported++;
+        }
+
+        void importFail(String authorUrl) {
+            this.totalProcessed++;
+            this.failedImport++;
+            this.failedAuthors.add(authorUrl);
         }
     }
 }

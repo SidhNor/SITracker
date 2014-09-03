@@ -14,7 +14,7 @@
   limitations under the License.
   -->
 
-<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
     <string name="app_name">СИ Трекер</string>
     <string name="title_settings">Настройки</string>
@@ -86,13 +86,18 @@
     <string name="check_for_updates">Проверка обновлений</string>
     <string name="action_add_ok">Добавить</string>
     <string name="notification_title">Прода</string>
+    <string name="notification_import_title">СИ Трекер - Импорт авторов</string>
+    <string name="notification_import_progress">Импортируем %1$s из %2$s</string>
+    <string name="import_message_title">Импортируем…</string>
+    <string name="import_progress_indication">%1$d/%2$d</string>
+    <string name="notification_import_complete">Импортирование завершено.</string>
     <string name="update_failed_crouton_message">Не удалось обновить авторов.</string>
     <string name="author_add_success_crouton_message">Автор добавлен</string>
     <string name="backup_restored_crouton_message">Бэк-ап данных востановлен</string>
     <string name="no_authors">Вы пока не добавили никаких авторов</string>
     <string name="no_newpubs">Проды нет :(</string>
     <plurals name="authors_selected">
-        <item quantity="one">1 выбранный</item>
+        <item quantity="one">%d выбранный</item>
         <item quantity="few">
             <xliff:g id="num_authors">%1$d</xliff:g>
             выбранных
@@ -108,7 +113,7 @@
     </plurals>
 
     <plurals name="authors_updated">
-        <item quantity="one">Автор обновился</item>
+        <item quantity="one" tools:ignore="ImpliedQuantity">Автор обновился</item>
         <item quantity="few">
             <xliff:g id="num_updates">%1$d</xliff:g>
             автора обновились

@@ -17,19 +17,25 @@
 package com.andrada.sitracker.ui;
 
 
+import android.app.ActivityManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.Color;
+import android.os.Bundle;
+import android.os.IBinder;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
+import com.andrada.sitracker.events.ImportUpdates;
 import com.andrada.sitracker.tasks.ImportAuthorsTask;
 import com.andrada.sitracker.tasks.ImportAuthorsTask_;
 import com.andrada.sitracker.tasks.io.AuthorFileImportContext;
@@ -37,12 +43,14 @@ import com.andrada.sitracker.tasks.io.AuthorFileImportContext;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import de.greenrobot.event.EventBus;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
@@ -50,7 +58,10 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 public class ImportAuthorsActivity extends BaseActivity {
 
     @ViewById
-    CheckBox overwriteAuthorsCheckbox;
+    ViewGroup progressPanel;
+
+    @ViewById
+    ViewGroup buttonPanel;
 
     @ViewById
     Button chooseFileButton;
@@ -64,7 +75,41 @@ public class ImportAuthorsActivity extends BaseActivity {
     @ViewById
     ListView list;
 
+    @ViewById
+    ProgressBar importProgressBar;
+
+    @ViewById
+    TextView progressValue;
+
+    @SystemService
+    ActivityManager activityManager;
+
+    ImportAuthorsTask importTask;
+    private boolean isBound = false;
     private List<String> authorsToImport;
+
+    private ServiceConnection mConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+            // We've bound to LocalService, cast the IBinder and get LocalService instance
+            ImportAuthorsTask.ImportAuthorsBinder binder = (ImportAuthorsTask.ImportAuthorsBinder) service;
+            importTask = binder.getService();
+            isBound = true;
+            authorsToImport = importTask.getAuthorsList();
+            if (list.getAdapter() == null || list.getAdapter().getCount() == 0) {
+                showParseResults(authorsToImport);
+            }
+            toggleButtonAndProgressPanels(true);
+            onEventMainThread(new ImportUpdates(importTask.getCurrentProgress()));
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            importTask = null;
+            isBound = false;
+        }
+    };
 
     @Click(R.id.chooseFileButton)
     void chooseFileClicked() {
@@ -78,17 +123,26 @@ public class ImportAuthorsActivity extends BaseActivity {
     @Click(R.id.performImportButton)
     void importParsedAuthors() {
         if (authorsToImport != null) {
-            Boolean shouldOverwrite = false;
-            if (overwriteAuthorsCheckbox.isChecked()) {
-                shouldOverwrite = true;
-            }
-            Intent importSvc = ImportAuthorsTask_.intent(this).get();
-            importSvc.putExtra(ImportAuthorsTask.CLEAR_CURRENT_EXTRA, shouldOverwrite);
+            progressValue.setText(getResources().getString(R.string.import_progress_indication,
+                    0, authorsToImport.size()));
+
+            Intent importSvc = ImportAuthorsTask_.intent(getApplicationContext()).get();
             importSvc.putStringArrayListExtra(ImportAuthorsTask.AUTHOR_LIST_EXTRA, new ArrayList<String>(authorsToImport));
-            this.startService(importSvc);
+            getApplicationContext().startService(importSvc);
+            getApplicationContext().bindService(importSvc, mConnection, Context.BIND_AUTO_CREATE);
         }
     }
 
+    @Click(R.id.cancelImportButton)
+    void importCancelRequested() {
+        if (isBound) {
+            this.importTask.cancelImport();
+            getApplicationContext().unbindService(mConnection);
+            isBound = false;
+        }
+        getApplicationContext().stopService(ImportAuthorsTask_.intent(getApplicationContext()).get());
+        toggleButtonAndProgressPanels(false);
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -103,9 +157,63 @@ public class ImportAuthorsActivity extends BaseActivity {
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (this.isImportServiceRunning(ImportAuthorsTask_.class)) {
+            Intent importSvc = ImportAuthorsTask_.intent(getApplicationContext()).get();
+            getApplicationContext().bindService(importSvc, mConnection, Context.BIND_AUTO_CREATE);
+        }
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (isBound) {
+            getApplicationContext().unbindService(mConnection);
+            isBound = false;
+        }
+    }
+
     @Background
     void tryParseOutTheChosenFile(String fileName) {
         showParseResults(new AuthorFileImportContext().getAuthorListFromFile(fileName));
+    }
+
+    public void onEventMainThread(ImportUpdates event) {
+        if (event.isFinished()) {
+            toggleButtonAndProgressPanels(false);
+            //TODO send back to home activity
+        } else {
+            //Update progress
+            importProgressBar.setMax(event.getImportProgress().getTotalAuthors());
+            importProgressBar.setProgress(event.getImportProgress().getTotalProcessed());
+            progressValue.setText(getResources().getString(R.string.import_progress_indication,
+                    event.getImportProgress().getTotalProcessed(),
+                    event.getImportProgress().getTotalAuthors()));
+        }
+    }
+
+    private void toggleButtonAndProgressPanels(boolean inProgress) {
+        if (inProgress) {
+            this.buttonPanel.setVisibility(View.GONE);
+            this.progressPanel.setVisibility(View.VISIBLE);
+        } else {
+            this.buttonPanel.setVisibility(View.VISIBLE);
+            this.progressPanel.setVisibility(View.GONE);
+        }
     }
 
     @UiThread
@@ -130,5 +238,14 @@ public class ImportAuthorsActivity extends BaseActivity {
             Crouton.makeText(this, getResources().getString(R.string.cannot_import_authors_from_file), Style.ALERT).show();
         }
         progressBar.setVisibility(View.GONE);
+    }
+
+    private boolean isImportServiceRunning(Class<?> serviceClass) {
+        for (ActivityManager.RunningServiceInfo service : activityManager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

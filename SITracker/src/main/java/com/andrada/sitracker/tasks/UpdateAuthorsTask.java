@@ -16,7 +16,6 @@
 
 package com.andrada.sitracker.tasks;
 
-import android.annotation.SuppressLint;
 import android.app.IntentService;
 import android.app.backup.BackupManager;
 import android.content.Intent;
@@ -41,7 +40,6 @@ import org.androidannotations.annotations.sharedpreferences.Pref;
 import java.sql.SQLException;
 import java.util.List;
 
-@SuppressLint("Registered")
 @EService
 public class UpdateAuthorsTask extends IntentService {
 

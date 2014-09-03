@@ -37,6 +37,7 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 class Samlib implements SiteStrategy {
 
@@ -74,14 +75,22 @@ class Samlib implements SiteStrategy {
             AuthorPageReader reader = new SamlibAuthorPageReader(request.body());
             author = reader.getAuthor(url);
             helper.getAuthorDao().create(author);
-            List<Publication> items = reader.getPublications(author);
+            final List<Publication> items = reader.getPublications(author);
             if (items.size() == 0) {
                 helper.getAuthorDao().delete(author);
                 throw new AddAuthorException(AddAuthorException.AuthorAddErrors.AUTHOR_NO_PUBLICATIONS);
             }
-            for (Publication publication : items) {
-                helper.getPublicationDao().create(publication);
-            }
+
+            helper.getPublicationDao().callBatchTasks(new Callable<Object>() {
+                @Override
+                public Object call() throws Exception {
+                    for (Publication publication : items) {
+                        helper.getPublicationDao().create(publication);
+                    }
+                    return null;
+                }
+            });
+
         } catch (HttpRequest.HttpRequestException e) {
             message = R.string.cannot_add_author_network;
         } catch (MalformedURLException e) {
@@ -113,6 +122,8 @@ class Samlib implements SiteStrategy {
                     message = R.string.cannot_add_author_unknown;
                     break;
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return message;
     }

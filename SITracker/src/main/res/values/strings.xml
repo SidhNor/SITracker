@@ -77,6 +77,11 @@
     <string name="check_for_updates">Checking for updates</string>
     <string name="action_add_ok">Add</string>
     <string name="notification_title">SITracker Updates</string>
+    <string name="notification_import_title">SITracker - Importing authors</string>
+    <string name="notification_import_progress">Importing %1$d out of %2$d</string>
+    <string name="import_message_title">Import in progress…</string>
+    <string name="import_progress_indication">%1$d/%2$d</string>
+    <string name="notification_import_complete">Importing complete.</string>
     <string name="update_failed_crouton_message">Update failed for an unexpected reason.</string>
     <string name="author_add_success_crouton_message">Author added</string>
     <string name="backup_restored_crouton_message">Backup restored</string>
