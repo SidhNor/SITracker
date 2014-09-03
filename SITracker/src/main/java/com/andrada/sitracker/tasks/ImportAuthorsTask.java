@@ -32,6 +32,7 @@ import com.andrada.sitracker.db.manager.SiDBHelper;
 import com.andrada.sitracker.events.ImportUpdates;
 import com.andrada.sitracker.reader.SiteDetector;
 import com.andrada.sitracker.reader.SiteStrategy;
+import com.andrada.sitracker.ui.HomeActivity_;
 import com.andrada.sitracker.ui.ImportAuthorsActivity_;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.support.DatabaseConnection;
@@ -143,7 +144,6 @@ public class ImportAuthorsTask extends IntentService {
             }
             if (shouldCancel) {
                 conn.rollback(savepoint);
-                notificationManager.cancel(NOTIFICATION_ID);
             } else {
                 conn.commit(savepoint);
                 EventBus.getDefault().post(new ImportUpdates(this.importProgress));
@@ -164,10 +164,22 @@ public class ImportAuthorsTask extends IntentService {
                 LOGW(TAG, "Error closing connection after transaction", e);
             }
             if (!shouldCancel) {
+                Intent finishIntent = new Intent(this, HomeActivity_.class);
+                // The stack builder object will contain an artificial back stack for the
+                // started Activity.
+                // This ensures that navigating backward from the Activity leads out of
+                // your application to the Home screen.
+                stackBuilder = TaskStackBuilder.create(this);
+                // Adds the back stack for the Intent (but not the Intent itself)
+                stackBuilder.addParentStack(HomeActivity_.class);
+                // Adds the Intent that starts the Activity to the top of the stack
+                stackBuilder.addNextIntent(finishIntent);
+
                 mBuilder.setProgress(0, 0, false)
                         .setOngoing(false)
                         .setAutoCancel(true)
-                        .setContentTitle(getResources().getString(R.string.notification_import_complete));
+                        .setContentText(getResources().getString(R.string.notification_import_complete))
+                        .setContentIntent(stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT));
                 notificationManager.notify(NOTIFICATION_ID, mBuilder.build());
             }
         }
@@ -175,6 +187,7 @@ public class ImportAuthorsTask extends IntentService {
 
     public void cancelImport() {
         this.shouldCancel = true;
+        notificationManager.cancel(NOTIFICATION_ID);
     }
 
     public ImportProgress getCurrentProgress() {

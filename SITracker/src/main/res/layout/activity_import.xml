@@ -27,6 +27,7 @@
 
         <LinearLayout
             android:id="@+id/buttonPanel"
+            android:paddingTop="@dimen/divider_margin_top"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -51,10 +52,10 @@
 
         <RelativeLayout
             android:id="@+id/progressPanel"
-            android:layout_margin="@dimen/default_grid_margin"
             android:visibility="gone"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:padding="@dimen/default_grid_margin">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -79,6 +80,7 @@
                     android:text="@string/import_progress_indication"
                     android:id="@+id/progressValue"
                     android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
                     android:textColor="@color/author_list_item_text"/>
 
                 <ProgressBar

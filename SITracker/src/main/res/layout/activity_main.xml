@@ -29,7 +29,7 @@
                 android:name="com.andrada.sitracker.ui.fragment.AuthorsFragment_"
                 android:id="@+id/fragment_authors"
                 android:layout_weight="1"
-                android:layout_width="300dp"
+                android:layout_width="@dimen/author_fragment_width"
                 android:layout_height="match_parent"
                 tools:layout="@layout/fragment_listview_with_empty"/>
 

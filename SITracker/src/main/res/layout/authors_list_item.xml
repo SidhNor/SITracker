@@ -9,6 +9,7 @@
             android:gravity="center_vertical"
             android:layout_alignParentTop="true"
             android:layout_toLeftOf="@+id/author_update_date"
+            android:layout_toStartOf="@+id/author_update_date"
             android:textColor="@color/author_list_item_text"
             android:minHeight="?android:attr/listPreferredItemHeight"
             android:ellipsize="end"
@@ -21,6 +22,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:textSize="12sp"
             android:text="@string/designtime_placeholder_date"
             android:textAlignment="viewEnd"/>
@@ -30,6 +32,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
             android:background="@null"
             android:src="@drawable/star_unselected"
