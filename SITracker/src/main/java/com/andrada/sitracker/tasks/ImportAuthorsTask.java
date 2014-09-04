@@ -40,8 +40,6 @@ import com.j256.ormlite.support.DatabaseConnection;
 import org.androidannotations.annotations.EService;
 import org.androidannotations.annotations.SystemService;
 
-import java.sql.SQLException;
-import java.sql.Savepoint;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -89,6 +87,9 @@ public class ImportAuthorsTask extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        if (intent == null) {
+            return;
+        }
         setupExtras(intent);
 
         this.importProgress = new ImportProgress(authorsList.size());
@@ -117,13 +118,9 @@ public class ImportAuthorsTask extends IntentService {
         mBuilder.setContentIntent(resultPendingIntent);
 
         DatabaseConnection conn = null;
-        try {
-            conn = helper.getAuthorDao().startThreadConnection();
-            Savepoint savepoint = conn.setSavePoint(null);
-
-            for (String authUrl : authorsList) {
+        for (String authUrl : authorsList) {
+            try {
                 if (shouldCancel) {
-                    //Check for canceling execution - rollback
                     break;
                 }
                 SiteStrategy strategy = SiteDetector.chooseStrategy(authUrl, helper);
@@ -133,7 +130,7 @@ public class ImportAuthorsTask extends IntentService {
                 } else {
                     this.importProgress.importFail(authUrl);
                 }
-                EventBus.getDefault().post(new ImportUpdates(this.importProgress));
+                EventBus.getDefault().post(new ImportUpdates(new ImportProgress(this.importProgress)));
                 mBuilder.setContentText(getResources()
                         .getString(R.string.notification_import_progress, importProgress.getTotalProcessed(), importProgress.getTotalAuthors()))
                         .setAutoCancel(false)
@@ -141,47 +138,35 @@ public class ImportAuthorsTask extends IntentService {
                 notificationManager.notify(NOTIFICATION_ID, mBuilder.build());
                 //Sleep for 5 seconds to avoid ban
                 Thread.sleep(5000);
-            }
-            if (shouldCancel) {
-                conn.rollback(savepoint);
-            } else {
-                conn.commit(savepoint);
-                EventBus.getDefault().post(new ImportUpdates(this.importProgress));
-            }
 
-        } catch (SQLException e) {
-            LOGW(TAG, "Error during author import", e);
-            //Post a message that something went wrong
-        } catch (InterruptedException e) {
-            LOGW(TAG, "Importing was forcibly stopped", e);
-        } finally {
-            try {
-                if (conn != null) {
-                    helper.getAuthorDao().endThreadConnection(conn);
+                if (!shouldCancel) {
+                    EventBus.getDefault().post(new ImportUpdates(this.importProgress));
                 }
-            } catch (SQLException e) {
-                //eat this one
-                LOGW(TAG, "Error closing connection after transaction", e);
+            } catch (InterruptedException e) {
+                LOGW(TAG, "Importing was forcibly stopped", e);
             }
-            if (!shouldCancel) {
-                Intent finishIntent = new Intent(this, HomeActivity_.class);
-                // The stack builder object will contain an artificial back stack for the
-                // started Activity.
-                // This ensures that navigating backward from the Activity leads out of
-                // your application to the Home screen.
-                stackBuilder = TaskStackBuilder.create(this);
-                // Adds the back stack for the Intent (but not the Intent itself)
-                stackBuilder.addParentStack(HomeActivity_.class);
-                // Adds the Intent that starts the Activity to the top of the stack
-                stackBuilder.addNextIntent(finishIntent);
+        }
+        if (!shouldCancel) {
+            Intent finishIntent = HomeActivity_.intent(this)
+                    .authorsProcessed(importProgress.getTotalAuthors())
+                    .authorsSuccessfullyImported(importProgress.getSuccessfullyImported())
+                    .get();
+            // The stack builder object will contain an artificial back stack for the
+            // started Activity.
+            // This ensures that navigating backward from the Activity leads out of
+            // your application to the Home screen.
+            stackBuilder = TaskStackBuilder.create(this);
+            // Adds the back stack for the Intent (but not the Intent itself)
+            stackBuilder.addParentStack(HomeActivity_.class);
+            // Adds the Intent that starts the Activity to the top of the stack
+            stackBuilder.addNextIntent(finishIntent);
 
-                mBuilder.setProgress(0, 0, false)
-                        .setOngoing(false)
-                        .setAutoCancel(true)
-                        .setContentText(getResources().getString(R.string.notification_import_complete))
-                        .setContentIntent(stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT));
-                notificationManager.notify(NOTIFICATION_ID, mBuilder.build());
-            }
+            mBuilder.setProgress(0, 0, false)
+                    .setOngoing(false)
+                    .setAutoCancel(true)
+                    .setContentText(getResources().getString(R.string.notification_import_complete))
+                    .setContentIntent(stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT));
+            notificationManager.notify(NOTIFICATION_ID, mBuilder.build());
         }
     }
 
@@ -207,13 +192,7 @@ public class ImportAuthorsTask extends IntentService {
         }
     }
 
-    public class ImportAuthorsBinder extends Binder {
-        public ImportAuthorsTask getService() {
-            return ImportAuthorsTask.this;
-        }
-    }
-
-    public class ImportProgress {
+    public static class ImportProgress {
         private int totalAuthors = 0;
         private int successfullyImported = 0;
         private int failedImport = 0;
@@ -222,6 +201,14 @@ public class ImportAuthorsTask extends IntentService {
 
         public ImportProgress(int totalAuthors) {
             this.totalAuthors = totalAuthors;
+        }
+
+        public ImportProgress(ImportProgress copy) {
+            this.totalAuthors = copy.totalAuthors;
+            this.successfullyImported = copy.successfullyImported;
+            this.failedImport = copy.failedImport;
+            this.totalProcessed = copy.totalProcessed;
+            this.failedAuthors.addAll(copy.getFailedAuthors());
         }
 
         public int getTotalProcessed() {
@@ -253,6 +240,12 @@ public class ImportAuthorsTask extends IntentService {
             this.totalProcessed++;
             this.failedImport++;
             this.failedAuthors.add(authorUrl);
+        }
+    }
+
+    public class ImportAuthorsBinder extends Binder {
+        public ImportAuthorsTask getService() {
+            return ImportAuthorsTask.this;
         }
     }
 }

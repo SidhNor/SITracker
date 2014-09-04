@@ -22,6 +22,7 @@ import android.app.PendingIntent;
 import android.app.backup.BackupManager;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SlidingPaneLayout;
 import android.view.Menu;
@@ -29,6 +30,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
@@ -49,6 +51,7 @@ import com.google.analytics.tracking.android.EasyTracker;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.FragmentById;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
@@ -61,6 +64,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import de.greenrobot.event.EventBus;
+import de.keyboardsurfer.android.widget.crouton.Configuration;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
@@ -71,6 +75,15 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoaderProvider {
 
     private static final long BACK_UP_DELAY = 30000L;
+
+    public static final String AUTHORS_PROCESSED_EXTRA = "authors_total_processed";
+    public static final String AUTHORS_SUCCESSFULLY_IMPORTED_EXTRA = "authors_successfully_imported";
+
+    @Extra(AUTHORS_PROCESSED_EXTRA)
+    int authorsProcessed = -1;
+    @Extra(AUTHORS_SUCCESSFULLY_IMPORTED_EXTRA)
+    int authorsSuccessfullyImported = -1;
+
     /**
      * This global layout listener is used to fire an event after first layout
      * occurs and then it is removed. This gives us a chance to configure parts
@@ -180,6 +193,20 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
     }
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        Bundle extras = intent.getExtras();
+        if (extras != null) {
+            if (extras.containsKey(AUTHORS_PROCESSED_EXTRA)) {
+                authorsProcessed = extras.getInt(AUTHORS_PROCESSED_EXTRA);
+            }
+            if (extras.containsKey(AUTHORS_SUCCESSFULLY_IMPORTED_EXTRA)) {
+                authorsSuccessfullyImported = extras.getInt(AUTHORS_SUCCESSFULLY_IMPORTED_EXTRA);
+            }
+        }
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         if (updateStatusReceiver == null) {
@@ -193,6 +220,7 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
         UpdateStatusMessageFilter filter = new UpdateStatusMessageFilter();
         filter.setPriority(1);
         registerReceiver(updateStatusReceiver, filter);
+        attemptToShowImportProgress();
     }
 
     @Override
@@ -271,6 +299,31 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
                 ExportAuthorsTask task = new ExportAuthorsTask(getApplicationContext());
                 task.execute(absoluteDir);
             }
+        }
+    }
+
+    private void attemptToShowImportProgress() {
+
+        if (authorsProcessed != -1 && authorsSuccessfullyImported != -1) {
+
+            View view = getLayoutInflater().inflate(R.layout.crouton_import_result, null);
+            TextView totalTextV = (TextView) view.findViewById(R.id.totalAuthorsText);
+            totalTextV.setText(getResources().getString(R.string.author_import_total_crouton_message,
+                    authorsProcessed));
+            TextView successTextV = (TextView) view.findViewById(R.id.successAuthorsText);
+            successTextV.setText(getResources().getString(R.string.author_import_processed_crouton_message,
+                    authorsSuccessfullyImported));
+            TextView failedTextV = (TextView) view.findViewById(R.id.failedAuthorsText);
+            failedTextV.setText(getResources().getString(R.string.author_import_failed_crouton_message,
+                    authorsProcessed - authorsSuccessfullyImported));
+            Configuration croutonConfiguration = new Configuration.Builder()
+                    .setDuration(Configuration.DURATION_LONG).build();
+            Crouton mNoNetworkCrouton = Crouton.make(this, view);
+            mNoNetworkCrouton.setConfiguration(croutonConfiguration);
+            mNoNetworkCrouton.show();
+
+            authorsSuccessfullyImported = -1;
+            authorsProcessed = -1;
         }
     }
 

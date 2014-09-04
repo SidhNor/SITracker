@@ -20,7 +20,7 @@ import com.andrada.sitracker.tasks.ImportAuthorsTask;
 
 public class ImportUpdates {
 
-    private ImportAuthorsTask.ImportProgress importProgress;
+    private final ImportAuthorsTask.ImportProgress importProgress;
 
     public ImportUpdates(ImportAuthorsTask.ImportProgress importProgress) {
         this.importProgress = importProgress;
@@ -31,6 +31,6 @@ public class ImportUpdates {
     }
 
     public boolean isFinished() {
-        return this.importProgress.getTotalAuthors() == this.importProgress.getTotalProcessed();
+        return importProgress != null && importProgress.getTotalAuthors() == importProgress.getTotalProcessed();
     }
 }

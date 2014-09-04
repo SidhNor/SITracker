@@ -81,10 +81,17 @@
     <string name="notification_import_title">SITracker - Importing authors</string>
     <string name="notification_import_progress">Importing %1$d out of %2$d</string>
     <string name="import_message_title">Import in progress…</string>
+    <string name="import_message_connecting_title">Connecting…</string>
     <string name="import_progress_indication">%1$d/%2$d</string>
     <string name="notification_import_complete">Importing complete.</string>
     <string name="update_failed_crouton_message">Update failed for an unexpected reason.</string>
     <string name="author_add_success_crouton_message">Author added</string>
+    <string name="author_export_success_crouton_message">Authors exported</string>
+    <string name="author_import_success_crouton_message">Authors import finished</string>
+    <string name="author_import_total_crouton_message">Total processed: %1$d</string>
+    <string name="author_import_processed_crouton_message">Added: %1$d</string>
+    <string name="author_import_failed_crouton_message">Duplicate or failed: %1$d</string>
+
     <string name="backup_restored_crouton_message">Backup restored</string>
     <string name="no_authors">You haven\'t added any authors yet</string>
     <string name="no_newpubs">There is nothing new :(</string>
@@ -181,6 +188,5 @@
     <string name="book_folder_name">Books</string>
     <string name="export_folder_name">SiTrackerExport</string>
     <string name="cannot_write_export_file">Error writing to export file</string>
-    <string name="author_export_success_crouton_message">Authors exported</string>
 
 </resources>

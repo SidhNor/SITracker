@@ -79,6 +79,9 @@ public class ImportAuthorsActivity extends BaseActivity {
     ProgressBar importProgressBar;
 
     @ViewById
+    TextView progressTitle;
+
+    @ViewById
     TextView progressValue;
 
     @SystemService
@@ -96,12 +99,19 @@ public class ImportAuthorsActivity extends BaseActivity {
             ImportAuthorsTask.ImportAuthorsBinder binder = (ImportAuthorsTask.ImportAuthorsBinder) service;
             importTask = binder.getService();
             isBound = true;
-            authorsToImport = importTask.getAuthorsList();
-            if (list.getAdapter() == null || list.getAdapter().getCount() == 0) {
-                showParseResults(authorsToImport);
+            ImportAuthorsTask.ImportProgress progress;
+            if (importTask.getCurrentProgress() != null) {
+                authorsToImport = importTask.getAuthorsList();
+                progress = importTask.getCurrentProgress();
+                if (list.getAdapter() == null || list.getAdapter().getCount() == 0) {
+                    showParseResults(authorsToImport);
+                }
+            } else {
+                progress = new ImportAuthorsTask.ImportProgress(authorsToImport.size());
             }
+
             toggleButtonAndProgressPanels(true);
-            onEventMainThread(new ImportUpdates(importTask.getCurrentProgress()));
+            onEventMainThread(new ImportUpdates(progress));
         }
 
         @Override
@@ -123,9 +133,9 @@ public class ImportAuthorsActivity extends BaseActivity {
     @Click(R.id.performImportButton)
     void importParsedAuthors() {
         if (authorsToImport != null) {
+            importProgressBar.setIndeterminate(true);
             progressValue.setText(getResources().getString(R.string.import_progress_indication,
                     0, authorsToImport.size()));
-
             Intent importSvc = ImportAuthorsTask_.intent(getApplicationContext()).get();
             importSvc.putStringArrayListExtra(ImportAuthorsTask.AUTHOR_LIST_EXTRA, new ArrayList<String>(authorsToImport));
             getApplicationContext().startService(importSvc);
@@ -195,9 +205,16 @@ public class ImportAuthorsActivity extends BaseActivity {
     public void onEventMainThread(ImportUpdates event) {
         if (event.isFinished()) {
             toggleButtonAndProgressPanels(false);
-            //TODO send back to home activity
+            HomeActivity_.intent(this)
+                    .authorsProcessed(event.getImportProgress().getTotalAuthors())
+                    .authorsSuccessfullyImported(event.getImportProgress().getSuccessfullyImported())
+                    .start();
         } else {
             //Update progress
+            if (importProgressBar.isIndeterminate() && event.getImportProgress().getTotalProcessed() != 0) {
+                importProgressBar.setIndeterminate(false);
+                progressTitle.setText(getResources().getString(R.string.import_message_title));
+            }
             importProgressBar.setMax(event.getImportProgress().getTotalAuthors());
             importProgressBar.setProgress(event.getImportProgress().getTotalProcessed());
             progressValue.setText(getResources().getString(R.string.import_progress_indication,

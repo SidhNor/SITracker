@@ -17,8 +17,9 @@
   -->
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
     <FrameLayout
         android:id="@+id/actionsContainer"
@@ -37,7 +38,7 @@
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:text="@string/choose_import_file"
-                android:id="@+id/chooseFileButton" />
+                android:id="@+id/chooseFileButton"/>
 
             <Button
                 style="@style/Compat.ButtonBarButton"
@@ -46,7 +47,7 @@
                 android:enabled="false"
                 android:layout_height="wrap_content"
                 android:text="@string/perform_import"
-                android:id="@+id/performImportButton" />
+                android:id="@+id/performImportButton"/>
 
         </LinearLayout>
 
@@ -67,7 +68,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="@string/import_message_title"
+                    android:text="@string/import_message_connecting_title"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
                     android:id="@+id/progressTitle"
@@ -87,12 +88,11 @@
                     style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:indeterminate="false"
                     android:id="@+id/importProgressBar"
                     android:layout_below="@id/progressTitle"
                     android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"/>
-
+                    android:layout_alignParentStart="true"
+                    android:indeterminate="true"/>
             </RelativeLayout>
 
             <ImageButton
@@ -124,7 +124,7 @@
         android:layout_below="@+id/separator"
         android:layout_alignParentBottom="true"
         android:background="@drawable/authors_list_background"
-        android:cacheColorHint="@color/light_color_hint" />
+        android:cacheColorHint="@color/light_color_hint"/>
 
     <ProgressBar
         style="?android:attr/progressBarStyleLarge"
@@ -133,6 +133,6 @@
         android:visibility="gone"
         android:id="@+id/progressBar"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"/>
 
 </RelativeLayout>
