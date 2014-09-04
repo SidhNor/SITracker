@@ -305,7 +305,7 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
     private void attemptToShowImportProgress() {
 
         if (authorsProcessed != -1 && authorsSuccessfullyImported != -1) {
-
+            mAuthorsFragment.getAdapter().reloadAuthors();
             View view = getLayoutInflater().inflate(R.layout.crouton_import_result, null);
             TextView totalTextV = (TextView) view.findViewById(R.id.totalAuthorsText);
             totalTextV.setText(getResources().getString(R.string.author_import_total_crouton_message,

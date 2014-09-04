@@ -44,6 +44,16 @@ public class AuthorDaoImpl extends BaseDaoImpl<Author, Integer>
     }
 
     @Override
+    public List<String> getAuthorsUrlIds() throws SQLException {
+        GenericRawResults results = this.queryRaw("SELECT urlId FROM authors");
+        List<String> authorUrls = new ArrayList<String>();
+        while (results.iterator().hasNext()) {
+            authorUrls.add(((String[]) results.iterator().next())[0]);
+        }
+        return authorUrls;
+    }
+
+    @Override
     public int getNewAuthorsCount() throws SQLException {
 
         return (int) this.queryRawValue(

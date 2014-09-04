@@ -34,6 +34,7 @@ import com.andrada.sitracker.reader.SiteDetector;
 import com.andrada.sitracker.reader.SiteStrategy;
 import com.andrada.sitracker.ui.HomeActivity_;
 import com.andrada.sitracker.ui.ImportAuthorsActivity_;
+import com.andrada.sitracker.util.SamlibPageHelper;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 
 import org.androidannotations.annotations.EService;
@@ -41,7 +42,9 @@ import org.androidannotations.annotations.SystemService;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.greenrobot.event.EventBus;
 
@@ -96,11 +99,15 @@ public class ImportAuthorsTask extends IntentService {
 
         //Filter out duplicates right away
         try {
-            List<String> urls = helper.getAuthorDao().getAuthorsUrls();
-            for (String url : urls) {
-                if (this.authorsList.contains(url)) {
-                    this.authorsList.remove(url);
-                    this.importProgress.importFail(url);
+            List<String> urlIds = helper.getAuthorDao().getAuthorsUrlIds();
+            Map<String, String> prospectAuthorIds = new HashMap<String, String>();
+            for (String auth : authorsList) {
+                prospectAuthorIds.put(SamlibPageHelper.getUrlIdFromCompleteUrl(auth), auth);
+            }
+            for (String urlId : urlIds) {
+                if (prospectAuthorIds.containsKey(urlId)) {
+                    authorsList.remove(prospectAuthorIds.get(urlId));
+                    this.importProgress.importFail(urlId);
                 }
             }
             if (authorsList.size() == 0) {

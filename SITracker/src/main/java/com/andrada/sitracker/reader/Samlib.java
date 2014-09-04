@@ -27,6 +27,7 @@ import com.andrada.sitracker.db.dao.PublicationDao;
 import com.andrada.sitracker.db.manager.SiDBHelper;
 import com.andrada.sitracker.exceptions.AddAuthorException;
 import com.andrada.sitracker.util.LogUtils;
+import com.andrada.sitracker.util.SamlibPageHelper;
 import com.github.kevinsawicki.http.HttpRequest;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.j256.ormlite.dao.ForeignCollection;
@@ -55,6 +56,7 @@ class Samlib implements SiteStrategy {
             if (url.equals("") || !url.matches(Constants.SIMPLE_URL_REGEX)) {
                 throw new MalformedURLException();
             }
+            url = url.replace("zhurnal.lib.ru", "samlib.ru");
 
             if (!url.endsWith(Constants.AUTHOR_PAGE_URL_ENDING_WO_SLASH)) {
                 url = (url.endsWith("/")) ? url + Constants.AUTHOR_PAGE_URL_ENDING_WO_SLASH : url + Constants.AUTHOR_PAGE_URL_ENDING_WI_SLASH;
@@ -63,8 +65,8 @@ class Samlib implements SiteStrategy {
             if (!url.startsWith(Constants.HTTP_PROTOCOL) && !url.startsWith(Constants.HTTPS_PROTOCOL)) {
                 url = Constants.HTTP_PROTOCOL + url;
             }
-
-            if (helper.getAuthorDao().queryBuilder().where().eq("url", url).query().size() != 0) {
+            String urlId = SamlibPageHelper.getUrlIdFromCompleteUrl(url);
+            if (helper.getAuthorDao().queryBuilder().where().eq("urlId", urlId).query().size() != 0) {
                 throw new AddAuthorException(AddAuthorException.AuthorAddErrors.AUTHOR_ALREADY_EXISTS);
             }
 
