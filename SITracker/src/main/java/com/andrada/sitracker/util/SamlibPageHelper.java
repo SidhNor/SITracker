@@ -24,4 +24,19 @@ public class SamlibPageHelper {
                 .replaceAll("<a[^>]*>\\s?Иллюстрации.[^>]*a>", "");
         return value;
     }
+
+    public static String getUrlIdFromCompleteUrl(String completeUrl) {
+        String result = completeUrl.toLowerCase()
+                .replace("http://", "")
+                .replace("indexdate.shtml", "")
+                .replace("indextitle.shtml", "")
+                .replace("/", "_")
+                .replace(".", "_")
+                .replace("\\", "_")
+                .trim();
+        if (result.endsWith("_")) {
+            result = result.substring(0, result.length() - 1);
+        }
+        return result;
+    }
 }

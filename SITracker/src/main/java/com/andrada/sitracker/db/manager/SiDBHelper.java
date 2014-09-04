@@ -23,16 +23,19 @@ import com.andrada.sitracker.db.beans.Author;
 import com.andrada.sitracker.db.beans.Publication;
 import com.andrada.sitracker.db.dao.AuthorDao;
 import com.andrada.sitracker.db.dao.PublicationDao;
+import com.andrada.sitracker.util.SamlibPageHelper;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
 import java.sql.SQLException;
+import java.util.List;
+import java.util.concurrent.Callable;
 
 public class SiDBHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "siinformer.db";
-    private static final int DATABASE_VERSION = 10;
+    private static final int DATABASE_VERSION = 11;
 
     private PublicationDao publicationDao;
     private AuthorDao authorDao;
@@ -125,9 +128,36 @@ public class SiDBHelper extends OrmLiteSqliteOpenHelper {
                         );
                         break;
                     }
+                    case 11: {
+                        getAuthorDao().executeRaw(
+                                "ALTER TABLE authors RENAME TO tmp_authors;");
+                        TableUtils.createTableIfNotExists(connectionSource, Author.class);
+                        getAuthorDao().executeRaw(
+                                "INSERT INTO authors(_id, name, url, updateDate, authorImageUrl, authorDescription, isNew) " +
+                                        "SELECT _id, name, url, updateDate, authorImageUrl, authorDescription, isNew " +
+                                        "FROM tmp_authors;"
+                        );
+                        getAuthorDao().executeRaw("DROP TABLE tmp_authors;");
+                        final List<Author> authors = this.getAuthorDao().getAllAuthorsSortedAZ();
+                        getAuthorDao().callBatchTasks(new Callable<Object>() {
+                            @Override
+                            public Object call() throws Exception {
+                                for (Author author : authors) {
+                                    String url = author.getUrl();
+                                    String urlId = SamlibPageHelper.getUrlIdFromCompleteUrl(url);
+                                    author.setUrlId(urlId);
+                                    authorDao.update(author);
+                                }
+                                return null;
+                            }
+                        });
+
+                    }
                 }
             }
         } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

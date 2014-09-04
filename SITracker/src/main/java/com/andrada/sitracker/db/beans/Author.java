@@ -38,6 +38,8 @@ public class Author implements Serializable {
     String name;
     @DatabaseField(unique = true, useGetSet = true)
     String url;
+    @DatabaseField(unique = true, useGetSet = true)
+    String urlId;
     @DatabaseField(canBeNull = false, useGetSet = true)
     Date updateDate;
     @DatabaseField(canBeNull = true, useGetSet = true)
@@ -76,6 +78,14 @@ public class Author implements Serializable {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public String getUrlId() {
+        return urlId;
+    }
+
+    public void setUrlId(String urlId) {
+        this.urlId = urlId;
     }
 
     public Date getUpdateDate() {
