@@ -30,6 +30,7 @@
     <string name="action_clear_saved_pubs">Удалить кэшированные</string>
     <string name="action_delete">Удалить автора</string>
     <string name="action_import">Импорт</string>
+    <string name="action_export">Экспорт</string>
     <string name="action_open_in_browser">Открыть выбранных в браузере</string>
     <string name="add_author_placeholder">samlib.ru/a/avtor</string>
     <string name="designtime_placeholder_long">Lorem ipsum dolor sit amet, consectetur adipiscing
@@ -184,5 +185,9 @@
     <string name="fp_create_folder_error_already_exists">Папка уже существует</string>
     <string name="fp_create_folder_error">Не удалось создать папку</string>
     <string name="fp_up_label">Вверх</string>
+    <string name="book_folder_name">Книги</string>
+    <string name="export_folder_name">СиТрекерЭкспорт</string>
+    <string name="cannot_write_export_file">Не удалось экспортировать авторов. Ошибка при записи файла.</string>
+    <string name="author_export_success_crouton_message">Авторы экспортированы</string>
 
 </resources>

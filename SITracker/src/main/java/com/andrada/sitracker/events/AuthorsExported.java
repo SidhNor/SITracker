@@ -14,25 +14,17 @@
  * limitations under the License.
  */
 
-package com.andrada.sitracker.db.dao;
+package com.andrada.sitracker.events;
 
-import com.andrada.sitracker.db.beans.Author;
-import com.j256.ormlite.dao.Dao;
+public class AuthorsExported {
 
-import java.sql.SQLException;
-import java.util.List;
+    private final String message;
 
-public interface AuthorDao extends Dao<Author, Integer> {
+    public AuthorsExported(String message) {
+        this.message = message;
+    }
 
-    List<String> getAuthorsUrls() throws SQLException;
-
-    int getNewAuthorsCount() throws SQLException;
-
-    void markAsRead(Author author) throws SQLException;
-
-    List<Author> getAllAuthorsSortedNew() throws SQLException;
-
-    List<Author> getAllAuthorsSortedAZ() throws SQLException;
-
-    void removeAuthor(long id) throws SQLException;
+    public String getMessage() {
+        return message;
+    }
 }

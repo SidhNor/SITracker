@@ -29,6 +29,7 @@
     <string name="action_delete">Delete author</string>
     <string name="action_markread">Mark as read</string>
     <string name="action_import">Import</string>
+    <string name="action_export">Export</string>
     <string name="action_open_in_browser">Open selected in browser</string>
     <string name="add_author_placeholder">samlib.ru/y/your_author</string>
     <string name="designtime_placeholder_long">Lorem ipsum dolor sit amet, consectetur adipiscing
@@ -177,5 +178,9 @@
     <string name="fp_create_folder_error">Could not create folder</string>
     <string name="fp_up_label">Up</string>
     <string name="file_descriptor">File type descriptor</string>
+    <string name="book_folder_name">Books</string>
+    <string name="export_folder_name">SiTrackerExport</string>
+    <string name="cannot_write_export_file">Error writing to export file</string>
+    <string name="author_export_success_crouton_message">Authors exported</string>
 
 </resources>

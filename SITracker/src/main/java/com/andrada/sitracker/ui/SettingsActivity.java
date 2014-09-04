@@ -88,7 +88,8 @@ public class SettingsActivity extends PreferenceActivity implements
         @Override
         public boolean onPreferenceClick(Preference preference) {
             final Intent chooserIntent = new Intent(getApplicationContext(), DirectoryChooserActivity.class);
-            chooserIntent.putExtra(DirectoryChooserActivity.EXTRA_NEW_DIR_NAME, "Books");
+            chooserIntent.putExtra(DirectoryChooserActivity.EXTRA_INITIAL_DIRECTORY, prefs.downloadFolder().get());
+            chooserIntent.putExtra(DirectoryChooserActivity.EXTRA_NEW_DIR_NAME, getResources().getString(R.string.book_folder_name));
             // REQUEST_DIRECTORY is a constant integer to identify the request, e.g. 0
             startActivityForResult(chooserIntent, Constants.REQUEST_DIRECTORY);
             return true;
@@ -195,7 +196,7 @@ public class SettingsActivity extends PreferenceActivity implements
                 String absoluteDir = data.getStringExtra(DirectoryChooserActivity.RESULT_SELECTED_DIR);
                 SharedPreferences.Editor editor = getPreferenceManager().getSharedPreferences().edit();
                 editor.putString(Constants.CONTENT_DOWNLOAD_FOLDER_KEY, absoluteDir);
-                editor.commit();
+                editor.apply();
                 setDownloadFolderSummary(absoluteDir);
             }
         }

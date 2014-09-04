@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Gleb Godonoga.
+ * Copyright 2014 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,8 +34,10 @@ import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.SIPrefs_;
 import com.andrada.sitracker.events.AuthorMarkedAsReadEvent;
+import com.andrada.sitracker.events.AuthorsExported;
 import com.andrada.sitracker.events.ProgressBarToggleEvent;
 import com.andrada.sitracker.events.PublicationMarkedAsReadEvent;
+import com.andrada.sitracker.tasks.ExportAuthorsTask;
 import com.andrada.sitracker.tasks.UpdateAuthorsTask_;
 import com.andrada.sitracker.tasks.filters.UpdateStatusMessageFilter;
 import com.andrada.sitracker.tasks.receivers.UpdateStatusReceiver;
@@ -60,6 +62,7 @@ import java.util.TimerTask;
 
 import de.greenrobot.event.EventBus;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.Style;
 
 
 @SuppressLint("Registered")
@@ -250,6 +253,27 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
         startActivity(com.andrada.sitracker.ui.ImportAuthorsActivity_.intent(this).get());
     }
 
+    @OptionsItem(R.id.action_export)
+    void menuExportSelected() {
+        final Intent chooserIntent = new Intent(getApplicationContext(), DirectoryChooserActivity.class);
+        chooserIntent.putExtra(DirectoryChooserActivity.EXTRA_NEW_DIR_NAME, getResources().getString(R.string.export_folder_name));
+        // REQUEST_DIRECTORY is a constant integer to identify the request, e.g. 0
+        startActivityForResult(chooserIntent, Constants.REQUEST_EXPORT_DIRECTORY);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == Constants.REQUEST_EXPORT_DIRECTORY) {
+            if (resultCode == DirectoryChooserActivity.RESULT_CODE_DIR_SELECTED) {
+                String absoluteDir = data.getStringExtra(DirectoryChooserActivity.RESULT_SELECTED_DIR);
+                ExportAuthorsTask task = new ExportAuthorsTask(getApplicationContext());
+                task.execute(absoluteDir);
+            }
+        }
+    }
+
     private void updateActionBarWithoutLandingNavigation() {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
@@ -271,6 +295,24 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
         } else {
             this.globalProgress.setVisibility(View.GONE);
         }
+    }
+
+    public void onEvent(AuthorsExported event) {
+        String message = event.getMessage();
+
+        Style.Builder alertStyle = new Style.Builder()
+                .setTextAppearance(android.R.attr.textAppearanceLarge)
+                .setPaddingInPixels(25);
+
+        if (message.length() == 0) {
+            //This is success
+            alertStyle.setBackgroundColorValue(Style.holoGreenLight);
+            message = getResources().getString(R.string.author_export_success_crouton_message);
+        } else {
+            alertStyle.setBackgroundColorValue(Style.holoRedLight);
+        }
+        Crouton.makeText(this, message, alertStyle.build()).show();
+
     }
 
     public void onEvent(AuthorMarkedAsReadEvent event) {

@@ -325,7 +325,7 @@ public class DirectoryChooserFragment extends DialogFragment {
             return;
         }
 
-        menuItem.setVisible(isValidFile(mSelectedDir) && mNewDirectoryName != null && !mIsDirectoryChooser);
+        menuItem.setVisible(mInitialDirectory != null && isValidFile(new File(mInitialDirectory)) && mNewDirectoryName != null && mIsDirectoryChooser);
     }
 
     @Override

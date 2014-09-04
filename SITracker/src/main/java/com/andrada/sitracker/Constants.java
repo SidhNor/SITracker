@@ -72,4 +72,5 @@ public class Constants {
     public static final String GA_EVENT_CLEAR_CACHED_PUBS = "clear_cached_publications";
 
     public static final int REQUEST_DIRECTORY = 1681;
+    public static final int REQUEST_EXPORT_DIRECTORY = 16811;
 }
