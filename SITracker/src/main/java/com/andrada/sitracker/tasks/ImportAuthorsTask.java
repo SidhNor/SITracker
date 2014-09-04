@@ -40,6 +40,7 @@ import com.j256.ormlite.support.DatabaseConnection;
 import org.androidannotations.annotations.EService;
 import org.androidannotations.annotations.SystemService;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -94,6 +95,19 @@ public class ImportAuthorsTask extends IntentService {
 
         this.importProgress = new ImportProgress(authorsList.size());
 
+        //Filter out duplicates right away
+        try {
+            List<String> urls = helper.getAuthorDao().getAuthorsUrls();
+            for(String url : urls) {
+                if (this.authorsList.contains(url)) {
+                    this.authorsList.remove(url);
+                    this.importProgress.importFail(url);
+                }
+            }
+        } catch (SQLException e) {
+            LOGW(TAG, "Failed to filter out duplicate authors", e);
+        }
+
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(android.R.drawable.stat_notify_sync)
@@ -117,7 +131,6 @@ public class ImportAuthorsTask extends IntentService {
                 stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
         mBuilder.setContentIntent(resultPendingIntent);
 
-        DatabaseConnection conn = null;
         for (String authUrl : authorsList) {
             try {
                 if (shouldCancel) {
