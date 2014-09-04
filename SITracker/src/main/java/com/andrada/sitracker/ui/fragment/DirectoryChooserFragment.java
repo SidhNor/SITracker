@@ -38,6 +38,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.andrada.sitracker.R;
@@ -172,16 +173,27 @@ public class DirectoryChooserFragment extends DialogFragment {
         mTxtvSelectedFolder = (TextView) view.findViewById(R.id.txtvSelectedFolder);
         mListDirectories = (ListView) view.findViewById(R.id.directoryList);
 
-        mBtnConfirm.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                if ((isValidFile(mSelectedDir) && mIsDirectoryChooser) ||
-                        (isValidFile(mSelectedFile) && !mIsDirectoryChooser)) {
-                    returnSelectedFolder();
-                }
+        if (!mIsDirectoryChooser) {
+            mBtnConfirm.setVisibility(View.GONE);
+            View horDivider = view.findViewById(R.id.horizontalDivider);
+            if (horDivider != null) {
+                horDivider.setVisibility(View.INVISIBLE);
+                RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)horDivider.getLayoutParams();
+                params.addRule(RelativeLayout.CENTER_HORIZONTAL, 0);
+                params.addRule(RelativeLayout.ALIGN_PARENT_END);
+                params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+                horDivider.setLayoutParams(params);
             }
-        });
+        } else {
+            mBtnConfirm.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (isValidFile(mSelectedDir) && mIsDirectoryChooser) {
+                        returnSelectedFolder();
+                    }
+                }
+            });
+        }
 
         mBtnCancel.setOnClickListener(new View.OnClickListener() {
 
@@ -378,6 +390,9 @@ public class DirectoryChooserFragment extends DialogFragment {
             if (isAdded()){
                 mTxtvSelectedFolderLabel.setText(getResources().getString(R.string.fp_selected_file_label));
             }
+            if (isValidFile(mSelectedFile)) {
+                returnSelectedFile();
+            }
         } else {
             File[] contents = dir.listFiles(new FileFilter() {
                 @Override
@@ -510,12 +525,17 @@ public class DirectoryChooserFragment extends DialogFragment {
         if (mSelectedDir != null && mIsDirectoryChooser) {
             debug("Returning %s as result", mSelectedDir.getAbsolutePath());
             mListener.onSelectDirectory(mSelectedDir.getAbsolutePath());
-        } else if (mSelectedFile != null && !mIsDirectoryChooser) {
+        } else {
+            mListener.onCancelChooser();
+        }
+    }
+
+    private void returnSelectedFile() {
+        if (mSelectedFile != null && !mIsDirectoryChooser) {
             mListener.onSelectDirectory(mSelectedFile.getAbsolutePath());
         } else {
             mListener.onCancelChooser();
         }
-
     }
 
     /**
