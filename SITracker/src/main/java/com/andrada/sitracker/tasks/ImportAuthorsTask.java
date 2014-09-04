@@ -35,7 +35,6 @@ import com.andrada.sitracker.reader.SiteStrategy;
 import com.andrada.sitracker.ui.HomeActivity_;
 import com.andrada.sitracker.ui.ImportAuthorsActivity_;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
-import com.j256.ormlite.support.DatabaseConnection;
 
 import org.androidannotations.annotations.EService;
 import org.androidannotations.annotations.SystemService;
@@ -98,11 +97,14 @@ public class ImportAuthorsTask extends IntentService {
         //Filter out duplicates right away
         try {
             List<String> urls = helper.getAuthorDao().getAuthorsUrls();
-            for(String url : urls) {
+            for (String url : urls) {
                 if (this.authorsList.contains(url)) {
                     this.authorsList.remove(url);
                     this.importProgress.importFail(url);
                 }
+            }
+            if (authorsList.size() == 0) {
+                EventBus.getDefault().post(new ImportUpdates(this.importProgress));
             }
         } catch (SQLException e) {
             LOGW(TAG, "Failed to filter out duplicate authors", e);
