@@ -58,7 +58,7 @@ class Samlib implements SiteStrategy {
             }
             url = url.replace("zhurnal.lib.ru", "samlib.ru");
 
-            if (!url.endsWith(Constants.AUTHOR_PAGE_URL_ENDING_WO_SLASH)) {
+            if (!url.endsWith(Constants.AUTHOR_PAGE_URL_ENDING_WO_SLASH) && !url.endsWith(Constants.AUTHOR_PAGE_ALT_URL_ENDING_WO_SLASH)) {
                 url = (url.endsWith("/")) ? url + Constants.AUTHOR_PAGE_URL_ENDING_WO_SLASH : url + Constants.AUTHOR_PAGE_URL_ENDING_WI_SLASH;
             }
 

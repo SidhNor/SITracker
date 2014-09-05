@@ -20,6 +20,7 @@ import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.db.beans.Author;
 import com.andrada.sitracker.db.beans.Publication;
 import com.andrada.sitracker.exceptions.AddAuthorException;
+import com.andrada.sitracker.util.SamlibPageHelper;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -41,6 +42,8 @@ public class SamlibAuthorPageReader implements AuthorPageReader {
     public Author getAuthor(String url) throws AddAuthorException {
         Author author = new Author();
         author.setUrl(url);
+        String urlId = SamlibPageHelper.getUrlIdFromCompleteUrl(url);
+        author.setUrlId(urlId);
         author.setName(getAuthorName());
         author.setUpdateDate(getAuthorUpdateDate());
         author.setAuthorDescription(getAuthorDescription());
