@@ -57,6 +57,7 @@ public class SamlibAuthorPageReader implements AuthorPageReader {
 
             Publication item = new Publication();
             String baseUrl = author.getUrl().replace(Constants.AUTHOR_PAGE_URL_ENDING_WI_SLASH, "");
+            baseUrl = baseUrl.replace(Constants.AUTHOR_PAGE_ALT_URL_ENDING_WI_SLASH, "");
 
             item.setAuthor(author);
             item.setUpdateDate(new Date());
@@ -99,6 +100,7 @@ public class SamlibAuthorPageReader implements AuthorPageReader {
     @Override
     public String getAuthorImageUrl(String authorUrl) {
         authorUrl = authorUrl.replace(Constants.AUTHOR_PAGE_URL_ENDING_WO_SLASH, "");
+        authorUrl = authorUrl.replace(Constants.AUTHOR_PAGE_ALT_URL_ENDING_WO_SLASH, "");
         Pattern pattern = Pattern.compile(Constants.AUTHOR_IMAGE_REGEX, Pattern.MULTILINE);
         Matcher matcher = pattern.matcher(pageContent);
         String imageUrl = null;

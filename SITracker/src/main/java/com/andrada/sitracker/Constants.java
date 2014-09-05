@@ -37,7 +37,9 @@ public class Constants {
     public final static String DIALOG_ADD_AUTHOR = "DIALOG_ADD_AUTHOR";
 
     public final static String AUTHOR_PAGE_URL_ENDING_WO_SLASH = "indextitle.shtml";
+    public static final String AUTHOR_PAGE_ALT_URL_ENDING_WO_SLASH = "indexdate.shtml";
     public final static String AUTHOR_PAGE_URL_ENDING_WI_SLASH = "/indextitle.shtml";
+    public final static String AUTHOR_PAGE_ALT_URL_ENDING_WI_SLASH = "/indexdate.shtml";
     public final static String HTTP_PROTOCOL = "http://";
     public final static String HTTPS_PROTOCOL = "https://";
 
