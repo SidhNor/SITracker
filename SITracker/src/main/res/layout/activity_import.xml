@@ -92,6 +92,7 @@
                     android:layout_below="@id/progressTitle"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
+                    android:indeterminateDrawable="@drawable/progress_indeterminate_horizontal_holo"
                     android:indeterminate="true"/>
             </RelativeLayout>
 

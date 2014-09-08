@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Gleb Godonoga.
+ * Copyright 2014 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,6 +42,7 @@ import org.androidannotations.annotations.sharedpreferences.Pref;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import de.greenrobot.event.EventBus;
 
@@ -156,12 +157,18 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
     }
 
     @Background
-    public void removeAuthors(List<Long> authorsToRemove) {
+    public void removeAuthors(final List<Long> authorsToRemove) {
         try {
-            for (Long anAuthorsToRemove : authorsToRemove) {
-                authorDao.removeAuthor(anAuthorsToRemove);
-            }
-        } catch (SQLException e) {
+            authorDao.callBatchTasks(new Callable<Object>() {
+                @Override
+                public Object call() throws Exception {
+                    for (Long anAuthorsToRemove : authorsToRemove) {
+                        authorDao.removeAuthor(anAuthorsToRemove);
+                    }
+                    return null;
+                }
+            });
+        } catch (Exception e) {
             EasyTracker.getTracker().sendException("Author Remove thread", e, false);
         }
 

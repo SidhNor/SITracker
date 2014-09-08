@@ -27,7 +27,6 @@ import com.andrada.sitracker.db.beans.Publication;
 import com.andrada.sitracker.db.dao.AuthorDao;
 import com.andrada.sitracker.db.dao.PublicationDao;
 import com.andrada.sitracker.db.manager.SiDBHelper;
-import com.andrada.sitracker.events.AuthorSelectedEvent;
 import com.andrada.sitracker.events.BackUpRestoredEvent;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 
@@ -41,10 +40,16 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import de.greenrobot.event.EventBus;
 
+import static com.andrada.sitracker.util.LogUtils.LOGD;
+import static com.andrada.sitracker.util.LogUtils.makeLogTag;
+
 public class SiBackupAgent extends BackupAgent {
+
+    private static final String TAG = makeLogTag(SiBackupAgent.class);
 
     private final static String AUTHORS_BACKUP_KEY = "authorsbackupKey";
 
@@ -61,6 +66,7 @@ public class SiBackupAgent extends BackupAgent {
             PublicationDao pubDao = helper.getPublicationDao();
 
             List<Publication> publications = pubDao.queryForAll();
+            LOGD(TAG, "Backing up publications. Count: " + publications.size());
 
             // Write structured data
             outWriter.writeObject(publications);
@@ -78,8 +84,6 @@ public class SiBackupAgent extends BackupAgent {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-
     }
 
     @Override
@@ -100,28 +104,40 @@ public class SiBackupAgent extends BackupAgent {
                 ObjectInputStream in = null;
 
                 try {
+                    LOGD(TAG, "Starting reading backup data");
                     in = new ObjectInputStream(baStream);
                     Object possiblePubs = in.readObject();
                     if (possiblePubs instanceof List) {
-                        List<Publication> publications = (List<Publication>) possiblePubs;
+                        final List<Publication> publications = (List<Publication>) possiblePubs;
                         SiDBHelper helper = OpenHelperManager.getHelper(this.getApplicationContext(), SiDBHelper.class);
-                        Map<Long, Author> authorsMap = new HashMap<Long, Author>();
+                        final Map<Long, Author> authorsMap = new HashMap<Long, Author>();
                         for (Publication pub : publications) {
-                            if (!authorsMap.containsKey(pub.getAuthor().getId())) {
+                            if (pub.getAuthor() != null && !authorsMap.containsKey(pub.getAuthor().getId())) {
                                 authorsMap.put(pub.getAuthor().getId(), pub.getAuthor());
                             }
                         }
+                        LOGD(TAG, "Backup data parsed");
 
-                        AuthorDao authorDao = helper.getAuthorDao();
-                        PublicationDao pubDao = helper.getPublicationDao();
+                        final AuthorDao authorDao = helper.getAuthorDao();
+                        final PublicationDao pubDao = helper.getPublicationDao();
 
-                        //Write all the authors to db.
-                        for(Author auth : authorsMap.values()) {
-                            authorDao.createOrUpdate(auth);
-                        }
-                        for (Publication pub : publications) {
-                            pubDao.createOrUpdate(pub);
-                        }
+                        //Write all authors and publications in a trasaction
+                        authorDao.callBatchTasks(new Callable<Object>() {
+                            @Override
+                            public Object call() throws Exception {
+                                //Write all the authors to db.
+                                for (Author auth : authorsMap.values()) {
+                                    authorDao.createOrUpdate(auth);
+                                }
+                                for (Publication pub : publications) {
+                                    pubDao.createOrUpdate(pub);
+                                }
+                                return null;
+                            }
+                        });
+
+                        LOGD(TAG, "Backup data persisted");
+
                         EventBus.getDefault().post(new BackUpRestoredEvent());
                         OpenHelperManager.releaseHelper();
                     }
@@ -129,7 +145,7 @@ public class SiBackupAgent extends BackupAgent {
 
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
-                } catch (SQLException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 } finally {
                     if (in != null) {

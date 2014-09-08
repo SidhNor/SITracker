@@ -143,6 +143,8 @@ public class ImportAuthorsTask extends IntentService {
         for (String authUrl : authorsList) {
             try {
                 if (shouldCancel) {
+                    //Make sure to cancel it here as well
+                    notificationManager.cancel(NOTIFICATION_ID);
                     break;
                 }
                 SiteStrategy strategy = SiteDetector.chooseStrategy(authUrl, helper);
@@ -151,6 +153,11 @@ public class ImportAuthorsTask extends IntentService {
                     this.importProgress.importSuccess();
                 } else {
                     this.importProgress.importFail(authUrl);
+                }
+                if (shouldCancel) {
+                    //Make sure to cancel it here as well
+                    notificationManager.cancel(NOTIFICATION_ID);
+                    break;
                 }
                 EventBus.getDefault().post(new ImportUpdates(new ImportProgress(this.importProgress)));
                 mBuilder.setContentText(getResources()

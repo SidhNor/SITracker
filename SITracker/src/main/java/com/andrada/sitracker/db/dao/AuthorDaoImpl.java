@@ -79,6 +79,7 @@ public class AuthorDaoImpl extends BaseDaoImpl<Author, Integer>
 
     @Override
     public void removeAuthor(long id) throws SQLException {
+        this.queryRaw("DELETE FROM publications WHERE author_id = ?", String.valueOf(id));
         DeleteBuilder<Author, Integer> delBuilder = this.deleteBuilder();
         delBuilder.where().eq("_id", id);
         delBuilder.delete();

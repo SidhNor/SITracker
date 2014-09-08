@@ -75,6 +75,7 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoaderProvider {
 
     private static final long BACK_UP_DELAY = 30000L;
+    private static final long STARTUP_UPDATE_DELAY = 600000L;
 
     public static final String AUTHORS_PROCESSED_EXTRA = "authors_total_processed";
     public static final String AUTHORS_SUCCESSFULLY_IMPORTED_EXTRA = "authors_successfully_imported";
@@ -248,7 +249,8 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
             PendingIntent pendingInt = PendingIntent.getService(this.getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
             long updateInterval = Long.parseLong(prefs.updateInterval().get());
             alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP,
-                    System.currentTimeMillis(),
+                    //Delay update for 10 minutes to allow complete restore of backup if exists
+                    System.currentTimeMillis() + STARTUP_UPDATE_DELAY,
                     updateInterval,
                     pendingInt);
         } else if (!isSyncing && updateServiceUp) {

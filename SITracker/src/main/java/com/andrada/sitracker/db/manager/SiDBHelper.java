@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Gleb Godonoga.
+ * Copyright 2014 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -129,6 +129,7 @@ public class SiDBHelper extends OrmLiteSqliteOpenHelper {
                         break;
                     }
                     case 11: {
+                        getPublicationDao().queryRaw("DELETE FROM publications WHERE author_id NOT IN (SELECT _id FROM authors) OR author_id IS NULL");
                         getAuthorDao().executeRaw(
                                 "ALTER TABLE authors RENAME TO tmp_authors;");
                         TableUtils.createTableIfNotExists(connectionSource, Author.class);
