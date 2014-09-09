@@ -110,16 +110,22 @@ public class SiBackupAgent extends BackupAgent {
                     if (possiblePubs instanceof List) {
                         final List<Publication> publications = (List<Publication>) possiblePubs;
                         SiDBHelper helper = OpenHelperManager.getHelper(this.getApplicationContext(), SiDBHelper.class);
-                        final Map<Long, Author> authorsMap = new HashMap<Long, Author>();
+                        final Map<String, Author> authorsMap = new HashMap<String, Author>();
                         for (Publication pub : publications) {
-                            if (pub.getAuthor() != null && !authorsMap.containsKey(pub.getAuthor().getId())) {
-                                authorsMap.put(pub.getAuthor().getId(), pub.getAuthor());
+                            if (authorsMap.containsKey(pub.getAuthor().getUrlId())) {
+                                //Make sure the pub has the author we added first
+                                pub.setAuthor(authorsMap.get(pub.getAuthor().getUrlId()));
+                            } else {
+                                authorsMap.put(pub.getAuthor().getUrlId(), pub.getAuthor());
                             }
                         }
                         LOGD(TAG, "Backup data parsed");
 
                         final AuthorDao authorDao = helper.getAuthorDao();
                         final PublicationDao pubDao = helper.getPublicationDao();
+
+                        LOGD(TAG, "Authors restored: " + authorsMap.size());
+                        LOGD(TAG, "Total pubs restored: " + publications.size());
 
                         //Write all authors and publications in a trasaction
                         authorDao.callBatchTasks(new Callable<Object>() {
