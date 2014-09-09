@@ -29,5 +29,6 @@
     <dimen name="default_grid_margin">8dp</dimen>
     <dimen name="text_vertical_spacing">4dp</dimen>
     <dimen name="author_fragment_width">300dp</dimen>
+    <dimen name="import_activity_spacing">0dp</dimen>
 </resources>
 

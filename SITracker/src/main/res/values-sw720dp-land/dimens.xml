@@ -23,5 +23,5 @@
     <dimen name="activity_horizontal_margin">128dp</dimen>
     <dimen name="default_grid_margin">16dp</dimen>
     <dimen name="text_vertical_spacing">8dp</dimen>
-
+    <dimen name="import_activity_spacing">128dp</dimen>
 </resources>

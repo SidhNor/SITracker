@@ -9,7 +9,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/group_heading_margin_top"
             android:layout_marginBottom="@dimen/group_heading_margin_top"
-            android:paddingLeft="@dimen/list_left_padding"
+            android:paddingStart="@dimen/list_left_padding"
             android:textAppearance="@android:style/TextAppearance.Large"
             android:textColor="@color/holo_blue_light"
             android:fontFamily="sans-serif-light"
@@ -18,7 +18,7 @@
             android:textStyle="bold"
             android:focusable="false"
             android:focusableInTouchMode="false"
-            android:layout_marginLeft="25dp"/>
+            android:layout_marginStart="25dp"/>
 
     <TextView
             android:id="@+id/category_item_count"
@@ -27,7 +27,7 @@
             android:textColor="@color/holo_blue_light"
             android:fontFamily="sans-serif-light"
             android:textAppearance="@android:style/TextAppearance.Large"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:layout_marginTop="@dimen/group_heading_margin_top"/>
 
     <View
