@@ -3,6 +3,8 @@
 SI Tracker allows you to stay informed of any updates your authors post. 
 Use it comfortably on devices of any size with responsive buttery UI.
 
+***Intended for use with http://samlib.ru and http://budclub.ru only
+
 Planed features:
 
 • Publication description with ratings.
@@ -12,11 +14,13 @@ Planed features:
 • View publication related images
 • Reading, posting and tracking comments.
 
-***Intended for use with http://samlib.ru only
 If you encounter any issue, please feel free to report it.
 
 
 What's new:
 
-Small bugfix release:
-• Multiple issue fixes. Specifically for Motorola and Asus Transformer
+• Added import and export support. txt and xml formats are supported.
+• Added google back-up. Now the content is synchronized between your devices
+• Added possibility to add authors from budclub.ru
+• Support for interactive download folder choosing.
+• Fixed author removal. Now all related publications are removed as well.
