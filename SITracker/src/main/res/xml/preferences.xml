@@ -27,7 +27,7 @@
             android:dialogTitle="@string/pref_authors_sort"
             android:entries="@array/pref_authors_sort_type_human"
             android:entryValues="@array/pref_authors_sort_type"
-            android:defaultValue="0" />
+            android:defaultValue="1"/>
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -37,16 +37,16 @@
             android:key="downloadFolder"
             android:title="@string/pref_content_download_title"
             android:summary="@string/pref_content_download_summ"
-            android:defaultValue="" />
+            android:defaultValue=""/>
         <Preference
             android:key="clearSavedPubs"
             android:title="@string/pref_content_clear_saved_title"
-            android:summary="@string/pref_content_clear_saved_summ" />
+            android:summary="@string/pref_content_clear_saved_summ"/>
         <CheckBoxPreference
             android:key="displayPubImages"
             android:title="@string/pref_content_img_display"
             android:summary="@string/pref_content_img_display_summ"
-            android:defaultValue="true" />
+            android:defaultValue="true"/>
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -56,7 +56,7 @@
             android:key="updatesEnabled"
             android:title="@string/pref_updates_check"
             android:summary="@string/pref_updates_check_summ"
-            android:defaultValue="true" />
+            android:defaultValue="true"/>
         <ListPreference
             android:dependency="updatesEnabled"
             android:key="updateInterval"
@@ -64,13 +64,13 @@
             android:dialogTitle="@string/pref_update_interval"
             android:entries="@array/pref_update_interval_human"
             android:entryValues="@array/pref_update_interval_value"
-            android:defaultValue="14400000" />
+            android:defaultValue="14400000"/>
         <CheckBoxPreference
             android:dependency="updatesEnabled"
             android:key="updateOnlyWiFi"
             android:title="@string/pref_update_wifi_only"
             android:summary="@string/pref_update_wifi_only_summ"
-            android:defaultValue="false" />
+            android:defaultValue="false"/>
     </PreferenceCategory>
 
 </PreferenceScreen>
