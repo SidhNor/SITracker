@@ -42,7 +42,7 @@ public class Publication implements Serializable {
             foreign = true,
             foreignAutoRefresh = true,
             indexName = "author_id_idx",
-            columnDefinition = "bigint references authors(_id) on delete cascade")
+            columnDefinition = "bigint references authors(_id)")
     Author author;
     @DatabaseField(useGetSet = true)
     String date;

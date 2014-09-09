@@ -35,7 +35,7 @@ import java.util.concurrent.Callable;
 public class SiDBHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "siinformer.db";
-    private static final int DATABASE_VERSION = 11;
+    private static final int DATABASE_VERSION = 9;
 
     private PublicationDao publicationDao;
     private AuthorDao authorDao;
@@ -99,9 +99,8 @@ public class SiDBHelper extends OrmLiteSqliteOpenHelper {
                     }
                     case 9: {
                         //Delete all orphaned publications
-                        getPublicationDao().executeRaw(
-                                "DELETE FROM publications " +
-                                        "WHERE author_id not in (SELECT _id FROM authors)");
+                        getPublicationDao().queryRaw("DELETE FROM publications WHERE author_id NOT IN " +
+                                "(SELECT _id FROM authors) OR author_id IS NULL");
                         //Due to the fact that sqlite does not support ADD CONSTRAINT - recreate table
                         getPublicationDao().executeRaw(
                                 "ALTER TABLE publications RENAME TO tmp_publications;");
@@ -116,20 +115,10 @@ public class SiDBHelper extends OrmLiteSqliteOpenHelper {
                                         "FROM tmp_publications;"
                         );
                         getPublicationDao().executeRaw("DROP TABLE tmp_publications;");
-                        break;
-                    }
-                    case 10: {
                         //Drop old index if exists that no longer references an existing column.
                         getPublicationDao().executeRaw(
                                 "DROP INDEX IF EXISTS fk_author_publication"
                         );
-                        getPublicationDao().executeRaw(
-                                "CREATE INDEX author_id_idx ON publications (author_id)"
-                        );
-                        break;
-                    }
-                    case 11: {
-                        getPublicationDao().queryRaw("DELETE FROM publications WHERE author_id NOT IN (SELECT _id FROM authors) OR author_id IS NULL");
                         getAuthorDao().executeRaw(
                                 "ALTER TABLE authors RENAME TO tmp_authors;");
                         TableUtils.createTableIfNotExists(connectionSource, Author.class);
@@ -139,6 +128,9 @@ public class SiDBHelper extends OrmLiteSqliteOpenHelper {
                                         "FROM tmp_authors;"
                         );
                         getAuthorDao().executeRaw("DROP TABLE tmp_authors;");
+                        getPublicationDao().executeRaw(
+                                "CREATE INDEX IF NOT EXISTS author_id_idx ON publications (author_id)"
+                        );
                         final List<Author> authors = this.getAuthorDao().getAllAuthorsSortedAZ();
                         getAuthorDao().callBatchTasks(new Callable<Object>() {
                             @Override
@@ -152,7 +144,7 @@ public class SiDBHelper extends OrmLiteSqliteOpenHelper {
                                 return null;
                             }
                         });
-
+                        break;
                     }
                 }
             }
