@@ -44,6 +44,7 @@ import com.andrada.sitracker.tasks.UpdateAuthorsTask_;
 import com.andrada.sitracker.tasks.filters.UpdateStatusMessageFilter;
 import com.andrada.sitracker.tasks.receivers.UpdateStatusReceiver;
 import com.andrada.sitracker.ui.fragment.AuthorsFragment;
+import com.andrada.sitracker.ui.fragment.DirectoryChooserFragment;
 import com.andrada.sitracker.ui.fragment.PublicationsFragment;
 import com.andrada.sitracker.util.ImageLoader;
 import com.andrada.sitracker.util.UIUtils;
@@ -72,19 +73,12 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 @SuppressLint("Registered")
 @EActivity(R.layout.activity_main)
 @OptionsMenu(R.menu.main_menu)
-public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoaderProvider {
-
-    private static final long BACK_UP_DELAY = 30000L;
-    private static final long STARTUP_UPDATE_DELAY = 600000L;
+public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoaderProvider, DirectoryChooserFragment.OnFragmentInteractionListener {
 
     public static final String AUTHORS_PROCESSED_EXTRA = "authors_total_processed";
     public static final String AUTHORS_SUCCESSFULLY_IMPORTED_EXTRA = "authors_successfully_imported";
-
-    @Extra(AUTHORS_PROCESSED_EXTRA)
-    int authorsProcessed = -1;
-    @Extra(AUTHORS_SUCCESSFULLY_IMPORTED_EXTRA)
-    int authorsSuccessfullyImported = -1;
-
+    private static final long BACK_UP_DELAY = 30000L;
+    private static final long STARTUP_UPDATE_DELAY = 600000L;
     /**
      * This global layout listener is used to fire an event after first layout
      * occurs and then it is removed. This gives us a chance to configure parts
@@ -141,8 +135,11 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
             getSupportFragmentManager().beginTransaction().addToBackStack(null).commit();
         }
     };
-
-
+    @Extra(AUTHORS_PROCESSED_EXTRA)
+    int authorsProcessed = -1;
+    @Extra(AUTHORS_SUCCESSFULLY_IMPORTED_EXTRA)
+    int authorsSuccessfullyImported = -1;
+    DirectoryChooserFragment mDialog;
     @FragmentById(R.id.fragment_publications)
     PublicationsFragment mPubFragment;
     @FragmentById(R.id.fragment_authors)
@@ -183,6 +180,21 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
         return mAuthorsFragment == null || !mAuthorsFragment.isUpdating();
     }
 
+    @SuppressWarnings("deprecation")
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        /*
+         * The action bar up action should open the slider if it is currently
+         * closed, as the left pane contains content one level up in the
+         * navigation hierarchy.
+         */
+        if (item.getItemId() == android.R.id.home && !slidingPane.isOpen()) {
+            slidingPane.openPane();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     @Override
     protected void onCreate(android.os.Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -191,6 +203,22 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
             return;
         }
         UIUtils.enableDisableActivitiesByFormFactor(this);
+        mDialog = DirectoryChooserFragment.newInstance(getResources().getString(R.string.export_folder_name), null, true);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+        Crouton.cancelAllCroutons();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        slidingPane.setPanelSlideListener(null);
+        unregisterReceiver(updateStatusReceiver);
+        getSupportFragmentManager().removeOnBackStackChangedListener(backStackListener);
     }
 
     @Override
@@ -225,21 +253,6 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
         attemptToShowImportProgress();
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        slidingPane.setPanelSlideListener(null);
-        unregisterReceiver(updateStatusReceiver);
-        getSupportFragmentManager().removeOnBackStackChangedListener(backStackListener);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        EventBus.getDefault().unregister(this);
-        Crouton.cancelAllCroutons();
-    }
-
     public void ensureUpdatesAreRunningOnSchedule() {
         Boolean isSyncing = prefs.updatesEnabled().get();
         Intent intent = UpdateAuthorsTask_.intent(this.getApplicationContext()).get();
@@ -259,21 +272,6 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
         }
     }
 
-    @SuppressWarnings("deprecation")
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        /*
-         * The action bar up action should open the slider if it is currently
-         * closed, as the left pane contains content one level up in the
-         * navigation hierarchy.
-         */
-        if (item.getItemId() == android.R.id.home && !slidingPane.isOpen()) {
-            slidingPane.openPane();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
     @OptionsItem(R.id.action_settings)
     void menuSettingsSelected() {
         startActivity(com.andrada.sitracker.ui.SettingsActivity_.intent(this).get());
@@ -286,23 +284,7 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
 
     @OptionsItem(R.id.action_export)
     void menuExportSelected() {
-        final Intent chooserIntent = new Intent(getApplicationContext(), DirectoryChooserActivity.class);
-        chooserIntent.putExtra(DirectoryChooserActivity.EXTRA_NEW_DIR_NAME, getResources().getString(R.string.export_folder_name));
-        // REQUEST_DIRECTORY is a constant integer to identify the request, e.g. 0
-        startActivityForResult(chooserIntent, Constants.REQUEST_EXPORT_DIRECTORY);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == Constants.REQUEST_EXPORT_DIRECTORY) {
-            if (resultCode == DirectoryChooserActivity.RESULT_CODE_DIR_SELECTED) {
-                String absoluteDir = data.getStringExtra(DirectoryChooserActivity.RESULT_SELECTED_DIR);
-                ExportAuthorsTask task = new ExportAuthorsTask(getApplicationContext());
-                task.execute(absoluteDir);
-            }
-        }
+        mDialog.show(getSupportFragmentManager(), null);
     }
 
     private void attemptToShowImportProgress() {
@@ -403,5 +385,17 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
     @Override
     public ImageLoader getImageLoaderInstance() {
         return mImageLoader;
+    }
+
+    @Override
+    public void onSelectDirectory(String path) {
+        ExportAuthorsTask task = new ExportAuthorsTask(getApplicationContext());
+        task.execute(path);
+        mDialog.dismiss();
+    }
+
+    @Override
+    public void onCancelChooser() {
+        mDialog.dismiss();
     }
 }
