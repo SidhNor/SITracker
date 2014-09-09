@@ -28,6 +28,7 @@
     <string name="action_add">Add author</string>
     <string name="action_delete">Delete author</string>
     <string name="action_markread">Mark as read</string>
+    <string name="action_clear_saved_pubs">Clear cached</string>
     <string name="action_import">Import</string>
     <string name="action_export">Export</string>
     <string name="action_open_in_browser">Open selected in browser</string>

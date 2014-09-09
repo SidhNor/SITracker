@@ -179,6 +179,8 @@
     <string name="pref_update_interval">Интервал обновлений</string>
     <string name="pref_header_title">Настройки</string>
 
+    <string name="crouton_image_desc">info</string>
+    <string name="file_descriptor">File type descriptor</string>
     <!--File picker stuff -->
     <string name="fp_cancel_label">Отменить</string>
     <string name="fp_confirm_label">Потвердить</string>
