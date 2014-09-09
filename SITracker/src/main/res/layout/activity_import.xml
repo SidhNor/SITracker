@@ -21,8 +21,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-    <FrameLayout
+    <LinearLayout
         android:id="@+id/actionsContainer"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -48,68 +49,8 @@
                 android:layout_height="wrap_content"
                 android:text="@string/perform_import"
                 android:id="@+id/performImportButton"/>
-
         </LinearLayout>
-
-        <RelativeLayout
-            android:id="@+id/progressPanel"
-            android:visibility="gone"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/default_grid_margin">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_toLeftOf="@+id/cancelImportButton"
-                android:layout_toStartOf="@+id/cancelImportButton">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="@string/import_message_connecting_title"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:id="@+id/progressTitle"
-                    android:textColor="@color/gray_foreground"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="@string/import_progress_indication"
-                    android:id="@+id/progressValue"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
-                    android:textColor="@color/author_list_item_text"/>
-
-                <ProgressBar
-                    style="?android:attr/progressBarStyleHorizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/importProgressBar"
-                    android:layout_below="@id/progressTitle"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:indeterminateDrawable="@drawable/progress_indeterminate_horizontal_holo"
-                    android:indeterminate="true"/>
-            </RelativeLayout>
-
-            <ImageButton
-                android:contentDescription="@string/fp_cancel_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/cancelImportButton"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentTop="false"
-                android:layout_alignParentBottom="false"
-                android:src="@drawable/ic_clear"
-                android:background="@color/transparent"
-                android:layout_centerVertical="true"/>
-        </RelativeLayout>
-    </FrameLayout>
+    </LinearLayout>
 
     <View
         style="@style/DividerThick"

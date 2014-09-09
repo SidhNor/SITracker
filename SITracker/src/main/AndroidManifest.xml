@@ -15,18 +15,20 @@
   -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.andrada.sitracker"
-    android:installLocation="auto"
-    android:versionCode="19"
-    android:versionName="1.1.2">
+          package="com.andrada.sitracker"
+          android:installLocation="auto"
+          android:versionCode="19"
+          android:versionName="1.1.2">
 
     <supports-screens
+        android:normalScreens="true"
+        android:anyDensity="true"
         android:largeScreens="true"
-        android:xlargeScreens="true" />
+        android:xlargeScreens="true"/>
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application
         android:allowBackup="true"
@@ -38,7 +40,7 @@
 
         <meta-data
             android:name="com.google.android.backup.api_key"
-            android:value="AEdPqrEAAAAIO-o9YYeEHO2HMe1a0hktEmHxPWxJY_Rhq_BKOQ" />
+            android:value="AEdPqrEAAAAIO-o9YYeEHO2HMe1a0hktEmHxPWxJY_Rhq_BKOQ"/>
 
         <!-- Activities for both phones and tablets -->
         <activity
@@ -46,8 +48,8 @@
             android:launchMode="singleTask"
             android:label="@string/app_name">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
         <activity
@@ -57,7 +59,7 @@
             <!-- Parent activity meta-data to support API level 7+ -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.andrada.sitracker.ui.HomeActivity_" />
+                android:value="com.andrada.sitracker.ui.HomeActivity_"/>
         </activity>
         <activity
             android:name=".ui.ImportAuthorsActivity_"
@@ -66,9 +68,9 @@
             <!-- Parent activity meta-data to support API level 7+ -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.andrada.sitracker.ui.HomeActivity_" />
+                android:value="com.andrada.sitracker.ui.HomeActivity_"/>
         </activity>
-        <activity android:name="com.andrada.sitracker.ui.DirectoryChooserActivity" />
+        <activity android:name="com.andrada.sitracker.ui.DirectoryChooserActivity"/>
 
         <!-- Phone-only activities -->
         <activity
@@ -78,10 +80,10 @@
             android:parentActivityName=".ui.HomeActivity_">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.HomeActivity_" />
+                android:value=".ui.HomeActivity_"/>
             <meta-data
                 android:name="com.andrada.sitracker.meta.TARGET_FORM_FACTOR"
-                android:value="handset" />
+                android:value="handset"/>
         </activity>
 
         <activity
@@ -92,10 +94,10 @@
             <!-- PARENT_ACTIVITY alone is insufficient for Up navigation for this activity -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.phone.PublicationsActivity_" />
+                android:value=".ui.phone.PublicationsActivity_"/>
             <meta-data
                 android:name="com.andrada.sitracker.meta.TARGET_FORM_FACTOR"
-                android:value="handset" />
+                android:value="handset"/>
         </activity>
 
         <activity
@@ -106,10 +108,10 @@
             <!-- PARENT_ACTIVITY alone is insufficient for Up navigation for this activity -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.phone.PublicationDetailsActivity_" />
+                android:value=".ui.phone.PublicationDetailsActivity_"/>
             <meta-data
                 android:name="com.andrada.sitracker.meta.TARGET_FORM_FACTOR"
-                android:value="handset" />
+                android:value="handset"/>
         </activity>
 
         <!-- Tablet-only activities -->
@@ -121,10 +123,10 @@
             android:parentActivityName=".ui.HomeActivity_">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.HomeActivity_" />
+                android:value=".ui.HomeActivity_"/>
             <meta-data
                 android:name="com.andrada.sitracker.meta.TARGET_FORM_FACTOR"
-                android:value="tablet" />
+                android:value="tablet"/>
         </activity>
 
         <activity
@@ -135,23 +137,24 @@
             <!-- PARENT_ACTIVITY alone is insufficient for Up navigation for this activity -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.HomeActivity_" />
+                android:value=".ui.HomeActivity_"/>
             <meta-data
                 android:name="com.andrada.sitracker.meta.TARGET_FORM_FACTOR"
-                android:value="tablet" />
+                android:value="tablet"/>
         </activity>
 
 
-        <service android:name=".tasks.ClearPublicationCacheTask" />
+        <service android:name=".tasks.ClearPublicationCacheTask"/>
         <!-- Authors update components -->
-        <service android:name=".tasks.UpdateAuthorsTask_" />
-        <service android:name=".tasks.ImportAuthorsTask_" />
+        <service android:name=".tasks.UpdateAuthorsTask_"/>
+        <service android:name=".tasks.ImportAuthorsTask_"/>
+
         <receiver
             android:name=".tasks.receivers.UpdateStatusNotificationReceiver"
             android:exported="false">
             <intent-filter android:priority="0">
-                <action android:name="com.andrada.sitracker.UPDATE_SUCCESS_ACTION" />
-                <action android:name="com.andrada.sitracker.UPDATE_FAILED_ACTION" />
+                <action android:name="com.andrada.sitracker.UPDATE_SUCCESS_ACTION"/>
+                <action android:name="com.andrada.sitracker.UPDATE_FAILED_ACTION"/>
             </intent-filter>
         </receiver>
     </application>

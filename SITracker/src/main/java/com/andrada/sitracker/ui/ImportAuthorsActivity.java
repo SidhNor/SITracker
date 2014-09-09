@@ -35,10 +35,13 @@ import android.widget.TextView;
 
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
+import com.andrada.sitracker.events.CancelImportEvent;
 import com.andrada.sitracker.events.ImportUpdates;
 import com.andrada.sitracker.tasks.ImportAuthorsTask;
 import com.andrada.sitracker.tasks.ImportAuthorsTask_;
 import com.andrada.sitracker.tasks.io.AuthorFileImportContext;
+import com.andrada.sitracker.ui.components.ImportProgressView;
+import com.andrada.sitracker.ui.components.ImportProgressView_;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Click;
@@ -57,11 +60,13 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 @EActivity(R.layout.activity_import)
 public class ImportAuthorsActivity extends BaseActivity {
 
-    @ViewById
-    ViewGroup progressPanel;
+    ImportProgressView progressPanel;
 
     @ViewById
     ViewGroup buttonPanel;
+
+    @ViewById
+    ViewGroup actionsContainer;
 
     @ViewById
     Button chooseFileButton;
@@ -74,15 +79,6 @@ public class ImportAuthorsActivity extends BaseActivity {
 
     @ViewById
     ListView list;
-
-    @ViewById
-    ProgressBar importProgressBar;
-
-    @ViewById
-    TextView progressTitle;
-
-    @ViewById
-    TextView progressValue;
 
     @SystemService
     ActivityManager activityManager;
@@ -133,9 +129,7 @@ public class ImportAuthorsActivity extends BaseActivity {
     @Click(R.id.performImportButton)
     void importParsedAuthors() {
         if (authorsToImport != null) {
-            importProgressBar.setIndeterminate(true);
-            progressValue.setText(getResources().getString(R.string.import_progress_indication,
-                    0, authorsToImport.size()));
+            //Inflate
             Intent importSvc = ImportAuthorsTask_.intent(getApplicationContext()).get();
             importSvc.putStringArrayListExtra(ImportAuthorsTask.AUTHOR_LIST_EXTRA, new ArrayList<String>(authorsToImport));
             getApplicationContext().startService(importSvc);
@@ -143,8 +137,7 @@ public class ImportAuthorsActivity extends BaseActivity {
         }
     }
 
-    @Click(R.id.cancelImportButton)
-    void importCancelRequested() {
+    public void onEvent(CancelImportEvent event) {
         if (isBound) {
             this.importTask.cancelImport();
             getApplicationContext().unbindService(mConnection);
@@ -209,23 +202,19 @@ public class ImportAuthorsActivity extends BaseActivity {
                     .authorsProcessed(event.getImportProgress().getTotalAuthors())
                     .authorsSuccessfullyImported(event.getImportProgress().getSuccessfullyImported())
                     .start();
-        } else {
+        } else if (progressPanel != null) {
             //Update progress
-            if (importProgressBar.isIndeterminate() && event.getImportProgress().getTotalProcessed() != 0) {
-                importProgressBar.setIndeterminate(false);
-                progressTitle.setText(getResources().getString(R.string.import_message_title));
-            }
-            importProgressBar.setMax(event.getImportProgress().getTotalAuthors());
-            importProgressBar.setProgress(event.getImportProgress().getTotalProcessed());
-            progressValue.setText(getResources().getString(R.string.import_progress_indication,
-                    event.getImportProgress().getTotalProcessed(),
-                    event.getImportProgress().getTotalAuthors()));
+            progressPanel.updateProgress(event.getImportProgress());
         }
     }
 
     private void toggleButtonAndProgressPanels(boolean inProgress) {
         if (inProgress) {
             this.buttonPanel.setVisibility(View.GONE);
+            if (this.progressPanel == null) {
+                this.progressPanel = ImportProgressView_.build(this);
+                this.actionsContainer.addView(progressPanel);
+            }
             this.progressPanel.setVisibility(View.VISIBLE);
         } else {
             this.buttonPanel.setVisibility(View.VISIBLE);
