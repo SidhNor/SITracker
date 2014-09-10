@@ -44,6 +44,7 @@ import android.widget.TextView;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.ui.components.FileFolderView;
 import com.andrada.sitracker.ui.components.FileFolderView_;
+import com.andrada.sitracker.util.LogUtils;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -72,7 +73,7 @@ public class DirectoryChooserFragment extends DialogFragment {
     private static final String ARG_IS_DIRECTORY_CHOOSER = "DIRECTORY_CHOOSER_SETTING";
     private static final String ARG_NEW_DIRECTORY_NAME = "NEW_DIRECTORY_NAME";
     private static final String ARG_INITIAL_DIRECTORY = "INITIAL_DIRECTORY";
-    private static final String TAG = DirectoryChooserFragment.class.getSimpleName();
+    private static final String TAG = LogUtils.makeLogTag(DirectoryChooserFragment.class);
     private String mNewDirectoryName;
     private String mInitialDirectory;
     private Boolean mIsDirectoryChooser = true;

@@ -127,7 +127,7 @@ public class SiBackupAgent extends BackupAgent {
                         LOGD(TAG, "Authors restored: " + authorsMap.size());
                         LOGD(TAG, "Total pubs restored: " + publications.size());
 
-                        //Write all authors and publications in a trasaction
+                        //Write all authors and publications in a transaction
                         authorDao.callBatchTasks(new Callable<Object>() {
                             @Override
                             public Object call() throws Exception {
