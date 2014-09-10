@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Gleb Godonoga.
+ * Copyright 2014 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,8 @@ import android.content.Intent;
 
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.exceptions.SharePublicationException;
+import com.andrada.sitracker.util.AnalyticsHelper;
 import com.andrada.sitracker.util.ShareHelper;
-import com.google.analytics.tracking.android.EasyTracker;
 
 import java.io.File;
 
@@ -35,7 +35,7 @@ public class ClearPublicationCacheTask extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         String errorMessage = "";
-        EasyTracker.getInstance().setContext(this.getApplicationContext());
+
         int failedFiles = 0;
         try {
             File dir = ShareHelper.getPublicationStorageDirectory(this);
@@ -51,7 +51,7 @@ public class ClearPublicationCacheTask extends IntentService {
             errorMessage = this.getResources().getString(R.string.publication_error_storage);
         }
         if (!errorMessage.equals("")) {
-            EasyTracker.getTracker().sendException("Failed to remove files.", false);
+            AnalyticsHelper.getInstance().sendException("Failed to remove files.");
         }
     }
 }

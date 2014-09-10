@@ -29,7 +29,7 @@ import com.andrada.sitracker.db.manager.SiDBHelper;
 import com.andrada.sitracker.events.AuthorMarkedAsReadEvent;
 import com.andrada.sitracker.ui.components.AuthorItemView;
 import com.andrada.sitracker.ui.components.AuthorItemView_;
-import com.google.analytics.tracking.android.EasyTracker;
+import com.andrada.sitracker.util.AnalyticsHelper;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Background;
@@ -151,7 +151,7 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
                 authorDao.update(auth);
                 EventBus.getDefault().post(new AuthorMarkedAsReadEvent(auth));
             } catch (SQLException e) {
-                EasyTracker.getTracker().sendException("Author mark as read: " + e.getMessage(), false);
+                AnalyticsHelper.getInstance().sendException("Author mark as read: ", e);
             }
         }
     }
@@ -169,7 +169,7 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
                 }
             });
         } catch (Exception e) {
-            EasyTracker.getTracker().sendException("Author Remove thread", e, false);
+            AnalyticsHelper.getInstance().sendException("Author Remove thread: ", e);
         }
 
         boolean removingCurrentlySelected = false;

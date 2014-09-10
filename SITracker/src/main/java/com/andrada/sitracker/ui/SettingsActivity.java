@@ -34,9 +34,9 @@ import com.andrada.sitracker.contracts.SIPrefs_;
 import com.andrada.sitracker.events.AuthorSortMethodChanged;
 import com.andrada.sitracker.tasks.ClearPublicationCacheTask;
 import com.andrada.sitracker.tasks.UpdateAuthorsTask_;
+import com.andrada.sitracker.util.AnalyticsHelper;
 import com.andrada.sitracker.util.ShareHelper;
 import com.andrada.sitracker.util.UIUtils;
-import com.google.analytics.tracking.android.EasyTracker;
 
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.SystemService;
@@ -92,6 +92,7 @@ public class SettingsActivity extends PreferenceActivity implements
             chooserIntent.putExtra(DirectoryChooserActivity.EXTRA_NEW_DIR_NAME, getResources().getString(R.string.book_folder_name));
             // REQUEST_DIRECTORY is a constant integer to identify the request, e.g. 0
             startActivityForResult(chooserIntent, Constants.REQUEST_DIRECTORY);
+            AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_PREFS_DOWNLOAD_DIALOG);
             return true;
         }
     };
@@ -108,7 +109,6 @@ public class SettingsActivity extends PreferenceActivity implements
         if (dirChooserPref != null) {
             dirChooserPref.setOnPreferenceClickListener(dirChooserClickListener);
         }
-        EasyTracker.getInstance().activityStart(this);
     }
 
     @Override
@@ -118,7 +118,6 @@ public class SettingsActivity extends PreferenceActivity implements
         Preference pref = findPreference(Constants.PREF_CLEAR_SAVED_PUBS_KEY);
         if (pref != null) {
             pref.setOnPreferenceClickListener(null);
-            EasyTracker.getInstance().activityStop(this);
         }
     }
 
@@ -141,11 +140,10 @@ public class SettingsActivity extends PreferenceActivity implements
             long updateInterval = Long.parseLong(prefs.updateInterval().get());
             alarmManager.setInexactRepeating(AlarmManager.RTC, System.currentTimeMillis(), updateInterval, pi);
             setUpdateIntervalSummary(prefs.updateInterval().get());
-            EasyTracker.getTracker().sendEvent(
+            AnalyticsHelper.getInstance().sendEvent(
                     Constants.GA_UI_CATEGORY,
                     Constants.GA_EVENT_CHANGED_UPDATE_INTERVAL,
                     Constants.GA_EVENT_CHANGED_UPDATE_INTERVAL, updateInterval);
-            EasyTracker.getInstance().dispatch();
         } else if (key.equals(Constants.AUTHOR_SORT_TYPE_KEY)) {
             EventBus.getDefault().post(new AuthorSortMethodChanged());
             setAuthorSortSummary(prefs.authorsSortType().get());

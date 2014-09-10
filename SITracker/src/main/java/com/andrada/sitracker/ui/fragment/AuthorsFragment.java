@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Gleb Godonoga.
+ * Copyright 2014 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,8 +49,7 @@ import com.andrada.sitracker.events.PublicationMarkedAsReadEvent;
 import com.andrada.sitracker.tasks.UpdateAuthorsTask_;
 import com.andrada.sitracker.ui.MultiSelectionUtil;
 import com.andrada.sitracker.ui.fragment.adapters.AuthorsAdapter;
-import com.google.analytics.tracking.android.EasyTracker;
-import com.j256.ormlite.android.apptools.OpenHelperManager;
+import com.andrada.sitracker.util.AnalyticsHelper;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
@@ -151,7 +150,7 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
         AddAuthorDialog authorDialog = new AddAuthorDialog();
         authorDialog.show(getActivity().getSupportFragmentManager(),
                 Constants.DIALOG_ADD_AUTHOR);
-        EasyTracker.getTracker().sendView(Constants.GA_SCREEN_ADD_DIALOG);
+        AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_ADD_DIALOG);
     }
 
     @OptionsItem(R.id.action_refresh)
@@ -162,11 +161,10 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
                 Intent updateIntent = new Intent(getActivity(), UpdateAuthorsTask_.class);
                 updateIntent.putExtra(Constants.UPDATE_IGNORES_NETWORK, true);
                 getActivity().startService(updateIntent);
-                EasyTracker.getTracker().sendEvent(
+                AnalyticsHelper.getInstance().sendEvent(
                         Constants.GA_UI_CATEGORY,
                         Constants.GA_EVENT_AUTHORS_MANUAL_REFRESH,
-                        Constants.GA_EVENT_AUTHORS_MANUAL_REFRESH, null);
-                EasyTracker.getInstance().dispatch();
+                        Constants.GA_EVENT_AUTHORS_MANUAL_REFRESH);
                 toggleUpdatingState();
             } else {
                 //Surface crouton that network is unavailable
@@ -310,11 +308,10 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
         mode.finish();
         if (item.getItemId() == R.id.action_remove) {
-            EasyTracker.getTracker().sendEvent(
+            AnalyticsHelper.getInstance().sendEvent(
                     Constants.GA_UI_CATEGORY,
                     Constants.GA_EVENT_AUTHOR_REMOVED,
                     Constants.GA_EVENT_AUTHOR_REMOVED, (long) mSelectedAuthors.size());
-            EasyTracker.getInstance().dispatch();
             adapter.removeAuthors(mSelectedAuthors);
             currentAuthorIndex = adapter.getSelectedAuthorId();
             /*
@@ -350,11 +347,10 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
 
     public void onEvent(PublicationMarkedAsReadEvent event) {
         //ensure we update the new status of the author if he has no new publications
-        EasyTracker.getTracker().sendEvent(
+        AnalyticsHelper.getInstance().sendEvent(
                 Constants.GA_UI_CATEGORY,
                 Constants.GA_EVENT_AUTHOR_MANUAL_READ,
-                Constants.GA_EVENT_AUTHOR_MANUAL_READ, null);
-        EasyTracker.getInstance().dispatch();
+                Constants.GA_EVENT_AUTHOR_MANUAL_READ);
         if (event.refreshAuthor) {
             adapter.reloadAuthors();
         }
@@ -390,11 +386,10 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
         EventBus.getDefault().post(new ProgressBarToggleEvent(false));
         String message = event.message;
 
-        EasyTracker.getTracker().sendEvent(
+        AnalyticsHelper.getInstance().sendEvent(
                 Constants.GA_UI_CATEGORY,
                 Constants.GA_EVENT_AUTHOR_ADDED,
                 Constants.GA_EVENT_AUTHOR_ADDED, (long) message.length());
-        EasyTracker.getInstance().dispatch();
 
         //Stop progress bar
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Gleb Godonoga.
+ * Copyright 2014 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package com.andrada.sitracker.db.beans;
 
 import com.andrada.sitracker.db.dao.AuthorDaoImpl;
-import com.google.analytics.tracking.android.EasyTracker;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
@@ -137,7 +136,7 @@ public class Author implements Serializable {
                 this.publications.update(pub);
             } catch (SQLException e) {
                 //surface error
-                EasyTracker.getTracker().sendException("Author mark as read", e, false);
+                //Eat exception
             }
         }
     }

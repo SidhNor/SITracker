@@ -62,6 +62,8 @@ public class Constants {
     public static final String GA_SCREEN_PUBLICATIONS = "Publications";
     public static final String GA_SCREEN_AUTHORS = "Authors";
     public static final String GA_SCREEN_ADD_DIALOG = "Add author dialog";
+    public static final String GA_SCREEN_EXPORT_DIALOG = "Export authors dialog";
+    public static final String GA_SCREEN_PREFS_DOWNLOAD_DIALOG = "Download folder setting dialog";
 
     //Analytics event names
     public static final String GA_EVENT_AUTHOR_ADDED = "author_added";

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Gleb Godonoga.
+ * Copyright 2014 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,8 @@ package com.andrada.sitracker.ui;
 
 import android.annotation.SuppressLint;
 
-import org.androidannotations.annotations.EActivity;
-
 @SuppressLint("Registered")
-@EActivity
+//@EActivity
 public class LoginActivity extends BaseActivity {
 
 }

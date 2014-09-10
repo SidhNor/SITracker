@@ -17,7 +17,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.andrada.sitracker"
           android:installLocation="auto"
-          android:versionCode="20"
+          android:versionCode="24"
           android:versionName="1.2.0">
 
 <supports-screens
@@ -38,6 +38,10 @@
         android:theme="@style/AppTheme"
         android:backupAgent=".util.SiBackupAgent">
 
+        <!-- Google Analytics Version v4 needs this value for easy tracking -->
+        <meta-data
+            android:name="com.google.android.gms.analytics.globalConfigResource"
+            android:resource="@xml/global_tracker"/>
         <meta-data
             android:name="com.google.android.backup.api_key"
             android:value="AEdPqrEAAAAIO-o9YYeEHO2HMe1a0hktEmHxPWxJY_Rhq_BKOQ"/>

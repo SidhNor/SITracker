@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Gleb Godonoga.
+ * Copyright 2014 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,8 +36,8 @@ import com.andrada.sitracker.ui.components.PublicationCategoryItemView;
 import com.andrada.sitracker.ui.components.PublicationCategoryItemView_;
 import com.andrada.sitracker.ui.components.PublicationItemView;
 import com.andrada.sitracker.ui.components.PublicationItemView_;
+import com.andrada.sitracker.util.AnalyticsHelper;
 import com.andrada.sitracker.util.ImageLoader;
-import com.google.analytics.tracking.android.EasyTracker;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
@@ -229,7 +229,7 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
                 boolean authorNewChanged = publicationsDao.markPublicationRead(pub);
                 EventBus.getDefault().post(new PublicationMarkedAsReadEvent(authorNewChanged));
             } catch (SQLException e) {
-                EasyTracker.getTracker().sendException("Publication Set update", e, false);
+                AnalyticsHelper.getInstance().sendException("Publication Set update", e);
             }
         }
     }
@@ -255,12 +255,10 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
 
                 //Attempt to open or download publication
                 listener.publicationShare(pub, pub.getNew());
-
-                EasyTracker.getTracker().sendEvent(
+                AnalyticsHelper.getInstance().sendEvent(
                         Constants.GA_UI_CATEGORY,
                         Constants.GA_EVENT_AUTHOR_PUB_OPEN,
-                        Constants.GA_EVENT_AUTHOR_PUB_OPEN, null);
-                EasyTracker.getInstance().dispatch();
+                        Constants.GA_EVENT_AUTHOR_PUB_OPEN);
             }
             // Return true as we are handling the event.
             return true;

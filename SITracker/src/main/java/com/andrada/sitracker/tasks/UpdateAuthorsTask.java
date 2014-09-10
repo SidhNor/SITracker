@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Gleb Godonoga.
+ * Copyright 2014 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ import com.andrada.sitracker.reader.SiteDetector;
 import com.andrada.sitracker.reader.SiteStrategy;
 import com.andrada.sitracker.tasks.messages.UpdateFailedIntentMessage;
 import com.andrada.sitracker.tasks.messages.UpdateSuccessfulIntentMessage;
-import com.google.analytics.tracking.android.EasyTracker;
+import com.andrada.sitracker.util.AnalyticsHelper;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 
 import org.androidannotations.annotations.EService;
@@ -75,8 +75,6 @@ public class UpdateAuthorsTask extends IntentService {
     protected void onHandleIntent(Intent intent) {
 
         boolean isNetworkIgnore = intent.getBooleanExtra(Constants.UPDATE_IGNORES_NETWORK, false);
-
-        EasyTracker.getInstance().setContext(this.getApplicationContext());
 
         //Check for updates
         this.updatedAuthors = 0;
@@ -137,7 +135,7 @@ public class UpdateAuthorsTask extends IntentService {
     }
 
     private void trackException(String message) {
-        EasyTracker.getTracker().sendException(message, false);
+        AnalyticsHelper.getInstance().sendException(message);
     }
 
 }

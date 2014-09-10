@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Gleb Godonoga.
+ * Copyright 2014 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package com.andrada.sitracker.util;
 
-import com.google.analytics.tracking.android.ExceptionParser;
+import com.google.android.gms.analytics.ExceptionParser;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 

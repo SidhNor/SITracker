@@ -46,9 +46,9 @@ import com.andrada.sitracker.tasks.receivers.UpdateStatusReceiver;
 import com.andrada.sitracker.ui.fragment.AuthorsFragment;
 import com.andrada.sitracker.ui.fragment.DirectoryChooserFragment;
 import com.andrada.sitracker.ui.fragment.PublicationsFragment;
+import com.andrada.sitracker.util.AnalyticsHelper;
 import com.andrada.sitracker.util.ImageLoader;
 import com.andrada.sitracker.util.UIUtils;
-import com.google.analytics.tracking.android.EasyTracker;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
@@ -121,7 +121,7 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
     final SlidingPaneLayout.SimplePanelSlideListener slidingPaneListener = new SlidingPaneLayout.SimplePanelSlideListener() {
 
         public void onPanelOpened(View view) {
-            EasyTracker.getTracker().sendView(Constants.GA_SCREEN_AUTHORS);
+            AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_AUTHORS);
             if (slidingPane.isSlideable()) {
                 updateActionBarWithHomeBackNavigation();
                 getSupportFragmentManager().popBackStack();
@@ -129,7 +129,7 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
         }
 
         public void onPanelClosed(View view) {
-            EasyTracker.getTracker().sendView(Constants.GA_SCREEN_PUBLICATIONS);
+            AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_PUBLICATIONS);
             //This is called only on phones and 7 inch tablets in portrait
             updateActionBarWithoutLandingNavigation();
             getSupportFragmentManager().beginTransaction().addToBackStack(null).commit();
@@ -284,6 +284,7 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
 
     @OptionsItem(R.id.action_export)
     void menuExportSelected() {
+        AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_EXPORT_DIALOG);
         mDialog.show(getSupportFragmentManager(), null);
     }
 

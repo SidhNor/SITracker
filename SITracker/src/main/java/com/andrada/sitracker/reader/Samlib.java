@@ -26,10 +26,10 @@ import com.andrada.sitracker.db.dao.AuthorDao;
 import com.andrada.sitracker.db.dao.PublicationDao;
 import com.andrada.sitracker.db.manager.SiDBHelper;
 import com.andrada.sitracker.exceptions.AddAuthorException;
+import com.andrada.sitracker.util.AnalyticsHelper;
 import com.andrada.sitracker.util.LogUtils;
 import com.andrada.sitracker.util.SamlibPageHelper;
 import com.github.kevinsawicki.http.HttpRequest;
-import com.google.analytics.tracking.android.EasyTracker;
 import com.j256.ormlite.dao.ForeignCollection;
 
 import java.net.MalformedURLException;
@@ -153,11 +153,10 @@ class Samlib implements SiteStrategy {
             if (reader.isPageBlank()) {
                 return false;
             }
-            EasyTracker.getTracker().sendEvent(
+            AnalyticsHelper.getInstance().sendEvent(
                     Constants.GA_BGR_CATEGORY,
                     Constants.GA_EVENT_AUTHOR_UPDATE,
-                    author.getName(), null);
-            EasyTracker.getInstance().dispatch();
+                    author.getName());
         } catch (MalformedURLException e) {
             //Just swallow exception, as this is unlikely to happen
             //Skip author
@@ -202,8 +201,6 @@ class Samlib implements SiteStrategy {
         }
 
         if (newItems.size() == 0 && oldItemsMap.size() > 1) {
-            EasyTracker.getTracker().sendException(
-                    "Something went wrong. Publications are empty.", false);
             LogUtils.LOGW(Constants.APP_TAG, "Something went wrong. No publications found for author that already exists");
             //Just skip for now to be on the safe side.
             return false;
@@ -245,6 +242,6 @@ class Samlib implements SiteStrategy {
     }
 
     private void trackException(String message) {
-        EasyTracker.getTracker().sendException(message, false);
+        AnalyticsHelper.getInstance().sendException(message);
     }
 }
