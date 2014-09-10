@@ -19,6 +19,7 @@ package com.andrada.sitracker.tasks;
 import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.backup.BackupManager;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.Binder;
@@ -189,6 +190,9 @@ public class ImportAuthorsTask extends IntentService {
             stackBuilder.addParentStack(HomeActivity_.class);
             // Adds the Intent that starts the Activity to the top of the stack
             stackBuilder.addNextIntent(finishIntent);
+
+            BackupManager bm = new BackupManager(this);
+            bm.dataChanged();
 
             mBuilder.setProgress(0, 0, false)
                     .setOngoing(false)

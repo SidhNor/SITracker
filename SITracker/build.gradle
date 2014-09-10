@@ -50,11 +50,11 @@ tasks.withType(JavaCompile) {
 android {
     signingConfigs {
     }
-    compileSdkVersion 19
-    buildToolsVersion '20'
+    compileSdkVersion 20
+    buildToolsVersion '20.0.0'
     defaultConfig {
         minSdkVersion 10
-        targetSdkVersion 19
+        targetSdkVersion 20
         applicationId 'com.andrada.sitracker'
         testInstrumentationRunner 'android.test.InstrumentationTestRunner'
         testApplicationId 'com.andrada.sitracker.test'
@@ -66,8 +66,6 @@ android {
             }
         }
     }
-    productFlavors {
-    }
     buildTypes {
         debug {
             debuggable true
@@ -75,7 +73,7 @@ android {
         }
         release {
             runProguard true
-            proguardFile '../proguard.cfg'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 }
