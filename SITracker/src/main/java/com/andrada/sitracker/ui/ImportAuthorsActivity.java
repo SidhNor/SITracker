@@ -42,6 +42,7 @@ import com.andrada.sitracker.tasks.ImportAuthorsTask_;
 import com.andrada.sitracker.tasks.io.AuthorFileImportContext;
 import com.andrada.sitracker.ui.components.ImportProgressView;
 import com.andrada.sitracker.ui.components.ImportProgressView_;
+import com.andrada.sitracker.util.AnalyticsHelper;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Click;
@@ -129,6 +130,7 @@ public class ImportAuthorsActivity extends BaseActivity {
     @Click(R.id.performImportButton)
     void importParsedAuthors() {
         if (authorsToImport != null) {
+            AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_IMPORT_PROGRESS);
             //Inflate
             Intent importSvc = ImportAuthorsTask_.intent(getApplicationContext()).get();
             importSvc.putStringArrayListExtra(ImportAuthorsTask.AUTHOR_LIST_EXTRA, new ArrayList<String>(authorsToImport));
@@ -143,6 +145,10 @@ public class ImportAuthorsActivity extends BaseActivity {
             getApplicationContext().unbindService(mConnection);
             isBound = false;
         }
+        AnalyticsHelper.getInstance().sendEvent(
+                Constants.GA_BGR_CATEGORY,
+                Constants.GA_EVENT_AUTHOR_IMPORT,
+                Constants.GA_EVENT_IMPORT_CANCELED);
         getApplicationContext().stopService(ImportAuthorsTask_.intent(getApplicationContext()).get());
         toggleButtonAndProgressPanels(false);
     }

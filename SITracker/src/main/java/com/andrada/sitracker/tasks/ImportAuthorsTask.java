@@ -28,6 +28,7 @@ import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 
+import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.db.manager.SiDBHelper;
 import com.andrada.sitracker.events.ImportUpdates;
@@ -35,6 +36,7 @@ import com.andrada.sitracker.reader.SiteDetector;
 import com.andrada.sitracker.reader.SiteStrategy;
 import com.andrada.sitracker.ui.HomeActivity_;
 import com.andrada.sitracker.ui.ImportAuthorsActivity_;
+import com.andrada.sitracker.util.AnalyticsHelper;
 import com.andrada.sitracker.util.SamlibPageHelper;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 
@@ -193,6 +195,12 @@ public class ImportAuthorsTask extends IntentService {
 
             BackupManager bm = new BackupManager(this);
             bm.dataChanged();
+
+            AnalyticsHelper.getInstance().sendEvent(
+                    Constants.GA_BGR_CATEGORY,
+                    Constants.GA_EVENT_AUTHOR_IMPORT,
+                    Constants.GA_EVENT_IMPORT_COMPLETE,
+                    importProgress.getTotalAuthors());
 
             mBuilder.setProgress(0, 0, false)
                     .setOngoing(false)

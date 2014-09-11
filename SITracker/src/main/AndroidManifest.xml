@@ -17,7 +17,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.andrada.sitracker"
           android:installLocation="auto"
-          android:versionCode="26"
+          android:versionCode="27"
           android:versionName="1.2.0">
 
 <supports-screens
@@ -36,6 +36,7 @@
         android:label="@string/app_name"
         android:name="com.andrada.sitracker.SITrackerApp"
         android:theme="@style/AppTheme"
+        android:restoreAnyVersion="true"
         android:backupAgent=".util.SiBackupAgent">
 
         <!-- Google Analytics Version v4 needs this value for easy tracking -->
