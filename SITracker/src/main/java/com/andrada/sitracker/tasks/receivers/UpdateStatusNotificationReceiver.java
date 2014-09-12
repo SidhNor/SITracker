@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Gleb Godonoga.
+ * Copyright 2014 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,8 +30,7 @@ import com.andrada.sitracker.R;
 import com.andrada.sitracker.tasks.messages.UpdateFailedIntentMessage;
 import com.andrada.sitracker.tasks.messages.UpdateSuccessfulIntentMessage;
 import com.andrada.sitracker.ui.HomeActivity_;
-import com.google.analytics.tracking.android.EasyTracker;
-import com.google.analytics.tracking.android.Tracker;
+import com.andrada.sitracker.util.AnalyticsHelper;
 
 
 public class UpdateStatusNotificationReceiver extends BroadcastReceiver {
@@ -51,8 +50,7 @@ public class UpdateStatusNotificationReceiver extends BroadcastReceiver {
 
         } else if (intent.getAction().equals(UpdateFailedIntentMessage.FAILED_MESSAGE)) {
             //Notify that update failed
-            Tracker myTracker = EasyTracker.getTracker();      // Get a reference to tracker.
-            myTracker.sendException(UpdateFailedIntentMessage.FAILED_MESSAGE, false);
+            AnalyticsHelper.getInstance().sendException(UpdateFailedIntentMessage.FAILED_MESSAGE);
         }
 
     }

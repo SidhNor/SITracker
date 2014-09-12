@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <!--
-  Copyright 2013 Gleb Godonoga.
+  Copyright 2014 Gleb Godonoga.
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -17,58 +17,62 @@
   -->
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="wrap_content"
-             android:background="#00000000">
+             android:background="#00000000"
+             android:padding="8dp"
+             tools:context=".ui.HomeActivity">
 
     <RelativeLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:background="@drawable/crouton_background"
-            android:layout_margin="8dp"
-            android:baselineAligned="false"
-            android:paddingLeft="10dp">
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:background="@drawable/crouton_background"
+        android:baselineAligned="false"
+        android:paddingLeft="10dp">
 
         <ImageView
-                android:id="@+id/crouton_img"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:paddingLeft="5dp"
-                android:src="@drawable/ic_alert"
-                android:contentDescription="@string/crouton_image_desc"
-                android:layout_centerVertical="true"/>
+            android:id="@+id/crouton_img"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:paddingLeft="5dp"
+            android:src="@drawable/ic_alert"
+            android:contentDescription="@string/crouton_image_desc"
+            android:layout_centerVertical="true"/>
 
         <TextView
-                android:layout_toRightOf="@id/crouton_img"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:textStyle="bold"
-                android:textColor="#fff"
-                android:text="@string/no_network_error"
-                android:layout_centerVertical="true"/>
+            android:layout_toRightOf="@id/crouton_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:textStyle="bold"
+            android:textColor="#fff"
+            android:text="@string/no_network_error"
+            android:layout_centerVertical="true"/>
 
         <View
-                android:layout_width="1dp"
-                android:layout_margin="5dp"
-                android:layout_height="30dp"
-                android:background="#FFDDDDDD"
-                android:layout_centerVertical="true"
-                android:layout_toStartOf="@+id/retryUpdateButton"/>
+            android:layout_width="1dp"
+            android:layout_margin="5dp"
+            android:layout_height="30dp"
+            android:background="#FFDDDDDD"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/retryUpdateButton"/>
 
         <Button
-                android:id="@+id/retryUpdateButton"
-                android:layout_alignParentRight="true"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/no_network_retry"
-                style="?android:attr/buttonStyleSmall"
-                android:background="@drawable/crouton_button_selector"
-                android:textColor="#fff"
-                android:textStyle="bold"
-                android:paddingRight="15dp"
-                android:paddingLeft="20dp"/>
+            android:id="@+id/retryUpdateButton"
+            android:layout_alignParentRight="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/no_network_retry"
+            style="?android:attr/buttonStyleSmall"
+            android:background="@drawable/crouton_button_selector"
+            android:textColor="#fff"
+            android:textStyle="bold"
+            android:paddingRight="15dp"
+            android:paddingLeft="20dp"
+            android:layout_alignParentBottom="false"
+            android:layout_centerVertical="true"/>
     </RelativeLayout>
 </FrameLayout>

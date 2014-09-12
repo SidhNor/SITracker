@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Gleb Godonoga.
+ * Copyright 2014 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,65 +14,50 @@
  * limitations under the License.
  */
 
+
+
+
 import java.util.regex.Pattern
 
-buildscript {
-    repositories {
-        maven { url 'http://repo1.maven.org/maven2' }
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:0.5.+'
-    }
-}
-apply plugin: 'android'
-
-repositories {
-    mavenCentral()
-    maven {
-        url 'https://oss.sonatype.org/content/repositories/snapshots/'
-    }
-}
+apply plugin: 'com.android.application'
+apply plugin: 'android-apt'
 
 configurations {
     compile
-    androidannotations.extendsFrom(compile)
 }
-
-
-ext.androidAnnotationsVersion = '3.0-SNAPSHOT';
 
 dependencies {
-    compile 'com.android.support:support-v4:18+'
-    compile 'com.android.support:appcompat-v7:18+'
-    androidannotations "org.androidannotations:androidannotations:${androidAnnotationsVersion}"
-    compile "org.androidannotations:androidannotations-api:${androidAnnotationsVersion}"
+    compile 'com.android.support:support-v4:20.+'
+    compile 'com.android.support:appcompat-v7:20.+'
+    compile 'com.google.android.gms:play-services:5.0.89'
+    apt 'org.androidannotations:androidannotations:3.0.1'
+    compile 'org.androidannotations:androidannotations-api:3.0.1'
     compile 'org.apache.commons:commons-lang3:3.0'
-    compile 'com.j256.ormlite:ormlite-android:4.46'
+    compile 'com.j256.ormlite:ormlite-android:4.48'
     compile 'com.github.kevinsawicki:http-request:4.2'
-    compile 'de.greenrobot:eventbus:2.0.2'
-    compile('de.keyboardsurfer.android.widget:crouton:1.8.1') {
-        exclude module: 'support-v4'
-        compile 'com.android.support:support-v4:+'
+    compile 'de.greenrobot:eventbus:2.2.1'
+    compile 'com.mcxiaoke.volley:library:1.0.6'
+    androidTestCompile 'com.squareup:fest-android:1.0.5'
+    compile('de.keyboardsurfer.android.widget:crouton:1.8.4@aar') {
+        exclude group: 'com.google.android', module: 'support-v4'
     }
-    compile files('libs/volley.jar')
-    compile files("libs/libGoogleAnalyticsV2.jar")
-
-    instrumentTestCompile 'com.squareup:fest-android:1.0.5'
 }
 
-tasks.withType(Compile) {
+tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
 }
 
 android {
-    compileSdkVersion 18
-    buildToolsVersion "18.0.1"
-
+    signingConfigs {
+    }
+    compileSdkVersion 20
+    buildToolsVersion '20.0.0'
     defaultConfig {
-        minSdkVersion 8
-        targetSdkVersion 18
-        testPackageName 'com.andrada.sitracker.test'
+        minSdkVersion 10
+        targetSdkVersion 20
+        applicationId 'com.andrada.sitracker'
         testInstrumentationRunner 'android.test.InstrumentationTestRunner'
+        testApplicationId 'com.andrada.sitracker.test'
     }
     sourceSets {
         main {
@@ -81,21 +66,22 @@ android {
             }
         }
     }
+    buildTypes {
+        debug {
+            debuggable true
+            runProguard false
+        }
+        release {
+            runProguard true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
 }
 
-afterEvaluate { project ->
-    android.applicationVariants.each { variant ->
-        def andAnnOutput = file("${project.buildDir}/source/aaGen/${variant.dirName}")
-        variant.renderscriptCompile.resOutputDir = andAnnOutput
-
-        variant.javaCompile.options.compilerArgs += [
-                '-classpath', configurations.compile.asPath,
-                '-processorpath', configurations.androidannotations.asPath,
-                '-processor', 'org.androidannotations.AndroidAnnotationProcessor',
-                '-AandroidManifestFile=' + variant.processResources.manifestFile,
-                '-s', andAnnOutput
-
-        ]
+apt {
+    arguments {
+        resourcePackageName android.defaultConfig.applicationId
+        androidManifestFile variant.processResources.manifestFile
     }
 }
 

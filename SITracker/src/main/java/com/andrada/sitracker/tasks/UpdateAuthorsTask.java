@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Gleb Godonoga.
+ * Copyright 2014 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 
 package com.andrada.sitracker.tasks;
 
-import android.annotation.SuppressLint;
 import android.app.IntentService;
+import android.app.backup.BackupManager;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -25,50 +25,45 @@ import android.net.NetworkInfo;
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.contracts.SIPrefs_;
 import com.andrada.sitracker.db.beans.Author;
-import com.andrada.sitracker.db.beans.Publication;
-import com.andrada.sitracker.db.dao.AuthorDao;
-import com.andrada.sitracker.db.dao.PublicationDao;
 import com.andrada.sitracker.db.manager.SiDBHelper;
+import com.andrada.sitracker.reader.SiteDetector;
+import com.andrada.sitracker.reader.SiteStrategy;
 import com.andrada.sitracker.tasks.messages.UpdateFailedIntentMessage;
 import com.andrada.sitracker.tasks.messages.UpdateSuccessfulIntentMessage;
-import com.andrada.sitracker.util.LogUtils;
-import com.andrada.sitracker.util.SamlibPageParser;
-import com.github.kevinsawicki.http.HttpRequest;
-import com.google.analytics.tracking.android.EasyTracker;
-import com.j256.ormlite.dao.ForeignCollection;
+import com.andrada.sitracker.util.AnalyticsHelper;
+import com.j256.ormlite.android.apptools.OpenHelperManager;
 
 import org.androidannotations.annotations.EService;
-import org.androidannotations.annotations.OrmLiteDao;
 import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.sharedpreferences.Pref;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.sql.SQLException;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
-@SuppressLint("Registered")
 @EService
 public class UpdateAuthorsTask extends IntentService {
 
-    @OrmLiteDao(helper = SiDBHelper.class, model = Author.class)
-    AuthorDao authorDao;
-
-    @OrmLiteDao(helper = SiDBHelper.class, model = Publication.class)
-    PublicationDao publicationsDao;
-
     @Pref
     SIPrefs_ prefs;
-
     @SystemService
     ConnectivityManager connectivityManager;
-
+    private SiDBHelper siDBHelper;
     private int updatedAuthors;
 
     public UpdateAuthorsTask() {
         super(UpdateAuthorsTask.class.getSimpleName());
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        siDBHelper = OpenHelperManager.getHelper(this, SiDBHelper.class);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        OpenHelperManager.releaseHelper();
     }
 
     /**
@@ -81,18 +76,17 @@ public class UpdateAuthorsTask extends IntentService {
 
         boolean isNetworkIgnore = intent.getBooleanExtra(Constants.UPDATE_IGNORES_NETWORK, false);
 
-        EasyTracker.getInstance().setContext(this.getApplicationContext());
-
         //Check for updates
         this.updatedAuthors = 0;
         try {
-            List<Author> authors = authorDao.queryForAll();
+            List<Author> authors = siDBHelper.getAuthorDao().queryForAll();
             for (Author author : authors) {
                 boolean useWiFiOnly = prefs.updateOnlyWiFi().get();
                 if (this.isConnected() &&
                         (isNetworkIgnore ||
                                 (!useWiFiOnly || this.isConnectedToWiFi()))) {
-                    if (updateAuthor(author)) {
+                    SiteStrategy strategy = SiteDetector.chooseStrategy(author.getUrl(), siDBHelper);
+                    if (strategy.updateAuthor(author)) {
                         this.updatedAuthors++;
                     }
                 }
@@ -115,106 +109,13 @@ public class UpdateAuthorsTask extends IntentService {
         }
     }
 
-    private boolean updateAuthor(Author author) throws SQLException {
-        boolean authorUpdated = false;
-        HttpRequest request;
-        String body;
-        try {
-            URL authorURL = new URL(author.getUrl());
-            request = HttpRequest.get(authorURL);
-            if (request.code() == 404) {
-                //skip this author
-                //Not available atm
-                return false;
-            }
-            if (!authorURL.getHost().equals(request.url().getHost())) {
-                //We are being redirected hell knows where.
-                //Skip
-                return false;
-            }
-            body = SamlibPageParser.sanitizeHTML(request.body());
-            //We go a blank response but no exception, skip author
-            if (body == null) return false;
-            EasyTracker.getTracker().sendEvent(
-                    Constants.GA_BGR_CATEGORY,
-                    Constants.GA_EVENT_AUTHOR_UPDATE,
-                    author.getName(), null);
-            EasyTracker.getInstance().dispatch();
-        } catch (MalformedURLException e) {
-            //Just swallow exception, as this is unlikely to happen
-            //Skip author
-            trackException(e.getMessage());
-            return false;
-        } catch (HttpRequest.HttpRequestException e) {
-            //Author currently inaccessible or no internet
-            //Skip author
-            trackException(e.getMessage());
-            return false;
-        }
-
-        String authImgUrl = SamlibPageParser.getAuthorImageUrl(body, author.getUrl());
-        String authDescription = SamlibPageParser.getAuthorDescription(body);
-        if (authImgUrl != null) author.setAuthorImageUrl(authImgUrl);
-        if (authDescription != null) author.setAuthorDescription(authDescription);
-        authorDao.update(author);
-
-        ForeignCollection<Publication> oldItems = author.getPublications();
-        List<Publication> newItems = SamlibPageParser.getPublications(body, author);
-
-        HashMap<String, Publication> oldItemsMap = new HashMap<String, Publication>();
-        for (Publication oldPub : oldItems) {
-            oldItemsMap.put(oldPub.getUrl(), oldPub);
-        }
-
-        if (newItems.size() == 0 && oldItemsMap.size() > 1) {
-            EasyTracker.getTracker().sendException(
-                    "Something went wrong. Publications are empty.", false);
-            LogUtils.LOGW(Constants.APP_TAG, "Something went wrong. No publications found for author that already exists");
-            //Just skip for now to be on the safe side.
-            return false;
-        }
-
-        for (Publication pub : newItems) {
-            //Find pub in oldItems
-            if (oldItemsMap.containsKey(pub.getUrl())) {
-                Publication old = oldItemsMap.get(pub.getUrl());
-                //Check size/name/description
-                if (pub.getSize() != old.getSize() ||
-                        !pub.getDescription().equals(old.getDescription()) ||
-                        !pub.getName().equals(old.getName())) {
-                    //if something differs
-                    //Store the old size
-                    pub.setOldSize(old.getSize());
-                    //Swap the ids, do an update in DB
-                    pub.setId(old.getId());
-                    pub.setNew(true);
-                    authorUpdated = true;
-                    publicationsDao.update(pub);
-                    //Mark author new, update in DB
-                    author.setUpdateDate(new Date());
-                    author.setNew(true);
-                    authorDao.update(author);
-                }
-            } else {
-                //Mark author new, update in DB
-                author.setUpdateDate(new Date());
-                author.setNew(true);
-                authorDao.update(author);
-                //Mark publication new, create in DB
-                pub.setNew(true);
-                authorUpdated = true;
-                publicationsDao.create(pub);
-            }
-        }
-
-        return authorUpdated;
-    }
-
     private void broadCastResult(boolean success) {
         Intent broadcastIntent = new Intent();
         if (success) {
             broadcastIntent.setAction(UpdateSuccessfulIntentMessage.SUCCESS_MESSAGE);
             broadcastIntent.putExtra(Constants.NUMBER_OF_UPDATED_AUTHORS, this.updatedAuthors);
+            BackupManager bm = new BackupManager(this.getApplicationContext());
+            bm.dataChanged();
         } else {
             broadcastIntent = broadcastIntent.setAction(UpdateFailedIntentMessage.FAILED_MESSAGE);
         }
@@ -234,7 +135,7 @@ public class UpdateAuthorsTask extends IntentService {
     }
 
     private void trackException(String message) {
-        EasyTracker.getTracker().sendException(message, false);
+        AnalyticsHelper.getInstance().sendException(message);
     }
 
 }

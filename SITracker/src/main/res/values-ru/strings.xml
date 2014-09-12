@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  Copyright 2013 Gleb Godonoga.
+  Copyright 2014 Gleb Godonoga.
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -14,11 +14,12 @@
   limitations under the License.
   -->
 
-<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
     <string name="app_name">СИ Трекер</string>
     <string name="title_settings">Настройки</string>
     <string name="title_publications">Произведения</string>
+    <string name="title_import">Импорт авторов</string>
     <string name="title_publications_details">Детали произведения</string>
     <string name="title_comment_stream">Комментарии</string>
 
@@ -28,6 +29,8 @@
     <string name="action_markread">Отметить как прочитаное</string>
     <string name="action_clear_saved_pubs">Удалить кэшированные</string>
     <string name="action_delete">Удалить автора</string>
+    <string name="action_import">Импорт</string>
+    <string name="action_export">Экспорт</string>
     <string name="action_open_in_browser">Открыть выбранных в браузере</string>
     <string name="add_author_placeholder">samlib.ru/a/avtor</string>
     <string name="designtime_placeholder_long">Lorem ipsum dolor sit amet, consectetur adipiscing
@@ -39,6 +42,8 @@
     <string name="designtime_placeholder_short">Lorem ipsum dolor</string>
     <string name="designtime_placeholder_size">615+3kb</string>
     <string name="designtime_placeholder_date">Май 28</string>
+
+    <string name="cannot_import_authors_from_file">Не удалось импортировать авторов из файла.</string>
     <string name="cannot_add_author">Не удалось добавить автора.</string>
     <string name="cannot_add_author_internal">Не удалось добавить автора. Непредвиденная ошибка.
     </string>
@@ -82,12 +87,24 @@
     <string name="check_for_updates">Проверка обновлений</string>
     <string name="action_add_ok">Добавить</string>
     <string name="notification_title">Прода</string>
+    <string name="notification_import_title">СИ Трекер - Импорт авторов</string>
+    <string name="notification_import_progress">Импортируем %1$s из %2$s</string>
+    <string name="import_message_title">Импортируем…</string>
+    <string name="import_message_connecting_title">Подключаемся…</string>
+    <string name="import_progress_indication">%1$d/%2$d</string>
+    <string name="notification_import_complete">Импортирование завершено.</string>
     <string name="update_failed_crouton_message">Не удалось обновить авторов.</string>
     <string name="author_add_success_crouton_message">Автор добавлен</string>
+    <string name="backup_restored_crouton_message">Бэк-ап данных востановлен</string>
+    <string name="author_export_success_crouton_message">Авторы экспортированы</string>
+    <string name="author_import_success_crouton_message">Авторы импортированы</string>
+    <string name="author_import_total_crouton_message">Всего: %1$d</string>
+    <string name="author_import_processed_crouton_message">Добавлены: %1$d</string>
+    <string name="author_import_failed_crouton_message">Ошибки или дупликаты: %1$d</string>
     <string name="no_authors">Вы пока не добавили никаких авторов</string>
     <string name="no_newpubs">Проды нет :(</string>
     <plurals name="authors_selected">
-        <item quantity="one">1 выбранный</item>
+        <item quantity="one">%d выбранный</item>
         <item quantity="few">
             <xliff:g id="num_authors">%1$d</xliff:g>
             выбранных
@@ -103,7 +120,7 @@
     </plurals>
 
     <plurals name="authors_updated">
-        <item quantity="one">Автор обновился</item>
+        <item quantity="one" tools:ignore="ImpliedQuantity">Автор обновился</item>
         <item quantity="few">
             <xliff:g id="num_updates">%1$d</xliff:g>
             автора обновились
@@ -120,6 +137,9 @@
 
     <string name="no_network_error">Нет соединения</string>
     <string name="no_network_retry">ЕЩЕ РАЗ</string>
+    <string name="replace_authors_at_import">Удалить нынешних авторов при импорте</string>
+    <string name="choose_import_file">Выберите файл</string>
+    <string name="perform_import">Импорт</string>
 
     <!--Preferences -->
 
@@ -156,6 +176,30 @@
         уменьшить потребление траффика
     </string>
 
+    <!--Statistics-->
+    <string name="pref_usage_category_title">Статистика использования</string>
+    <string name="pref_opt_out_statistics_title">Отказаться</string>
+    <string name="pref_opt_out_statistics_summ">Не отправлять статистику изпользования автору.</string>
+
     <string name="pref_update_interval">Интервал обновлений</string>
     <string name="pref_header_title">Настройки</string>
+
+    <string name="crouton_image_desc">info</string>
+    <string name="file_descriptor">File type descriptor</string>
+    <!--File picker stuff -->
+    <string name="fp_cancel_label">Отменить</string>
+    <string name="fp_confirm_label">Потвердить</string>
+    <string name="fp_selected_folder_label">Выбранная папка:</string>
+    <string name="fp_selected_file_label">Выбранный файл:</string>
+    <string name="fp_create_folder_label">Создать папку</string>
+    <string name="fp_create_folder_msg">Создать папку с именем "%1$s"?</string>
+    <string name="fp_create_folder_success">Создать новую папку</string>
+    <string name="fp_create_folder_error_no_write_access">Невозможно записать в эту папку</string>
+    <string name="fp_create_folder_error_already_exists">Папка уже существует</string>
+    <string name="fp_create_folder_error">Не удалось создать папку</string>
+    <string name="fp_up_label">Вверх</string>
+    <string name="book_folder_name">Книги</string>
+    <string name="export_folder_name">СиТрекерЭкспорт</string>
+    <string name="cannot_write_export_file">Не удалось экспортировать авторов. Ошибка при записи файла.</string>
+
 </resources>

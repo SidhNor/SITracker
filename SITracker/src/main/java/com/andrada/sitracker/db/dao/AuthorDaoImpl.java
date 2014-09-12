@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Gleb Godonoga.
+ * Copyright 2014 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,12 @@ package com.andrada.sitracker.db.dao;
 
 import com.andrada.sitracker.db.beans.Author;
 import com.j256.ormlite.dao.BaseDaoImpl;
+import com.j256.ormlite.dao.GenericRawResults;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.support.ConnectionSource;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class AuthorDaoImpl extends BaseDaoImpl<Author, Integer>
@@ -30,6 +32,25 @@ public class AuthorDaoImpl extends BaseDaoImpl<Author, Integer>
     public AuthorDaoImpl(ConnectionSource connectionSource)
             throws SQLException {
         super(connectionSource, Author.class);
+    }
+
+    public List<String> getAuthorsUrls() throws SQLException {
+        GenericRawResults results = this.queryRaw("SELECT url FROM authors");
+        List<String> authorUrls = new ArrayList<String>();
+        while (results.iterator().hasNext()) {
+            authorUrls.add(((String[]) results.iterator().next())[0]);
+        }
+        return authorUrls;
+    }
+
+    @Override
+    public List<String> getAuthorsUrlIds() throws SQLException {
+        GenericRawResults results = this.queryRaw("SELECT urlId FROM authors");
+        List<String> authorUrls = new ArrayList<String>();
+        while (results.iterator().hasNext()) {
+            authorUrls.add(((String[]) results.iterator().next())[0]);
+        }
+        return authorUrls;
     }
 
     @Override
@@ -58,6 +79,7 @@ public class AuthorDaoImpl extends BaseDaoImpl<Author, Integer>
 
     @Override
     public void removeAuthor(long id) throws SQLException {
+        this.queryRaw("DELETE FROM publications WHERE author_id = ?", String.valueOf(id));
         DeleteBuilder<Author, Integer> delBuilder = this.deleteBuilder();
         delBuilder.where().eq("_id", id);
         delBuilder.delete();

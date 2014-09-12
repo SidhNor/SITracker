@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Gleb Godonoga.
+ * Copyright 2014 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,11 +23,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 
-import com.andrada.sitracker.BuildConfig;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.util.UIUtils;
-import com.google.analytics.tracking.android.EasyTracker;
-import com.google.analytics.tracking.android.GoogleAnalytics;
+import com.google.android.gms.analytics.GoogleAnalytics;
 
 import static com.andrada.sitracker.util.LogUtils.makeLogTag;
 
@@ -37,25 +35,6 @@ import static com.andrada.sitracker.util.LogUtils.makeLogTag;
 public abstract class BaseActivity extends ActionBarActivity {
 
     private static final String TAG = makeLogTag(BaseActivity.class);
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (BuildConfig.DEBUG) {
-            GoogleAnalytics.getInstance(getApplicationContext()).setAppOptOut(true);
-        }
-        EasyTracker.getInstance().setContext(this);
-    }
-
-    protected void setHasTabs() {
-        if (!UIUtils.isTablet(this)
-                && getResources().getConfiguration().orientation
-                != Configuration.ORIENTATION_LANDSCAPE) {
-            // Only show the tab bar's shadow
-            getSupportActionBar().setBackgroundDrawable(getResources().getDrawable(
-                    R.drawable.actionbar_background_noshadow));
-        }
-    }
 
     /**
      * Converts an intent into a {@link Bundle} suitable for use as fragment arguments.
@@ -99,14 +78,29 @@ public abstract class BaseActivity extends ActionBarActivity {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        EasyTracker.getInstance().activityStart(this);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        EasyTracker.getInstance().activityStop(this);
+        GoogleAnalytics.getInstance(this).reportActivityStart(this);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        GoogleAnalytics.getInstance(this).reportActivityStart(this);
+    }
+
+    protected void setHasTabs() {
+        if (!UIUtils.isTablet(this)
+                && getResources().getConfiguration().orientation
+                != Configuration.ORIENTATION_LANDSCAPE) {
+            // Only show the tab bar's shadow
+            getSupportActionBar().setBackgroundDrawable(getResources().getDrawable(
+                    R.drawable.actionbar_background_noshadow));
+        }
     }
 }

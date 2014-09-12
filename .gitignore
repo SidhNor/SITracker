@@ -12,9 +12,6 @@ build/
 .gradle/
 *.iml
 
-#Project specific
-/libraries
-
 SITracker/*.apk
 
 device-screenshots

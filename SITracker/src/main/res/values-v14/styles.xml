@@ -1,5 +1,5 @@
 <!--
-  Copyright 2013 Gleb Godonoga.
+  Copyright 2014 Gleb Godonoga.
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -34,7 +34,8 @@
         <item name="android:actionBarTabStyle">@style/ActionBar.TabView</item>
         <item name="android:actionDropDownStyle">@style/DropDownNav</item>
         <item name="android:actionBarStyle">@style/ActionBar</item>
-        <item name="android:actionModeStyle">@style/ActionMode</item>
+        <item name="actionModeBackground">@drawable/cab_background_top_si</item>
+        <item name="actionModeSplitBackground">@drawable/cab_background_bottom_si</item>
         <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode</item>
     </style>
 
@@ -43,11 +44,6 @@
         <item name="android:backgroundStacked">@drawable/ab_stacked_solid_si</item>
         <item name="android:backgroundSplit">@drawable/ab_bottom_solid_si</item>
         <item name="android:progressBarStyle">@style/ProgressBar</item>
-    </style>
-
-    <style name="ActionMode" parent="FrameworkRoot.ActionMode">
-        <item name="android:background">@drawable/cab_background_top_si</item>
-        <item name="android:backgroundSplit">@drawable/cab_background_bottom_si</item>
     </style>
 
 </resources>

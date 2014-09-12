@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Gleb Godonoga.
+ * Copyright 2014 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ import com.andrada.sitracker.db.manager.SiDBHelper;
 import com.andrada.sitracker.events.AuthorMarkedAsReadEvent;
 import com.andrada.sitracker.ui.components.AuthorItemView;
 import com.andrada.sitracker.ui.components.AuthorItemView_;
-import com.google.analytics.tracking.android.EasyTracker;
+import com.andrada.sitracker.util.AnalyticsHelper;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Background;
@@ -42,6 +42,7 @@ import org.androidannotations.annotations.sharedpreferences.Pref;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import de.greenrobot.event.EventBus;
 
@@ -150,19 +151,25 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
                 authorDao.update(auth);
                 EventBus.getDefault().post(new AuthorMarkedAsReadEvent(auth));
             } catch (SQLException e) {
-                EasyTracker.getTracker().sendException("Author mark as read: " + e.getMessage(), false);
+                AnalyticsHelper.getInstance().sendException("Author mark as read: ", e);
             }
         }
     }
 
     @Background
-    public void removeAuthors(List<Long> authorsToRemove) {
+    public void removeAuthors(final List<Long> authorsToRemove) {
         try {
-            for (Long anAuthorsToRemove : authorsToRemove) {
-                authorDao.removeAuthor(anAuthorsToRemove);
-            }
-        } catch (SQLException e) {
-            EasyTracker.getTracker().sendException("Author Remove thread", e, false);
+            authorDao.callBatchTasks(new Callable<Object>() {
+                @Override
+                public Object call() throws Exception {
+                    for (Long anAuthorsToRemove : authorsToRemove) {
+                        authorDao.removeAuthor(anAuthorsToRemove);
+                    }
+                    return null;
+                }
+            });
+        } catch (Exception e) {
+            AnalyticsHelper.getInstance().sendException("Author Remove thread: ", e);
         }
 
         boolean removingCurrentlySelected = false;

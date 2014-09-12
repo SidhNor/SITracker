@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Gleb Godonoga.
+ * Copyright 2014 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -141,7 +141,7 @@ public class PublicationsFragment extends Fragment implements ExpandableListView
                     pub.getAuthor().getName() + "_" + pub.getName());
         }
 
-        String errorMessage = "";
+        int errorMessage = -1;
         boolean shareResult = true;
 
         try {
@@ -168,29 +168,34 @@ public class PublicationsFragment extends Fragment implements ExpandableListView
                 getActivity().startActivity(ShareHelper.getSharePublicationIntent(Uri.fromFile(file)));
             }
         } catch (MalformedURLException e) {
-            errorMessage = getActivity().getResources().getString(R.string.publication_error_url);
+            errorMessage = R.string.publication_error_url;
             shareResult = false;
         } catch (HttpRequest.HttpRequestException e) {
-            errorMessage = getActivity().getResources().getString(R.string.cannot_download_publication);
+            errorMessage = R.string.cannot_download_publication;
             shareResult = false;
         } catch (SharePublicationException e) {
             switch (e.getError()) {
                 case COULD_NOT_PERSIST:
-                    errorMessage = getActivity().getResources().getString(R.string.publication_error_save);
+                    errorMessage = R.string.publication_error_save;
                     break;
                 case STORAGE_NOT_ACCESSIBLE_FOR_PERSISTANCE:
-                    errorMessage = getActivity().getResources().getString(R.string.publication_error_storage);
+                    errorMessage = R.string.publication_error_storage;
                     break;
                 case ERROR_UNKOWN:
-                    errorMessage = getActivity().getResources().getString(R.string.publication_error_unknown);
+                    errorMessage = R.string.publication_error_unknown;
                     break;
                 case COULD_NOT_LOAD:
-                    errorMessage = getActivity().getResources().getString(R.string.cannot_download_publication);
+                    errorMessage = R.string.cannot_download_publication;
                     break;
             }
             shareResult = false;
         } finally {
-            stopProgressAfterShare(shareResult, errorMessage, pub.getId());
+            String msg = "";
+            if (errorMessage != -1 && getActivity() != null) {
+                msg = getActivity().getResources().getString(errorMessage);
+            }
+            stopProgressAfterShare(shareResult, msg, pub.getId());
+
         }
     }
 }

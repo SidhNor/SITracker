@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Gleb Godonoga.
+ * Copyright 2014 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,11 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface AuthorDao extends Dao<Author, Integer> {
+
+    List<String> getAuthorsUrls() throws SQLException;
+
+    List<String> getAuthorsUrlIds() throws SQLException;
+
     int getNewAuthorsCount() throws SQLException;
 
     void markAsRead(Author author) throws SQLException;

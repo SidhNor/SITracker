@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Gleb Godonoga.
+ * Copyright 2014 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,23 +17,28 @@
 package com.andrada.sitracker.db.beans;
 
 import com.andrada.sitracker.db.dao.AuthorDaoImpl;
-import com.google.analytics.tracking.android.EasyTracker;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.Date;
 
 @DatabaseTable(daoClass = AuthorDaoImpl.class, tableName = "authors")
-public class Author {
+public class Author implements Serializable {
+
+    private static final long serialVersionUID = -4329046928579678402L;
+
     @DatabaseField(generatedId = true, useGetSet = true, columnName = "_id")
     long id;
     @DatabaseField(canBeNull = false, useGetSet = true)
     String name;
     @DatabaseField(unique = true, useGetSet = true)
     String url;
+    @DatabaseField(unique = true, useGetSet = true)
+    String urlId;
     @DatabaseField(canBeNull = false, useGetSet = true)
     Date updateDate;
     @DatabaseField(canBeNull = true, useGetSet = true)
@@ -44,7 +49,7 @@ public class Author {
     Boolean isNew;
 
     @ForeignCollectionField(eager = false)
-    ForeignCollection<Publication> publications;
+    transient ForeignCollection<Publication> publications;
 
     public Author() {
         updateDate = new Date();
@@ -72,6 +77,14 @@ public class Author {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public String getUrlId() {
+        return urlId;
+    }
+
+    public void setUrlId(String urlId) {
+        this.urlId = urlId;
     }
 
     public Date getUpdateDate() {
@@ -123,7 +136,7 @@ public class Author {
                 this.publications.update(pub);
             } catch (SQLException e) {
                 //surface error
-                EasyTracker.getTracker().sendException("Author mark as read", e, false);
+                //Eat exception
             }
         }
     }

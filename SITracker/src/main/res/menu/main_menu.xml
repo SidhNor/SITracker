@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <!--
-  Copyright 2013 Gleb Godonoga.
+  Copyright 2014 Gleb Godonoga.
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -19,8 +19,18 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:sitracker="http://schemas.android.com/apk/res-auto">
     <item
-            android:id="@+id/action_settings"
-            android:orderInCategory="100"
-            sitracker:showAsAction="never"
-            android:title="@string/action_settings"/>
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        sitracker:showAsAction="never"
+        android:title="@string/action_settings"/>
+    <item
+        android:id="@+id/action_import"
+        android:orderInCategory="101"
+        sitracker:showAsAction="never"
+        android:title="@string/action_import"/>
+    <item
+        android:id="@+id/action_export"
+        android:orderInCategory="102"
+        sitracker:showAsAction="never"
+        android:title="@string/action_export"/>
 </menu>

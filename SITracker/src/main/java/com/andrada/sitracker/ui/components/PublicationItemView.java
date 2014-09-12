@@ -32,7 +32,7 @@ import com.andrada.sitracker.ui.widget.EllipsizedTextView;
 import com.andrada.sitracker.ui.widget.TouchDelegateRelativeLayout;
 import com.andrada.sitracker.util.DateFormatterUtil;
 import com.andrada.sitracker.util.ImageLoader;
-import com.andrada.sitracker.util.SamlibPageParser;
+import com.andrada.sitracker.util.SamlibPageHelper;
 import com.andrada.sitracker.util.UIUtils;
 
 import org.androidannotations.annotations.AfterViews;
@@ -56,9 +56,6 @@ public class PublicationItemView extends TouchDelegateRelativeLayout {
 
     @ViewById
     EllipsizedTextView item_description;
-
-    @ViewById
-    View publication_item_divider;
 
     @ViewById
     ImageView publication_image;
@@ -95,7 +92,7 @@ public class PublicationItemView extends TouchDelegateRelativeLayout {
         mListener = listener;
     }
 
-    public void bind(Publication publication, Boolean isLast, ImageLoader loader) {
+    public void bind(Publication publication, ImageLoader loader) {
         mIsNew = publication.getNew();
         item_title.setText(publication.getName());
         item_updated.setImageResource(mIsNew ? R.drawable.star_selected : R.drawable.star_unselected);
@@ -111,7 +108,7 @@ public class PublicationItemView extends TouchDelegateRelativeLayout {
         }
 
         UIUtils.setTextMaybeHtml(item_description,
-                SamlibPageParser.stripDescriptionOfImages(publication.getDescription()));
+                SamlibPageHelper.stripDescriptionOfImages(publication.getDescription()));
 
 
         StringBuilder builder = new StringBuilder();
@@ -129,15 +126,15 @@ public class PublicationItemView extends TouchDelegateRelativeLayout {
         builder.append("kb");
         itemSize.setText(builder.toString());
 
-        publication_item_divider.setVisibility(isLast ? GONE : VISIBLE);
-
-        downloadProgress.clearAnimation();
-        backgroundPane.clearAnimation();
         if (publication.getLoading()) {
-            downloadProgress.setVisibility(VISIBLE);
-            downloadProgress.startAnimation(fadeInAnim);
-            backgroundPane.startAnimation(scaleFadeOutAnim);
+            if (downloadProgress.getVisibility() == GONE) {
+                downloadProgress.setVisibility(VISIBLE);
+                downloadProgress.startAnimation(fadeInAnim);
+                backgroundPane.startAnimation(scaleFadeOutAnim);
+            }
         } else {
+            downloadProgress.clearAnimation();
+            backgroundPane.clearAnimation();
             downloadProgress.setVisibility(GONE);
         }
 

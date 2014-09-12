@@ -1,5 +1,5 @@
 <!--
-  Copyright 2013 Gleb Godonoga.
+  Copyright 2014 Gleb Godonoga.
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -16,13 +16,12 @@
 
 <resources>
 
-    <style name="NoParent"/>
+    <style name="NoParent" />
     <!--
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
     -->
-    <style name="FrameworkRoot.Base" parent="Theme.AppCompat.Light">
-    </style>
+    <style name="FrameworkRoot.Base" parent="@style/Theme.AppCompat.Light"></style>
 
     <!-- Root styles that vary by API level -->
     <style name="FrameworkRoot.Theme" parent="FrameworkRoot.Base">
@@ -39,23 +38,21 @@
         </item>
     </style>
 
-    <style name="FrameworkRoot.ActionBar" parent="Widget.AppCompat.Light.ActionBar"/>
+    <style name="FrameworkRoot.ActionBar" parent="@style/Widget.AppCompat.Light.ActionBar" />
 
-    <style name="FrameworkRoot.ActionMode" parent="Widget.AppCompat.ActionMode"/>
+    <style name="FrameworkRoot.ActionBar.TabBar" parent="@style/Widget.AppCompat.Base.ActionBar.TabBar" />
 
-    <style name="FrameworkRoot.ActionBar.TabBar" parent="Widget.AppCompat.Base.ActionBar.TabBar"/>
+    <style name="FrameworkRoot.ActionBar.TabView" parent="@style/Widget.AppCompat.ActionBar.TabView" />
 
-    <style name="FrameworkRoot.ActionBar.TabView" parent="Widget.AppCompat.ActionBar.TabView"/>
+    <style name="FrameworkRoot.PopupMenu" parent="@style/Widget.AppCompat.Light.PopupMenu" />
 
-    <style name="FrameworkRoot.PopupMenu" parent="Widget.AppCompat.Light.PopupMenu"/>
+    <style name="FrameworkRoot.DropDownListView" parent="@style/Widget.AppCompat.Light.ListView.DropDown" />
 
-    <style name="FrameworkRoot.DropDownListView" parent="Widget.AppCompat.Light.ListView.DropDown"/>
+    <style name="FrameworkRoot.DropDownNav" parent="@style/Widget.AppCompat.Light.Spinner.DropDown.ActionBar" />
 
-    <style name="FrameworkRoot.DropDownNav" parent="Widget.AppCompat.Light.Spinner.DropDown.ActionBar"/>
+    <style name="FrameworkRoot.ProgressBar.Horizontal" parent="@style/Widget.AppCompat.ProgressBar.Horizontal" />
 
-    <style name="FrameworkRoot.ProgressBar.Horizontal" parent="Widget.AppCompat.ProgressBar.Horizontal"/>
-
-    <style name="FrameworkRoot.ActionButton.CloseMode" parent="Widget.AppCompat.Light.ActionButton.CloseMode"/>
+    <style name="FrameworkRoot.ActionButton.CloseMode" parent="@style/Widget.AppCompat.Light.ActionButton.CloseMode" />
 
     <!-- Application theme. -->
     <style name="AppTheme" parent="FrameworkRoot.Theme">
@@ -65,7 +62,8 @@
         <item name="actionBarTabStyle">@style/ActionBar.TabView</item>
         <item name="actionDropDownStyle">@style/DropDownNav</item>
         <item name="actionBarStyle">@style/ActionBar</item>
-        <item name="actionModeStyle">@style/ActionMode</item>
+        <item name="actionModeBackground">@drawable/cab_background_top_si</item>
+        <item name="actionModeSplitBackground">@drawable/cab_background_bottom_si</item>
         <item name="actionModeCloseButtonStyle">@style/ActionButton.CloseMode</item>
     </style>
 
@@ -76,12 +74,6 @@
         <item name="backgroundSplit">@drawable/ab_bottom_solid_si</item>
         <item name="progressBarStyle">@style/ProgressBar</item>
     </style>
-
-    <style name="ActionMode" parent="FrameworkRoot.ActionMode">
-        <item name="background">@drawable/cab_background_top_si</item>
-        <item name="backgroundSplit">@drawable/cab_background_bottom_si</item>
-    </style>
-
 
     <style name="PopupMenu" parent="FrameworkRoot.PopupMenu">
         <item name="android:popupBackground">@drawable/menu_dropdown_panel_si</item>

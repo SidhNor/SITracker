@@ -17,20 +17,21 @@
   -->
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <ListView
-            android:id="@+id/list"
-            android:listSelector="@drawable/authors_list_selector"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignParentBottom="true"
-            android:cacheColorHint="@color/light_color_hint"/>
+        android:id="@+id/list"
+        android:listSelector="@drawable/authors_list_selector"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/authors_list_background"
+        android:cacheColorHint="@color/light_color_hint" />
 
     <ViewStub
-            android:id="@+id/empty"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"/>
+        android:id="@+id/empty"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center" />
 </RelativeLayout>

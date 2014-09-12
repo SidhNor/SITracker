@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Gleb Godonoga.
+ * Copyright 2014 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,8 +36,10 @@ public class Constants {
 
     public final static String DIALOG_ADD_AUTHOR = "DIALOG_ADD_AUTHOR";
 
-    public final static String AUTHOR_PAGE_URL_ENDING_WO_SLASH = "indexdate.shtml";
-    public final static String AUTHOR_PAGE_URL_ENDING_WI_SLASH = "/indexdate.shtml";
+    public final static String AUTHOR_PAGE_URL_ENDING_WO_SLASH = "indextitle.shtml";
+    public static final String AUTHOR_PAGE_ALT_URL_ENDING_WO_SLASH = "indexdate.shtml";
+    public final static String AUTHOR_PAGE_URL_ENDING_WI_SLASH = "/indextitle.shtml";
+    public final static String AUTHOR_PAGE_ALT_URL_ENDING_WI_SLASH = "/indexdate.shtml";
     public final static String HTTP_PROTOCOL = "http://";
     public final static String HTTPS_PROTOCOL = "https://";
 
@@ -45,8 +47,9 @@ public class Constants {
 
     public final static String UPDATES_ENABLED_KEY = "updatesEnabled";
     public final static String CONTENT_DOWNLOAD_FOLDER_KEY = "downloadFolder";
-    public static final String PREF_CLEAR_SAVED_PUBS_KEY = "clearSavedPubs";
+    public final static String PREF_CLEAR_SAVED_PUBS_KEY = "clearSavedPubs";
     public final static String UPDATE_INTERVAL_KEY = "updateInterval";
+    public final static String PREF_USAGE_OPT_OUT_KEY = "optOutUsageStatistics";
     public final static String UPDATE_IGNORES_NETWORK = "update_service_ignores_network_constraints";
     public final static String AUTHOR_SORT_TYPE_KEY = "authorsSortType";
 
@@ -54,12 +57,14 @@ public class Constants {
 
     //Analytics category names
     public static final String GA_UI_CATEGORY = "ui_action";
-    public static final String GA_BGR_CATEGORY = "bgr_action";
 
     //Analytics screen names
     public static final String GA_SCREEN_PUBLICATIONS = "Publications";
     public static final String GA_SCREEN_AUTHORS = "Authors";
     public static final String GA_SCREEN_ADD_DIALOG = "Add author dialog";
+    public static final String GA_SCREEN_IMPORT_PROGRESS = "Import progress";
+    public static final String GA_SCREEN_EXPORT_DIALOG = "Export authors dialog";
+    public static final String GA_SCREEN_PREFS_DOWNLOAD_DIALOG = "Download folder setting dialog";
 
     //Analytics event names
     public static final String GA_EVENT_AUTHOR_ADDED = "author_added";
@@ -69,6 +74,11 @@ public class Constants {
     public static final String GA_EVENT_AUTHOR_MANUAL_READ = "author_manual_marked_read";
     public static final String GA_EVENT_AUTHOR_PUB_OPEN = "publication_opened";
     public static final String GA_EVENT_CHANGED_UPDATE_INTERVAL = "update_interval_changed";
+    public static final String GA_EVENT_AUTHOR_IMPORT = "author_import";
+    public static final String GA_EVENT_IMPORT_COMPLETE = "import_complete";
+    public static final String GA_EVENT_IMPORT_CANCELED = "import_canceled";
     public static final String GA_EVENT_CLEAR_CACHED_PUBS = "clear_cached_publications";
 
+    public static final int REQUEST_DIRECTORY = 1681;
+    public static final int REQUEST_EXPORT_DIRECTORY = 16811;
 }

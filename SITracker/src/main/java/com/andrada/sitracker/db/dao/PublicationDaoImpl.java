@@ -93,9 +93,7 @@ public class PublicationDaoImpl extends BaseDaoImpl<Publication, Integer>
         pub.setNew(false);
         pub.setOldSize(0);
         this.update(pub);
-        int newPubCount = (int) this.queryRawValue("SELECT COUNT(id) FROM publications " +
-                "WHERE publications.author_id = " + authId +
-                " AND publications.isNew = 1");
+        int newPubCount = (int) getNewPublicationsCountForAuthorId(authId);
         if (newPubCount == 0) {
             this.executeRaw("UPDATE authors SET isNew=0 WHERE _id = " + authId);
         }

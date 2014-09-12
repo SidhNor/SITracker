@@ -1,6 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
-  Copyright 2013 Gleb Godonoga.
+<?xml version="1.0" encoding="utf-8"?><!--
+  Copyright 2014 Gleb Godonoga.
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -19,11 +18,18 @@
     <color name="light_color_hint">#EEEEEE</color>
     <color name="left_menu_text_gray">#949294</color>
     <color name="gray_foreground">#ff4c4c4c</color>
+    <color name="primary_black">#ff000000</color>
+    <color name="transparent">#00000000</color>
+    <color name="secondary_gray">#ff777777</color>
     <color name="holo_blue_light">#ff33b5e5</color>
     <color name="author_activated_color">#ffffff</color>
     <color name="holo_red_light">#ffff4444</color>
     <color name="author_list_item_text">#58585b</color>
     <color name="orange_active">#ff9c00</color>
     <color name="pressed_si">#CC33B5E5</color>
+    <color name="bright_blue">#33B5E5</color>
+    <color name="semitransgray">#99333333</color>
+    <!-- Use Gingerbread-orange -->
+    <color name="fp_selection_background_color">#FEBB20</color>
 </resources>
 

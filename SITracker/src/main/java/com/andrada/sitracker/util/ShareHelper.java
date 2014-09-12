@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Gleb Godonoga.
+ * Copyright 2014 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,8 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -125,6 +127,13 @@ public final class ShareHelper {
         } else {
             return null;
         }
+    }
+
+    public static String getTimestampFilename(String prefix, String extension) {
+        assert prefix != null;
+        assert extension != null;
+        SimpleDateFormat fmt = new SimpleDateFormat("dd-MM-yyyy");
+        return prefix + fmt.format(new Date()) + extension;
     }
 
     /**

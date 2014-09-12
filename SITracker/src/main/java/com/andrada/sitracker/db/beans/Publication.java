@@ -20,10 +20,14 @@ import com.andrada.sitracker.db.dao.PublicationDaoImpl;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @DatabaseTable(daoClass = PublicationDaoImpl.class, tableName = "publications")
-public class Publication {
+public class Publication implements Serializable {
+
+    private static final long serialVersionUID = 2332804144509172310L;
+
     @DatabaseField(generatedId = true, useGetSet = true)
     long id;
     @DatabaseField(canBeNull = false, useGetSet = true)
@@ -34,7 +38,11 @@ public class Publication {
     int oldSize;
     @DatabaseField(useGetSet = true)
     String category;
-    @DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)
+    @DatabaseField(canBeNull = false,
+            foreign = true,
+            foreignAutoRefresh = true,
+            indexName = "author_id_idx",
+            columnDefinition = "bigint references authors(_id)")
     Author author;
     @DatabaseField(useGetSet = true)
     String date;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Gleb Godonoga.
+ * Copyright 2014 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,16 +23,19 @@ import com.andrada.sitracker.db.beans.Author;
 import com.andrada.sitracker.db.beans.Publication;
 import com.andrada.sitracker.db.dao.AuthorDao;
 import com.andrada.sitracker.db.dao.PublicationDao;
+import com.andrada.sitracker.util.SamlibPageHelper;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
 import java.sql.SQLException;
+import java.util.List;
+import java.util.concurrent.Callable;
 
 public class SiDBHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "siinformer.db";
-    private static final int DATABASE_VERSION = 8;
+    private static final int DATABASE_VERSION = 9;
 
     private PublicationDao publicationDao;
     private AuthorDao authorDao;
@@ -94,23 +97,82 @@ public class SiDBHelper extends OrmLiteSqliteOpenHelper {
                         getAuthorDao().executeRaw("ALTER TABLE 'authors' ADD COLUMN authorDescription TEXT;");
                         break;
                     }
+                    case 9: {
+                        //Delete all orphaned publications
+                        getPublicationDao().queryRaw("DELETE FROM publications WHERE author_id NOT IN " +
+                                "(SELECT _id FROM authors) OR author_id IS NULL");
+                        //Due to the fact that sqlite does not support ADD CONSTRAINT - recreate table
+                        getPublicationDao().executeRaw(
+                                "ALTER TABLE publications RENAME TO tmp_publications;");
+                        TableUtils.createTableIfNotExists(connectionSource, Publication.class);
+                        //Copy data back
+                        getPublicationDao().executeRaw(
+                                "INSERT INTO publications(" +
+                                        "id, name, size, oldSize, category, author_id, date, description," +
+                                        "commentUrl, url, rating, commentsCount, isNew, updateDate, imageUrl) " +
+                                        "SELECT id, name, size, oldSize, category, author_id, date, description," +
+                                        "commentUrl, url, rating, commentsCount, isNew, updateDate, imageUrl " +
+                                        "FROM tmp_publications;"
+                        );
+                        getPublicationDao().executeRaw("DROP TABLE tmp_publications;");
+                        //Drop old index if exists that no longer references an existing column.
+                        getPublicationDao().executeRaw(
+                                "DROP INDEX IF EXISTS fk_author_publication"
+                        );
+                        getAuthorDao().executeRaw(
+                                "ALTER TABLE authors RENAME TO tmp_authors;");
+                        TableUtils.createTableIfNotExists(connectionSource, Author.class);
+                        getAuthorDao().executeRaw(
+                                "INSERT INTO authors(_id, name, url, updateDate, authorImageUrl, authorDescription, isNew) " +
+                                        "SELECT _id, name, url, updateDate, authorImageUrl, authorDescription, isNew " +
+                                        "FROM tmp_authors;"
+                        );
+                        getAuthorDao().executeRaw("DROP TABLE tmp_authors;");
+                        getPublicationDao().executeRaw(
+                                "CREATE INDEX IF NOT EXISTS author_id_idx ON publications (author_id)"
+                        );
+                        final List<Author> authors = this.getAuthorDao().getAllAuthorsSortedAZ();
+                        getAuthorDao().callBatchTasks(new Callable<Object>() {
+                            @Override
+                            public Object call() throws Exception {
+                                for (Author author : authors) {
+                                    String url = author.getUrl();
+                                    String urlId = SamlibPageHelper.getUrlIdFromCompleteUrl(url);
+                                    author.setUrlId(urlId);
+                                    authorDao.update(author);
+                                }
+                                return null;
+                            }
+                        });
+                        break;
+                    }
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    public AuthorDao getAuthorDao() throws SQLException {
+    public AuthorDao getAuthorDao() {
         if (authorDao == null) {
-            authorDao = getDao(Author.class);
+            try {
+                authorDao = getDao(Author.class);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return authorDao;
     }
 
-    public PublicationDao getPublicationDao() throws SQLException {
+    public PublicationDao getPublicationDao() {
         if (publicationDao == null) {
-            publicationDao = getDao(Publication.class);
+            try {
+                publicationDao = getDao(Publication.class);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return publicationDao;
     }

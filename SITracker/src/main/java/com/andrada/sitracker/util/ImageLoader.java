@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Gleb Godonoga.
+ * Copyright 2014 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -96,20 +96,6 @@ public class ImageLoader extends com.android.volley.toolbox.ImageLoader {
                 BitmapCache.getInstance(activity.getSupportFragmentManager()));
         mResources = activity.getResources();
         mPlaceHolderDrawables = placeHolderDrawables;
-    }
-
-    /**
-     * Starts processing requests on the {@link com.android.volley.RequestQueue}.
-     */
-    public void startProcessingQueue() {
-        getRequestQueue().start();
-    }
-
-    /**
-     * Stops processing requests on the {@link com.android.volley.RequestQueue}.
-     */
-    public void stopProcessingQueue() {
-        getRequestQueue().stop();
     }
 
     public ImageLoader setFadeInImage(boolean fadeInImage) {
