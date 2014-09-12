@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Gleb Godonoga.
+ * Copyright 2014 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,5 +40,8 @@ public interface SIPrefs {
 
     @DefaultString("")
     String downloadFolder();
+
+    @DefaultBoolean(false)
+    boolean optOutUsageStatistics();
 
 }

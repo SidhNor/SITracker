@@ -146,7 +146,7 @@ public class ImportAuthorsActivity extends BaseActivity {
             isBound = false;
         }
         AnalyticsHelper.getInstance().sendEvent(
-                Constants.GA_BGR_CATEGORY,
+                Constants.GA_UI_CATEGORY,
                 Constants.GA_EVENT_AUTHOR_IMPORT,
                 Constants.GA_EVENT_IMPORT_CANCELED);
         getApplicationContext().stopService(ImportAuthorsTask_.intent(getApplicationContext()).get());

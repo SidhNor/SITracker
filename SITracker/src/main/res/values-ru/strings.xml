@@ -176,6 +176,11 @@
         уменьшить потребление траффика
     </string>
 
+    <!--Statistics-->
+    <string name="pref_usage_category_title">Статистика использования</string>
+    <string name="pref_opt_out_statistics_title">Отказаться</string>
+    <string name="pref_opt_out_statistics_summ">Не отправлять статистику изпользования автору.</string>
+
     <string name="pref_update_interval">Интервал обновлений</string>
     <string name="pref_header_title">Настройки</string>
 

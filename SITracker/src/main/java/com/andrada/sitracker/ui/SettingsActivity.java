@@ -37,6 +37,7 @@ import com.andrada.sitracker.tasks.UpdateAuthorsTask_;
 import com.andrada.sitracker.util.AnalyticsHelper;
 import com.andrada.sitracker.util.ShareHelper;
 import com.andrada.sitracker.util.UIUtils;
+import com.google.android.gms.analytics.GoogleAnalytics;
 
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.SystemService;
@@ -50,6 +51,8 @@ import de.greenrobot.event.EventBus;
 public class SettingsActivity extends PreferenceActivity implements
         SharedPreferences.OnSharedPreferenceChangeListener {
 
+    public static String PREF_NAME = "SIPrefs";
+
     @SystemService
     AlarmManager alarmManager;
 
@@ -60,7 +63,7 @@ public class SettingsActivity extends PreferenceActivity implements
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getPreferenceManager().setSharedPreferencesName("SIPrefs");
+        getPreferenceManager().setSharedPreferencesName(PREF_NAME);
         if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_TELEPHONY)) {
             addPreferencesFromResource(R.xml.preferences);
         } else {
@@ -125,17 +128,15 @@ public class SettingsActivity extends PreferenceActivity implements
     @Override
     public void onSharedPreferenceChanged(SharedPreferences preference, String key) {
 
-        if (key == null) return;
-
         Intent intent = UpdateAuthorsTask_.intent(this.getApplicationContext()).get();
         PendingIntent pi = PendingIntent.getService(this.getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        if (key.equals(Constants.UPDATES_ENABLED_KEY)) {
+        if (Constants.UPDATES_ENABLED_KEY.equals(key)) {
             Boolean isSyncing = prefs.updatesEnabled().get();
             if (!isSyncing) {
                 alarmManager.cancel(pi);
             }
-        } else if (key.equals(Constants.UPDATE_INTERVAL_KEY)) {
+        } else if (Constants.UPDATE_INTERVAL_KEY.equals(key)) {
             alarmManager.cancel(pi);
             long updateInterval = Long.parseLong(prefs.updateInterval().get());
             alarmManager.setInexactRepeating(AlarmManager.RTC, System.currentTimeMillis(), updateInterval, pi);
@@ -144,10 +145,10 @@ public class SettingsActivity extends PreferenceActivity implements
                     Constants.GA_UI_CATEGORY,
                     Constants.GA_EVENT_CHANGED_UPDATE_INTERVAL,
                     Constants.GA_EVENT_CHANGED_UPDATE_INTERVAL, updateInterval);
-        } else if (key.equals(Constants.AUTHOR_SORT_TYPE_KEY)) {
+        } else if (Constants.AUTHOR_SORT_TYPE_KEY.equals(key)) {
             EventBus.getDefault().post(new AuthorSortMethodChanged());
             setAuthorSortSummary(prefs.authorsSortType().get());
-        } else if (key.equals(Constants.CONTENT_DOWNLOAD_FOLDER_KEY)) {
+        } else if (Constants.CONTENT_DOWNLOAD_FOLDER_KEY.equals(key)) {
             String path = prefs.downloadFolder().get();
             //Perform validation
             if (ShareHelper.getExternalDirectoryBasedOnPath(path) != null) {
@@ -159,6 +160,8 @@ public class SettingsActivity extends PreferenceActivity implements
                 builder.setPositiveButton(android.R.string.ok, null);
                 builder.show();
             }
+        } else if (Constants.PREF_USAGE_OPT_OUT_KEY.equals(key)) {
+            GoogleAnalytics.getInstance(this).setAppOptOut(prefs.optOutUsageStatistics().get());
         }
     }
 

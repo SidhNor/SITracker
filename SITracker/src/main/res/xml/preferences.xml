@@ -73,4 +73,14 @@
             android:defaultValue="false"/>
     </PreferenceCategory>
 
+    <PreferenceCategory
+        android:key="pref_key_usage_settings"
+        android:title="@string/pref_usage_category_title">
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="optOutUsageStatistics"
+            android:summary="@string/pref_opt_out_statistics_summ"
+            android:title="@string/pref_opt_out_statistics_title"/>
+    </PreferenceCategory>
+
 </PreferenceScreen>

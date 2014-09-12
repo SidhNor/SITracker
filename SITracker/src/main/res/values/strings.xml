@@ -167,6 +167,11 @@
     <string name="pref_update_interval">Update interval</string>
     <string name="pref_header_title">Settings</string>
 
+    <!--Statistics-->
+    <string name="pref_usage_category_title">Usage statistics</string>
+    <string name="pref_opt_out_statistics_title">Opt out</string>
+    <string name="pref_opt_out_statistics_summ">Prevent sending usage statistics to the author.</string>
+
     <string name="no_network_error">No network</string>
     <string name="no_network_retry">RETRY</string>
 

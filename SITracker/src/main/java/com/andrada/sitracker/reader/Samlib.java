@@ -153,10 +153,6 @@ class Samlib implements SiteStrategy {
             if (reader.isPageBlank()) {
                 return false;
             }
-            AnalyticsHelper.getInstance().sendEvent(
-                    Constants.GA_BGR_CATEGORY,
-                    Constants.GA_EVENT_AUTHOR_UPDATE,
-                    author.getName());
         } catch (MalformedURLException e) {
             //Just swallow exception, as this is unlikely to happen
             //Skip author

@@ -47,8 +47,9 @@ public class Constants {
 
     public final static String UPDATES_ENABLED_KEY = "updatesEnabled";
     public final static String CONTENT_DOWNLOAD_FOLDER_KEY = "downloadFolder";
-    public static final String PREF_CLEAR_SAVED_PUBS_KEY = "clearSavedPubs";
+    public final static String PREF_CLEAR_SAVED_PUBS_KEY = "clearSavedPubs";
     public final static String UPDATE_INTERVAL_KEY = "updateInterval";
+    public final static String PREF_USAGE_OPT_OUT_KEY = "optOutUsageStatistics";
     public final static String UPDATE_IGNORES_NETWORK = "update_service_ignores_network_constraints";
     public final static String AUTHOR_SORT_TYPE_KEY = "authorsSortType";
 
@@ -56,7 +57,6 @@ public class Constants {
 
     //Analytics category names
     public static final String GA_UI_CATEGORY = "ui_action";
-    public static final String GA_BGR_CATEGORY = "bgr_action";
 
     //Analytics screen names
     public static final String GA_SCREEN_PUBLICATIONS = "Publications";
