@@ -1,9 +1,11 @@
-﻿Love to read? Having trouble following your best authors on samlib.ru?
+﻿***Intended for use with http://samlib.ru and http://budclub.ru only
 
+Love to read? Having trouble following your best authors on samlib.ru?
 SI Tracker allows you to stay informed of any updates your authors post. 
 Use it comfortably on devices of any size with responsive buttery UI.
 
-***Intended for use with http://samlib.ru and http://budclub.ru only
+Supports author import from a TXT file. Each author link on a new line.
+Also supports import of authorts.xml from SIInformer 
 
 Planed features:
 
@@ -12,7 +14,6 @@ Planed features:
 • Publication details
 • samlib user profile
 • View publication related images
-• Reading, posting and tracking comments.
 
 If you encounter any issue, please feel free to report it.
 
