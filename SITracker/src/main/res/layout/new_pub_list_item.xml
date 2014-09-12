@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <!--
-  Copyright 2013 Gleb Godonoga.
+  Copyright 2014 Gleb Godonoga.
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -18,11 +18,11 @@
 
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:showDividers="middle"
-    android:orientation="vertical"
-    android:minHeight="65dp">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:showDividers="middle"
+                android:orientation="vertical"
+                android:minHeight="65dp">
 
     <RelativeLayout
         android:id="@+id/backgroundPane"
@@ -44,7 +44,7 @@
                 android:scaleType="centerInside"
                 android:src="@drawable/authors_list_item_background_checked"
                 android:visibility="visible"
-                android:layout_centerInParent="true" />
+                android:layout_centerInParent="true"/>
         </RelativeLayout>
 
 
@@ -62,7 +62,7 @@
             android:lines="1"
             android:scrollHorizontally="true"
             android:ellipsize="end"
-            android:layout_marginBottom="4dp" />
+            android:layout_marginBottom="4dp"/>
 
         <TextView
             android:id="@+id/category_title"
@@ -71,7 +71,7 @@
             android:layout_toRightOf="@+id/pub_img_container"
             android:layout_toLeftOf="@+id/actions_view"
             android:layout_below="@+id/item_title"
-            android:lines="1" />
+            android:lines="1"/>
 
         <TextView
             android:id="@+id/author_title"
@@ -80,7 +80,7 @@
             android:layout_toRightOf="@+id/pub_img_container"
             android:layout_toLeftOf="@+id/actions_view"
             android:layout_below="@+id/category_title"
-            android:lines="1" />
+            android:lines="1"/>
 
         <com.andrada.sitracker.ui.widget.EllipsizedTextView
             android:layout_width="wrap_content"
@@ -96,7 +96,7 @@
             android:text="@string/designtime_placeholder_long"
             android:singleLine="false"
             android:maxLines="3"
-            android:ellipsize="end" />
+            android:ellipsize="end"/>
 
         <LinearLayout
             android:id="@+id/actions_view"
@@ -115,7 +115,7 @@
                 android:text="@string/designtime_placeholder_date"
                 android:textAlignment="viewEnd"
                 android:layout_gravity="right"
-                android:layout_marginBottom="4dp" />
+                android:layout_marginBottom="4dp"/>
 
             <TextView
                 android:id="@+id/itemSize"
@@ -124,17 +124,17 @@
                 android:text="@string/designtime_placeholder_size"
                 android:textAlignment="viewEnd"
                 android:layout_marginBottom="4dp"
-                android:layout_gravity="right" />
+                android:layout_gravity="right"/>
 
             <ImageButton
                 android:id="@+id/item_updated"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:layout_gravity="end"
+                android:layout_gravity="right"
                 android:background="@null"
                 android:src="@drawable/star_unselected"
-                android:contentDescription="@string/notification_title" />
+                android:contentDescription="@string/notification_title"/>
         </LinearLayout>
 
         <View
@@ -143,7 +143,7 @@
             android:layout_below="@id/item_description"
             style="@style/DividerThin"
             android:layout_marginBottom="6dp"
-            android:layout_marginTop="4dp" />
+            android:layout_marginTop="4dp"/>
     </RelativeLayout>
 
     <RelativeLayout
@@ -164,7 +164,7 @@
             android:text="@string/publications_downloading"
             android:layout_marginLeft="15dp"
             android:layout_centerVertical="true"
-            android:layout_alignParentLeft="true" />
+            android:layout_alignParentLeft="true"/>
 
         <ProgressBar
             android:indeterminate="true"
@@ -174,8 +174,8 @@
             android:layout_height="10dp"
             android:paddingEnd="50dp"
             android:paddingStart="15dp"
-            android:layout_alignParentEnd="false"
-            android:layout_alignParentBottom="true" />
+            android:layout_alignParentRight="false"
+            android:layout_alignParentBottom="true"/>
     </RelativeLayout>
 
 </RelativeLayout>

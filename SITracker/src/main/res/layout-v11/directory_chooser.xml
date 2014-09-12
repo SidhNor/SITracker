@@ -17,8 +17,8 @@
   -->
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
     <RelativeLayout
         android:id="@+id/footer"
@@ -30,7 +30,7 @@
             android:layout_width="match_parent"
             android:layout_height="1dip"
             android:layout_alignParentTop="true"
-            android:background="?android:attr/dividerVertical" />
+            android:background="?android:attr/dividerVertical"/>
 
         <View
             android:id="@+id/horizontalDivider"
@@ -40,7 +40,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="4dp"
             android:layout_marginTop="4dp"
-            android:background="?android:attr/dividerVertical" />
+            android:background="?android:attr/dividerVertical"/>
 
         <Button
             android:id="@+id/btnCancel"
@@ -51,7 +51,7 @@
             android:layout_alignParentTop="true"
             android:layout_toLeftOf="@id/horizontalDivider"
             android:background="?android:attr/selectableItemBackground"
-            android:text="@string/fp_cancel_label" />
+            android:text="@string/fp_cancel_label"/>
 
         <Button
             android:id="@+id/btnConfirm"
@@ -62,7 +62,7 @@
             android:layout_alignParentTop="true"
             android:layout_toRightOf="@id/horizontalDivider"
             android:background="?android:attr/selectableItemBackground"
-            android:text="@string/fp_confirm_label" />
+            android:text="@string/fp_confirm_label"/>
     </RelativeLayout>
 
     <RelativeLayout
@@ -79,7 +79,7 @@
             android:layout_alignParentTop="true"
             android:background="@drawable/borderless_button"
             android:contentDescription="@string/fp_up_label"
-            android:src="@drawable/navigation_up" />
+            android:src="@drawable/navigation_up"/>
 
         <TextView
             android:id="@+id/txtvSelectedFolderLabel"
@@ -91,7 +91,7 @@
             android:layout_marginTop="8dp"
             android:layout_toRightOf="@id/btnNavUp"
             android:text="@string/fp_selected_folder_label"
-            android:textStyle="bold"></TextView>
+            android:textStyle="bold"/>
 
         <TextView
             android:id="@+id/txtvSelectedFolder"
@@ -106,7 +106,7 @@
             android:text="@string/action_settings"
             android:layout_marginLeft="8dp"
             android:layout_marginTop="6dp"
-            android:layout_marginBottom="6dp" />
+            android:layout_marginBottom="6dp"/>
 
         <ImageButton
             android:id="@+id/btnCreateFolder"
@@ -116,14 +116,14 @@
             android:layout_alignParentTop="true"
             android:contentDescription="@string/fp_create_folder_label"
             android:background="@drawable/borderless_button"
-            android:src="@drawable/ic_action_create" />
+            android:src="@drawable/ic_action_create"/>
 
         <View
             android:id="@+id/divider"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_below="@id/btnNavUp"
-            android:background="@color/bright_blue" />
+            android:background="@color/bright_blue"/>
     </RelativeLayout>
 
     <ListView
@@ -131,6 +131,6 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_above="@id/footer"
-        android:layout_below="@id/directoryInfo" />
+        android:layout_below="@id/directoryInfo"/>
 
 </RelativeLayout>
