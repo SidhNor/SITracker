@@ -56,6 +56,10 @@ public class AddAuthorTask extends AsyncTask<String, Integer, String> {
         String message = "";
         for (String url : args) {
             SiteStrategy strategy = SiteDetector.chooseStrategy(url, helper);
+            if (strategy == null) {
+                message = context.getResources().getString(R.string.supported_urls);
+                return message;
+            }
             int returnMsg = strategy.addAuthorForUrl(url);
             if (returnMsg != -1) {
                 message = context.getResources().getString(returnMsg);

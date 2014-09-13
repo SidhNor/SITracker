@@ -151,12 +151,17 @@ public class ImportAuthorsTask extends IntentService {
                     break;
                 }
                 SiteStrategy strategy = SiteDetector.chooseStrategy(authUrl, helper);
-                int returnMsg = strategy.addAuthorForUrl(authUrl);
-                if (returnMsg == -1) {
-                    this.importProgress.importSuccess();
-                } else {
+                if (strategy == null) {
                     this.importProgress.importFail(authUrl);
+                } else {
+                    int returnMsg = strategy.addAuthorForUrl(authUrl);
+                    if (returnMsg == -1) {
+                        this.importProgress.importSuccess();
+                    } else {
+                        this.importProgress.importFail(authUrl);
+                    }
                 }
+
                 if (shouldCancel) {
                     //Make sure to cancel it here as well
                     notificationManager.cancel(NOTIFICATION_ID);

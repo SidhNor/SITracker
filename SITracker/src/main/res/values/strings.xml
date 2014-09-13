@@ -44,6 +44,7 @@
     <string name="designtime_placeholder_date">May 28</string>
     <string name="cannot_import_authors_from_file">Could not import authors from file.</string>
     <string name="cannot_add_author">Cannot add author.</string>
+    <string name="supported_urls">Only samlib.ru and budclub.ru author urls are supported.</string>
     <string name="cannot_add_author_internal">Cannot add author. Some internal error occurred.
     </string>
     <string name="cannot_add_author_malformed">Cannot add author. Make sure the link is correct.

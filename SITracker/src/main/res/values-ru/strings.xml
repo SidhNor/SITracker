@@ -45,6 +45,7 @@
 
     <string name="cannot_import_authors_from_file">Не удалось импортировать авторов из файла.</string>
     <string name="cannot_add_author">Не удалось добавить автора.</string>
+    <string name="supported_urls">Поддерживаются ссылки авторов только с samlib.ru и budclub.ru</string>
     <string name="cannot_add_author_internal">Не удалось добавить автора. Непредвиденная ошибка.
     </string>
     <string name="cannot_add_author_malformed">Не удалось добавить автора. Удостоверьтесь что адрес
