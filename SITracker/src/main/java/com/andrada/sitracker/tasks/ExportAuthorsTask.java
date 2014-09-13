@@ -57,7 +57,11 @@ public class ExportAuthorsTask extends AsyncTask<String, Integer, String> {
             }
             writer.println();
         } catch (IOException e) {
-            result = context.getResources().getString(R.string.cannot_write_export_file);
+            if (context == null) {
+                result = "Error writing to file";
+            } else {
+                result = context.getResources().getString(R.string.cannot_write_export_file);
+            }
         } catch (SQLException e) {
             result = "Error reading authors";
         } finally {
