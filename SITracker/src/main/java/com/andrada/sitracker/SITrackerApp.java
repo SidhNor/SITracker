@@ -31,13 +31,14 @@ public class SITrackerApp extends Application {
     public void onCreate() {
 
         AnalyticsHelper.initHelper(this);
-        // Change uncaught exception parser...
-        // Note: Checking uncaughtExceptionHandler type can be useful if clearing ga_trackingId during development to disable analytics - avoid NullPointerException.
-        Thread.UncaughtExceptionHandler uncaughtExceptionHandler = Thread.getDefaultUncaughtExceptionHandler();
-
-        if (uncaughtExceptionHandler instanceof ExceptionReporter) {
-            ExceptionReporter exceptionReporter = (ExceptionReporter) uncaughtExceptionHandler;
-            exceptionReporter.setExceptionParser(new AnalyticsExceptionParser());
-        }
+        ExceptionReporter myReporter = new ExceptionReporter(
+                // Currently used Tracker.
+                AnalyticsHelper.getInstance().getTracker(AnalyticsHelper.TrackerName.APP_TRACKER),
+                // Current default uncaught exception handler.
+                Thread.getDefaultUncaughtExceptionHandler(),
+                // Context of the application.
+                this.getApplicationContext());
+        myReporter.setExceptionParser(new AnalyticsExceptionParser());
+        Thread.setDefaultUncaughtExceptionHandler(myReporter);
     }
 }
