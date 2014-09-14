@@ -21,6 +21,8 @@ import com.andrada.sitracker.db.beans.Publication;
 import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.support.ConnectionSource;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.sql.SQLException;
 import java.util.List;
 
@@ -33,16 +35,19 @@ public class PublicationDaoImpl extends BaseDaoImpl<Publication, Integer>
         super(connectionSource, Publication.class);
     }
 
+    @NotNull
     @Override
-    public List<Publication> getPublicationsForAuthor(Author author) throws SQLException {
+    public List<Publication> getPublicationsForAuthor(@NotNull Author author) throws SQLException {
         return getPublicationsForAuthorId(author.getId());
     }
 
+    @NotNull
     @Override
     public List<Publication> getPublicationsForAuthorId(long authorId) throws SQLException {
         return this.queryBuilder().where().eq("author_id", authorId).query();
     }
 
+    @NotNull
     @Override
     public List<Publication> getNewPublications() throws SQLException {
         return this.queryBuilder()
@@ -51,11 +56,14 @@ public class PublicationDaoImpl extends BaseDaoImpl<Publication, Integer>
                 .eq("isNew", true).query();
     }
 
+
+    @NotNull
     @Override
-    public List<Publication> getNewPublicationsForAuthor(Author author) throws SQLException {
+    public List<Publication> getNewPublicationsForAuthor(@NotNull Author author) throws SQLException {
         return getNewPublicationsForAuthorId(author.getId());
     }
 
+    @NotNull
     @Override
     public List<Publication> getNewPublicationsForAuthorId(long authorId) throws SQLException {
         return this.queryBuilder().where()
@@ -65,7 +73,7 @@ public class PublicationDaoImpl extends BaseDaoImpl<Publication, Integer>
     }
 
     @Override
-    public long getNewPublicationsCountForAuthor(Author author) throws SQLException {
+    public long getNewPublicationsCountForAuthor(@NotNull Author author) throws SQLException {
         return getNewPublicationsCountForAuthorId(author.getId());
     }
 
@@ -77,6 +85,7 @@ public class PublicationDaoImpl extends BaseDaoImpl<Publication, Integer>
                 .eq("isNew", true).countOf();
     }
 
+    @NotNull
     @Override
     public List<Publication> getSortedPublicationsForAuthorId(long authorId) throws SQLException {
         return this.queryBuilder()
@@ -88,7 +97,7 @@ public class PublicationDaoImpl extends BaseDaoImpl<Publication, Integer>
     }
 
     @Override
-    public boolean markPublicationRead(Publication pub) throws SQLException {
+    public boolean markPublicationRead(@NotNull Publication pub) throws SQLException {
         long authId = pub.getAuthor().getId();
         pub.setNew(false);
         pub.setOldSize(0);

@@ -7,6 +7,10 @@
             <xliff:g id="num_authors">%1$d</xliff:g>
             выбранных автора
         </item>
+        <item quantity="other">
+            <xliff:g id="num_authors">%1$d</xliff:g>
+            выбранных автора
+        </item>
         <item quantity="many">
             <xliff:g id="num_authors">%1$d</xliff:g>
             выбранных авторов

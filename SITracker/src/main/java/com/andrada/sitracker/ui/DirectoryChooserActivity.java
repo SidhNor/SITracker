@@ -25,6 +25,9 @@ import android.view.MenuItem;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.ui.fragment.DirectoryChooserFragment;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 /**
  * Let's the user choose a directory on the storage device. The selected folder
  * will be sent back to the starting activity as an activity result.
@@ -46,7 +49,7 @@ public class DirectoryChooserActivity extends BaseActivity implements
     public static final int RESULT_CODE_DIR_SELECTED = 1;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupActionBar();
 
@@ -79,7 +82,7 @@ public class DirectoryChooserActivity extends BaseActivity implements
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NotNull MenuItem item) {
         final int itemId = item.getItemId();
 
         if (itemId == android.R.id.home) {

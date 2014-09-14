@@ -37,6 +37,7 @@ import com.j256.ormlite.android.apptools.OpenHelperManager;
 import org.androidannotations.annotations.EService;
 import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.sharedpreferences.Pref;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -74,7 +75,7 @@ public class UpdateAuthorsTask extends IntentService {
      * stops the service, as appropriate.
      */
     @Override
-    protected void onHandleIntent(Intent intent) {
+    protected void onHandleIntent(@NotNull Intent intent) {
 
         boolean isNetworkIgnore = intent.getBooleanExtra(Constants.UPDATE_IGNORES_NETWORK, false);
 
@@ -88,7 +89,7 @@ public class UpdateAuthorsTask extends IntentService {
                         (isNetworkIgnore ||
                                 (!useWiFiOnly || this.isConnectedToWiFi()))) {
                     SiteStrategy strategy = SiteDetector.chooseStrategy(author.getUrl(), siDBHelper);
-                    if (strategy.updateAuthor(author)) {
+                    if (strategy != null && strategy.updateAuthor(author)) {
                         this.updatedAuthors++;
                     }
                 }

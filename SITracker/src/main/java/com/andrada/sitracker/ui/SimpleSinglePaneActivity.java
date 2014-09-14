@@ -22,6 +22,8 @@ import android.support.v4.app.Fragment;
 
 import com.andrada.sitracker.R;
 
+import org.jetbrains.annotations.Nullable;
+
 
 /**
  * A {@link BaseActivity} that simply contains a single fragment. The intent used to invoke this
@@ -32,7 +34,7 @@ public abstract class SimpleSinglePaneActivity extends BaseActivity {
     private Fragment mFragment;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getContentViewResId());
 

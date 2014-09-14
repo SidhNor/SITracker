@@ -45,6 +45,8 @@ import org.androidannotations.annotations.OrmLiteDao;
 import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.sharedpreferences.Pref;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -77,8 +79,10 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
 
     private final HashMap<Long, Publication> mDownloadingPublications = new HashMap<Long, Publication>();
 
+    @Nullable
     ImageLoader mLoader;
 
+    @Nullable
     ListView listView = null;
 
     @Background
@@ -134,9 +138,10 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
         return items.get(childPosition).getId();
     }
 
+    @NotNull
     @Override
     public View getChildView(int groupPosition, int childPosition,
-                             boolean isLastChild, View convertView, ViewGroup parent) {
+                             boolean isLastChild, @Nullable View convertView, ViewGroup parent) {
 
         Publication pub = (Publication) getChild(groupPosition, childPosition);
 
@@ -151,15 +156,16 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
         return publicationItemView;
     }
 
+    @NotNull
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded,
-                             View convertView, ViewGroup parent) {
+                             @Nullable View convertView, ViewGroup parent) {
         if (listView == null) {
             listView = (ListView) parent;
         }
         PublicationCategoryItemView publicationCategoryView;
         //For some weird reason, convertView is PublicationItemView instead of PublicationCategoryItemView_
-        if (convertView == null || !(convertView instanceof PublicationCategoryItemView)) {
+        if (!(convertView instanceof PublicationCategoryItemView)) {
             publicationCategoryView = PublicationCategoryItemView_.build(context);
         } else {
             publicationCategoryView = (PublicationCategoryItemView) convertView;
@@ -199,10 +205,12 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
     }
 
     @Override
-    public void onIsNewItemTapped(View checkBox) {
+    public void onIsNewItemTapped(@NotNull View checkBox) {
         if (listView != null) {
             Publication pub = (Publication) checkBox.getTag();
-            updateStatusOfPublication(pub);
+            if (pub != null) {
+                updateStatusOfPublication(pub);
+            }
         }
     }
 
@@ -223,8 +231,8 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
     }
 
     @Background
-    protected void updateStatusOfPublication(Publication pub) {
-        if (pub != null && pub.getNew()) {
+    protected void updateStatusOfPublication(@NotNull Publication pub) {
+        if (pub.getNew()) {
             try {
                 boolean authorNewChanged = publicationsDao.markPublicationRead(pub);
                 EventBus.getDefault().post(new PublicationMarkedAsReadEvent(authorNewChanged));
@@ -235,7 +243,7 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
     }
 
     @Override
-    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+    public boolean onItemLongClick(@NotNull AdapterView<?> parent, View view, int position, long id) {
         if (ExpandableListView.getPackedPositionType(id) == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
             long packedPosition = ((ExpandableListView) parent).getExpandableListPosition(position);
             int groupPosition = ExpandableListView.getPackedPositionGroup(packedPosition);

@@ -16,6 +16,8 @@
 
 package com.andrada.sitracker.tasks.messages;
 
+import org.jetbrains.annotations.NotNull;
+
 public class UpdateSuccessfulIntentMessage extends BaseIntentMessage {
 
     public static final String SUCCESS_MESSAGE = "com.andrada.sitracker.UPDATE_SUCCESS_ACTION";
@@ -25,6 +27,7 @@ public class UpdateSuccessfulIntentMessage extends BaseIntentMessage {
         this.setAction(SUCCESS_MESSAGE);
     }
 
+    @NotNull
     public static String getMessageName() {
         return SUCCESS_MESSAGE;
     }

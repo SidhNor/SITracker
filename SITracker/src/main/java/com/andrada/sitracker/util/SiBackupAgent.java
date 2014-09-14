@@ -30,6 +30,9 @@ import com.andrada.sitracker.db.manager.SiDBHelper;
 import com.andrada.sitracker.events.BackUpRestoredEvent;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
@@ -54,8 +57,8 @@ public class SiBackupAgent extends BackupAgent {
     private final static String AUTHORS_BACKUP_KEY = "authorsbackupKey";
 
     @Override
-    public void onBackup(ParcelFileDescriptor oldState, BackupDataOutput data,
-                         ParcelFileDescriptor newState) throws IOException {
+    public void onBackup(ParcelFileDescriptor oldState, @NotNull BackupDataOutput data,
+                         @NotNull ParcelFileDescriptor newState) throws IOException {
 
         // Create buffer stream and data output stream for our data
         ByteArrayOutputStream bufStream = new ByteArrayOutputStream();
@@ -87,7 +90,7 @@ public class SiBackupAgent extends BackupAgent {
     }
 
     @Override
-    public void onRestore(BackupDataInput data, int appVersionCode,
+    public void onRestore(@NotNull BackupDataInput data, int appVersionCode,
                           ParcelFileDescriptor newState) throws IOException {
 
         while (data.readNextHeader()) {
@@ -123,12 +126,15 @@ public class SiBackupAgent extends BackupAgent {
 
                         final AuthorDao authorDao = helper.getAuthorDao();
                         final PublicationDao pubDao = helper.getPublicationDao();
+                        assert authorDao != null;
+                        assert pubDao != null;
 
                         LOGD(TAG, "Authors restored: " + authorsMap.size());
                         LOGD(TAG, "Total pubs restored: " + publications.size());
 
                         //Write all authors and publications in a transaction
                         authorDao.callBatchTasks(new Callable<Object>() {
+                            @Nullable
                             @Override
                             public Object call() throws Exception {
                                 //Write all the authors to db.

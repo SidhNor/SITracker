@@ -46,6 +46,9 @@ import com.andrada.sitracker.ui.components.FileFolderView;
 import com.andrada.sitracker.ui.components.FileFolderView_;
 import com.andrada.sitracker.util.LogUtils;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
@@ -78,6 +81,7 @@ public class DirectoryChooserFragment extends DialogFragment {
     private String mInitialDirectory;
     private Boolean mIsDirectoryChooser = true;
 
+    @NotNull
     private OnFragmentInteractionListener mListener;
 
     private Button mBtnConfirm;
@@ -91,9 +95,12 @@ public class DirectoryChooserFragment extends DialogFragment {
     /**
      * The directory that is currently being shown.
      */
+    @Nullable
     private File mSelectedDir;
+    @Nullable
     private File mSelectedFile;
     private File[] mFilesInDir;
+    @Nullable
     private FileObserver mFileObserver;
 
 
@@ -113,6 +120,7 @@ public class DirectoryChooserFragment extends DialogFragment {
      *                         {@link android.os.Environment#getExternalStorageDirectory()}
      * @return A new instance of fragment DirectoryChooserFragment.
      */
+    @NotNull
     public static DirectoryChooserFragment newInstance(
             final String newDirectoryName,
             final String initialDirectory,
@@ -127,14 +135,15 @@ public class DirectoryChooserFragment extends DialogFragment {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NotNull Bundle outState) {
         super.onSaveInstanceState(outState);
-
-        outState.putString(KEY_CURRENT_DIRECTORY, mSelectedDir.getAbsolutePath());
+        if (mSelectedDir != null) {
+            outState.putString(KEY_CURRENT_DIRECTORY, mSelectedDir.getAbsolutePath());
+        }
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         if (getArguments() == null) {
@@ -158,7 +167,7 @@ public class DirectoryChooserFragment extends DialogFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         assert getActivity() != null;
@@ -282,7 +291,7 @@ public class DirectoryChooserFragment extends DialogFragment {
     }
 
     @Override
-    public void onAttach(Activity activity) {
+    public void onAttach(@NotNull Activity activity) {
         super.onAttach(activity);
         try {
             mListener = (OnFragmentInteractionListener) activity;
@@ -315,7 +324,7 @@ public class DirectoryChooserFragment extends DialogFragment {
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NotNull Menu menu, @NotNull MenuInflater inflater) {
         inflater.inflate(R.menu.directory_chooser, menu);
 
         final MenuItem menuItem = menu.findItem(R.id.new_folder_item);
@@ -328,7 +337,7 @@ public class DirectoryChooserFragment extends DialogFragment {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NotNull MenuItem item) {
         final int itemId = item.getItemId();
 
         if (itemId == R.id.new_folder_item) {
@@ -353,7 +362,7 @@ public class DirectoryChooserFragment extends DialogFragment {
                         new DialogInterface.OnClickListener() {
 
                             @Override
-                            public void onClick(DialogInterface dialog,
+                            public void onClick(@NotNull DialogInterface dialog,
                                                 int which) {
                                 dialog.dismiss();
                             }
@@ -362,7 +371,7 @@ public class DirectoryChooserFragment extends DialogFragment {
                         new DialogInterface.OnClickListener() {
 
                             @Override
-                            public void onClick(DialogInterface dialog,
+                            public void onClick(@NotNull DialogInterface dialog,
                                                 int which) {
                                 dialog.dismiss();
                                 int msg = createFolder();
@@ -378,7 +387,7 @@ public class DirectoryChooserFragment extends DialogFragment {
      *            non-null and a directory, otherwise the displayed directory
      *            will not be changed
      */
-    private void changeDirectory(File dir) {
+    private void changeDirectory(@Nullable File dir) {
         if (dir == null) {
             debug("Could not change folder: dir was null");
         } else if (!dir.isDirectory() && !mIsDirectoryChooser) {
@@ -395,7 +404,7 @@ public class DirectoryChooserFragment extends DialogFragment {
         } else {
             File[] contents = dir.listFiles(new FileFilter() {
                 @Override
-                public boolean accept(File file) {
+                public boolean accept(@NotNull File file) {
                     return !file.isHidden();
                 }
             });
@@ -422,7 +431,7 @@ public class DirectoryChooserFragment extends DialogFragment {
                 }
                 Arrays.sort(mFilesInDir, new Comparator<File>() {
                     @Override
-                    public int compare(File aThis, File aThat) {
+                    public int compare(@NotNull File aThis, @Nullable File aThat) {
                         final int BEFORE = -1;
                         final int EQUAL = 0;
                         final int AFTER = 1;
@@ -466,7 +475,7 @@ public class DirectoryChooserFragment extends DialogFragment {
         refreshButtonState();
     }
 
-    private void debug(String message, Object... args) {
+    private void debug(@NotNull String message, Object... args) {
         LOGD(TAG, String.format(message, args));
     }
 
@@ -495,6 +504,7 @@ public class DirectoryChooserFragment extends DialogFragment {
     /**
      * Sets up a FileObserver to watch the current directory.
      */
+    @NotNull
     private FileObserver createFileObserver(String path) {
         return new FileObserver(path, FileObserver.CREATE | FileObserver.DELETE
                 | FileObserver.MOVED_FROM | FileObserver.MOVED_TO) {
@@ -565,7 +575,7 @@ public class DirectoryChooserFragment extends DialogFragment {
     /**
      * Returns true if the selected file or directory would be valid selection.
      */
-    private boolean isValidFile(File file) {
+    private boolean isValidFile(@Nullable File file) {
         if (mIsDirectoryChooser) {
             return (file != null && file.isDirectory() && file.canRead() && file
                     .canWrite());
@@ -623,7 +633,7 @@ public class DirectoryChooserFragment extends DialogFragment {
         }
 
         @Override
-        public int compareTo(FileDescriptor that) {
+        public int compareTo(@Nullable FileDescriptor that) {
             final int BEFORE = -1;
             final int EQUAL = 0;
             final int AFTER = 1;
@@ -652,12 +662,13 @@ public class DirectoryChooserFragment extends DialogFragment {
 
     private class FolderArrayAdapter extends ArrayAdapter<FileDescriptor> {
 
-        public FolderArrayAdapter(Context context, int resource, List<FileDescriptor> objects) {
+        public FolderArrayAdapter(@NotNull Context context, int resource, List<FileDescriptor> objects) {
             super(context, resource, objects);
         }
 
+        @Nullable
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(int position, @Nullable View convertView, ViewGroup parent) {
             FileFolderView folderItemView;
             if (convertView == null) {
                 folderItemView = FileFolderView_.build(getContext());

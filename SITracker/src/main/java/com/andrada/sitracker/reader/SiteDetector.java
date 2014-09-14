@@ -18,8 +18,11 @@ package com.andrada.sitracker.reader;
 
 import com.andrada.sitracker.db.manager.SiDBHelper;
 
+import org.jetbrains.annotations.Nullable;
+
 public class SiteDetector {
 
+    @Nullable
     public static SiteStrategy chooseStrategy(String url, SiDBHelper helper) {
         url = url.toLowerCase().trim();
         if (url.contains("samlib.ru")) {

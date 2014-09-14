@@ -22,6 +22,6 @@
     <item
         android:id="@+id/new_folder_item"
         sitracker:showAsAction="ifRoom|withText"
-        android:title="@string/fp_create_folder_label"></item>
+        android:title="@string/fp_create_folder_label"/>
 
 </menu>

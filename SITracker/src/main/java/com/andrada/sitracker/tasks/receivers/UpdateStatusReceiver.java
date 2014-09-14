@@ -24,11 +24,15 @@ import com.andrada.sitracker.contracts.AuthorUpdateStatusListener;
 import com.andrada.sitracker.tasks.messages.UpdateFailedIntentMessage;
 import com.andrada.sitracker.tasks.messages.UpdateSuccessfulIntentMessage;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 public class UpdateStatusReceiver extends BroadcastReceiver {
 
+    @Nullable
     private AuthorUpdateStatusListener mListener = null;
 
-    public UpdateStatusReceiver(AuthorUpdateStatusListener listener) {
+    public UpdateStatusReceiver(@Nullable AuthorUpdateStatusListener listener) {
         mListener = listener;
     }
 
@@ -37,7 +41,7 @@ public class UpdateStatusReceiver extends BroadcastReceiver {
     }
 
     @Override
-    public void onReceive(Context context, Intent intent) {
+    public void onReceive(Context context, @NotNull Intent intent) {
         //See if there is something we can notify
         if (mListener != null) {
             String action = intent.getAction();

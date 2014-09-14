@@ -16,6 +16,7 @@
 
 package com.andrada.sitracker.tasks.io;
 
+import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -29,10 +30,12 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 public class SIInformerXMLAuthorImport implements AuthorImportStrategy {
 
+    @NotNull
     @Override
-    public List<String> extractAuthorsFromFile(String absoluteFilename) {
+    public List<String> extractAuthorsFromFile(@NotNull String absoluteFilename) {
+        List<String> result = new ArrayList<String>();
         if (!absoluteFilename.endsWith(".xml")) {
-            return null;
+            return result;
         }
         try {
             File file = new File(absoluteFilename);
@@ -46,10 +49,11 @@ public class SIInformerXMLAuthorImport implements AuthorImportStrategy {
 
         }
 
-        return null;
+        return result;
     }
 
-    private List<String> readFeed(Document doc) {
+    @NotNull
+    private List<String> readFeed(@NotNull Document doc) {
         List<String> entries = new ArrayList<String>();
         NodeList authorsList = doc.getElementsByTagName("Author");
         if (authorsList.getLength() > 0) {

@@ -17,7 +17,6 @@ limitations under the License.
 -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     package="com.andrada.sitracker"
           android:installLocation="auto"
           android:versionCode="30"

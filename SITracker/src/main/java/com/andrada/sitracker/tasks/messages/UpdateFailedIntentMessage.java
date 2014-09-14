@@ -16,6 +16,8 @@
 
 package com.andrada.sitracker.tasks.messages;
 
+import org.jetbrains.annotations.NotNull;
+
 public class UpdateFailedIntentMessage extends BaseIntentMessage {
 
     public static final String FAILED_MESSAGE = "com.andrada.sitracker.UPDATE_FAILED_ACTION";
@@ -25,6 +27,7 @@ public class UpdateFailedIntentMessage extends BaseIntentMessage {
         this.setAction(FAILED_MESSAGE);
     }
 
+    @NotNull
     public static String getMessageName() {
         return FAILED_MESSAGE;
     }

@@ -16,6 +16,8 @@
 
 package com.andrada.sitracker.tasks.io;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -24,8 +26,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PlainTextAuthorImport implements AuthorImportStrategy {
+
+    @NotNull
     @Override
-    public List<String> extractAuthorsFromFile(String absoluteFilename) {
+    public List<String> extractAuthorsFromFile(@NotNull String absoluteFilename) {
         List<String> authorLinks = new ArrayList<String>();
 
         BufferedReader data = null;

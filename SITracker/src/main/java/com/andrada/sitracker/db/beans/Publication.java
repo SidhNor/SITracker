@@ -20,6 +20,9 @@ import com.andrada.sitracker.db.dao.PublicationDaoImpl;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -70,10 +73,11 @@ public class Publication implements Serializable {
     }
 
     @Override
-    public boolean equals(Object object) {
+    @Contract("null -> false")
+    public boolean equals(@Nullable Object object) {
         boolean sameSame = false;
 
-        if (object != null && object instanceof Publication) {
+        if (object instanceof Publication) {
             sameSame = this.getUrl().equals(((Publication) object).getUrl());
         }
 

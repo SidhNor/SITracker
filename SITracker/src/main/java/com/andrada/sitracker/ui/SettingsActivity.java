@@ -42,6 +42,8 @@ import com.google.android.gms.analytics.GoogleAnalytics;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.sharedpreferences.Pref;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import de.greenrobot.event.EventBus;
 
@@ -51,7 +53,9 @@ import de.greenrobot.event.EventBus;
 public class SettingsActivity extends PreferenceActivity implements
         SharedPreferences.OnSharedPreferenceChangeListener {
 
-    public static String PREF_NAME = "SIPrefs";
+    @NotNull
+    public static final String PREF_NAME = "SIPrefs";
+    @Nullable
     private final Preference.OnPreferenceClickListener clickListener = new Preference.OnPreferenceClickListener() {
         @Override
         public boolean onPreferenceClick(Preference preference) {
@@ -77,7 +81,7 @@ public class SettingsActivity extends PreferenceActivity implements
     @Pref
     SIPrefs_ prefs;
 
-    @SuppressLint("NewApi")
+    @SuppressLint({"NewApi", "AppCompatMethod"})
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,7 +96,6 @@ public class SettingsActivity extends PreferenceActivity implements
         setAuthorSortSummary(prefs.authorsSortType().get());
         setDownloadFolderSummary(prefs.downloadFolder().get());
         if (UIUtils.hasHoneycomb()) {
-            //noinspection ы
             getActionBar().setDisplayHomeAsUpEnabled(true);
         }
     }
@@ -173,7 +176,7 @@ public class SettingsActivity extends PreferenceActivity implements
         }
     }
 
-    private void setDownloadFolderSummary(String newValue) {
+    private void setDownloadFolderSummary(@Nullable String newValue) {
         Preference pref = findPreference(Constants.CONTENT_DOWNLOAD_FOLDER_KEY);
         if (newValue == null || newValue.length() == 0) {
             pref.setSummary(getResources().getString(R.string.pref_content_download_summ));
@@ -197,7 +200,7 @@ public class SettingsActivity extends PreferenceActivity implements
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, @NotNull Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == Constants.REQUEST_DIRECTORY) {

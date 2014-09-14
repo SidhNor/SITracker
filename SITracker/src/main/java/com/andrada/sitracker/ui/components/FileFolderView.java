@@ -25,6 +25,7 @@ import com.andrada.sitracker.ui.widget.CheckedRelativeLayout;
 
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
+import org.jetbrains.annotations.NotNull;
 
 @EViewGroup(R.layout.file_folder_list_item)
 public class FileFolderView extends CheckedRelativeLayout {
@@ -35,7 +36,7 @@ public class FileFolderView extends CheckedRelativeLayout {
     @ViewById
     ImageView fileFolderIconImageView;
 
-    public FileFolderView(Context context) {
+    public FileFolderView(@NotNull Context context) {
         super(context);
     }
 

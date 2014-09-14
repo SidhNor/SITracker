@@ -22,6 +22,8 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.widget.TextView;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * A simple {@link android.widget.TextView} subclass that uses {@link android.text.TextUtils#ellipsize(CharSequence,
  * android.text.TextPaint, float, android.text.TextUtils.TruncateAt, boolean,
@@ -35,15 +37,11 @@ public class EllipsizedTextView extends TextView {
 
     private int mMaxLines;
 
-    public EllipsizedTextView(Context context) {
-        this(context, null, 0);
-    }
-
-    public EllipsizedTextView(Context context, AttributeSet attrs) {
+    public EllipsizedTextView(@NotNull Context context, @NotNull AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public EllipsizedTextView(Context context, AttributeSet attrs, int defStyle) {
+    public EllipsizedTextView(@NotNull Context context, @NotNull AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
 
         // Attribute initialization
@@ -56,7 +54,7 @@ public class EllipsizedTextView extends TextView {
     }
 
     @Override
-    public void setText(CharSequence text, BufferType type) {
+    public void setText(@NotNull CharSequence text, BufferType type) {
         CharSequence newText = getWidth() == 0 || mMaxLines > MAX_ELLIPSIZE_LINES ? text :
                 TextUtils.ellipsize(text, getPaint(), (getWidth() - 40) * mMaxLines,
                         TextUtils.TruncateAt.END, false, null);

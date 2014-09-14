@@ -28,6 +28,8 @@ import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.widget.TextView;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.regex.Pattern;
@@ -59,7 +61,7 @@ public class UIUtils {
      * through {@link android.text.Html#fromHtml(String)} when applicable. Also sets
      * {@link android.widget.TextView#setMovementMethod} so inline links are handled.
      */
-    public static void setTextMaybeHtml(TextView view, String text) {
+    public static void setTextMaybeHtml(@NotNull TextView view, @NotNull String text) {
         if (TextUtils.isEmpty(text)) {
             view.setText("");
             return;
@@ -89,13 +91,13 @@ public class UIUtils {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
     }
 
-    public static boolean isTablet(Context context) {
+    public static boolean isTablet(@NotNull Context context) {
         return (context.getResources().getConfiguration().screenLayout
                 & Configuration.SCREENLAYOUT_SIZE_MASK)
                 >= Configuration.SCREENLAYOUT_SIZE_LARGE;
     }
 
-    public static boolean isHoneycombTablet(Context context) {
+    public static boolean isHoneycombTablet(@NotNull Context context) {
         return hasHoneycomb() && isTablet(context);
     }
 
@@ -110,7 +112,7 @@ public class UIUtils {
      * @param context the current context of the device
      * @see #isHoneycombTablet(android.content.Context)
      */
-    public static void enableDisableActivitiesByFormFactor(Context context) {
+    public static void enableDisableActivitiesByFormFactor(@NotNull Context context) {
         final PackageManager pm = context.getPackageManager();
         boolean isTablet = isHoneycombTablet(context);
 
@@ -154,7 +156,7 @@ public class UIUtils {
      * A hashing method that changes a string (like a URL) into a hash suitable for using as a
      * disk filename.
      */
-    public static String hashKeyForDisk(String key) {
+    public static String hashKeyForDisk(@NotNull String key) {
         String cacheKey;
         try {
             final MessageDigest mDigest = MessageDigest.getInstance("MD5");
@@ -166,7 +168,8 @@ public class UIUtils {
         return cacheKey;
     }
 
-    private static String bytesToHexString(byte[] bytes) {
+    @NotNull
+    private static String bytesToHexString(@NotNull byte[] bytes) {
         // http://stackoverflow.com/questions/332079
         StringBuilder sb = new StringBuilder();
         for (byte aByte : bytes) {

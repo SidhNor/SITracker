@@ -21,7 +21,7 @@
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
     -->
-    <style name="FrameworkRoot.Base" parent="@style/Theme.AppCompat.Light"></style>
+    <style name="FrameworkRoot.Base" parent="@style/Theme.AppCompat.Light"/>
 
     <!-- Root styles that vary by API level -->
     <style name="FrameworkRoot.Theme" parent="FrameworkRoot.Base">

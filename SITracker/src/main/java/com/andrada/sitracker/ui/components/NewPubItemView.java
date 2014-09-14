@@ -23,11 +23,12 @@ import com.andrada.sitracker.db.beans.Publication;
 import com.andrada.sitracker.ui.widget.CheckedRelativeLayout;
 
 import org.androidannotations.annotations.EViewGroup;
+import org.jetbrains.annotations.NotNull;
 
 @EViewGroup(R.layout.new_pub_list_item)
 public class NewPubItemView extends CheckedRelativeLayout {
 
-    public NewPubItemView(Context context) {
+    public NewPubItemView(@NotNull Context context) {
         super(context);
     }
 

@@ -34,6 +34,7 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
+import org.jetbrains.annotations.Nullable;
 
 
 @EFragment(R.layout.fragment_listview_with_empty)
@@ -49,6 +50,7 @@ public class NewPubsFragment extends Fragment implements MultiSelectionUtil.Mult
     @Bean
     NewPubsAdapter adapter;
 
+    @Nullable
     private MultiSelectionUtil.Controller mMultiSelectionController;
 
     @Override

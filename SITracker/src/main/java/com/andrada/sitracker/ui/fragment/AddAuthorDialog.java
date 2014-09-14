@@ -35,6 +35,8 @@ import com.andrada.sitracker.events.ProgressBarToggleEvent;
 import com.andrada.sitracker.tasks.AddAuthorTask;
 import com.andrada.sitracker.util.ClipboardHelper;
 
+import org.jetbrains.annotations.NotNull;
+
 import de.greenrobot.event.EventBus;
 
 public class AddAuthorDialog extends DialogFragment implements
@@ -49,6 +51,7 @@ public class AddAuthorDialog extends DialogFragment implements
         setRetainInstance(true);
     }
 
+    @NotNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         LayoutInflater inflater = (LayoutInflater) getActivity()
@@ -109,7 +112,7 @@ public class AddAuthorDialog extends DialogFragment implements
     }
 
     @Override
-    public void onClick(DialogInterface dialog, int which) {
+    public void onClick(@NotNull DialogInterface dialog, int which) {
         if (which == Dialog.BUTTON_NEGATIVE) {
             dialog.dismiss();
         }

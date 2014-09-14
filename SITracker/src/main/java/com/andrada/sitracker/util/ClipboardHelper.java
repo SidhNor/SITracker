@@ -21,10 +21,14 @@ import android.content.ClipData;
 import android.content.Context;
 import android.os.Build;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 @SuppressWarnings("deprecation")
 public class ClipboardHelper {
 
-    public static CharSequence getClipboardText(Context context) {
+    @Nullable
+    public static CharSequence getClipboardText(@NotNull Context context) {
 
         CharSequence clipboardChars;
         if (UIUtils.hasHoneycomb()) {
@@ -38,8 +42,9 @@ public class ClipboardHelper {
     }
 
 
+    @Nullable
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    private static CharSequence getClipboardHoneycomb(android.content.ClipboardManager clipboard) {
+    private static CharSequence getClipboardHoneycomb(@NotNull android.content.ClipboardManager clipboard) {
         if (clipboard.hasPrimaryClip()) {
             ClipData.Item item = clipboard.getPrimaryClip().getItemAt(0);
             return item.getText();
@@ -48,7 +53,7 @@ public class ClipboardHelper {
     }
 
     @TargetApi(Build.VERSION_CODES.FROYO)
-    private static CharSequence getClipboardFroyo(android.text.ClipboardManager clipboard) {
+    private static CharSequence getClipboardFroyo(@NotNull android.text.ClipboardManager clipboard) {
         //noinspection deprecation,AndroidLintNewApi
         return clipboard.getText();
     }

@@ -22,6 +22,8 @@ import com.j256.ormlite.dao.GenericRawResults;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.support.ConnectionSource;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +36,7 @@ public class AuthorDaoImpl extends BaseDaoImpl<Author, Integer>
         super(connectionSource, Author.class);
     }
 
+    @NotNull
     public List<String> getAuthorsUrls() throws SQLException {
         GenericRawResults results = this.queryRaw("SELECT url FROM authors");
         List<String> authorUrls = new ArrayList<String>();
@@ -43,6 +46,7 @@ public class AuthorDaoImpl extends BaseDaoImpl<Author, Integer>
         return authorUrls;
     }
 
+    @NotNull
     @Override
     public List<String> getAuthorsUrlIds() throws SQLException {
         GenericRawResults results = this.queryRaw("SELECT urlId FROM authors");
@@ -61,18 +65,20 @@ public class AuthorDaoImpl extends BaseDaoImpl<Author, Integer>
                         "WHERE authors._id = publications.author_id AND publications.isNew = 1");
     }
 
+    @NotNull
     @Override
     public List<Author> getAllAuthorsSortedAZ() throws SQLException {
         return this.queryBuilder().orderBy("name", true).query();
     }
 
+    @NotNull
     @Override
     public List<Author> getAllAuthorsSortedNew() throws SQLException {
         return this.queryBuilder().orderBy("updateDate", false).query();
     }
 
     @Override
-    public void markAsRead(Author author) throws SQLException {
+    public void markAsRead(@NotNull Author author) throws SQLException {
         author.markRead();
         this.update(author);
     }

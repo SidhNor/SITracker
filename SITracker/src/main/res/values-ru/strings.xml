@@ -139,7 +139,6 @@
 
     <string name="no_network_error">Нет соединения</string>
     <string name="no_network_retry">ЕЩЕ РАЗ</string>
-    <string name="replace_authors_at_import">Удалить нынешних авторов при импорте</string>
     <string name="choose_import_file">Выберите файл</string>
     <string name="perform_import">Импорт</string>
 
@@ -184,7 +183,6 @@
     <string name="pref_opt_out_statistics_summ">Не отправлять статистику изпользования автору.</string>
 
     <string name="pref_update_interval">Интервал обновлений</string>
-    <string name="pref_header_title">Настройки</string>
 
     <string name="crouton_image_desc">info</string>
     <string name="file_descriptor">File type descriptor</string>

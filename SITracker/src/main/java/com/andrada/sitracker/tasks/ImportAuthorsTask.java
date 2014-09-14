@@ -43,6 +43,8 @@ import com.j256.ormlite.android.apptools.OpenHelperManager;
 
 import org.androidannotations.annotations.EService;
 import org.androidannotations.annotations.SystemService;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -88,13 +90,14 @@ public class ImportAuthorsTask extends IntentService {
         OpenHelperManager.releaseHelper();
     }
 
+    @NotNull
     @Override
     public IBinder onBind(Intent intent) {
         return mBinder;
     }
 
     @Override
-    protected void onHandleIntent(Intent intent) {
+    protected void onHandleIntent(@Nullable Intent intent) {
         if (intent == null) {
             return;
         }
@@ -231,7 +234,7 @@ public class ImportAuthorsTask extends IntentService {
         return authorsList;
     }
 
-    private void setupExtras(Intent intent) {
+    private void setupExtras(@NotNull Intent intent) {
         Bundle extras = intent.getExtras();
         if (extras != null) {
             if (extras.containsKey(AUTHOR_LIST_EXTRA)) {
@@ -251,7 +254,7 @@ public class ImportAuthorsTask extends IntentService {
             this.totalAuthors = totalAuthors;
         }
 
-        public ImportProgress(ImportProgress copy) {
+        public ImportProgress(@NotNull ImportProgress copy) {
             this.totalAuthors = copy.totalAuthors;
             this.successfullyImported = copy.successfullyImported;
             this.failedImport = copy.failedImport;
@@ -275,6 +278,7 @@ public class ImportAuthorsTask extends IntentService {
             return failedImport;
         }
 
+        @NotNull
         public List<String> getFailedAuthors() {
             return failedAuthors;
         }
@@ -292,6 +296,7 @@ public class ImportAuthorsTask extends IntentService {
     }
 
     public class ImportAuthorsBinder extends Binder {
+        @NotNull
         public ImportAuthorsTask getService() {
             return ImportAuthorsTask.this;
         }

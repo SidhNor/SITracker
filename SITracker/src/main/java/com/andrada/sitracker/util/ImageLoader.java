@@ -41,6 +41,9 @@ import com.android.volley.toolbox.DiskBasedCache;
 import com.android.volley.toolbox.HttpClientStack;
 import com.android.volley.toolbox.HurlStack;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.File;
 import java.util.ArrayList;
 
@@ -59,7 +62,7 @@ public class ImageLoader extends com.android.volley.toolbox.ImageLoader {
     private static final int HALF_FADE_IN_TIME = UIUtils.ANIMATION_FADE_IN_TIME / 2;
     private static final String CACHE_DIR = "images";
 
-    private Resources mResources;
+    private final Resources mResources;
     private ArrayList<Drawable> mPlaceHolderDrawables;
     private boolean mFadeInImage = true;
     private int mMaxImageHeight = 0;
@@ -69,7 +72,7 @@ public class ImageLoader extends com.android.volley.toolbox.ImageLoader {
      * Creates an ImageLoader with Bitmap memory cache. No default placeholder image will be shown
      * while the image is being fetched and loaded.
      */
-    public ImageLoader(FragmentActivity activity) {
+    public ImageLoader(@NotNull FragmentActivity activity) {
         super(newRequestQueue(activity),
                 BitmapCache.getInstance(activity.getSupportFragmentManager()));
         mResources = activity.getResources();
@@ -79,7 +82,7 @@ public class ImageLoader extends com.android.volley.toolbox.ImageLoader {
      * Creates an ImageLoader with Bitmap memory cache and a default placeholder image while the
      * image is being fetched and loaded.
      */
-    public ImageLoader(FragmentActivity activity, int defaultPlaceHolderResId) {
+    public ImageLoader(@NotNull FragmentActivity activity, int defaultPlaceHolderResId) {
         super(newRequestQueue(activity),
                 BitmapCache.getInstance(activity.getSupportFragmentManager()));
         mResources = activity.getResources();
@@ -91,42 +94,49 @@ public class ImageLoader extends com.android.volley.toolbox.ImageLoader {
     /**
      * Creates an ImageLoader with Bitmap memory cache and a list of default placeholder drawables.
      */
-    public ImageLoader(FragmentActivity activity, ArrayList<Drawable> placeHolderDrawables) {
+    public ImageLoader(@NotNull FragmentActivity activity, ArrayList<Drawable> placeHolderDrawables) {
         super(newRequestQueue(activity),
                 BitmapCache.getInstance(activity.getSupportFragmentManager()));
         mResources = activity.getResources();
         mPlaceHolderDrawables = placeHolderDrawables;
     }
 
+    @NotNull
     public ImageLoader setFadeInImage(boolean fadeInImage) {
         mFadeInImage = fadeInImage;
         return this;
     }
 
+    @NotNull
     public ImageLoader setMaxImageSize(int maxImageWidth, int maxImageHeight) {
         mMaxImageWidth = maxImageWidth;
         mMaxImageHeight = maxImageHeight;
         return this;
     }
 
+    @NotNull
     public ImageLoader setMaxImageSize(int maxImageSize) {
         return setMaxImageSize(maxImageSize, maxImageSize);
     }
 
-    public ImageContainer get(String requestUrl, ImageView imageView) {
+    @Nullable
+    public ImageContainer get(String requestUrl, @NotNull ImageView imageView) {
         return get(requestUrl, imageView, 0);
     }
 
-    public ImageContainer get(String requestUrl, ImageView imageView, int placeHolderIndex) {
+    @Nullable
+    public ImageContainer get(String requestUrl, @NotNull ImageView imageView, int placeHolderIndex) {
         return get(requestUrl, imageView, mPlaceHolderDrawables.get(placeHolderIndex),
                 mMaxImageWidth, mMaxImageHeight);
     }
 
-    public ImageContainer get(String requestUrl, ImageView imageView, Drawable placeHolder) {
+    @Nullable
+    public ImageContainer get(String requestUrl, @NotNull ImageView imageView, Drawable placeHolder) {
         return get(requestUrl, imageView, placeHolder, mMaxImageWidth, mMaxImageHeight);
     }
 
-    public ImageContainer get(String requestUrl, ImageView imageView, Drawable placeHolder,
+    @Nullable
+    public ImageContainer get(@Nullable String requestUrl, @NotNull ImageView imageView, Drawable placeHolder,
                               int maxWidth, int maxHeight) {
 
         // Find any old image load request pending on this ImageView (in case this view was
@@ -162,11 +172,12 @@ public class ImageLoader extends com.android.volley.toolbox.ImageLoader {
         return imageContainer;
     }
 
+    @Nullable
     private static ImageListener getImageListener(final Resources resources,
-                                                  final ImageView imageView, final Drawable placeHolder, final boolean fadeInImage) {
+                                                  @NotNull final ImageView imageView, final Drawable placeHolder, final boolean fadeInImage) {
         return new ImageListener() {
             @Override
-            public void onResponse(ImageContainer response, boolean isImmediate) {
+            public void onResponse(@NotNull ImageContainer response, boolean isImmediate) {
                 imageView.setTag(null);
                 if (response.getBitmap() != null) {
                     setImageBitmap(imageView, response.getBitmap(), resources,
@@ -182,7 +193,8 @@ public class ImageLoader extends com.android.volley.toolbox.ImageLoader {
         };
     }
 
-    private static RequestQueue newRequestQueue(Context context) {
+    @NotNull
+    private static RequestQueue newRequestQueue(@NotNull Context context) {
 
         // On HC+ use HurlStack which is based on HttpURLConnection. Otherwise fall back on
         // AndroidHttpClient (based on Apache DefaultHttpClient) which should no longer be used
@@ -206,7 +218,7 @@ public class ImageLoader extends com.android.volley.toolbox.ImageLoader {
      * Drawable.
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
-    private static void setImageBitmap(final ImageView imageView, final Bitmap bitmap,
+    private static void setImageBitmap(@NotNull final ImageView imageView, final Bitmap bitmap,
                                        Resources resources, boolean fadeIn) {
 
         // If we're fading in and on HC MR1+
@@ -260,7 +272,8 @@ public class ImageLoader extends com.android.volley.toolbox.ImageLoader {
      * @param uniqueName A unique directory name to append to the cache dir
      * @return The cache dir
      */
-    public static File getDiskCacheDir(Context context, String uniqueName) {
+    @NotNull
+    public static File getDiskCacheDir(@NotNull Context context, String uniqueName) {
         // Check if media is mounted or storage is built-in, if so, try and use external cache dir
         // otherwise use internal cache dir
 
@@ -274,7 +287,7 @@ public class ImageLoader extends com.android.volley.toolbox.ImageLoader {
         if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState()) ||
                 !Environment.isExternalStorageRemovable()) {
             File dir = getExternalCacheDir(context);
-            cachePath = dir == null ? context.getCacheDir().getPath() : getExternalCacheDir(context).getPath();
+            cachePath = dir == null ? context.getCacheDir().getPath() : dir.getPath();
         } else {
             cachePath = context.getCacheDir().getPath();
         }
@@ -287,7 +300,8 @@ public class ImageLoader extends com.android.volley.toolbox.ImageLoader {
      * @param context The context to use
      * @return The external cache dir
      */
-    private static File getExternalCacheDir(Context context) {
+    @Nullable
+    private static File getExternalCacheDir(@NotNull Context context) {
         // TODO: This needs to be moved to a background thread to ensure no disk access on the
         // main/UI thread as unfortunately getExternalCacheDir() calls mkdirs() for us (even
         // though the Volley library will later try and call mkdirs() as well from a background

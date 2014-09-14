@@ -38,6 +38,8 @@ import com.andrada.sitracker.util.UIUtils;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 @EViewGroup(R.layout.publications_item)
 public class PublicationItemView extends TouchDelegateRelativeLayout {
@@ -73,7 +75,7 @@ public class PublicationItemView extends TouchDelegateRelativeLayout {
 
     private IsNewItemTappedListener mListener;
 
-    public PublicationItemView(Context context) {
+    public PublicationItemView(@NotNull Context context) {
         super(context);
 
     }
@@ -92,7 +94,7 @@ public class PublicationItemView extends TouchDelegateRelativeLayout {
         mListener = listener;
     }
 
-    public void bind(Publication publication, ImageLoader loader) {
+    public void bind(@NotNull Publication publication, @Nullable ImageLoader loader) {
         mIsNew = publication.getNew();
         item_title.setText(publication.getName());
         item_updated.setImageResource(mIsNew ? R.drawable.star_selected : R.drawable.star_unselected);
@@ -141,7 +143,7 @@ public class PublicationItemView extends TouchDelegateRelativeLayout {
     }
 
     @Override
-    protected void onDelegatedTouchViewClicked(View view) {
+    protected void onDelegatedTouchViewClicked(@NotNull View view) {
         if (mListener != null && view.getId() == R.id.item_updated) {
             mIsNew = false;
             item_updated.setImageResource(R.drawable.star_unselected);
@@ -150,14 +152,14 @@ public class PublicationItemView extends TouchDelegateRelativeLayout {
     }
 
     @Override
-    protected void onDelegatedTouchViewDown(View view) {
+    protected void onDelegatedTouchViewDown(@NotNull View view) {
         if (mIsNew && view.getId() == R.id.item_updated) {
             item_updated.setImageResource(R.drawable.star_selected_focused);
         }
     }
 
     @Override
-    protected void onDelegatedTouchViewCancel(View view) {
+    protected void onDelegatedTouchViewCancel(@NotNull View view) {
         //If we are not new, just ignore everything
         if (mIsNew && view.getId() == R.id.item_updated) {
             item_updated.setImageResource(R.drawable.star_selected);

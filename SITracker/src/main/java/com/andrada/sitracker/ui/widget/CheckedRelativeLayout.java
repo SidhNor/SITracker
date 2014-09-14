@@ -22,6 +22,8 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Checkable;
 
+import org.jetbrains.annotations.NotNull;
+
 public class CheckedRelativeLayout extends TouchDelegateRelativeLayout implements Checkable {
 
     private static final int[] CHECKED_STATE_SET = {
@@ -31,15 +33,15 @@ public class CheckedRelativeLayout extends TouchDelegateRelativeLayout implement
     private boolean checked = false;
 
     @SuppressLint("NewApi")
-    public CheckedRelativeLayout(Context context, AttributeSet attrs, int defStyle) {
+    public CheckedRelativeLayout(@NotNull Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
 
-    public CheckedRelativeLayout(Context context, AttributeSet attrs) {
+    public CheckedRelativeLayout(@NotNull Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public CheckedRelativeLayout(Context context) {
+    public CheckedRelativeLayout(@NotNull Context context) {
         super(context);
     }
 

@@ -19,6 +19,7 @@ package com.andrada.sitracker.contracts;
 import org.androidannotations.annotations.sharedpreferences.DefaultBoolean;
 import org.androidannotations.annotations.sharedpreferences.DefaultString;
 import org.androidannotations.annotations.sharedpreferences.SharedPref;
+import org.jetbrains.annotations.NotNull;
 
 @SharedPref(value = SharedPref.Scope.UNIQUE)
 public interface SIPrefs {
@@ -29,15 +30,18 @@ public interface SIPrefs {
     @DefaultBoolean(true)
     boolean updatesEnabled();
 
+    @NotNull
     @DefaultString("1")
     String authorsSortType();
 
     @DefaultBoolean(false)
     boolean updateOnlyWiFi();
 
+    @NotNull
     @DefaultString("14400000")
     String updateInterval();
 
+    @NotNull
     @DefaultString("")
     String downloadFolder();
 

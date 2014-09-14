@@ -51,6 +51,8 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -86,11 +88,14 @@ public class ImportAuthorsActivity extends BaseActivity {
     @SystemService
     ActivityManager activityManager;
 
+    @Nullable
     ImportAuthorsTask importTask;
     private boolean isBound = false;
+    @Nullable
     private List<String> authorsToImport;
 
-    private ServiceConnection mConnection = new ServiceConnection() {
+    @NotNull
+    private final ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName className,
                                        IBinder service) {
@@ -156,7 +161,7 @@ public class ImportAuthorsActivity extends BaseActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, @NotNull Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == Constants.REQUEST_DIRECTORY) {
@@ -199,11 +204,11 @@ public class ImportAuthorsActivity extends BaseActivity {
     }
 
     @Background
-    void tryParseOutTheChosenFile(String fileName) {
+    void tryParseOutTheChosenFile(@NotNull String fileName) {
         showParseResults(new AuthorFileImportContext().getAuthorListFromFile(fileName));
     }
 
-    public void onEventMainThread(ImportUpdates event) {
+    public void onEventMainThread(@NotNull ImportUpdates event) {
         if (event.isFinished()) {
             toggleButtonAndProgressPanels(false);
             HomeActivity_.intent(this)
@@ -231,8 +236,8 @@ public class ImportAuthorsActivity extends BaseActivity {
     }
 
     @UiThread
-    void showParseResults(List<String> authorLinks) {
-        if (authorLinks != null && authorLinks.size() > 0) {
+    void showParseResults(@NotNull List<String> authorLinks) {
+        if (authorLinks.size() > 0) {
             authorsToImport = authorLinks;
             list.setAdapter(new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1, authorLinks) {
                 @Override
@@ -254,7 +259,7 @@ public class ImportAuthorsActivity extends BaseActivity {
         progressBar.setVisibility(View.GONE);
     }
 
-    private boolean isImportServiceRunning(Class<?> serviceClass) {
+    private boolean isImportServiceRunning(@NotNull Class<?> serviceClass) {
         for (ActivityManager.RunningServiceInfo service : activityManager.getRunningServices(Integer.MAX_VALUE)) {
             if (serviceClass.getName().equals(service.service.getClassName())) {
                 return true;

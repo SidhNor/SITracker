@@ -28,6 +28,8 @@ import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -37,7 +39,9 @@ public class SiDBHelper extends OrmLiteSqliteOpenHelper {
     private static final String DATABASE_NAME = "siinformer.db";
     private static final int DATABASE_VERSION = 9;
 
+    @Nullable
     private PublicationDao publicationDao;
+    @Nullable
     private AuthorDao authorDao;
 
     public SiDBHelper(Context context) {
@@ -133,13 +137,14 @@ public class SiDBHelper extends OrmLiteSqliteOpenHelper {
                         );
                         final List<Author> authors = this.getAuthorDao().getAllAuthorsSortedAZ();
                         getAuthorDao().callBatchTasks(new Callable<Object>() {
+                            @Nullable
                             @Override
                             public Object call() throws Exception {
                                 for (Author author : authors) {
                                     String url = author.getUrl();
                                     String urlId = SamlibPageHelper.getUrlIdFromCompleteUrl(url);
                                     author.setUrlId(urlId);
-                                    authorDao.update(author);
+                                    getAuthorDao().update(author);
                                 }
                                 return null;
                             }
@@ -155,6 +160,7 @@ public class SiDBHelper extends OrmLiteSqliteOpenHelper {
         }
     }
 
+    @Nullable
     public AuthorDao getAuthorDao() {
         if (authorDao == null) {
             try {
@@ -166,6 +172,7 @@ public class SiDBHelper extends OrmLiteSqliteOpenHelper {
         return authorDao;
     }
 
+    @Nullable
     public PublicationDao getPublicationDao() {
         if (publicationDao == null) {
             try {

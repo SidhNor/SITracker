@@ -21,6 +21,10 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -32,6 +36,7 @@ import java.util.regex.Pattern;
 
 public final class ShareHelper {
 
+    @NotNull
     public static Intent getSharePublicationIntent(Uri file) {
         Intent share = new Intent(Intent.ACTION_VIEW);
         share.addCategory(Intent.CATEGORY_DEFAULT);
@@ -46,26 +51,27 @@ public final class ShareHelper {
      * @param hashedPublicationName A unique hash of the publication url
      * @return The file or null if storage is not accessible.
      */
-    public static File getPublicationStorageFile(Context context, String hashedPublicationName) {
+    @Nullable
+    public static File getPublicationStorageFile(@NotNull Context context, String hashedPublicationName) {
 
         File storageDir = getPublicationStorageDirectory(context);
         if (storageDir == null) {
-            return storageDir;
+            return null;
         }
-
         return new File(storageDir, hashedPublicationName + ".html");
     }
 
+    @Nullable
     public static File getPublicationStorageFileWithPath(Context context, String path, String filename) {
         File storageDir = getExternalDirectoryBasedOnPath(path);
         if (storageDir == null) {
-            return storageDir;
+            return null;
         }
 
         return new File(storageDir, sanitizeFileName(filename + ".html"));
     }
 
-    private static String sanitizeFileName(String badFileName) {
+    private static String sanitizeFileName(@NotNull String badFileName) {
         final String pattern = "[^0-9\\s_\\p{L}\\(\\)%\\-\\.]";
         StringBuffer cleanFileName = new StringBuffer();
         Pattern filePattern = Pattern.compile(pattern);
@@ -85,7 +91,8 @@ public final class ShareHelper {
      * @param context The context to use
      * @return external directory path, null if directory not available
      */
-    public static File getPublicationStorageDirectory(Context context) {
+    @Nullable
+    public static File getPublicationStorageDirectory(@NotNull Context context) {
         // Check if media is mounted or storage is built-in, if so, try and use external cache dir
         // otherwise return null
         if (!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState()) &&
@@ -101,7 +108,9 @@ public final class ShareHelper {
      * @param path path to try
      * @return File instance or null if storage is not accessible or path is invalid
      */
-    public static File getExternalDirectoryBasedOnPath(String path) {
+    @Nullable
+    @Contract("null -> null")
+    public static File getExternalDirectoryBasedOnPath(@Nullable String path) {
         //Sanity check 1
         if (path == null) {
             return null;
@@ -129,9 +138,8 @@ public final class ShareHelper {
         }
     }
 
-    public static String getTimestampFilename(String prefix, String extension) {
-        assert prefix != null;
-        assert extension != null;
+    @NotNull
+    public static String getTimestampFilename(@NotNull String prefix, @NotNull String extension) {
         SimpleDateFormat fmt = new SimpleDateFormat("dd-MM-yyyy");
         return prefix + fmt.format(new Date()) + extension;
     }
@@ -145,7 +153,7 @@ public final class ShareHelper {
      * @param charSet Character set to use during save
      * @return true if save was successful, false otherwise
      */
-    public static boolean saveHtmlPageToFile(File file, String content, String charSet) {
+    public static boolean saveHtmlPageToFile(@NotNull File file, @NotNull String content, String charSet) {
         boolean result = true;
         if (!content.contains("<meta http-equiv=\"Content-Type\"")) {
             //Use UTF-8

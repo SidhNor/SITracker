@@ -32,6 +32,9 @@ import com.andrada.sitracker.util.SamlibPageHelper;
 import com.github.kevinsawicki.http.HttpRequest;
 import com.j256.ormlite.dao.ForeignCollection;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.SQLException;
@@ -49,7 +52,7 @@ class Samlib implements SiteStrategy {
     }
 
     @Override
-    public int addAuthorForUrl(String url) {
+    public int addAuthorForUrl(@NotNull String url) {
         Author author = null;
         int message = -1;
         try {
@@ -84,6 +87,7 @@ class Samlib implements SiteStrategy {
             }
 
             helper.getPublicationDao().callBatchTasks(new Callable<Object>() {
+                @Nullable
                 @Override
                 public Object call() throws Exception {
                     for (Publication publication : items) {
@@ -131,7 +135,7 @@ class Samlib implements SiteStrategy {
     }
 
     @Override
-    public boolean updateAuthor(Author author) throws SQLException {
+    public boolean updateAuthor(@NotNull Author author) throws SQLException {
         boolean authorUpdated = false;
         HttpRequest request;
         AuthorPageReader reader;

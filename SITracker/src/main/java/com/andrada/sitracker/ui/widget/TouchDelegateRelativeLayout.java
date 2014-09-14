@@ -30,6 +30,8 @@ import android.widget.RelativeLayout;
 
 import com.andrada.sitracker.BuildConfig;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -134,6 +136,7 @@ public class TouchDelegateRelativeLayout extends RelativeLayout {
          *
          * @return ViewConfig object with the specified options
          */
+        @NotNull
         public static ViewConfig wholeLeft() {
             return new ViewConfig(
                     ViewConfig.VIEW_CONFIG_START,
@@ -150,6 +153,7 @@ public class TouchDelegateRelativeLayout extends RelativeLayout {
          *
          * @return ViewConfig object with the specified options
          */
+        @NotNull
         public static ViewConfig wholeRight() {
             return new ViewConfig(
                     ViewConfig.VIEW_CONFIG_END,
@@ -166,6 +170,7 @@ public class TouchDelegateRelativeLayout extends RelativeLayout {
          *
          * @return ViewConfig object with the specified options
          */
+        @NotNull
         public static ViewConfig wholeTop() {
             return new ViewConfig(
                     ViewConfig.VIEW_CONFIG_START,
@@ -182,6 +187,7 @@ public class TouchDelegateRelativeLayout extends RelativeLayout {
          *
          * @return ViewConfig object with the specified options
          */
+        @NotNull
         public static ViewConfig wholeBottom() {
             return new ViewConfig(
                     ViewConfig.VIEW_CONFIG_START,
@@ -198,6 +204,7 @@ public class TouchDelegateRelativeLayout extends RelativeLayout {
          *
          * @return ViewConfig object with the specified options
          */
+        @NotNull
         public static ViewConfig topLeft() {
             return new ViewConfig(
                     ViewConfig.VIEW_CONFIG_START,
@@ -214,6 +221,7 @@ public class TouchDelegateRelativeLayout extends RelativeLayout {
          *
          * @return ViewConfig object with the specified options
          */
+        @NotNull
         public static ViewConfig topRight() {
             return new ViewConfig(
                     ViewConfig.VIEW_CONFIG_END,
@@ -229,6 +237,7 @@ public class TouchDelegateRelativeLayout extends RelativeLayout {
          *
          * @return ViewConfig object with the specified options
          */
+        @NotNull
         public static ViewConfig bottomLeft() {
             return new ViewConfig(
                     ViewConfig.VIEW_CONFIG_START,
@@ -245,6 +254,7 @@ public class TouchDelegateRelativeLayout extends RelativeLayout {
          *
          * @return ViewConfig object with the specified options
          */
+        @NotNull
         public static ViewConfig bottomRight() {
             return new ViewConfig(
                     ViewConfig.VIEW_CONFIG_END,
@@ -269,22 +279,22 @@ public class TouchDelegateRelativeLayout extends RelativeLayout {
     private final ArrayList<TouchDelegateRecord> mTouchDelegateRecords = new ArrayList<TouchDelegateRecord>();
     private final Paint mPaint = new Paint();
 
-    public TouchDelegateRelativeLayout(Context context) {
+    public TouchDelegateRelativeLayout(@NotNull Context context) {
         super(context);
         init(context);
     }
 
-    public TouchDelegateRelativeLayout(Context context, AttributeSet attrs) {
+    public TouchDelegateRelativeLayout(@NotNull Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
     }
 
-    public TouchDelegateRelativeLayout(Context context, AttributeSet attrs, int defStyle) {
+    public TouchDelegateRelativeLayout(@NotNull Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init(context);
     }
 
-    private void init(Context context) {
+    private void init(@NotNull Context context) {
         setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
         mTouchDelegateGroup = new TouchDelegateGroup(this);
         if (BuildConfig.DEBUG && TapRegionHighlighted) {
@@ -322,7 +332,7 @@ public class TouchDelegateRelativeLayout extends RelativeLayout {
                 });
                 entry.getValue().setOnTouchListener(new OnTouchListener() {
                     @Override
-                    public boolean onTouch(View view, MotionEvent motionEvent) {
+                    public boolean onTouch(View view, @NotNull MotionEvent motionEvent) {
                         switch (motionEvent.getAction()) {
                             case MotionEvent.ACTION_DOWN:
                                 onDelegatedTouchViewDown(view);
@@ -345,7 +355,8 @@ public class TouchDelegateRelativeLayout extends RelativeLayout {
         }
     }
 
-    private Rect computeRectFor(int parentWidth, int parentHeight, View childView, ViewConfig config) {
+    @NotNull
+    private Rect computeRectFor(int parentWidth, int parentHeight, @NotNull View childView, @NotNull ViewConfig config) {
         int x, y, w, h;
 
         if (config.getHExpanding() == ViewGroup.LayoutParams.MATCH_PARENT) {
@@ -398,13 +409,13 @@ public class TouchDelegateRelativeLayout extends RelativeLayout {
         return new Rect(x, y, w, h);
     }
 
-    private void addTouchDelegate(Rect rect, int color, View delegateView) {
+    private void addTouchDelegate(Rect rect, int color, @NotNull View delegateView) {
         mTouchDelegateGroup.addTouchDelegate(new TouchDelegate(rect, delegateView));
         mTouchDelegateRecords.add(new TouchDelegateRecord(rect, color));
     }
 
     @Override
-    protected void dispatchDraw(Canvas canvas) {
+    protected void dispatchDraw(@NotNull Canvas canvas) {
         if (BuildConfig.DEBUG && TapRegionHighlighted) {
             for (TouchDelegateRecord record : mTouchDelegateRecords) {
                 mPaint.setColor(record.color);

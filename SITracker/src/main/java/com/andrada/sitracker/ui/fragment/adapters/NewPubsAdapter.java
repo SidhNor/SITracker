@@ -33,6 +33,7 @@ import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.OrmLiteDao;
 import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.UiThread;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -87,8 +88,9 @@ public class NewPubsAdapter extends BaseAdapter {
         return newPublications.get(i).getId();
     }
 
+    @Nullable
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, @Nullable View convertView, ViewGroup parent) {
         NewPubItemView newPubItemView;
         if (convertView == null) {
             newPubItemView = NewPubItemView_.build(context);

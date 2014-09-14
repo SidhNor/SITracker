@@ -27,6 +27,9 @@ import com.andrada.sitracker.R;
 import com.andrada.sitracker.util.UIUtils;
 import com.google.android.gms.analytics.GoogleAnalytics;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import static com.andrada.sitracker.util.LogUtils.makeLogTag;
 
 /**
@@ -39,7 +42,8 @@ public abstract class BaseActivity extends ActionBarActivity {
     /**
      * Converts an intent into a {@link Bundle} suitable for use as fragment arguments.
      */
-    protected static Bundle intentToFragmentArguments(Intent intent) {
+    @NotNull
+    protected static Bundle intentToFragmentArguments(@Nullable Intent intent) {
         Bundle arguments = new Bundle();
         if (intent == null) {
             return arguments;
@@ -52,7 +56,7 @@ public abstract class BaseActivity extends ActionBarActivity {
 
         final Bundle extras = intent.getExtras();
         if (extras != null) {
-            arguments.putAll(intent.getExtras());
+            arguments.putAll(extras);
         }
 
         return arguments;
@@ -61,7 +65,8 @@ public abstract class BaseActivity extends ActionBarActivity {
     /**
      * Converts a fragment arguments bundle into an intent.
      */
-    public static Intent fragmentArgumentsToIntent(Bundle arguments) {
+    @NotNull
+    public static Intent fragmentArgumentsToIntent(@Nullable Bundle arguments) {
         Intent intent = new Intent();
         if (arguments == null) {
             return intent;

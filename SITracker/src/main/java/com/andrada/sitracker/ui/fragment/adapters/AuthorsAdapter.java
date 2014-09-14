@@ -38,6 +38,8 @@ import org.androidannotations.annotations.OrmLiteDao;
 import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.sharedpreferences.Pref;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -110,8 +112,9 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
         return authors.get(position).getId();
     }
 
+    @Nullable
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, @Nullable View convertView, ViewGroup parent) {
         AuthorItemView authorsItemView;
         if (convertView == null) {
             authorsItemView = AuthorItemView_.build(context);
@@ -127,13 +130,13 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
 
     @Override
     @Background
-    public void onIsNewItemTapped(View starButton) {
+    public void onIsNewItemTapped(@NotNull View starButton) {
         Author auth = (Author) starButton.getTag();
         dismissAuthor(auth);
     }
 
     @Background
-    public void markAuthorsRead(List<Long> authorsToMarkAsRead) {
+    public void markAuthorsRead(@NotNull List<Long> authorsToMarkAsRead) {
         for (long authId : authorsToMarkAsRead) {
             dismissAuthor(this.getAuthorById(authId));
         }
@@ -144,7 +147,7 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
      *
      * @param auth Author to mark as read
      */
-    private void dismissAuthor(Author auth) {
+    private void dismissAuthor(@Nullable Author auth) {
         if (auth != null) {
             auth.markRead();
             try {
@@ -157,9 +160,10 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
     }
 
     @Background
-    public void removeAuthors(final List<Long> authorsToRemove) {
+    public void removeAuthors(@NotNull final List<Long> authorsToRemove) {
         try {
             authorDao.callBatchTasks(new Callable<Object>() {
+                @Nullable
                 @Override
                 public Object call() throws Exception {
                     for (Long anAuthorsToRemove : authorsToRemove) {
@@ -210,12 +214,14 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
         return this.mSelectedAuthorId;
     }
 
+    @Nullable
     public Author getCurrentlySelectedAuthor() {
         if (mSelectedItem < authors.size() && mSelectedItem >= 0)
             return authors.get(mSelectedItem);
         return null;
     }
 
+    @Nullable
     private Author getAuthorById(long authorId) {
         for (Author author : authors) {
             if (author.getId() == authorId) {

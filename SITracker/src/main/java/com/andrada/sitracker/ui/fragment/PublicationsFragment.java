@@ -42,6 +42,7 @@ import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.sharedpreferences.Pref;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -94,7 +95,7 @@ public class PublicationsFragment extends Fragment implements ExpandableListView
         adapter.reloadPublicationsForAuthorId(id);
     }
 
-    public void onEvent(AuthorMarkedAsReadEvent event) {
+    public void onEvent(@NotNull AuthorMarkedAsReadEvent event) {
         if (mCurrentId == event.author.getId()) {
             //That means that we are viewing the current author
             //Just do a reload.
@@ -115,7 +116,7 @@ public class PublicationsFragment extends Fragment implements ExpandableListView
         }
     }
 
-    public void onEvent(AuthorSelectedEvent event) {
+    public void onEvent(@NotNull AuthorSelectedEvent event) {
         updatePublicationsView(event.authorId);
     }
 
@@ -128,7 +129,7 @@ public class PublicationsFragment extends Fragment implements ExpandableListView
 
     @Override
     @Background
-    public void publicationShare(Publication pub, boolean forceDownload) {
+    public void publicationShare(@NotNull Publication pub, boolean forceDownload) {
         HttpRequest request;
         String pubUrl = pub.getUrl();
         String pubFolder = prefs.downloadFolder().get();
@@ -145,15 +146,15 @@ public class PublicationsFragment extends Fragment implements ExpandableListView
         boolean shareResult = true;
 
         try {
+            if (file == null) {
+                throw new SharePublicationException(
+                        SharePublicationException.SharePublicationErrors.STORAGE_NOT_ACCESSIBLE_FOR_PERSISTANCE);
+            }
             if (forceDownload || !file.exists()) {
                 URL authorURL = new URL(pubUrl);
                 request = HttpRequest.get(authorURL);
                 if (request.code() == 200) {
                     String content = request.body();
-                    if (file == null) {
-                        throw new SharePublicationException(
-                                SharePublicationException.SharePublicationErrors.STORAGE_NOT_ACCESSIBLE_FOR_PERSISTANCE);
-                    }
                     boolean result = ShareHelper.saveHtmlPageToFile(file, content, request.charset());
                     if (!result) {
                         throw new SharePublicationException(

@@ -62,6 +62,8 @@ import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.apache.commons.lang3.ArrayUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Timer;
@@ -92,15 +94,18 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
     @InstanceState
     long currentAuthorIndex = -1;
 
+    @Nullable
     private Crouton mNoNetworkCrouton;
 
     private boolean mIsUpdating = false;
 
+    @Nullable
     @InstanceState
     long[] checkedItems;
 
     private final ArrayList<Long> mSelectedAuthors = new ArrayList<Long>();
 
+    @Nullable
     private MultiSelectionUtil.Controller mMultiSelectionController;
 
     //region Fragment lifecycle overrides
@@ -137,7 +142,7 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
     //endregion
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NotNull Menu menu, MenuInflater inflater) {
         if (mIsUpdating) {
             menu.removeItem(R.id.action_refresh);
         }
@@ -179,7 +184,7 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
     /**
      * Crouton click handler
      */
-    public void onClick(View view) {
+    public void onClick(@NotNull View view) {
         if (view.getId() == R.id.retryUpdateButton) {
             if (this.mNoNetworkCrouton != null) {
                 Crouton.hide(this.mNoNetworkCrouton);
@@ -277,7 +282,7 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
     //region CABListener
 
     @Override
-    public void onItemCheckedStateChanged(ActionMode mode,
+    public void onItemCheckedStateChanged(@NotNull ActionMode mode,
                                           int position, long id, boolean checked) {
         if (checked) {
             mSelectedAuthors.add(((Author) adapter.getItem(position)).getId());
@@ -292,7 +297,7 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
     }
 
     @Override
-    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+    public boolean onCreateActionMode(@NotNull ActionMode mode, Menu menu) {
         MenuInflater inflater = mode.getMenuInflater();
         inflater.inflate(R.menu.context_authors, menu);
         mSelectedAuthors.clear();
@@ -305,7 +310,7 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
     }
 
     @Override
-    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+    public boolean onActionItemClicked(@NotNull ActionMode mode, @NotNull MenuItem item) {
         mode.finish();
         if (item.getItemId() == R.id.action_remove) {
             AnalyticsHelper.getInstance().sendEvent(
@@ -345,7 +350,7 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
 
     //endregion
 
-    public void onEvent(PublicationMarkedAsReadEvent event) {
+    public void onEvent(@NotNull PublicationMarkedAsReadEvent event) {
         //ensure we update the new status of the author if he has no new publications
         AnalyticsHelper.getInstance().sendEvent(
                 Constants.GA_UI_CATEGORY,
@@ -381,7 +386,7 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
         adapter.reloadAuthors();
     }
 
-    public void onEvent(AuthorAddedEvent event) {
+    public void onEvent(@NotNull AuthorAddedEvent event) {
 
         EventBus.getDefault().post(new ProgressBarToggleEvent(false));
         String message = event.message;

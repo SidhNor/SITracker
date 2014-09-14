@@ -20,18 +20,26 @@ import com.andrada.sitracker.db.beans.Author;
 import com.andrada.sitracker.db.beans.Publication;
 import com.j256.ormlite.dao.Dao;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.sql.SQLException;
 import java.util.List;
 
 public interface PublicationDao extends Dao<Publication, Integer> {
+
+    @NotNull
     List<Publication> getPublicationsForAuthor(Author author) throws SQLException;
 
+    @NotNull
     List<Publication> getPublicationsForAuthorId(long authorId) throws SQLException;
 
+    @NotNull
     List<Publication> getSortedPublicationsForAuthorId(long authorId) throws SQLException;
 
+    @NotNull
     List<Publication> getNewPublicationsForAuthor(Author author) throws SQLException;
 
+    @NotNull
     List<Publication> getNewPublicationsForAuthorId(long authorId) throws SQLException;
 
     long getNewPublicationsCountForAuthor(Author author) throws SQLException;
@@ -40,5 +48,6 @@ public interface PublicationDao extends Dao<Publication, Integer> {
 
     boolean markPublicationRead(Publication pub) throws SQLException;
 
+    @NotNull
     List<Publication> getNewPublications() throws SQLException;
 }

@@ -16,9 +16,11 @@
 
 package com.andrada.sitracker.tasks.io;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
-public interface AuthorImportStrategy {
+interface AuthorImportStrategy {
 
-    List<String> extractAuthorsFromFile(String absoluteFilename);
+    @NotNull List<String> extractAuthorsFromFile(String absoluteFilename);
 }

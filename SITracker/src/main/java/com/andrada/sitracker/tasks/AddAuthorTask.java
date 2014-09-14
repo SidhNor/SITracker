@@ -26,6 +26,8 @@ import com.andrada.sitracker.reader.SiteDetector;
 import com.andrada.sitracker.reader.SiteStrategy;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 
+import org.jetbrains.annotations.NotNull;
+
 import de.greenrobot.event.EventBus;
 
 public class AddAuthorTask extends AsyncTask<String, Integer, String> {
@@ -39,7 +41,7 @@ public class AddAuthorTask extends AsyncTask<String, Integer, String> {
     }
 
     @Override
-    protected String doInBackground(String... args) {
+    protected String doInBackground(@NotNull String... args) {
         String message = "";
         for (String url : args) {
             SiteStrategy strategy = SiteDetector.chooseStrategy(url, helper);

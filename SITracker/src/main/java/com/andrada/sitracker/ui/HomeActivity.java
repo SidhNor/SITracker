@@ -62,6 +62,7 @@ import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.res.StringRes;
 import org.androidannotations.annotations.sharedpreferences.Pref;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -156,7 +157,8 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
     SIPrefs_ prefs;
     @StringRes(R.string.app_name)
     String mAppName;
-    private Timer backUpTimer = new Timer();
+    @NotNull
+    private final Timer backUpTimer = new Timer();
     private TimerTask backUpTask;
     private ImageLoader mImageLoader;
     private BroadcastReceiver updateStatusReceiver;
@@ -184,7 +186,7 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
 
     @SuppressWarnings("deprecation")
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NotNull MenuItem item) {
         /*
          * The action bar up action should open the slider if it is currently
          * closed, as the left pane contains content one level up in the
@@ -224,7 +226,7 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
     }
 
     @Override
-    protected void onNewIntent(Intent intent) {
+    protected void onNewIntent(@NotNull Intent intent) {
         super.onNewIntent(intent);
         Bundle extras = intent.getExtras();
         if (extras != null) {
@@ -335,7 +337,7 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
         getSupportActionBar().setTitle(mAppName);
     }
 
-    public void onEventMainThread(ProgressBarToggleEvent event) {
+    public void onEventMainThread(@NotNull ProgressBarToggleEvent event) {
         if (event.showProgress) {
             this.globalProgress.setVisibility(View.VISIBLE);
         } else {
@@ -343,7 +345,7 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
         }
     }
 
-    public void onEvent(AuthorsExported event) {
+    public void onEvent(@NotNull AuthorsExported event) {
         String message = event.getMessage();
 
         Style.Builder alertStyle = new Style.Builder()

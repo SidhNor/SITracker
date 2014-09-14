@@ -26,6 +26,9 @@ import android.support.v4.util.LruCache;
 
 import com.android.volley.toolbox.ImageLoader;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import static com.andrada.sitracker.util.LogUtils.LOGD;
 import static com.andrada.sitracker.util.LogUtils.makeLogTag;
 
@@ -59,7 +62,8 @@ public class BitmapCache implements ImageLoader.ImageCache {
      *                        that needs to be retained).
      * @param memCacheSize    Memory cache size in KB.
      */
-    public static BitmapCache getInstance(FragmentManager fragmentManager, String fragmentTag,
+    @Nullable
+    public static BitmapCache getInstance(@Nullable FragmentManager fragmentManager, String fragmentTag,
                                           int memCacheSize) {
         BitmapCache bitmapCache = null;
         RetainFragment mRetainFragment = null;
@@ -82,14 +86,17 @@ public class BitmapCache implements ImageLoader.ImageCache {
         return bitmapCache;
     }
 
+    @Nullable
     public static BitmapCache getInstance(FragmentManager fragmentManager, int memCacheSize) {
         return getInstance(fragmentManager, TAG, memCacheSize);
     }
 
+    @Nullable
     public static BitmapCache getInstance(FragmentManager fragmentManager, float memCachePercent) {
         return getInstance(fragmentManager, calculateMemCacheSize(memCachePercent));
     }
 
+    @Nullable
     public static BitmapCache getInstance(FragmentManager fragmentManger) {
         return getInstance(fragmentManger, DEFAULT_MEM_CACHE_PERCENT);
     }
@@ -106,7 +113,7 @@ public class BitmapCache implements ImageLoader.ImageCache {
              * for a bitmap cache
              */
             @Override
-            protected int sizeOf(String key, Bitmap bitmap) {
+            protected int sizeOf(String key, @NotNull Bitmap bitmap) {
                 final int bitmapSize = getBitmapSize(bitmap) / 1024;
                 return bitmapSize == 0 ? 1 : bitmapSize;
             }
@@ -119,7 +126,7 @@ public class BitmapCache implements ImageLoader.ImageCache {
      * @param data   Unique identifier for the bitmap to store
      * @param bitmap The bitmap to store
      */
-    public void addBitmapToCache(String data, Bitmap bitmap) {
+    public void addBitmapToCache(@Nullable String data, @Nullable Bitmap bitmap) {
         if (data == null || bitmap == null) {
             return;
         }
@@ -139,7 +146,8 @@ public class BitmapCache implements ImageLoader.ImageCache {
      * @param data Unique identifier for which item to get
      * @return The bitmap if found in cache, null otherwise
      */
-    public Bitmap getBitmapFromMemCache(String data) {
+    @Nullable
+    public Bitmap getBitmapFromMemCache(@Nullable String data) {
         if (data != null) {
             synchronized (mMemoryCache) {
                 final Bitmap memBitmap = mMemoryCache.get(data);
@@ -189,7 +197,7 @@ public class BitmapCache implements ImageLoader.ImageCache {
      * Get the size in bytes of a bitmap.
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
-    public static int getBitmapSize(Bitmap bitmap) {
+    public static int getBitmapSize(@NotNull Bitmap bitmap) {
         if (UIUtils.hasHoneycombMR1()) {
             return bitmap.getByteCount();
         }
@@ -207,7 +215,8 @@ public class BitmapCache implements ImageLoader.ImageCache {
      * @return The existing instance of the Fragment or the new instance if just
      * created.
      */
-    private static RetainFragment getRetainFragment(FragmentManager fm, String fragmentTag) {
+    @NotNull
+    private static RetainFragment getRetainFragment(@NotNull FragmentManager fm, String fragmentTag) {
         // Check to see if we have retained the worker fragment.
         RetainFragment mRetainFragment = (RetainFragment) fm.findFragmentByTag(fragmentTag);
 
@@ -220,6 +229,7 @@ public class BitmapCache implements ImageLoader.ImageCache {
         return mRetainFragment;
     }
 
+    @Nullable
     @Override
     public Bitmap getBitmap(String key) {
         return getBitmapFromMemCache(key);
