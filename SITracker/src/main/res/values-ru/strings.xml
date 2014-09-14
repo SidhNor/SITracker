@@ -31,6 +31,7 @@
     <string name="action_delete">Удалить автора</string>
     <string name="action_import">Импорт</string>
     <string name="action_export">Экспорт</string>
+    <string name="action_about">О приложении</string>
     <string name="action_open_in_browser">Открыть выбранных в браузере</string>
     <string name="add_author_placeholder">samlib.ru/a/avtor</string>
     <string name="designtime_placeholder_long">Lorem ipsum dolor sit amet, consectetur adipiscing
@@ -43,6 +44,11 @@
     <string name="designtime_placeholder_size">615+3kb</string>
     <string name="designtime_placeholder_date">Май 28</string>
     <string name="designtime_placeholder_item_num">(24)</string>
+
+    <string name="app_version_format">Версия: %1$s</string>
+    <string name="app_buildnr_format">Билд №: %1$s</string>
+    <!-- Shown as a link in the About screen of the app; user can click it to see the licenses. -->
+    <string name="about_licenses">Лицензии с открытым исходным кодом</string>
 
     <string name="cannot_import_authors_from_file">Не удалось импортировать авторов из файла.</string>
     <string name="cannot_add_author">Не удалось добавить автора.</string>
@@ -201,5 +207,7 @@
     <string name="book_folder_name">Книги</string>
     <string name="export_folder_name">СиТрекерЭкспорт</string>
     <string name="cannot_write_export_file">Не удалось экспортировать авторов. Ошибка при записи файла.</string>
+
+    <string name="ok">Ок</string>
 
 </resources>
