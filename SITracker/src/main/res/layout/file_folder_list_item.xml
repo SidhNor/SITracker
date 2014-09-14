@@ -34,6 +34,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/fileFolderIconImageView"
+        android:layout_toEndOf="@id/fileFolderIconImageView"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="?android:attr/textColorPrimary"
         android:layout_marginLeft="@dimen/text_vertical_spacing"

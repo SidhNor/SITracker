@@ -42,6 +42,7 @@
     <string name="designtime_placeholder_short">Lorem ipsum dolor</string>
     <string name="designtime_placeholder_size">615+3kb</string>
     <string name="designtime_placeholder_date">May 28</string>
+    <string name="designtime_placeholder_item_num">(24)</string>
     <string name="cannot_import_authors_from_file">Could not import authors from file.</string>
     <string name="cannot_add_author">Cannot add author.</string>
     <string name="supported_urls">Only samlib.ru and budclub.ru author urls are supported.</string>

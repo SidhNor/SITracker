@@ -52,10 +52,28 @@ public class SettingsActivity extends PreferenceActivity implements
         SharedPreferences.OnSharedPreferenceChangeListener {
 
     public static String PREF_NAME = "SIPrefs";
-
+    private final Preference.OnPreferenceClickListener clickListener = new Preference.OnPreferenceClickListener() {
+        @Override
+        public boolean onPreferenceClick(Preference preference) {
+            Intent updateIntent = new Intent(getApplicationContext(), ClearPublicationCacheTask.class);
+            getApplicationContext().startService(updateIntent);
+            return true;
+        }
+    };
+    private final Preference.OnPreferenceClickListener dirChooserClickListener = new Preference.OnPreferenceClickListener() {
+        @Override
+        public boolean onPreferenceClick(Preference preference) {
+            final Intent chooserIntent = new Intent(getApplicationContext(), DirectoryChooserActivity.class);
+            chooserIntent.putExtra(DirectoryChooserActivity.EXTRA_INITIAL_DIRECTORY, prefs.downloadFolder().get());
+            chooserIntent.putExtra(DirectoryChooserActivity.EXTRA_NEW_DIR_NAME, getResources().getString(R.string.book_folder_name));
+            // REQUEST_DIRECTORY is a constant integer to identify the request, e.g. 0
+            startActivityForResult(chooserIntent, Constants.REQUEST_DIRECTORY);
+            AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_PREFS_DOWNLOAD_DIALOG);
+            return true;
+        }
+    };
     @SystemService
     AlarmManager alarmManager;
-
     @Pref
     SIPrefs_ prefs;
 
@@ -74,36 +92,21 @@ public class SettingsActivity extends PreferenceActivity implements
         setAuthorSortSummary(prefs.authorsSortType().get());
         setDownloadFolderSummary(prefs.downloadFolder().get());
         if (UIUtils.hasHoneycomb()) {
+            //noinspection ы
             getActionBar().setDisplayHomeAsUpEnabled(true);
         }
     }
 
-    private final Preference.OnPreferenceClickListener clickListener = new Preference.OnPreferenceClickListener() {
-        @Override
-        public boolean onPreferenceClick(Preference preference) {
-            Intent updateIntent = new Intent(getApplicationContext(), ClearPublicationCacheTask.class);
-            getApplicationContext().startService(updateIntent);
-            return true;
-        }
-    };
-
-    private final Preference.OnPreferenceClickListener dirChooserClickListener = new Preference.OnPreferenceClickListener() {
-        @Override
-        public boolean onPreferenceClick(Preference preference) {
-            final Intent chooserIntent = new Intent(getApplicationContext(), DirectoryChooserActivity.class);
-            chooserIntent.putExtra(DirectoryChooserActivity.EXTRA_INITIAL_DIRECTORY, prefs.downloadFolder().get());
-            chooserIntent.putExtra(DirectoryChooserActivity.EXTRA_NEW_DIR_NAME, getResources().getString(R.string.book_folder_name));
-            // REQUEST_DIRECTORY is a constant integer to identify the request, e.g. 0
-            startActivityForResult(chooserIntent, Constants.REQUEST_DIRECTORY);
-            AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_PREFS_DOWNLOAD_DIALOG);
-            return true;
-        }
-    };
-
+    @SuppressLint("InlinedApi")
     @Override
     protected void onResume() {
         super.onResume();
-        getSharedPreferences(Constants.SI_PREF_NAME, MODE_MULTI_PROCESS).registerOnSharedPreferenceChangeListener(this);
+        if (UIUtils.hasHoneycomb()) {
+            getSharedPreferences(Constants.SI_PREF_NAME, MODE_MULTI_PROCESS).registerOnSharedPreferenceChangeListener(this);
+        } else {
+            getSharedPreferences(Constants.SI_PREF_NAME, MODE_PRIVATE).registerOnSharedPreferenceChangeListener(this);
+        }
+
         Preference pref = findPreference(Constants.PREF_CLEAR_SAVED_PUBS_KEY);
         if (pref != null) {
             pref.setOnPreferenceClickListener(clickListener);
@@ -114,10 +117,15 @@ public class SettingsActivity extends PreferenceActivity implements
         }
     }
 
+    @SuppressLint("InlinedApi")
     @Override
     protected void onPause() {
         super.onPause();
-        getSharedPreferences(Constants.SI_PREF_NAME, MODE_MULTI_PROCESS).unregisterOnSharedPreferenceChangeListener(this);
+        if (UIUtils.hasHoneycomb()) {
+            getSharedPreferences(Constants.SI_PREF_NAME, MODE_MULTI_PROCESS).unregisterOnSharedPreferenceChangeListener(this);
+        } else {
+            getSharedPreferences(Constants.SI_PREF_NAME, MODE_PRIVATE).unregisterOnSharedPreferenceChangeListener(this);
+        }
         Preference pref = findPreference(Constants.PREF_CLEAR_SAVED_PUBS_KEY);
         if (pref != null) {
             pref.setOnPreferenceClickListener(null);

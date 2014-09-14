@@ -2,7 +2,7 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
     <plurals name="authors_selected">
-        <item quantity="one">1 выбранный автор</item>
+        <item quantity="one">%1$d выбранный автор</item>
         <item quantity="few">
             <xliff:g id="num_authors">%1$d</xliff:g>
             выбранных автора

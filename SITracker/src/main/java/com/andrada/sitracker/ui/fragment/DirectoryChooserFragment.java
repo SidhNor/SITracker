@@ -81,12 +81,10 @@ public class DirectoryChooserFragment extends DialogFragment {
     private OnFragmentInteractionListener mListener;
 
     private Button mBtnConfirm;
-    private Button mBtnCancel;
     private ImageButton mBtnNavUp;
     private ImageButton mBtnCreateFolder;
     private TextView mTxtvSelectedFolderLabel;
     private TextView mTxtvSelectedFolder;
-    private ListView mListDirectories;
 
     private FolderArrayAdapter mListDirectoriesAdapter;
     private ArrayList<FileDescriptor> mFilenames;
@@ -167,12 +165,12 @@ public class DirectoryChooserFragment extends DialogFragment {
         final View view = inflater.inflate(R.layout.directory_chooser, container, false);
 
         mBtnConfirm = (Button) view.findViewById(R.id.btnConfirm);
-        mBtnCancel = (Button) view.findViewById(R.id.btnCancel);
+        Button mBtnCancel = (Button) view.findViewById(R.id.btnCancel);
         mBtnNavUp = (ImageButton) view.findViewById(R.id.btnNavUp);
         mBtnCreateFolder = (ImageButton) view.findViewById(R.id.btnCreateFolder);
         mTxtvSelectedFolderLabel = (TextView) view.findViewById(R.id.txtvSelectedFolderLabel);
         mTxtvSelectedFolder = (TextView) view.findViewById(R.id.txtvSelectedFolder);
-        mListDirectories = (ListView) view.findViewById(R.id.directoryList);
+        ListView mListDirectories = (ListView) view.findViewById(R.id.directoryList);
 
         if (!mIsDirectoryChooser) {
             mBtnConfirm.setVisibility(View.GONE);
@@ -181,7 +179,7 @@ public class DirectoryChooserFragment extends DialogFragment {
                 horDivider.setVisibility(View.INVISIBLE);
                 RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)horDivider.getLayoutParams();
                 params.addRule(RelativeLayout.CENTER_HORIZONTAL, 0);
-                params.addRule(RelativeLayout.ALIGN_PARENT_END);
+                params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
                 params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
                 horDivider.setLayoutParams(params);
             }

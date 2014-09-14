@@ -27,8 +27,9 @@ configurations {
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:20.+'
-    compile 'com.android.support:appcompat-v7:20.+'
+    compile 'com.android.support:support-v4:20.0.0'
+    compile 'com.android.support:appcompat-v7:20.0.0'
+    //noinspection GradleDependency
     compile 'com.google.android.gms:play-services:5.0.89'
     apt 'org.androidannotations:androidannotations:3.0.1'
     compile 'org.androidannotations:androidannotations-api:3.0.1'
@@ -53,7 +54,7 @@ android {
     compileSdkVersion 20
     buildToolsVersion '20.0.0'
     defaultConfig {
-        minSdkVersion 10
+        minSdkVersion 9
         targetSdkVersion 20
         applicationId 'com.andrada.sitracker'
         testInstrumentationRunner 'android.test.InstrumentationTestRunner'

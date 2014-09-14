@@ -16,6 +16,7 @@
 
 package com.andrada.sitracker.tasks;
 
+import android.annotation.SuppressLint;
 import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -54,6 +55,7 @@ import de.greenrobot.event.EventBus;
 import static com.andrada.sitracker.util.LogUtils.LOGW;
 import static com.andrada.sitracker.util.LogUtils.makeLogTag;
 
+@SuppressLint("Registered")
 @EService
 public class ImportAuthorsTask extends IntentService {
 

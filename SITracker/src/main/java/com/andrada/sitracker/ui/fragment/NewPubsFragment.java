@@ -35,8 +35,6 @@ import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
 
-import de.greenrobot.event.EventBus;
-
 
 @EFragment(R.layout.fragment_listview_with_empty)
 @OptionsMenu(R.menu.newpubs_menu)

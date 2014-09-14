@@ -18,7 +18,6 @@ package com.andrada.sitracker.ui.components;
 
 import android.content.Context;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.andrada.sitracker.R;

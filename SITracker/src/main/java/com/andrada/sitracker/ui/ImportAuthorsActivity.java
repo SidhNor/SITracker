@@ -17,6 +17,7 @@
 package com.andrada.sitracker.ui;
 
 
+import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -58,6 +59,7 @@ import de.greenrobot.event.EventBus;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
+@SuppressLint("Registered")
 @EActivity(R.layout.activity_import)
 public class ImportAuthorsActivity extends BaseActivity {
 

@@ -25,7 +25,8 @@
             android:layout_alignParentEnd="true"
             android:textSize="12sp"
             android:text="@string/designtime_placeholder_date"
-            android:textAlignment="viewEnd"/>
+            android:textAlignment="viewEnd"
+            android:layout_gravity="end"/>
 
     <ImageButton
             android:id="@+id/author_updated"

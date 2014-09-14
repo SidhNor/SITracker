@@ -160,7 +160,7 @@ public class PublicationItemView extends TouchDelegateRelativeLayout {
     protected void onDelegatedTouchViewCancel(View view) {
         //If we are not new, just ignore everything
         if (mIsNew && view.getId() == R.id.item_updated) {
-            item_updated.setImageResource(mIsNew ? R.drawable.star_selected : R.drawable.star_unselected);
+            item_updated.setImageResource(R.drawable.star_selected);
         }
     }
 }

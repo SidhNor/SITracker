@@ -42,6 +42,7 @@
     <string name="designtime_placeholder_short">Lorem ipsum dolor</string>
     <string name="designtime_placeholder_size">615+3kb</string>
     <string name="designtime_placeholder_date">Май 28</string>
+    <string name="designtime_placeholder_item_num">(24)</string>
 
     <string name="cannot_import_authors_from_file">Не удалось импортировать авторов из файла.</string>
     <string name="cannot_add_author">Не удалось добавить автора.</string>
@@ -89,7 +90,7 @@
     <string name="action_add_ok">Добавить</string>
     <string name="notification_title">Прода</string>
     <string name="notification_import_title">СИ Трекер - Импорт авторов</string>
-    <string name="notification_import_progress">Импортируем %1$s из %2$s</string>
+    <string name="notification_import_progress">Импортируем %1$d из %2$d</string>
     <string name="import_message_title">Импортируем…</string>
     <string name="import_message_connecting_title">Подключаемся…</string>
     <string name="import_progress_indication">%1$d/%2$d</string>

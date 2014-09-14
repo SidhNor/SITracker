@@ -93,8 +93,8 @@
                 android:layout_height="wrap_content"
                 android:textSize="12sp"
                 android:text="@string/designtime_placeholder_date"
-                android:textAlignment="viewEnd"
                 android:layout_gravity="right"
+                android:textAlignment="viewEnd"
                 android:layout_marginBottom="@dimen/text_vertical_spacing"/>
 
             <TextView
@@ -102,9 +102,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/designtime_placeholder_size"
+                android:layout_gravity="right"
                 android:textAlignment="viewEnd"
-                android:layout_marginBottom="@dimen/text_vertical_spacing"
-                android:layout_gravity="right"/>
+                android:layout_marginBottom="@dimen/text_vertical_spacing"/>
 
             <ImageButton
                 android:id="@+id/item_updated"
@@ -154,7 +154,9 @@
             android:layout_width="match_parent"
             android:layout_height="10dp"
             android:paddingEnd="50dp"
+            android:paddingRight="50dp"
             android:paddingStart="15dp"
+            android:paddingLeft="15dp"
             android:layout_alignParentEnd="false"
             android:layout_alignParentRight="false"
             android:layout_alignParentBottom="true"/>
