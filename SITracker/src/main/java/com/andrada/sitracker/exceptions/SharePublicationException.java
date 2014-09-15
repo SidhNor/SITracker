@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Gleb Godonoga.
+ * Copyright 2014 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@
 package com.andrada.sitracker.exceptions;
 
 public class SharePublicationException extends Exception {
+    private static final long serialVersionUID = 1926675132307831316L;
+
     private SharePublicationErrors mError = SharePublicationErrors.ERROR_UNKOWN;
 
     public enum SharePublicationErrors {

@@ -18,7 +18,6 @@ package com.andrada.sitracker.ui;
 
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.app.backup.BackupManager;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
@@ -42,7 +41,6 @@ import com.andrada.sitracker.events.AuthorsExported;
 import com.andrada.sitracker.events.ProgressBarToggleEvent;
 import com.andrada.sitracker.events.PublicationMarkedAsReadEvent;
 import com.andrada.sitracker.tasks.ExportAuthorsTask;
-import com.andrada.sitracker.tasks.UpdateAuthorsTask_;
 import com.andrada.sitracker.tasks.filters.UpdateStatusMessageFilter;
 import com.andrada.sitracker.tasks.receivers.UpdateStatusReceiver;
 import com.andrada.sitracker.ui.fragment.AboutDialog;
@@ -52,6 +50,7 @@ import com.andrada.sitracker.ui.fragment.PublicationsFragment;
 import com.andrada.sitracker.util.AnalyticsHelper;
 import com.andrada.sitracker.util.ImageLoader;
 import com.andrada.sitracker.util.UIUtils;
+import com.andrada.sitracker.util.UpdateServiceHelper;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
@@ -84,7 +83,7 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
     public static final String AUTHORS_PROCESSED_EXTRA = "authors_total_processed";
     public static final String AUTHORS_SUCCESSFULLY_IMPORTED_EXTRA = "authors_successfully_imported";
     private static final long BACK_UP_DELAY = 30000L;
-    private static final long STARTUP_UPDATE_DELAY = 600000L;
+
     /**
      * This global layout listener is used to fire an event after first layout
      * occurs and then it is removed. This gives us a chance to configure parts
@@ -141,6 +140,8 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
             getSupportFragmentManager().beginTransaction().addToBackStack(null).commit();
         }
     };
+    @NotNull
+    private final Timer backUpTimer = new Timer();
     @Extra(AUTHORS_PROCESSED_EXTRA)
     int authorsProcessed = -1;
     @Extra(AUTHORS_SUCCESSFULLY_IMPORTED_EXTRA)
@@ -160,8 +161,6 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
     SIPrefs_ prefs;
     @StringRes(R.string.app_name)
     String mAppName;
-    @NotNull
-    private final Timer backUpTimer = new Timer();
     private TimerTask backUpTask;
     private ImageLoader mImageLoader;
     private BroadcastReceiver updateStatusReceiver;
@@ -267,21 +266,13 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
     }
 
     public void ensureUpdatesAreRunningOnSchedule() {
-        Boolean isSyncing = prefs.updatesEnabled().get();
-        Intent intent = UpdateAuthorsTask_.intent(this.getApplicationContext()).get();
-        boolean updateServiceUp = PendingIntent.getService(this.getApplicationContext(), 0, intent, PendingIntent.FLAG_NO_CREATE) != null;
+        boolean isSyncing = prefs.updatesEnabled().get();
+
+        boolean updateServiceUp = UpdateServiceHelper.isServiceRunning(this);
         if (isSyncing && !updateServiceUp) {
-            //We need to schedule the update
-            PendingIntent pendingInt = PendingIntent.getService(this.getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-            long updateInterval = Long.parseLong(prefs.updateInterval().get());
-            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP,
-                    //Delay update for 10 minutes to allow complete restore of backup if exists
-                    System.currentTimeMillis() + STARTUP_UPDATE_DELAY,
-                    updateInterval,
-                    pendingInt);
+            UpdateServiceHelper.scheduleUpdates(this);
         } else if (!isSyncing && updateServiceUp) {
-            //We need to cancel
-            alarmManager.cancel(PendingIntent.getService(this.getApplicationContext(), 0, intent, PendingIntent.FLAG_NO_CREATE));
+            UpdateServiceHelper.cancelUpdates(this);
         }
     }
 

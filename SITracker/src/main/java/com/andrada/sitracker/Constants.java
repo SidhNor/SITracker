@@ -20,6 +20,8 @@ public class Constants {
 
     public final static String APP_TAG = "sitracker";
 
+    public final static long STARTUP_UPDATE_DELAY = 600000L;
+
     public final static String PUBLICATIONS_REGEX =
             "<DL><DT><li>(?:<font.*?>.*?</font>)?\\s*(<b>(.*?)\\s*</b>\\s*)?<A HREF=(.*?)><b>\\s*(.*?)\\s*</b></A>.*?<b>(\\d+)k</b>.*?<small>(?:Оценка:<b>((\\d+(?:\\.\\d+)?).*?)</b>.*?)?\\s*\\\"(.*?)\\\"\\s*(.*?)?\\s*(?:<A HREF=\\\"(.*?)\\\">Комментарии:\\s*((\\d+).*?)</A>\\s*)?</small>.*?(?:<br><DD>(.*?))?</DL>";
 

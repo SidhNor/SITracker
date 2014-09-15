@@ -1,46 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <!--
-Copyright 2014 Gleb Godonoga.
+  Copyright 2014 Gleb Godonoga.
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
 
- http://www.apache.org/licenses/LICENSE-2.0
+     http://www.apache.org/licenses/LICENSE-2.0
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
--->
-
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+<manifest
     package="com.andrada.sitracker"
-          android:installLocation="auto"
-          android:versionCode="30"
-          android:versionName="1.2.1">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:installLocation="auto"
+    android:versionCode="30"
+    android:versionName="1.2.1">
 
     <supports-screens
-        android:normalScreens="true"
         android:anyDensity="true"
         android:largeScreens="true"
+        android:normalScreens="true"
         android:xlargeScreens="true"/>
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
     <application
+        android:name=".SITrackerApp"
         android:allowBackup="true"
+        android:backupAgent=".util.SiBackupAgent"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:name="com.andrada.sitracker.SITrackerApp"
-        android:theme="@style/AppTheme"
-        android:supportsRtl="false"
         android:restoreAnyVersion="true"
-        android:backupAgent=".util.SiBackupAgent">
+        android:supportsRtl="false"
+        android:theme="@style/AppTheme">
 
         <!-- Google Analytics Version v4 needs this value for easy tracking -->
         <meta-data
@@ -55,10 +55,10 @@ limitations under the License.
 
         <!-- Activities for both phones and tablets -->
         <activity
-            android:name="com.andrada.sitracker.ui.HomeActivity_"
-            android:launchMode="singleTask"
-            android:label="@string/app_name">
-            <intent-filter>
+            android:name=".ui.HomeActivity_"
+            android:label="@string/app_name"
+            android:launchMode="singleTask">
+        <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
@@ -66,8 +66,8 @@ limitations under the License.
         <activity
             android:name=".ui.SettingsActivity_"
             android:label="@string/title_settings"
-            android:parentActivityName="com.andrada.sitracker.ui.HomeActivity_">
-            <!-- Parent activity meta-data to support API level 7+ -->
+            android:parentActivityName=".ui.HomeActivity_">
+        <!-- Parent activity meta-data to support API level 7+ -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.andrada.sitracker.ui.HomeActivity_"/>
@@ -75,19 +75,19 @@ limitations under the License.
         <activity
             android:name=".ui.ImportAuthorsActivity_"
             android:label="@string/title_import"
-            android:parentActivityName="com.andrada.sitracker.ui.HomeActivity_">
-            <!-- Parent activity meta-data to support API level 7+ -->
+            android:parentActivityName=".ui.HomeActivity_">
+        <!-- Parent activity meta-data to support API level 7+ -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.andrada.sitracker.ui.HomeActivity_"/>
         </activity>
-        <activity android:name="com.andrada.sitracker.ui.DirectoryChooserActivity"/>
+        <activity android:name=".ui.DirectoryChooserActivity"/>
 
         <!-- Phone-only activities -->
         <activity
             android:name=".ui.phone.PublicationsActivity_"
-            android:label="@string/title_publications"
             android:configChanges="orientation|keyboardHidden"
+            android:label="@string/title_publications"
             android:parentActivityName=".ui.HomeActivity_">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -96,11 +96,10 @@ limitations under the License.
                 android:name="com.andrada.sitracker.meta.TARGET_FORM_FACTOR"
                 android:value="handset"/>
         </activity>
-
         <activity
             android:name=".ui.phone.PublicationDetailsActivity_"
-            android:label="@string/title_publications_details"
             android:configChanges="orientation|keyboardHidden"
+            android:label="@string/title_publications_details"
             android:parentActivityName=".ui.phone.PublicationsActivity_">
             <!-- PARENT_ACTIVITY alone is insufficient for Up navigation for this activity -->
             <meta-data
@@ -110,11 +109,10 @@ limitations under the License.
                 android:name="com.andrada.sitracker.meta.TARGET_FORM_FACTOR"
                 android:value="handset"/>
         </activity>
-
         <activity
             android:name=".ui.phone.CommentStreamActivity_"
-            android:label="@string/title_comment_stream"
             android:configChanges="orientation|keyboardHidden"
+            android:label="@string/title_comment_stream"
             android:parentActivityName=".ui.phone.PublicationDetailsActivity_">
             <!-- PARENT_ACTIVITY alone is insufficient for Up navigation for this activity -->
             <meta-data
@@ -129,8 +127,8 @@ limitations under the License.
 
         <activity
             android:name=".ui.tablet.PublicationsMultiPaneActivity_"
-            android:label="@string/title_publications"
             android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_publications"
             android:parentActivityName=".ui.HomeActivity_">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -139,11 +137,10 @@ limitations under the License.
                 android:name="com.andrada.sitracker.meta.TARGET_FORM_FACTOR"
                 android:value="tablet"/>
         </activity>
-
         <activity
             android:name=".ui.tablet.CommentsMultiPaneActivity_"
-            android:label="@string/title_comment_stream"
             android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_comment_stream"
             android:parentActivityName=".ui.HomeActivity_">
             <!-- PARENT_ACTIVITY alone is insufficient for Up navigation for this activity -->
             <meta-data
@@ -153,7 +150,6 @@ limitations under the License.
                 android:name="com.andrada.sitracker.meta.TARGET_FORM_FACTOR"
                 android:value="tablet"/>
         </activity>
-
 
         <service android:name=".tasks.ClearPublicationCacheTask"/>
         <!-- Authors update components -->
@@ -168,7 +164,15 @@ limitations under the License.
                 <action android:name="com.andrada.sitracker.UPDATE_FAILED_ACTION"/>
             </intent-filter>
         </receiver>
+        <receiver
+            android:name=".tasks.receivers.BootReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.EXTERNAL_APPLICATIONS_AVAILABLE"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
-

@@ -138,7 +138,7 @@ public class PublicationsFragment extends Fragment implements ExpandableListView
         if (pubFolder.equals("")) {
             file = ShareHelper.getPublicationStorageFile(getActivity(), UIUtils.hashKeyForDisk(pubUrl));
         } else {
-            file = ShareHelper.getPublicationStorageFileWithPath(getActivity(), pubFolder,
+            file = ShareHelper.getPublicationStorageFileWithPath(pubFolder,
                     pub.getAuthor().getName() + "_" + pub.getName());
         }
 

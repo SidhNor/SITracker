@@ -21,6 +21,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
 
+import com.andrada.sitracker.Constants;
+
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,6 +35,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.andrada.sitracker.util.LogUtils.LOGW;
 
 public final class ShareHelper {
 
@@ -62,7 +66,7 @@ public final class ShareHelper {
     }
 
     @Nullable
-    public static File getPublicationStorageFileWithPath(Context context, String path, String filename) {
+    public static File getPublicationStorageFileWithPath(String path, String filename) {
         File storageDir = getExternalDirectoryBasedOnPath(path);
         if (storageDir == null) {
             return null;
@@ -161,15 +165,31 @@ public final class ShareHelper {
             content = content.replace("<head>",
                     "<head><meta http-equiv=\"Content-Type\" content=\"text/html;charset=UTF-8\">");
         }
+        BufferedOutputStream bs = null;
+        FileOutputStream fs = null;
+
         try {
-            BufferedOutputStream bs;
-            FileOutputStream fs = new FileOutputStream(file);
+            fs = new FileOutputStream(file);
             bs = new BufferedOutputStream(fs);
             bs.write(content.getBytes(charSet));
             bs.close();
 
         } catch (IOException e) {
             result = false;
+        } finally {
+            if (bs != null) {
+                try {
+                    bs.close();
+                } catch (IOException e) {
+                    LOGW(Constants.APP_TAG, "Could not closed saved html page", e);
+                }
+            } else if (fs != null) {
+                try {
+                    fs.close();
+                } catch (IOException e) {
+                    LOGW(Constants.APP_TAG, "Could not closed saved html page", e);
+                }
+            }
         }
 
         return result;
