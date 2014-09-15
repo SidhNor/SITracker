@@ -110,7 +110,6 @@
     <string name="author_import_processed_crouton_message">Добавлены: %1$d</string>
     <string name="author_import_failed_crouton_message">Ошибки или дупликаты: %1$d</string>
     <string name="no_authors">Вы пока не добавили никаких авторов</string>
-    <string name="no_newpubs">Проды нет :(</string>
     <plurals name="authors_selected">
         <item quantity="one">%d выбранный</item>
         <item quantity="few">

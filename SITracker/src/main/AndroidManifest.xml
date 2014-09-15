@@ -166,6 +166,7 @@
         </receiver>
         <receiver
             android:name=".tasks.receivers.BootReceiver"
+            android:permission="android.permission.RECEIVE_BOOT_COMPLETED"
             android:enabled="true"
             android:exported="true">
             <intent-filter>

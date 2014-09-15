@@ -103,7 +103,6 @@
 
     <string name="backup_restored_crouton_message">Backup restored</string>
     <string name="no_authors">You haven\'t added any authors yet</string>
-    <string name="no_newpubs">There is nothing new :(</string>
     <plurals name="authors_selected">
         <item quantity="one">1 selected</item>
         <item quantity="few">
