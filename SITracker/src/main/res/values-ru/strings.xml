@@ -17,12 +17,19 @@
 <resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
     <string name="app_name">СИ Трекер</string>
+    <string name="title_search">Поиск</string>
     <string name="title_settings">Настройки</string>
     <string name="title_publications">Произведения</string>
     <string name="title_import">Импорт авторов</string>
     <string name="title_publications_details">Детали произведения</string>
     <string name="title_comment_stream">Комментарии</string>
 
+
+    <string name="search_hint">Поиск авторов</string>
+    <string name="search_label">Авторы на samlib.ru</string>
+
+    <string name="ok">Ок</string>
+    <string name="action_search">Поиск</string>
     <string name="action_settings">Настройки</string>
     <string name="action_refresh">Обновить</string>
     <string name="action_add">Добавить автора</string>
@@ -206,7 +213,5 @@
     <string name="book_folder_name">Книги</string>
     <string name="export_folder_name">СиТрекерЭкспорт</string>
     <string name="cannot_write_export_file">Не удалось экспортировать авторов. Ошибка при записи файла.</string>
-
-    <string name="ok">Ок</string>
 
 </resources>

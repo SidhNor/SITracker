@@ -48,6 +48,7 @@ import com.andrada.sitracker.events.ProgressBarToggleEvent;
 import com.andrada.sitracker.events.PublicationMarkedAsReadEvent;
 import com.andrada.sitracker.tasks.UpdateAuthorsTask_;
 import com.andrada.sitracker.ui.MultiSelectionUtil;
+import com.andrada.sitracker.ui.SearchActivity_;
 import com.andrada.sitracker.ui.fragment.adapters.AuthorsAdapter;
 import com.andrada.sitracker.util.AnalyticsHelper;
 
@@ -156,6 +157,12 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
         authorDialog.show(getActivity().getSupportFragmentManager(),
                 Constants.DIALOG_ADD_AUTHOR);
         AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_ADD_DIALOG);
+    }
+
+    @OptionsItem(R.id.action_search)
+    void menuSearchSelected() {
+        AnalyticsHelper.getInstance().sendEvent(Constants.GA_UI_CATEGORY, "launchsearch", "");
+        SearchActivity_.intent(this.getActivity()).start();
     }
 
     @OptionsItem(R.id.action_refresh)
