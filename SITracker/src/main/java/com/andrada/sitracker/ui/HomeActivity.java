@@ -33,6 +33,7 @@ import android.view.ViewTreeObserver;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.andrada.sitracker.BuildConfig;
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.SIPrefs_;
@@ -244,10 +245,12 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
     @Override
     protected void onResume() {
         super.onResume();
-        //Check for Google Play services
-        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
-        if (resultCode != ConnectionResult.SUCCESS) {
-            GooglePlayServicesUtil.getErrorDialog(resultCode, this, 2982).show();
+        if (!BuildConfig.DEBUG) {
+            //Check for Google Play services
+            int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+            if (resultCode != ConnectionResult.SUCCESS) {
+                GooglePlayServicesUtil.getErrorDialog(resultCode, this, 2982).show();
+            }
         }
 
         if (updateStatusReceiver == null) {

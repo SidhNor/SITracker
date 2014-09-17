@@ -2,8 +2,13 @@ package com.andrada.sitracker.ui;
 
 
 import android.app.SearchManager;
+import android.content.Context;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
+import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.ui.fragment.RemoteAuthorsFragment;
@@ -13,9 +18,14 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.OptionsMenu;
 
+import static com.andrada.sitracker.util.LogUtils.LOGW;
+import static com.andrada.sitracker.util.LogUtils.makeLogTag;
+
 @EActivity(R.layout.activity_search)
 @OptionsMenu(R.menu.search_menu)
 public class SearchActivity extends BaseActivity {
+
+    private static final String TAG = makeLogTag(SearchActivity.class);
 
     RemoteAuthorsFragment mAuthorsFragment;
 
@@ -45,5 +55,50 @@ public class SearchActivity extends BaseActivity {
         }
 
         overridePendingTransition(0, 0);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        final MenuItem searchItem = menu.findItem(R.id.action_search);
+        if (searchItem != null) {
+            SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+            final SearchView view = (SearchView) MenuItemCompat.getActionView(searchItem);
+            mSearchView = view;
+            if (view == null) {
+                LOGW(TAG, "Could not set up search view, view is null.");
+            } else {
+                view.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+                view.setIconified(false);
+                view.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                    @Override
+                    public boolean onQueryTextSubmit(String s) {
+                        view.clearFocus();
+                        return true;
+                    }
+
+                    @Override
+                    public boolean onQueryTextChange(String s) {
+                        if (mAuthorsFragment != null) {
+                            mAuthorsFragment.requestQueryUpdate(s);
+                        }
+                        return true;
+                    }
+                });
+                view.setOnCloseListener(new SearchView.OnCloseListener() {
+                    @Override
+                    public boolean onClose() {
+                        finish();
+                        return false;
+                    }
+                });
+
+                if (!TextUtils.isEmpty(mQuery)) {
+                    view.setQuery(mQuery, false);
+                }
+            }
+        }
+        return true;
     }
 }

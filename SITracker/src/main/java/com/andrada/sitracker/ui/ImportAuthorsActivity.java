@@ -91,8 +91,8 @@ public class ImportAuthorsActivity extends BaseActivity {
     @Nullable
     ImportAuthorsTask importTask;
     private boolean isBound = false;
-    @Nullable
-    private List<String> authorsToImport;
+    @NotNull
+    private List<String> authorsToImport = new ArrayList<String>();
 
     @NotNull
     private final ServiceConnection mConnection = new ServiceConnection() {
@@ -136,19 +136,19 @@ public class ImportAuthorsActivity extends BaseActivity {
 
     @Click(R.id.performImportButton)
     void importParsedAuthors() {
-        if (authorsToImport != null) {
-            AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_IMPORT_PROGRESS);
-            //Inflate
-            Intent importSvc = ImportAuthorsTask_.intent(getApplicationContext()).get();
-            importSvc.putStringArrayListExtra(ImportAuthorsTask.AUTHOR_LIST_EXTRA, new ArrayList<String>(authorsToImport));
-            getApplicationContext().startService(importSvc);
-            getApplicationContext().bindService(importSvc, mConnection, Context.BIND_AUTO_CREATE);
-        }
+        AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_IMPORT_PROGRESS);
+        //Inflate
+        Intent importSvc = ImportAuthorsTask_.intent(getApplicationContext()).get();
+        importSvc.putStringArrayListExtra(ImportAuthorsTask.AUTHOR_LIST_EXTRA, new ArrayList<String>(authorsToImport));
+        getApplicationContext().startService(importSvc);
+        getApplicationContext().bindService(importSvc, mConnection, Context.BIND_AUTO_CREATE);
     }
 
     public void onEvent(CancelImportEvent event) {
         if (isBound) {
-            this.importTask.cancelImport();
+            if (importTask != null) {
+                importTask.cancelImport();
+            }
             getApplicationContext().unbindService(mConnection);
             isBound = false;
         }
@@ -252,7 +252,7 @@ public class ImportAuthorsActivity extends BaseActivity {
             performImportButton.setEnabled(true);
         } else {
             list.setAdapter(null);
-            authorsToImport = null;
+            authorsToImport.clear();
             performImportButton.setEnabled(false);
             Crouton.makeText(this, getResources().getString(R.string.cannot_import_authors_from_file), Style.ALERT).show();
         }

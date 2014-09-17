@@ -71,7 +71,8 @@ public class ImportAuthorsTask extends IntentService {
     NotificationManager notificationManager;
     private volatile boolean shouldCancel = false;
     private SiDBHelper helper;
-    private List<String> authorsList;
+    @NotNull
+    private List<String> authorsList = new ArrayList<String>();
     private ImportProgress importProgress;
 
     public ImportAuthorsTask() {
@@ -230,6 +231,7 @@ public class ImportAuthorsTask extends IntentService {
         return this.importProgress;
     }
 
+    @NotNull
     public List<String> getAuthorsList() {
         return authorsList;
     }

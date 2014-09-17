@@ -17,7 +17,7 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
     <string name="app_name">SI Tracker</string>
-    <string name="title_search">Settings</string>
+    <string name="title_search">Search</string>
     <string name="title_settings">Settings</string>
     <string name="title_publications">Publications</string>
     <string name="title_import">Import authors</string>
