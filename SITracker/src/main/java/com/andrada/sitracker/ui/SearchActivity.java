@@ -3,6 +3,7 @@ package com.andrada.sitracker.ui;
 
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
@@ -18,6 +19,7 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.OptionsMenu;
 
+import static com.andrada.sitracker.util.LogUtils.LOGD;
 import static com.andrada.sitracker.util.LogUtils.LOGW;
 import static com.andrada.sitracker.util.LogUtils.makeLogTag;
 
@@ -55,6 +57,19 @@ public class SearchActivity extends BaseActivity {
         }
 
         overridePendingTransition(0, 0);
+    }
+
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        LOGD(TAG, "SearchActivity.onNewIntent: " + intent);
+        setIntent(intent);
+        String query = intent.getStringExtra(SearchManager.QUERY);
+        /*Bundle args = intentToFragmentArguments(
+                new Intent(Intent.ACTION_VIEW, ScheduleContract.Sessions.buildSearchUri(query)));*/
+        if (mAuthorsFragment != null) {
+            //mAuthorsFragment.reloadFromArguments(args);
+        }
     }
 
     @Override

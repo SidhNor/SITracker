@@ -1,4 +1,4 @@
-package com.andrada.sitracker.db.loader;
+package com.andrada.sitracker.loader;
 
 import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;

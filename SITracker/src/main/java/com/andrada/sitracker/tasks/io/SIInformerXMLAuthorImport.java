@@ -43,7 +43,7 @@ public class SIInformerXMLAuthorImport implements AuthorImportStrategy {
                     .newDocumentBuilder();
             Document doc = dBuilder.parse(file);
             if (doc.hasChildNodes()) {
-                return readFeed(doc);
+                result = readFeed(doc);
             }
         } catch (Exception ignored) {
 
