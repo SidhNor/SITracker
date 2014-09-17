@@ -75,14 +75,14 @@ public class SearchActivity extends BaseActivity {
                     @Override
                     public boolean onQueryTextSubmit(String s) {
                         view.clearFocus();
+                        if (mAuthorsFragment != null) {
+                            mAuthorsFragment.requestQueryUpdate(s);
+                        }
                         return true;
                     }
 
                     @Override
                     public boolean onQueryTextChange(String s) {
-                        if (mAuthorsFragment != null) {
-                            mAuthorsFragment.requestQueryUpdate(s);
-                        }
                         return true;
                     }
                 });

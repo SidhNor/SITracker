@@ -16,6 +16,7 @@
 
 <resources>
     <color name="light_color_hint">#EEEEEE</color>
+    <color name="white">#ffffff</color>
     <color name="left_menu_text_gray">#949294</color>
     <color name="gray_foreground">#ff4c4c4c</color>
     <color name="primary_black">#ff000000</color>
