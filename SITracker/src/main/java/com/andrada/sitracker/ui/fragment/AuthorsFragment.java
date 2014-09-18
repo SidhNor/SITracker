@@ -23,6 +23,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
@@ -187,10 +188,12 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
 
     //endregion
 
-    @Override
     /**
      * Crouton click handler
+     *
+     * @param view being clicked
      */
+    @Override
     public void onClick(@NotNull View view) {
         if (view.getId() == R.id.retryUpdateButton) {
             if (this.mNoNetworkCrouton != null) {
@@ -201,7 +204,15 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
             timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    menuRefreshSelected();
+                    FragmentActivity activity = getActivity();
+                    if (activity != null) {
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                menuRefreshSelected();
+                            }
+                        });
+                    }
                 }
             }, 1500);
         }
