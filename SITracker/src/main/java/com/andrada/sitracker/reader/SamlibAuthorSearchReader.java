@@ -27,8 +27,8 @@ public class SamlibAuthorSearchReader implements AuthorSearchReader {
                 continue;
             }
             authorUrl = this.normalizeUrl(authorUrl);
-            String authorName = matcher.group(2) == null ? "" : matcher.group(2);
-            String descr = matcher.group(3) == null ? "" : matcher.group(3);
+            String authorName = matcher.group(2) == null ? "" : matcher.group(2).trim();
+            String descr = matcher.group(3) == null ? "" : matcher.group(3).trim();
             SearchedAuthor auth = new SearchedAuthor(authorUrl, authorName, descr);
             if (!authors.contains(auth)) {
                 authors.add(auth);

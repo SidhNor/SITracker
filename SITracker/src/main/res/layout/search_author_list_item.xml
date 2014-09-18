@@ -11,8 +11,8 @@
     <TextView
         android:id="@+id/authorName"
         android:text="@string/designtime_placeholder_short"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="?android:attr/textColorPrimary"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/primary_black"
         android:fontFamily="sans-serif-condensed"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
@@ -22,7 +22,7 @@
         android:layout_below="@id/authorName"
         android:text="@string/designtime_placeholder_short"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textColor="?android:attr/textColorSecondary"
+        android:textColor="@color/secondary_gray"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
@@ -30,7 +30,7 @@
         android:id="@+id/matchDescription"
         android:layout_below="@id/authorUrl"
         android:text="@string/designtime_placeholder_short"
-        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textAppearance="?android:attr/textAppearanceSmall"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
