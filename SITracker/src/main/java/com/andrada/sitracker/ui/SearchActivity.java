@@ -4,6 +4,7 @@ package com.andrada.sitracker.ui;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
@@ -12,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.andrada.sitracker.R;
+import com.andrada.sitracker.contracts.AppUriContract;
 import com.andrada.sitracker.ui.fragment.RemoteAuthorsFragment;
 import com.andrada.sitracker.ui.fragment.RemoteAuthorsFragment_;
 
@@ -65,10 +67,10 @@ public class SearchActivity extends BaseActivity {
         LOGD(TAG, "SearchActivity.onNewIntent: " + intent);
         setIntent(intent);
         String query = intent.getStringExtra(SearchManager.QUERY);
-        /*Bundle args = intentToFragmentArguments(
-                new Intent(Intent.ACTION_VIEW, ScheduleContract.Sessions.buildSearchUri(query)));*/
+        Bundle args = intentToFragmentArguments(
+                new Intent(Intent.ACTION_VIEW, AppUriContract.buildSamlibSearchUri(query)));
         if (mAuthorsFragment != null) {
-            //mAuthorsFragment.reloadFromArguments(args);
+            mAuthorsFragment.reloadFromArguments(args);
         }
     }
 

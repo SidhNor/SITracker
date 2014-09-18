@@ -43,7 +43,7 @@ public abstract class BaseActivity extends ActionBarActivity {
      * Converts an intent into a {@link Bundle} suitable for use as fragment arguments.
      */
     @NotNull
-    protected static Bundle intentToFragmentArguments(@Nullable Intent intent) {
+    public static Bundle intentToFragmentArguments(@Nullable Intent intent) {
         Bundle arguments = new Bundle();
         if (intent == null) {
             return arguments;

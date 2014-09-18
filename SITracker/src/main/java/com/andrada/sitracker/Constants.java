@@ -25,6 +25,8 @@ public class Constants {
     public final static String PUBLICATIONS_REGEX =
             "<DL><DT><li>(?:<font.*?>.*?</font>)?\\s*(<b>(.*?)\\s*</b>\\s*)?<A HREF=(.*?)><b>\\s*(.*?)\\s*</b></A>.*?<b>(\\d+)k</b>.*?<small>(?:Оценка:<b>((\\d+(?:\\.\\d+)?).*?)</b>.*?)?\\s*\\\"(.*?)\\\"\\s*(.*?)?\\s*(?:<A HREF=\\\"(.*?)\\\">Комментарии:\\s*((\\d+).*?)</A>\\s*)?</small>.*?(?:<br><DD>(.*?))?</DL>";
 
+    public static final String SAMLIB_AUTHOR_SEARCH_REGEX = "<td.*?><p><a href=(.*?)><font.*?>(.*?)</font>.+?</font><br>\\s*(.*?)</td></tr></tbody>";
+
     public final static String SIMPLE_URL_REGEX =
             "^(https?:\\/\\/)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\/\\w \\.-]*)*\\/?$";
 

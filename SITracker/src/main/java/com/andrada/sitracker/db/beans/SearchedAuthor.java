@@ -1,5 +1,6 @@
 package com.andrada.sitracker.db.beans;
 
+
 import org.jetbrains.annotations.NotNull;
 
 public class SearchedAuthor {

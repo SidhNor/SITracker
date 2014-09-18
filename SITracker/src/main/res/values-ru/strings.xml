@@ -28,7 +28,6 @@
     <string name="search_hint">Поиск авторов</string>
     <string name="search_label">Авторы на samlib.ru</string>
 
-    <string name="ok">Ок</string>
     <string name="action_search">Поиск</string>
     <string name="action_settings">Настройки</string>
     <string name="action_refresh">Обновить</string>
@@ -54,6 +53,9 @@
 
     <string name="app_version_format">Версия: %1$s</string>
     <string name="app_buildnr_format">Билд №: %1$s</string>
+
+    <string name="ok">Ок</string>
+    <string name="empty_search_results">No authors for your query</string>
     <!-- Shown as a link in the About screen of the app; user can click it to see the licenses. -->
     <string name="about_licenses">Лицензии с открытым исходным кодом</string>
 
