@@ -19,6 +19,7 @@ import com.andrada.sitracker.ui.fragment.RemoteAuthorsFragment_;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.InstanceState;
 import org.androidannotations.annotations.OptionsMenu;
 
 import static com.andrada.sitracker.util.LogUtils.LOGD;
@@ -34,12 +35,16 @@ public class SearchActivity extends BaseActivity {
     RemoteAuthorsFragment mAuthorsFragment;
 
     SearchView mSearchView = null;
+
+    @InstanceState
     String mQuery = "";
 
     @AfterViews
     void afterViews() {
         String query = getIntent().getStringExtra(SearchManager.QUERY);
-        query = query == null ? "" : query;
+        if (query == null && mQuery != null) {
+            query = mQuery;
+        }
         mQuery = query;
 
         FragmentManager fm = getSupportFragmentManager();
@@ -100,6 +105,7 @@ public class SearchActivity extends BaseActivity {
 
                     @Override
                     public boolean onQueryTextChange(String s) {
+                        mQuery = s;
                         return true;
                     }
                 });

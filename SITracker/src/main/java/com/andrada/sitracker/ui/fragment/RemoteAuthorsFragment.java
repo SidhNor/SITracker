@@ -1,5 +1,7 @@
 package com.andrada.sitracker.ui.fragment;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -8,7 +10,6 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -16,16 +17,22 @@ import android.widget.TextView;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.AppUriContract;
 import com.andrada.sitracker.db.beans.SearchedAuthor;
+import com.andrada.sitracker.events.AuthorAddedEvent;
 import com.andrada.sitracker.loader.SamlibSearchLoader;
+import com.andrada.sitracker.tasks.AddAuthorTask;
 import com.andrada.sitracker.ui.BaseActivity;
 import com.andrada.sitracker.ui.fragment.adapters.SearchResultsAdapter;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.ItemClick;
 import org.androidannotations.annotations.ViewById;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+
+import de.greenrobot.event.EventBus;
 
 import static com.andrada.sitracker.util.LogUtils.LOGD;
 import static com.andrada.sitracker.util.LogUtils.makeLogTag;
@@ -54,7 +61,59 @@ public class RemoteAuthorsFragment extends Fragment implements
     @AfterViews
     void bindAdapter() {
         list.setAdapter(adapter);
-        list.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
+    }
+
+    @ItemClick
+    public void listItemClicked(int position) {
+        final SearchedAuthor author = ((SearchedAuthor) adapter.getItem(position));
+        if (author.isAdded()) {
+            return;
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage(getString(R.string.add_author_confirmation))
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        author.setAdded(true);
+                        //TODO notify dataset changed
+                        new AddAuthorTask(getActivity()).execute(author.getAuthorUrl());
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, null);
+        builder.create().show();
+    }
+
+    public void onEvent(@NotNull AuthorAddedEvent event) {
+        //Cancel any further delivery
+        EventBus.getDefault().cancelEventDelivery(event);
+        if (event.authorUrl != null) {
+            //Find author with this url
+            SearchedAuthor auth = adapter.getItemById(event.authorUrl);
+            if (auth != null) {
+                auth.setAdded(true);
+                adapter.notifyDataSetChanged();
+            }
+        }
+    }
+
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
+        setRetainInstance(true);
+        if (mCurrentUri != null) {
+            // Only if this is a config change should we initLoader(), to reconnect with an
+            // existing loader. Otherwise, the loader will be init'd when reloadFromArguments
+            // is called.
+            getLoaderManager().initLoader(SamlibSearchLoader.SEARCH_TOKEN, null, RemoteAuthorsFragment.this);
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        EventBus.getDefault().unregister(this);
+        super.onDestroy();
     }
 
     public void requestQueryUpdate(String query) {
@@ -84,6 +143,7 @@ public class RemoteAuthorsFragment extends Fragment implements
         LOGD(TAG, "Reloading search data");
         getLoaderManager().restartLoader(SamlibSearchLoader.SEARCH_TOKEN, mArguments, RemoteAuthorsFragment.this);
         emptyText.setVisibility(View.GONE);
+        list.setVisibility(View.GONE);
         loading.setVisibility(View.VISIBLE);
     }
 
@@ -101,6 +161,7 @@ public class RemoteAuthorsFragment extends Fragment implements
     private void hideEmptyView() {
         emptyText.setVisibility(View.GONE);
         loading.setVisibility(View.GONE);
+        list.setVisibility(View.VISIBLE);
     }
 
     private void showEmptyView() {
@@ -113,11 +174,13 @@ public class RemoteAuthorsFragment extends Fragment implements
             // so don't show an empty view.
             emptyText.setText("");
             emptyText.setVisibility(View.VISIBLE);
+            list.setVisibility(View.VISIBLE);
             loading.setVisibility(View.GONE);
         } else {
             // Showing authors as a result of search. If blank - show no resuls
             emptyText.setText(R.string.empty_search_results);
             emptyText.setVisibility(View.VISIBLE);
+            list.setVisibility(View.VISIBLE);
             loading.setVisibility(View.GONE);
         }
     }

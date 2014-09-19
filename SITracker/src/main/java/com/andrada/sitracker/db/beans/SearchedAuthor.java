@@ -7,6 +7,7 @@ public class SearchedAuthor {
     private String authorUrl;
     private String authorName;
     private String contextDescription;
+    private boolean added;
     private int hitsInOnSearch;
 
     private static final int INDEX_OF_MAX = 50;
@@ -19,6 +20,7 @@ public class SearchedAuthor {
         this.authorName = authorName;
         this.contextDescription = contextDescription;
         this.hitsInOnSearch = 1;
+        this.added = false;
     }
 
     public String getAuthorUrl() {
@@ -39,6 +41,14 @@ public class SearchedAuthor {
 
     public void recordSearchHit() {
         this.hitsInOnSearch++;
+    }
+
+    public boolean isAdded() {
+        return added;
+    }
+
+    public void setAdded(boolean added) {
+        this.added = added;
     }
 
     @Override

@@ -40,6 +40,15 @@ public class SearchResultsAdapter extends BaseAdapter {
         return mData.get(position);
     }
 
+    public SearchedAuthor getItemById(String id) {
+        for (SearchedAuthor auth : mData) {
+            if (auth.getAuthorUrl().equals(id)) {
+                return auth;
+            }
+        }
+        return null;
+    }
+
     @Override
     public long getItemId(int position) {
         return mData.get(position).hashCode();
@@ -57,5 +66,10 @@ public class SearchResultsAdapter extends BaseAdapter {
             authorsItemView.bind(mData.get(position));
         }
         return authorsItemView;
+    }
+
+    @Override
+    public boolean hasStableIds() {
+        return true;
     }
 }

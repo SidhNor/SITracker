@@ -34,6 +34,7 @@ public class AddAuthorTask extends AsyncTask<String, Integer, String> {
 
     private final Context context;
     private SiDBHelper helper;
+    private String authUrl;
 
 
     public AddAuthorTask(Context context) {
@@ -44,6 +45,7 @@ public class AddAuthorTask extends AsyncTask<String, Integer, String> {
     protected String doInBackground(@NotNull String... args) {
         String message = "";
         for (String url : args) {
+            authUrl = url;
             SiteStrategy strategy = SiteDetector.chooseStrategy(url, helper);
             if (strategy == null) {
                 message = context.getResources().getString(R.string.supported_urls);
@@ -65,6 +67,6 @@ public class AddAuthorTask extends AsyncTask<String, Integer, String> {
     @Override
     protected void onPostExecute(String result) {
         OpenHelperManager.releaseHelper();
-        EventBus.getDefault().post(new AuthorAddedEvent(result));
+        EventBus.getDefault().post(new AuthorAddedEvent(result, authUrl));
     }
 }

@@ -46,6 +46,7 @@
         in accumsan justo
         ultricies
     </string>
+    <string name="designtime_placeholder_medium">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean </string>
     <string name="designtime_placeholder_short">Lorem ipsum dolor</string>
     <string name="designtime_placeholder_size">615+3kb</string>
     <string name="designtime_placeholder_date">May 28</string>
@@ -146,6 +147,8 @@
 
     <string name="choose_import_file">Pick file</string>
     <string name="perform_import">Import</string>
+    <string name="already_in_library">Already in library</string>
+    <string name="tap_to_add_to_library">Tap to add</string>
 
     <!--Preferences -->
 

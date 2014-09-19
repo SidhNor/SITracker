@@ -19,8 +19,10 @@ package com.andrada.sitracker.events;
 public class AuthorAddedEvent {
 
     public final String message;
+    public final String authorUrl;
 
-    public AuthorAddedEvent(String message) {
+    public AuthorAddedEvent(String message, String authorUrl) {
         this.message = message;
+        this.authorUrl = authorUrl;
     }
 }
