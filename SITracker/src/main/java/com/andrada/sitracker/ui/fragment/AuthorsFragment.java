@@ -41,7 +41,6 @@ import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.AuthorUpdateStatusListener;
 import com.andrada.sitracker.db.beans.Author;
-import com.andrada.sitracker.events.AuthorAddedEvent;
 import com.andrada.sitracker.events.AuthorSelectedEvent;
 import com.andrada.sitracker.events.AuthorSortMethodChanged;
 import com.andrada.sitracker.events.BackUpRestoredEvent;
@@ -152,14 +151,6 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
     }
 
     //region Menu item tap handlers
-    @OptionsItem(R.id.action_add)
-    void menuAddSelected() {
-        AddAuthorDialog authorDialog = new AddAuthorDialog();
-        authorDialog.show(getActivity().getSupportFragmentManager(),
-                Constants.DIALOG_ADD_AUTHOR);
-        AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_ADD_DIALOG);
-    }
-
     @OptionsItem(R.id.action_search)
     void menuSearchSelected() {
         AnalyticsHelper.getInstance().sendEvent(Constants.GA_EXPLORE_CATEGORY, "launchsearch", "");
@@ -403,45 +394,6 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
     public void onEvent(AuthorSortMethodChanged event) {
         adapter.reloadAuthors();
     }
-
-    public void onEvent(@NotNull AuthorAddedEvent event) {
-
-        EventBus.getDefault().post(new ProgressBarToggleEvent(false));
-        String message = event.message;
-
-        AnalyticsHelper.getInstance().sendEvent(
-                Constants.GA_EXPLORE_CATEGORY,
-                Constants.GA_EVENT_AUTHOR_ADDED,
-                Constants.GA_EVENT_AUTHOR_ADDED, (long) message.length());
-
-        //Stop progress bar
-
-        Style.Builder alertStyle = new Style.Builder()
-                .setTextAppearance(android.R.attr.textAppearanceLarge)
-                .setPaddingInPixels(25);
-
-        if (message.length() == 0) {
-            //This is success
-            adapter.reloadAuthors();
-            alertStyle.setBackgroundColorValue(Style.holoGreenLight);
-            message = getResources().getString(R.string.author_add_success_crouton_message);
-        } else {
-            alertStyle.setBackgroundColorValue(Style.holoRedLight);
-        }
-        Crouton.makeText(getActivity(), message, alertStyle.build()).show();
-
-        if (currentAuthorIndex == -1) {
-            currentAuthorIndex = adapter.getFirstAuthorId();
-            EventBus.getDefault().post(new AuthorSelectedEvent(currentAuthorIndex));
-            // Set the item as checked to be highlighted
-            adapter.setSelectedItem(currentAuthorIndex);
-            adapter.notifyDataSetChanged();
-        }
-
-        BackupManager bm = new BackupManager(getActivity());
-        bm.dataChanged();
-    }
-
     //endregion
 
 

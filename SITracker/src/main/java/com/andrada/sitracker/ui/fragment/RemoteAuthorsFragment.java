@@ -1,6 +1,7 @@
 package com.andrada.sitracker.ui.fragment;
 
 import android.app.AlertDialog;
+import android.app.backup.BackupManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -14,6 +15,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.AppUriContract;
 import com.andrada.sitracker.db.beans.SearchedAuthor;
@@ -22,6 +24,7 @@ import com.andrada.sitracker.loader.SamlibSearchLoader;
 import com.andrada.sitracker.tasks.AddAuthorTask;
 import com.andrada.sitracker.ui.BaseActivity;
 import com.andrada.sitracker.ui.fragment.adapters.SearchResultsAdapter;
+import com.andrada.sitracker.util.AnalyticsHelper;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
@@ -33,6 +36,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.andrada.sitracker.util.LogUtils.LOGD;
 import static com.andrada.sitracker.util.LogUtils.makeLogTag;
@@ -74,8 +79,8 @@ public class RemoteAuthorsFragment extends Fragment implements
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        author.setAdded(true);
-                        //TODO notify dataset changed
+                        //TODO make sure to run this in UI thread
+                        loading.setVisibility(View.VISIBLE);
                         new AddAuthorTask(getActivity()).execute(author.getAuthorUrl());
                     }
                 })
@@ -94,6 +99,30 @@ public class RemoteAuthorsFragment extends Fragment implements
                 adapter.notifyDataSetChanged();
             }
         }
+        loading.setVisibility(View.GONE);
+        String message = event.message;
+
+        AnalyticsHelper.getInstance().sendEvent(
+                Constants.GA_EXPLORE_CATEGORY,
+                Constants.GA_EVENT_AUTHOR_ADDED,
+                Constants.GA_EVENT_AUTHOR_ADDED, (long) message.length());
+
+        //Stop progress bar
+
+        Style.Builder alertStyle = new Style.Builder()
+                .setTextAppearance(android.R.attr.textAppearanceLarge)
+                .setPaddingInPixels(25);
+
+        if (message.length() == 0) {
+            //This is success
+            alertStyle.setBackgroundColorValue(Style.holoGreenLight);
+            message = getResources().getString(R.string.author_add_success_crouton_message);
+        } else {
+            alertStyle.setBackgroundColorValue(Style.holoRedLight);
+        }
+        Crouton.makeText(getActivity(), message, alertStyle.build()).show();
+        BackupManager bm = new BackupManager(getActivity());
+        bm.dataChanged();
     }
 
 
@@ -102,6 +131,7 @@ public class RemoteAuthorsFragment extends Fragment implements
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
         setRetainInstance(true);
+        //noinspection VariableNotUsedInsideIf
         if (mCurrentUri != null) {
             // Only if this is a config change should we initLoader(), to reconnect with an
             // existing loader. Otherwise, the loader will be init'd when reloadFromArguments
@@ -117,8 +147,15 @@ public class RemoteAuthorsFragment extends Fragment implements
     }
 
     public void requestQueryUpdate(String query) {
-        reloadFromArguments(BaseActivity.intentToFragmentArguments(
-                new Intent(Intent.ACTION_SEARCH, AppUriContract.buildSamlibSearchUri(query))));
+        //Test query for URL
+        if (query.matches(Constants.SIMPLE_URL_REGEX) && query.startsWith(Constants.HTTP_PROTOCOL)) {
+            //This looks like an url
+            loading.setVisibility(View.VISIBLE);
+            new AddAuthorTask(getActivity()).execute(query);
+        } else {
+            reloadFromArguments(BaseActivity.intentToFragmentArguments(
+                    new Intent(Intent.ACTION_SEARCH, AppUriContract.buildSamlibSearchUri(query))));
+        }
     }
 
     public void reloadFromArguments(Bundle arguments) {
