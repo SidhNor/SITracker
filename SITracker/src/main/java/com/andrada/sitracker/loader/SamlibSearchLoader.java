@@ -43,6 +43,10 @@ public class SamlibSearchLoader extends AsyncTaskLoader<List<SearchedAuthor>> {
     private static final int DEFAULT_TYPE = 0;
 
     private static final String BUFF_READER_ID = "bufferedReader";
+    /**
+     * Use search cache for 2 days only
+     */
+    private static final long MAX_STALE_CACHE = 60 * 60 * 24 * 2;
 
     volatile boolean finishedLoading = false;
 
@@ -67,6 +71,8 @@ public class SamlibSearchLoader extends AsyncTaskLoader<List<SearchedAuthor>> {
         try {
             long requestStart = new Date().getTime();
             final HttpRequest request = HttpRequest.get(new URL(url));
+            //Tolerate 2 days
+            request.getConnection().addRequestProperty("Cache-Control", "max-stale=" + MAX_STALE_CACHE);
             if (request.code() == 404) {
                 throw new MalformedURLException();
             }

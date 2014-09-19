@@ -22,6 +22,10 @@ import com.andrada.sitracker.util.AnalyticsExceptionParser;
 import com.andrada.sitracker.util.AnalyticsHelper;
 import com.google.android.gms.analytics.ExceptionReporter;
 
+import java.io.File;
+
+import static com.andrada.sitracker.util.LogUtils.LOGD;
+
 public class SITrackerApp extends Application {
 
     /*
@@ -29,6 +33,19 @@ public class SITrackerApp extends Application {
       * @see android.app.Application#onCreate()
       */
     public void onCreate() {
+
+        //Setup cache if possible
+        try {
+            File httpCacheDir = new File(this.getCacheDir(), "http");
+            long httpCacheSize = 1 * 1024 * 1024; // 1 MiB
+            Class.forName("android.net.http.HttpResponseCache")
+                    .getMethod("install", File.class, long.class)
+                    .invoke(null, httpCacheDir, httpCacheSize);
+            LOGD("SiTracker", "Cache installed");
+
+        } catch (Exception ignored) {
+            //Ignore everything
+        }
 
         AnalyticsHelper.initHelper(this);
         ExceptionReporter myReporter = new ExceptionReporter(
