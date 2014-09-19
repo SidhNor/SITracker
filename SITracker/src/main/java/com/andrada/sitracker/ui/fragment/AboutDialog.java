@@ -64,7 +64,7 @@ public class AboutDialog extends DialogFragment {
         return new AlertDialog.Builder(getActivity())
                 .setTitle(R.string.action_about)
                 .setView(aboutBodyView)
-                .setPositiveButton(R.string.ok,
+                .setPositiveButton(android.R.string.ok,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 dialog.dismiss();
@@ -100,7 +100,7 @@ public class AboutDialog extends DialogFragment {
             return new AlertDialog.Builder(getActivity())
                     .setTitle(R.string.about_licenses)
                     .setView(webView)
-                    .setPositiveButton(R.string.ok,
+                    .setPositiveButton(android.R.string.ok,
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int whichButton) {
                                     dialog.dismiss();

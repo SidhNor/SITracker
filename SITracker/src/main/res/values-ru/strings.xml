@@ -54,11 +54,10 @@
     <string name="app_version_format">Версия: %1$s</string>
     <string name="app_buildnr_format">Билд №: %1$s</string>
 
-    <string name="ok">Ок</string>
-    <string name="empty_search_results">No authors for your query</string>
+    <string name="empty_search_results">Не найдено авторов по вашему запросу.</string>
     <!-- Shown as a link in the About screen of the app; user can click it to see the licenses. -->
     <string name="about_licenses">Лицензии с открытым исходным кодом</string>
-
+    <string name="add_author_confirmation">Добавить автора?</string>
     <string name="cannot_import_authors_from_file">Не удалось импортировать авторов из файла.</string>
     <string name="cannot_add_author">Не удалось добавить автора.</string>
     <string name="supported_urls">Поддерживаются ссылки авторов только с samlib.ru и budclub.ru</string>

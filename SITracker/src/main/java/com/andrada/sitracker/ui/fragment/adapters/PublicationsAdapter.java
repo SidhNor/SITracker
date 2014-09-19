@@ -264,7 +264,7 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
                 //Attempt to open or download publication
                 listener.publicationShare(pub, pub.getNew());
                 AnalyticsHelper.getInstance().sendEvent(
-                        Constants.GA_UI_CATEGORY,
+                        Constants.GA_READ_CATEGORY,
                         Constants.GA_EVENT_AUTHOR_PUB_OPEN,
                         Constants.GA_EVENT_AUTHOR_PUB_OPEN);
             }

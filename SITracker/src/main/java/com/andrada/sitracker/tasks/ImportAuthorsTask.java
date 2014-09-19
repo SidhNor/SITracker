@@ -208,7 +208,7 @@ public class ImportAuthorsTask extends IntentService {
             bm.dataChanged();
 
             AnalyticsHelper.getInstance().sendEvent(
-                    Constants.GA_UI_CATEGORY,
+                    Constants.GA_ADMIN_CATEGORY,
                     Constants.GA_EVENT_AUTHOR_IMPORT,
                     Constants.GA_EVENT_IMPORT_COMPLETE,
                     importProgress.getTotalAuthors());

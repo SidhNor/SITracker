@@ -54,12 +54,12 @@
     <string name="app_version_format">Version: %1$s</string>
     <string name="app_buildnr_format">Build number: %1$s</string>
 
-    <string name="ok">OK</string>
     <string name="empty_search_results">No authors for your query</string>
 
     <!-- Shown as a link in the About screen of the app; user can click it to see the licenses. -->
     <string name="about_licenses">Open Source Licenses</string>
 
+    <string name="add_author_confirmation">Are you sure you want to add this author?</string>
     <string name="cannot_import_authors_from_file">Could not import authors from file.</string>
     <string name="cannot_add_author">Cannot add author.</string>
     <string name="supported_urls">Only samlib.ru and budclub.ru author urls are supported.</string>

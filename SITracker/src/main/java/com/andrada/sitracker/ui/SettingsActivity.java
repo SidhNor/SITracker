@@ -153,7 +153,7 @@ public class SettingsActivity extends PreferenceActivity implements
             alarmManager.setInexactRepeating(AlarmManager.RTC, System.currentTimeMillis(), updateInterval, pi);
             setUpdateIntervalSummary(prefs.updateInterval().get());
             AnalyticsHelper.getInstance().sendEvent(
-                    Constants.GA_UI_CATEGORY,
+                    Constants.GA_ADMIN_CATEGORY,
                     Constants.GA_EVENT_CHANGED_UPDATE_INTERVAL,
                     Constants.GA_EVENT_CHANGED_UPDATE_INTERVAL, updateInterval);
         } else if (Constants.AUTHOR_SORT_TYPE_KEY.equals(key)) {

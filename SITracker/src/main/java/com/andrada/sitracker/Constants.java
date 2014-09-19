@@ -60,7 +60,9 @@ public class Constants {
     public static final String NUMBER_OF_UPDATED_AUTHORS = "number_of_updated_authors";
 
     //Analytics category names
-    public static final String GA_UI_CATEGORY = "ui_action";
+    public static final String GA_EXPLORE_CATEGORY = "explore_action";
+    public static final String GA_READ_CATEGORY = "read_action";
+    public static final String GA_ADMIN_CATEGORY = "admin_action";
 
     //Analytics screen names
     public static final String GA_SCREEN_PUBLICATIONS = "Publications";

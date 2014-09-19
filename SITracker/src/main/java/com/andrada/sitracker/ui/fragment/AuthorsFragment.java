@@ -162,7 +162,7 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
 
     @OptionsItem(R.id.action_search)
     void menuSearchSelected() {
-        AnalyticsHelper.getInstance().sendEvent(Constants.GA_UI_CATEGORY, "launchsearch", "");
+        AnalyticsHelper.getInstance().sendEvent(Constants.GA_EXPLORE_CATEGORY, "launchsearch", "");
         SearchActivity_.intent(this.getActivity()).start();
     }
 
@@ -175,7 +175,7 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
                 updateIntent.putExtra(Constants.UPDATE_IGNORES_NETWORK, true);
                 getActivity().startService(updateIntent);
                 AnalyticsHelper.getInstance().sendEvent(
-                        Constants.GA_UI_CATEGORY,
+                        Constants.GA_READ_CATEGORY,
                         Constants.GA_EVENT_AUTHORS_MANUAL_REFRESH,
                         Constants.GA_EVENT_AUTHORS_MANUAL_REFRESH);
                 toggleUpdatingState();
@@ -332,7 +332,7 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
         mode.finish();
         if (item.getItemId() == R.id.action_remove) {
             AnalyticsHelper.getInstance().sendEvent(
-                    Constants.GA_UI_CATEGORY,
+                    Constants.GA_ADMIN_CATEGORY,
                     Constants.GA_EVENT_AUTHOR_REMOVED,
                     Constants.GA_EVENT_AUTHOR_REMOVED, (long) mSelectedAuthors.size());
             adapter.removeAuthors(mSelectedAuthors);
@@ -371,7 +371,7 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
     public void onEvent(@NotNull PublicationMarkedAsReadEvent event) {
         //ensure we update the new status of the author if he has no new publications
         AnalyticsHelper.getInstance().sendEvent(
-                Constants.GA_UI_CATEGORY,
+                Constants.GA_READ_CATEGORY,
                 Constants.GA_EVENT_AUTHOR_MANUAL_READ,
                 Constants.GA_EVENT_AUTHOR_MANUAL_READ);
         if (event.refreshAuthor) {
@@ -410,7 +410,7 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
         String message = event.message;
 
         AnalyticsHelper.getInstance().sendEvent(
-                Constants.GA_UI_CATEGORY,
+                Constants.GA_EXPLORE_CATEGORY,
                 Constants.GA_EVENT_AUTHOR_ADDED,
                 Constants.GA_EVENT_AUTHOR_ADDED, (long) message.length());
 
