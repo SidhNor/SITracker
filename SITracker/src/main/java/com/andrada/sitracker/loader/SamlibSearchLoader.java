@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.andrada.sitracker.util.LogUtils.LOGD;
+import static com.andrada.sitracker.util.LogUtils.LOGE;
 
 public class SamlibSearchLoader extends AsyncTaskLoader<List<SearchedAuthor>> {
 
@@ -93,7 +94,8 @@ public class SamlibSearchLoader extends AsyncTaskLoader<List<SearchedAuthor>> {
             });
             Thread.sleep(500);
             long currentMils;
-            boolean searchCriteriaSatisfied;
+            boolean authNumberCriteriaSatisfied;
+            boolean timeCriteriaSatisfied;
             do {
                 currentMils = new Date().getTime();
                 Collection<SearchedAuthor> authors = new SamlibAuthorSearchReader().getUniqueAuthorsFromPage(buffer.toString());
@@ -103,13 +105,13 @@ public class SamlibSearchLoader extends AsyncTaskLoader<List<SearchedAuthor>> {
                     }
                 }
                 LOGD(TAG, "Check for result availability. Mils passed: " + (currentMils - requestStart) + ". Unique authors got: " + hashAuthors.size());
-                searchCriteriaSatisfied = hashAuthors.size() > 10 &&
-                        ((currentMils - requestStart) > 30000 || hashAuthors.size() != 0);
+                authNumberCriteriaSatisfied = hashAuthors.size() > 10;
+                timeCriteriaSatisfied = (currentMils - requestStart) > 30000 && hashAuthors.size() != 0;
                 Thread.sleep(500);
-            } while (!finishedLoading && !searchCriteriaSatisfied);
+            } while (!finishedLoading && !authNumberCriteriaSatisfied && !timeCriteriaSatisfied);
 
             if (!finishedLoading) {
-                LOGD(TAG, "Search conditions satisfied. Force stopping current request with " + hashAuthors.size() + "authors");
+                LOGD(TAG, "Search conditions satisfied. Force stopping current request with " + hashAuthors.size() + " authors");
                 finishedLoading = true;
                 BackgroundExecutor.cancelAll(BUFF_READER_ID, true);
             }
@@ -143,7 +145,7 @@ public class SamlibSearchLoader extends AsyncTaskLoader<List<SearchedAuthor>> {
         } catch (HttpRequest.HttpRequestException e) {
             throw e;
         } catch (IOException e) {
-            throw new IOException(e);
+            LOGE(TAG, "Could not read data", e);
         } finally {
             try {
                 reader.close();
