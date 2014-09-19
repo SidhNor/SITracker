@@ -32,6 +32,8 @@ public interface AuthorDao extends Dao<Author, Integer> {
     @NotNull
     List<String> getAuthorsUrlIds() throws SQLException;
 
+    boolean hasAuthor(String authorUrlId) throws SQLException;
+
     int getNewAuthorsCount() throws SQLException;
 
     void markAsRead(Author author) throws SQLException;

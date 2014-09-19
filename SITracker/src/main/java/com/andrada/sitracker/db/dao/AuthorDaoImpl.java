@@ -46,6 +46,12 @@ public class AuthorDaoImpl extends BaseDaoImpl<Author, Integer>
         return authorUrls;
     }
 
+    @Override
+    public boolean hasAuthor(String authorUrlId) throws SQLException {
+        int count = (int) this.queryBuilder().where().eq("urlId", authorUrlId).countOf();
+        return count > 0;
+    }
+
     @NotNull
     @Override
     public List<String> getAuthorsUrlIds() throws SQLException {
@@ -59,7 +65,6 @@ public class AuthorDaoImpl extends BaseDaoImpl<Author, Integer>
 
     @Override
     public int getNewAuthorsCount() throws SQLException {
-
         return (int) this.queryRawValue(
                 "SELECT COUNT(DISTINCT authors._id) FROM authors, publications " +
                         "WHERE authors._id = publications.author_id AND publications.isNew = 1");
