@@ -5,8 +5,9 @@ import com.andrada.sitracker.db.beans.SearchedAuthor;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,8 +17,8 @@ public class SamlibAuthorSearchReader implements AuthorSearchReader {
 
     @Override
     @NotNull
-    public List<SearchedAuthor> getUniqueAuthorsFromPage(String pageContent) {
-        List<SearchedAuthor> authors = new ArrayList<SearchedAuthor>();
+    public Collection<SearchedAuthor> getUniqueAuthorsFromPage(String pageContent) {
+        Map<String, SearchedAuthor> authors = new HashMap<String, SearchedAuthor>();
 
         Pattern pattern = Pattern.compile(Constants.SAMLIB_AUTHOR_SEARCH_REGEX, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
         Matcher matcher = pattern.matcher(pageContent);
@@ -30,12 +31,14 @@ public class SamlibAuthorSearchReader implements AuthorSearchReader {
             String authorName = matcher.group(2) == null ? "" : matcher.group(2).trim();
             String descr = matcher.group(3) == null ? "" : matcher.group(3).trim();
             SearchedAuthor auth = new SearchedAuthor(authorUrl, authorName, descr);
-            if (!authors.contains(auth)) {
-                authors.add(auth);
+            if (!authors.containsKey(authorUrl)) {
+                authors.put(authorUrl, auth);
+            } else {
+                authors.get(authorUrl).recordSearchHit();
             }
         }
 
-        return authors;
+        return authors.values();
     }
 
     private String normalizeUrl(String value) {

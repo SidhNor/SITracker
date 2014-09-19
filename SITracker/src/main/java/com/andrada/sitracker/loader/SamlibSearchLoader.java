@@ -20,6 +20,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.CharBuffer;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -89,7 +90,7 @@ public class SamlibSearchLoader extends AsyncTaskLoader<List<SearchedAuthor>> {
             boolean searchCriteriaSatisfied;
             do {
                 currentMils = new Date().getTime();
-                List<SearchedAuthor> authors = new SamlibAuthorSearchReader().getUniqueAuthorsFromPage(buffer.toString());
+                Collection<SearchedAuthor> authors = new SamlibAuthorSearchReader().getUniqueAuthorsFromPage(buffer.toString());
                 for (SearchedAuthor auth : authors) {
                     if (!hashAuthors.containsKey(auth.getAuthorUrl())) {
                         hashAuthors.put(auth.getAuthorUrl(), auth);
@@ -111,12 +112,7 @@ public class SamlibSearchLoader extends AsyncTaskLoader<List<SearchedAuthor>> {
             Collections.sort(mAuthors, new Comparator<SearchedAuthor>() {
                 @Override
                 public int compare(SearchedAuthor searchedAuthor, SearchedAuthor searchedAuthor2) {
-                    int indexOfAuthOne = searchedAuthor.getAuthorName().toLowerCase().indexOf(unencodedQuery);
-                    int indexOfAuthTwo = searchedAuthor2.getAuthorName().toLowerCase().indexOf(unencodedQuery);
-                    if (indexOfAuthOne != -1 && indexOfAuthTwo != -1) {
-                        return indexOfAuthOne < indexOfAuthTwo ? -1 : 1;
-                    }
-                    return indexOfAuthTwo - indexOfAuthOne;
+                    return searchedAuthor.weightedCompare(searchedAuthor2, unencodedQuery);
                 }
             });
         } catch (MalformedURLException e) {

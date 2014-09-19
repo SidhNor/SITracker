@@ -4,9 +4,9 @@ import com.andrada.sitracker.db.beans.SearchedAuthor;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
+import java.util.Collection;
 
 public interface AuthorSearchReader {
     @NotNull
-    List<SearchedAuthor> getUniqueAuthorsFromPage(String page);
+    Collection<SearchedAuthor> getUniqueAuthorsFromPage(String page);
 }
