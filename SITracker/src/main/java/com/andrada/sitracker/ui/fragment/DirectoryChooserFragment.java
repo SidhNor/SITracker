@@ -186,7 +186,7 @@ public class DirectoryChooserFragment extends DialogFragment {
             View horDivider = view.findViewById(R.id.horizontalDivider);
             if (horDivider != null) {
                 horDivider.setVisibility(View.INVISIBLE);
-                RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)horDivider.getLayoutParams();
+                RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) horDivider.getLayoutParams();
                 params.addRule(RelativeLayout.CENTER_HORIZONTAL, 0);
                 params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
                 params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
@@ -286,7 +286,7 @@ public class DirectoryChooserFragment extends DialogFragment {
                 0.72 * Color.green(color) +
                 0.07 * Color.blue(color) < 128) {
             mBtnNavUp.setImageResource(R.drawable.navigation_up_light);
-            mBtnCreateFolder.setImageResource(R.drawable.ic_action_create_light);
+            mBtnCreateFolder.setImageResource(R.drawable.ic_action_create);
         }
     }
 
@@ -395,7 +395,7 @@ public class DirectoryChooserFragment extends DialogFragment {
             //Selecting file
             mSelectedFile = dir;
             mTxtvSelectedFolder.setText(dir.getAbsolutePath());
-            if (isAdded()){
+            if (isAdded()) {
                 mTxtvSelectedFolderLabel.setText(getResources().getString(R.string.fp_selected_file_label));
             }
             if (isValidFile(mSelectedFile)) {
@@ -460,7 +460,7 @@ public class DirectoryChooserFragment extends DialogFragment {
                 Collections.sort(mFilenames);
                 mSelectedDir = dir;
                 mSelectedFile = null;
-                if (isAdded()){
+                if (isAdded()) {
                     mTxtvSelectedFolderLabel.setText(getResources().getString(R.string.fp_selected_folder_label));
                 }
                 mTxtvSelectedFolder.setText(dir.getAbsolutePath());
