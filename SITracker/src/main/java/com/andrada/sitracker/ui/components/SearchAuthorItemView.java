@@ -3,8 +3,8 @@ package com.andrada.sitracker.ui.components;
 import android.content.Context;
 import android.text.Html;
 import android.text.SpannableString;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.andrada.sitracker.R;
@@ -15,7 +15,7 @@ import org.androidannotations.annotations.ViewById;
 import org.jetbrains.annotations.NotNull;
 
 @EViewGroup(R.layout.search_author_list_item)
-public class SearchAuthorItemView extends RelativeLayout {
+public class SearchAuthorItemView extends FrameLayout {
 
     @ViewById
     TextView authorName;

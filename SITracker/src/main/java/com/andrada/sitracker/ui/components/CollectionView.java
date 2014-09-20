@@ -40,7 +40,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static com.andrada.sitracker.util.LogUtils.LOGD;
-import static com.andrada.sitracker.util.LogUtils.LOGW;
 
 public class CollectionView extends ListView {
     private static final String TAG = "CollectionView";
@@ -264,8 +263,6 @@ public class CollectionView extends ListView {
             viewLayoutParams = (LinearLayout.LayoutParams) view.getLayoutParams();
         } else {
             // This shouldn't happen... but if it does, let's work around it as well as we can.
-            LOGW(TAG, "Unexpected class for collection view item's layout params: " +
-                    view.getLayoutParams().getClass().getName());
             viewLayoutParams = new LinearLayout.LayoutParams(
                     LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         }

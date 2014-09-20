@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:tools="http://schemas.android.com/tools"
-       xmlns:android="http://schemas.android.com/apk/res/android"
-       tools:context=".ui.HomeActivity">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    tools:context=".ui.HomeActivity">
 
     <TextView
         android:id="@+id/author_title"
@@ -12,11 +12,11 @@
         android:layout_alignParentTop="true"
         android:layout_toLeftOf="@+id/author_update_date"
         android:layout_toStartOf="@+id/author_update_date"
-        android:textColor="@color/author_list_item_text"
+        android:textColor="@color/body_text_1"
         android:minHeight="?android:attr/listPreferredItemHeight"
         android:ellipsize="end"
         android:maxLines="2"
-        android:text="@string/designtime_placeholder_short"/>
+        android:text="@string/designtime_placeholder_short" />
 
     <TextView
         android:id="@+id/author_update_date"
@@ -28,7 +28,7 @@
         android:textSize="12sp"
         android:text="@string/designtime_placeholder_date"
         android:textAlignment="viewEnd"
-        android:layout_gravity="end"/>
+        android:layout_gravity="end" />
 
     <ImageButton
         android:id="@+id/author_updated"
@@ -39,7 +39,7 @@
         android:layout_alignParentBottom="true"
         android:background="@null"
         android:src="@drawable/star_unselected"
-        android:contentDescription="@string/notification_title"/>
+        android:contentDescription="@string/notification_title" />
 </merge>
 
 

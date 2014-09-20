@@ -2,6 +2,7 @@ package com.andrada.sitracker.ui.fragment;
 
 import android.app.AlertDialog;
 import android.app.backup.BackupManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -11,7 +12,8 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.ListView;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -23,10 +25,14 @@ import com.andrada.sitracker.events.AuthorAddedEvent;
 import com.andrada.sitracker.loader.SamlibSearchLoader;
 import com.andrada.sitracker.tasks.AddAuthorTask;
 import com.andrada.sitracker.ui.BaseActivity;
+import com.andrada.sitracker.ui.components.CollectionView;
+import com.andrada.sitracker.ui.components.CollectionViewCallbacks;
+import com.andrada.sitracker.ui.components.SearchAuthorItemView;
+import com.andrada.sitracker.ui.components.SearchAuthorItemView_;
 import com.andrada.sitracker.ui.fragment.adapters.SearchResultsAdapter;
 import com.andrada.sitracker.util.AnalyticsHelper;
+import com.andrada.sitracker.util.UIUtils;
 
-import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ItemClick;
@@ -44,12 +50,12 @@ import static com.andrada.sitracker.util.LogUtils.makeLogTag;
 
 @EFragment(R.layout.fragment_search)
 public class RemoteAuthorsFragment extends Fragment implements
-        LoaderManager.LoaderCallbacks<List<SearchedAuthor>> {
+        LoaderManager.LoaderCallbacks<List<SearchedAuthor>>, CollectionViewCallbacks {
 
     private static final String TAG = makeLogTag(RemoteAuthorsFragment.class);
 
     @ViewById
-    ListView list;
+    CollectionView list;
 
     @ViewById
     ProgressBar loading;
@@ -62,11 +68,6 @@ public class RemoteAuthorsFragment extends Fragment implements
 
     @Bean
     SearchResultsAdapter adapter;
-
-    @AfterViews
-    void bindAdapter() {
-        list.setAdapter(adapter);
-    }
 
     @ItemClick
     public void listItemClicked(int position) {
@@ -96,7 +97,7 @@ public class RemoteAuthorsFragment extends Fragment implements
             SearchedAuthor auth = adapter.getItemById(event.authorUrl);
             if (auth != null) {
                 auth.setAdded(true);
-                adapter.notifyDataSetChanged();
+                ((BaseAdapter) list.getAdapter()).notifyDataSetChanged();
             }
         }
         loading.setVisibility(View.GONE);
@@ -188,11 +189,33 @@ public class RemoteAuthorsFragment extends Fragment implements
         adapter.swapData(data);
         LOGD(TAG, "Data has " + data.size() + " items. Will now update collection view.");
         int itemCount = data.size();
+        CollectionView.Inventory inv;
         if (itemCount == 0) {
             showEmptyView();
+            inv = new CollectionView.Inventory();
         } else {
             hideEmptyView();
+            inv = prepareInventory();
         }
+        list.setCollectionAdapter(this);
+        list.updateInventory(inv, UIUtils.hasHoneycombMR1());
+
+    }
+
+    private CollectionView.Inventory prepareInventory() {
+        LOGD(TAG, "Preparing collection view inventory.");
+        final int displayCols = getResources().getInteger(R.integer.search_grid_columns);
+        CollectionView.InventoryGroup group = new CollectionView.InventoryGroup(1000)
+                .setDisplayCols(displayCols)
+                .setShowHeader(false);
+        int dataIndex = -1;
+        while (dataIndex < adapter.getCount()) {
+            ++dataIndex;
+            group.addItemWithCustomDataIndex(dataIndex);
+        }
+        CollectionView.Inventory inventory = new CollectionView.Inventory();
+        inventory.addGroup(group);
+        return inventory;
     }
 
     private void hideEmptyView() {
@@ -251,5 +274,29 @@ public class RemoteAuthorsFragment extends Fragment implements
     @Override
     public void onLoaderReset(Loader<List<SearchedAuthor>> listLoader) {
 
+    }
+
+
+    @Override
+    public View newCollectionHeaderView(Context context, ViewGroup parent) {
+        return null;
+    }
+
+    @Override
+    public void bindCollectionHeaderView(Context context, View view, int groupId, String groupLabel) {
+        //We don't have headers
+    }
+
+    @Override
+    public View newCollectionItemView(Context context, int groupId, ViewGroup parent) {
+        return SearchAuthorItemView_.build(context);
+    }
+
+    @Override
+    public void bindCollectionItemView(Context context, View view, int groupId, int indexInGroup, int dataIndex, Object tag) {
+        SearchAuthorItemView authView = (SearchAuthorItemView) view;
+        if (dataIndex < adapter.getCount()) {
+            authView.bind((SearchedAuthor) adapter.getItem(dataIndex));
+        }
     }
 }

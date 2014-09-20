@@ -1,36 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:orientation="vertical"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent">
+    xmlns:sitracker="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <ListView
+    <com.andrada.sitracker.ui.components.CollectionView
         android:id="@+id/list"
-        android:listSelector="@drawable/authors_list_selector"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:scrollbarStyle="outsideOverlay"
         android:background="@drawable/authors_list_background"
-        android:cacheColorHint="@color/light_color_hint"/>
+        android:cacheColorHint="@color/light_color_hint"
+        sitracker:internalPadding="@dimen/explore_grid_padding" />
 
     <ProgressBar
         android:id="@+id/loading"
-        android:visibility="gone"
-        android:paddingTop="?actionBarSize"
-        android:layout_gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        />
+        android:layout_gravity="center"
+        android:paddingTop="?actionBarSize"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/emptyText"
-        android:visibility="gone"
-        android:paddingTop="?actionBarSize"
-        android:layout_gravity="center"
-        android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:paddingTop="?actionBarSize"
+        android:textColor="@color/body_text_2"
         android:textSize="@dimen/text_size_medium"
-        android:textColor="@color/secondary_gray"/>
+        android:visibility="gone" />
 
 </FrameLayout>

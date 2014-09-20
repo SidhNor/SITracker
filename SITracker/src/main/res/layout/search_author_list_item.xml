@@ -1,73 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="@dimen/default_grid_margin"
     tools:context=".ui.SearchActivity">
 
-    <LinearLayout
-        android:id="@+id/inLibraryContainer"
-        android:layout_width="@dimen/library_container_width"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:orientation="vertical"
-        android:paddingTop="@dimen/divider_margin_top"
-        android:paddingBottom="@dimen/divider_margin_top"
-        android:paddingRight="@dimen/divider_margin_top"
-        tools:ignore="RtlHardcoded,UseCompoundDrawables">
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/inLibraryContainer"
+            android:layout_width="@dimen/library_container_width"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/divider_margin_top"
+            android:paddingRight="@dimen/divider_margin_top"
+            android:paddingTop="@dimen/divider_margin_top"
+            tools:ignore="RtlHardcoded,UseCompoundDrawables">
+
+            <TextView
+                android:id="@+id/actionText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/text_vertical_spacing"
+                android:gravity="center"
+                android:maxLines="2"
+                android:text="@string/tap_to_add_to_library"
+                android:textAlignment="center"
+                android:textSize="@dimen/text_size_xsmall" />
+
+            <ImageView
+                android:id="@+id/actionImg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:contentDescription="@string/already_in_library"
+                android:src="@drawable/not_in_library" />
+        </LinearLayout>
+
 
         <TextView
-            android:id="@+id/actionText"
+            android:id="@+id/authorName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:maxLines="2"
-            android:text="@string/tap_to_add_to_library"
-            android:textAlignment="center"
-            android:textSize="@dimen/text_size_xsmall"
-            android:layout_marginBottom="@dimen/text_vertical_spacing" />
+            android:layout_marginBottom="@dimen/text_vertical_spacing"
+            android:layout_toRightOf="@id/inLibraryContainer"
+            android:fontFamily="sans-serif-condensed"
+            android:text="@string/designtime_placeholder_short"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/body_text_1" />
 
-        <ImageView
-            android:id="@+id/actionImg"
-            android:layout_gravity="center"
-            android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/authorUrl"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:contentDescription="@string/already_in_library"
-            android:src="@drawable/not_in_library" />
-    </LinearLayout>
+            android:layout_below="@id/authorName"
+            android:layout_marginBottom="@dimen/text_vertical_spacing"
+            android:layout_toRightOf="@id/inLibraryContainer"
+            android:text="@string/designtime_placeholder_short"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/body_text_2" />
 
+        <TextView
+            android:id="@+id/matchDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/authorUrl"
+            android:layout_toRightOf="@id/inLibraryContainer"
+            android:text="@string/designtime_placeholder_medium"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+    </RelativeLayout>
 
-    <TextView
-        android:id="@+id/authorName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/inLibraryContainer"
-        android:fontFamily="sans-serif-condensed"
-        android:text="@string/designtime_placeholder_short"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@color/primary_black"
-        android:layout_marginBottom="@dimen/text_vertical_spacing" />
-
-    <TextView
-        android:id="@+id/authorUrl"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/authorName"
-        android:layout_toRightOf="@id/inLibraryContainer"
-        android:text="@string/designtime_placeholder_short"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textColor="@color/secondary_gray"
-        android:layout_marginBottom="@dimen/text_vertical_spacing" />
-
-    <TextView
-        android:id="@+id/matchDescription"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/authorUrl"
-        android:layout_toRightOf="@id/inLibraryContainer"
-        android:text="@string/designtime_placeholder_medium"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
-
-</RelativeLayout>
+</FrameLayout>

@@ -104,4 +104,5 @@ public class SearchResultsAdapter extends BaseAdapter {
     public boolean hasStableIds() {
         return true;
     }
+
 }
