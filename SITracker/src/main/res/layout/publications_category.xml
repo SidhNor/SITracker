@@ -53,7 +53,7 @@
         android:layout_marginLeft="25dp"/>
 
     <View
-        style="@style/DividerThick"
+        style="@style/Theme.SiTracker.DividerThick"
         android:layout_below="@+id/category_title"
         android:layout_marginBottom="@dimen/divider_margin_bottom"
         android:layout_marginTop="@dimen/divider_margin_top"/>

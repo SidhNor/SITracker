@@ -56,7 +56,7 @@
     <style name="FrameworkRoot.ActionButton.CloseMode" parent="@style/Widget.AppCompat.Light.ActionButton.CloseMode"/>
 
     <!-- Application theme. -->
-    <style name="AppTheme" parent="FrameworkRoot.Theme">
+    <style name="Theme.SiTracker" parent="FrameworkRoot.Theme">
         <item name="actionBarItemBackground">@drawable/selectable_background_si</item>
         <item name="popupMenuStyle">@style/PopupMenu</item>
         <item name="dropDownListViewStyle">@style/DropDownListView</item>
@@ -66,6 +66,12 @@
         <item name="actionModeBackground">@drawable/cab_background_top_si</item>
         <item name="actionModeSplitBackground">@drawable/cab_background_bottom_si</item>
         <item name="actionModeCloseButtonStyle">@style/ActionButton.CloseMode</item>
+    </style>
+
+    <style name="Theme.SiTracker.Home" parent="Theme.SiTracker"/>
+
+    <style name="Theme.SiTracker.Search" parent="Theme.SiTracker">
+        <item name="android:windowBackground">@color/gray_background</item>
     </style>
 
     <style name="ActionBar" parent="FrameworkRoot.ActionBar">
@@ -101,13 +107,13 @@
         <item name="android:background">@drawable/btn_cab_done_si</item>
     </style>
 
-    <style name="DividerThick">`
+    <style name="Theme.SiTracker.DividerThick">`
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">2dp</item>
         <item name="android:background">@color/holo_blue_light</item>
     </style>
 
-    <style name="DividerThin">
+    <style name="Theme.SiTracker.DividerThin">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">1dp</item>
         <item name="android:background">?android:attr/listDivider</item>

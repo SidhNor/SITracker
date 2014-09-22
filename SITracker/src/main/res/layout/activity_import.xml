@@ -58,7 +58,7 @@
 
     <View
         android:id="@+id/separator"
-        style="@style/DividerThick"
+        style="@style/Theme.SiTracker.DividerThick"
         android:layout_below="@+id/actionsContainer"
         android:layout_marginBottom="@dimen/divider_margin_bottom"
         android:layout_marginTop="@dimen/divider_margin_top"/>

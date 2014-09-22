@@ -27,7 +27,7 @@
         <item name="listPreferredItemHeightSmall">?android:listPreferredItemHeightSmall</item>
     </style>
 
-    <style name="AppTheme" parent="FrameworkRoot.Theme">
+    <style name="Theme.SiTracker" parent="FrameworkRoot.Theme">
         <item name="android:actionBarItemBackground">@drawable/selectable_background_si</item>
         <item name="android:popupMenuStyle">@style/PopupMenu</item>
         <item name="android:dropDownListViewStyle">@style/DropDownListView</item>

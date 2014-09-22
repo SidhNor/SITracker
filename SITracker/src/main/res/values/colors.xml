@@ -28,6 +28,8 @@
     <color name="light_color_hint">#EEEEEE</color>
     <color name="white">#ffffff</color>
 
+    <color name="gray_background">#e5e5e5</color>
+
     <color name="holo_blue_light">#ff33b5e5</color>
     <color name="author_activated_color">#ffffff</color>
     <color name="holo_red_light">#ffff4444</color>
