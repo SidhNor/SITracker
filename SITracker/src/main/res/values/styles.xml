@@ -21,8 +21,8 @@
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
     -->
-    <style name="FrameworkRoot.Base" parent="@style/Theme.AppCompat.Light"/>
-    <style name="FrameworkRoot.ActionBar" parent="@style/Widget.AppCompat.Light.ActionBar"/>
+    <style name="FrameworkRoot.Base" parent="@style/Theme.AppCompat.Light.DarkActionBar"/>
+    <style name="FrameworkRoot.ActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse"/>
     <style name="FrameworkRoot.ActionBar.TitleText" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"/>
     <style name="FrameworkRoot.ActionBar.TabBar" parent="@style/Widget.AppCompat.Base.ActionBar.TabBar"/>
     <style name="FrameworkRoot.ActionBar.TabView" parent="@style/Widget.AppCompat.ActionBar.TabView"/>
@@ -31,7 +31,6 @@
     <style name="FrameworkRoot.Widget.ActionButton.Overflow" parent="@style/Widget.AppCompat.ActionButton.Overflow" />
     <style name="FrameworkRoot.Widget.PopupMenu" parent="@style/Widget.AppCompat.Light.PopupMenu"/>
     <style name="FrameworkRoot.Widget.ListView.DropDown" parent="@style/Widget.AppCompat.Light.ListView.DropDown"/>
-    <style name="FrameworkRoot.ProgressBar.Horizontal" parent="@style/Widget.AppCompat.ProgressBar.Horizontal"/>
     <style name="FrameworkRoot.ActionButton.CloseMode" parent="@style/Widget.AppCompat.Light.ActionButton.CloseMode"/>
     <style name="FrameworkRoot.TextAppearance.Widget.PopupMenu.Large" parent="@style/TextAppearance.AppCompat.Light.Widget.PopupMenu.Large"/>
 
@@ -56,16 +55,28 @@
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowBackground">@android:color/white</item>
         <item name="actionBarStyle">@style/ActionBar</item>
+        <!--TODO Change CAB background to a dark one-->
         <item name="actionModeBackground">@drawable/cab_background_top_si</item>
         <item name="actionModeCloseButtonStyle">@style/ActionButton.CloseMode</item>
         <item name="actionBarItemBackground">@drawable/selectable_background_si</item>
         <item name="actionBarWidgetTheme">@style/Theme.SiTracker.Widget</item>
+
+        <item name="actionBarOverlayTopOffset">?attr/actionBarSize</item>
+        <item name="actionBarInsetStart">?attr/actionBarSize</item>
+        <item name="popupItemBackground">?attr/selectableItemBackground</item>
+
+        <item name="popupMenuStyle">@style/Widget.SiTracker.PopupMenu</item>
+        <item name="listPopupWindowStyle">@style/Widget.SiTracker.PopupMenu</item>
+        <item name="dropDownListViewStyle">@style/Widget.SiTracker.ListView.DropDown</item>
+        <item name="actionDropDownStyle">@style/Widget.SiTracker.ListView.DropDown</item>
+        <item name="textAppearanceLargePopupMenu">@style/TextAppearance.LargePopupMenu</item>
+
     </style>
 
     <style name="Theme.SiTracker.Widget" parent="FrameworkRoot.Widget">
         <item name="popupMenuStyle">@style/Widget.SiTracker.PopupMenu</item>
         <item name="listPopupWindowStyle">@style/Widget.SiTracker.PopupMenu</item>
-        <!--<item name="dropDownListViewStyle">@style/Widget.SiTracker.ListView.DropDown</item>-->
+        <item name="dropDownListViewStyle">@style/Widget.SiTracker.ListView.DropDown</item>
         <item name="actionDropDownStyle">@style/Widget.SiTracker.ListView.DropDown</item>
         <item name="textAppearanceLargePopupMenu">@style/TextAppearance.LargePopupMenu</item>
     </style>
@@ -86,7 +97,6 @@
         <item name="displayOptions">showHome|showTitle</item>
         <item name="backgroundSplit">@drawable/ab_solid</item>
         <item name="titleTextStyle">@style/ActionBar.TitleText</item>
-        <item name="progressBarStyle">@style/ProgressBar</item>
     </style>
 
     <style name="ActionBar.TitleText" parent="FrameworkRoot.ActionBar.TitleText">
@@ -103,22 +113,16 @@
         <item name="android:background">@drawable/tab_indicator_ab_si</item>
     </style>
 
-
-    <style name="ProgressBar" parent="FrameworkRoot.ProgressBar.Horizontal">
-        <item name="android:progressDrawable">@drawable/progress_horizontal_si</item>
-    </style>
-
     <style name="ActionButton.CloseMode" parent="FrameworkRoot.ActionButton.CloseMode">
         <item name="android:background">@drawable/btn_cab_done_si</item>
     </style>
 
     <style name="Widget.SiTracker.PopupMenu" parent="FrameworkRoot.Widget.PopupMenu">
-        <item name="android:popupBackground">@drawable/menu_dropdown_panel_si</item>
-        <item name="android:dropDownSelector">@drawable/selectable_background_si</item>
+        <item name="android:dropDownSelector">?popupItemBackground</item>
     </style>
 
     <style name="Widget.SiTracker.ListView.DropDown" parent="FrameworkRoot.Widget.ListView.DropDown">
-        <item name="android:listSelector">@drawable/selectable_background_si</item>
+        <item name="android:listSelector">?popupItemBackground</item>
         <item name="android:divider">@null</item>
         <item name="android:dividerHeight">0dp</item>
     </style>

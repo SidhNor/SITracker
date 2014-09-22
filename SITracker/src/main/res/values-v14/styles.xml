@@ -37,6 +37,11 @@
         <item name="android:actionModeBackground">@drawable/cab_background_top_si</item>
         <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode</item>
         <item name="android:actionBarWidgetTheme">@style/Theme.SiTracker.Widget</item>
+
+        <item name="actionBarOverlayTopOffset">?android:actionBarSize</item>
+        <item name="actionBarInsetStart">?android:actionBarSize</item>
+        <item name="popupItemBackground">?android:selectableItemBackground</item>
+
     </style>
 
     <style name="ActionBar" parent="FrameworkRoot.ActionBar">
@@ -45,7 +50,6 @@
         <item name="android:displayOptions">showHome|showTitle</item>
         <item name="android:backgroundSplit">@drawable/ab_solid</item>
         <item name="android:titleTextStyle">@style/ActionBar.TitleText</item>
-        <item name="android:progressBarStyle">@style/ProgressBar</item>
     </style>
 
 </resources>

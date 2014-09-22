@@ -45,6 +45,13 @@
         <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode</item>
         <item name="android:editTextBackground">@drawable/edit_text</item>
         <item name="actionBarWidgetTheme">@style/Theme.SiTracker.Widget</item>
+
+        <item name="android:popupMenuStyle">@style/Widget.SiTracker.PopupMenu</item>
+        <item name="android:listPopupWindowStyle">@style/Widget.SiTracker.PopupMenu</item>
+        <item name="android:dropDownListViewStyle">@style/Widget.SiTracker.ListView.DropDown</item>
+        <item name="android:actionDropDownStyle">@style/Widget.SiTracker.ListView.DropDown</item>
+        <item name="android:textAppearanceLargePopupMenu">@style/TextAppearance.LargePopupMenu</item>
+
     </style>
 
     <style name="ActionBar" parent="FrameworkRoot.ActionBar">
@@ -53,7 +60,6 @@
         <item name="android:displayOptions">showHome|showTitle</item>
         <item name="backgroundSplit">@drawable/ab_solid</item>
         <item name="android:titleTextStyle">@style/ActionBar.TitleText</item>
-        <item name="android:progressBarStyle">@style/ProgressBar</item>
     </style>
 
     <style name="Theme.SiTracker.Widget" parent="FrameworkRoot.Widget">
