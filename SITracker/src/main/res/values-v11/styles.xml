@@ -70,4 +70,8 @@
         <item name="android:textAppearanceLargePopupMenu">@style/TextAppearance.LargePopupMenu</item>
     </style>
 
+    <style name="Theme.SiTracker.Home" parent="Theme.SiTracker">
+        <item name="windowActionBarOverlay">false</item>
+    </style>
+
 </resources>

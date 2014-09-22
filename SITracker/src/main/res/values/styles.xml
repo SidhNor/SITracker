@@ -85,7 +85,9 @@
         <item name="android:src">@drawable/ic_action_overflow</item>
     </style>
 
-    <style name="Theme.SiTracker.Home" parent="Theme.SiTracker"/>
+    <style name="Theme.SiTracker.Home" parent="Theme.SiTracker">
+        <item name="windowActionBarOverlay">false</item>
+    </style>
 
     <style name="Theme.SiTracker.Search" parent="Theme.SiTracker">
         <item name="android:windowBackground">@color/gray_background</item>
