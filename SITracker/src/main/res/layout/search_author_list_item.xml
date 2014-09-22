@@ -1,21 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="@dimen/default_grid_margin"
-    tools:context=".ui.SearchActivity">
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:padding="@dimen/default_grid_margin"
+             tools:context=".ui.SearchActivity">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
         <LinearLayout
             android:id="@+id/inLibraryContainer"
             android:layout_width="@dimen/library_container_width"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
+            android:layout_gravity="center_vertical"
+            android:background="?attr/selectableItemBackground"
+            android:gravity="center_vertical"
             android:orientation="vertical"
             android:paddingBottom="@dimen/divider_margin_top"
             android:paddingRight="@dimen/divider_margin_top"
@@ -31,7 +34,7 @@
                 android:maxLines="2"
                 android:text="@string/tap_to_add_to_library"
                 android:textAlignment="center"
-                android:textSize="@dimen/text_size_xsmall" />
+                android:textSize="@dimen/text_size_xsmall"/>
 
             <ImageView
                 android:id="@+id/actionImg"
@@ -39,40 +42,41 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:contentDescription="@string/already_in_library"
-                android:src="@drawable/not_in_library" />
+                android:src="@drawable/not_in_library"/>
         </LinearLayout>
 
-
-        <TextView
-            android:id="@+id/authorName"
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/text_vertical_spacing"
-            android:layout_toRightOf="@id/inLibraryContainer"
-            android:fontFamily="sans-serif-condensed"
-            android:text="@string/designtime_placeholder_short"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/body_text_1" />
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/authorUrl"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/authorName"
-            android:layout_marginBottom="@dimen/text_vertical_spacing"
-            android:layout_toRightOf="@id/inLibraryContainer"
-            android:text="@string/designtime_placeholder_short"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@color/body_text_2" />
+            <TextView
+                android:id="@+id/authorName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/text_vertical_spacing"
+                android:fontFamily="sans-serif-condensed"
+                android:text="@string/designtime_placeholder_short"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/body_text_1"/>
 
-        <TextView
-            android:id="@+id/matchDescription"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/authorUrl"
-            android:layout_toRightOf="@id/inLibraryContainer"
-            android:text="@string/designtime_placeholder_medium"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
-    </RelativeLayout>
+            <TextView
+                android:id="@+id/authorUrl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/text_vertical_spacing"
+                android:text="@string/designtime_placeholder_short"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@color/body_text_2"/>
+
+            <TextView
+                android:id="@+id/matchDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/designtime_placeholder_medium"
+                android:textAppearance="?android:attr/textAppearanceSmall"/>
+        </LinearLayout>
+
+    </LinearLayout>
 
 </FrameLayout>

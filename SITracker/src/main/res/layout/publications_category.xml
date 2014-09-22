@@ -44,7 +44,7 @@
         android:textAppearance="@android:style/TextAppearance.Large"
         android:textColor="@color/holo_blue_light"
         android:fontFamily="sans-serif-light"
-        android:text="@string/designtime_placeholder_long"
+        android:text="@string/designtime_placeholder_medium"
         android:textIsSelectable="false"
         android:textStyle="bold"
         android:focusable="false"

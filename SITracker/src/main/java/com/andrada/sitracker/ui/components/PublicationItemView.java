@@ -87,6 +87,20 @@ public class PublicationItemView extends TouchDelegateRelativeLayout {
                 item_updated);
         item_description.setMaxLines(3);
         scaleFadeOutAnim = AnimationUtils.loadAnimation(getContext(), R.anim.item_fade_scale_down);
+        scaleFadeOutAnim.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                backgroundPane.setVisibility(GONE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+        });
         fadeInAnim = AnimationUtils.loadAnimation(getContext(), R.anim.item_fade_in);
     }
 
@@ -138,6 +152,7 @@ public class PublicationItemView extends TouchDelegateRelativeLayout {
             downloadProgress.clearAnimation();
             backgroundPane.clearAnimation();
             downloadProgress.setVisibility(GONE);
+            backgroundPane.setVisibility(VISIBLE);
         }
 
     }

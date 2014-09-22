@@ -14,20 +14,21 @@
   limitations under the License.
   -->
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:showDividers="middle"
-                android:orientation="vertical"
-                tools:context=".ui.SimpleSinglePaneActivity">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:background="?attr/selectableItemBackground"
+             android:orientation="vertical"
+             android:showDividers="middle"
+             tools:context=".ui.SimpleSinglePaneActivity">
 
     <RelativeLayout
         android:id="@+id/backgroundPane"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="@dimen/default_grid_margin"
-        android:paddingBottom="@dimen/default_grid_margin">
+        android:paddingBottom="@dimen/default_grid_margin"
+        android:paddingTop="@dimen/default_grid_margin">
 
         <RelativeLayout
             android:id="@+id/pub_img_container"
@@ -39,11 +40,11 @@
                 android:id="@+id/publication_image"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/publication_pixel_size"
+                android:layout_centerInParent="true"
+                android:paddingRight="@dimen/default_grid_margin"
                 android:scaleType="centerInside"
                 android:src="@drawable/blank_book"
-                android:visibility="visible"
-                android:layout_centerInParent="true"
-                android:paddingRight="@dimen/default_grid_margin"/>
+                android:visibility="visible"/>
         </RelativeLayout>
 
 
@@ -52,76 +53,76 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:layout_toRightOf="@+id/pub_img_container"
+            android:layout_marginBottom="@dimen/text_vertical_spacing"
             android:layout_toLeftOf="@+id/actions_view"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="?android:attr/textColorPrimary"
+            android:layout_toRightOf="@+id/pub_img_container"
+            android:ellipsize="end"
             android:fontFamily="sans-serif-condensed"
-            android:text="@string/designtime_placeholder_short"
             android:lines="1"
             android:scrollHorizontally="true"
-            android:ellipsize="end"
-            android:layout_marginBottom="@dimen/text_vertical_spacing"/>
+            android:text="@string/designtime_placeholder_short"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="?android:attr/textColorPrimary"/>
 
         <com.andrada.sitracker.ui.widget.EllipsizedTextView
+            android:id="@+id/item_description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/item_description"
-            android:layout_toRightOf="@+id/pub_img_container"
-            android:layout_toLeftOf="@+id/actions_view"
             android:layout_below="@+id/item_title"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="?android:attr/textColorSecondary"
             android:layout_gravity="left|center_vertical"
-            android:text="@string/designtime_placeholder_long"
-            android:singleLine="false"
+            android:layout_toLeftOf="@+id/actions_view"
+            android:layout_toRightOf="@+id/pub_img_container"
+            android:ellipsize="end"
             android:maxLines="3"
-            android:ellipsize="end"/>
+            android:singleLine="false"
+            android:text="@string/designtime_placeholder_long"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="?android:attr/textColorSecondary"/>
 
         <LinearLayout
             android:id="@+id/actions_view"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
-            android:layout_marginLeft="@dimen/default_grid_margin">
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="@dimen/default_grid_margin"
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/item_update_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="12sp"
-                android:text="@string/designtime_placeholder_date"
                 android:layout_gravity="right"
+                android:layout_marginBottom="@dimen/text_vertical_spacing"
+                android:text="@string/designtime_placeholder_date"
                 android:textAlignment="viewEnd"
-                android:layout_marginBottom="@dimen/text_vertical_spacing"/>
+                android:textSize="12sp"/>
 
             <TextView
                 android:id="@+id/itemSize"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/designtime_placeholder_size"
                 android:layout_gravity="right"
-                android:textAlignment="viewEnd"
-                android:layout_marginBottom="@dimen/text_vertical_spacing"/>
+                android:layout_marginBottom="@dimen/text_vertical_spacing"
+                android:text="@string/designtime_placeholder_size"
+                android:textAlignment="viewEnd"/>
 
             <ImageButton
                 android:id="@+id/item_updated"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
-                android:layout_weight="1"
                 android:layout_gravity="right"
+                android:layout_weight="1"
                 android:background="@null"
-                android:src="@drawable/star_unselected"
-                android:contentDescription="@string/notification_title"/>
+                android:contentDescription="@string/notification_title"
+                android:src="@drawable/star_unselected"/>
         </LinearLayout>
 
         <View
             android:id="@+id/publication_item_divider"
+            style="@style/DividerThin"
             android:layout_alignParentBottom="true"
             android:layout_below="@id/item_description"
-            style="@style/DividerThin"
             android:layout_marginBottom="6dp"
             android:layout_marginTop="4dp"/>
 
@@ -131,35 +132,36 @@
         android:id="@+id/downloadProgress"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:minHeight="65dp"
         android:background="#FFFFFFFF"
-        android:visibility="gone"
-        android:layout_alignBottom="@+id/backgroundPane">
+        android:minHeight="65dp"
+        android:visibility="gone">
 
         <TextView
+            android:id="@+id/text1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="?android:attr/textColorPrimary"
-            android:text="@string/publications_downloading"
             android:layout_marginLeft="15dp"
-            android:layout_centerVertical="true"
-            android:layout_alignParentLeft="true"/>
+            android:text="@string/publications_downloading"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="?android:attr/textColorPrimary"/>
 
         <ProgressBar
-            android:indeterminate="true"
-            android:indeterminateOnly="true"
-            android:indeterminateDrawable="@drawable/progress_indeterminate_horizontal_holo"
             android:layout_width="match_parent"
             android:layout_height="10dp"
+            android:layout_below="@+id/text1"
+            android:indeterminate="true"
+            android:indeterminateDrawable="@drawable/progress_indeterminate_horizontal_holo"
+            android:indeterminateOnly="true"
             android:paddingEnd="50dp"
-            android:paddingRight="50dp"
-            android:paddingStart="15dp"
             android:paddingLeft="15dp"
-            android:layout_alignParentEnd="false"
-            android:layout_alignParentRight="false"
-            android:layout_alignParentBottom="true"/>
+            android:paddingRight="50dp"
+            android:paddingStart="15dp"/>
+
+        <View
+            style="@style/DividerThin"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="6dp"
+            android:layout_marginTop="4dp"/>
     </RelativeLayout>
 
-</RelativeLayout>
+</FrameLayout>
