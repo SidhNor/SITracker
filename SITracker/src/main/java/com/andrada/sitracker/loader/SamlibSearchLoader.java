@@ -6,6 +6,7 @@ import android.support.v4.content.AsyncTaskLoader;
 
 import com.andrada.sitracker.contracts.AppUriContract;
 import com.andrada.sitracker.db.beans.SearchedAuthor;
+import com.andrada.sitracker.exceptions.SamlibBusyException;
 import com.andrada.sitracker.reader.SamlibAuthorSearchReader;
 import com.github.kevinsawicki.http.HttpRequest;
 
@@ -78,6 +79,10 @@ public class SamlibSearchLoader extends AsyncTaskLoader<List<SearchedAuthor>> {
                 throw new MalformedURLException();
             }
 
+            if (request.code() == 500) {
+                throw new SamlibBusyException();
+            }
+
             final StringBuffer buffer = new StringBuffer();
             final BufferedReader reader = request.bufferedReader();
             finishedLoading = false;
@@ -124,10 +129,16 @@ public class SamlibSearchLoader extends AsyncTaskLoader<List<SearchedAuthor>> {
                 }
             });
         } catch (MalformedURLException e) {
+            //TODO post error event
             e.printStackTrace();
         } catch (HttpRequest.HttpRequestException e) {
+            //TODO post error event
             e.printStackTrace();
-        } catch (Exception e) {
+        } catch (SamlibBusyException e) {
+            //TODO post error event
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            //TODO post error event
             e.printStackTrace();
         }
         return mAuthors;
