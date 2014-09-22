@@ -34,6 +34,6 @@
         android:id="@+id/action_remove"
         android:orderInCategory="101"
         sitracker:showAsAction="always"
-        android:icon="@drawable/ic_action_delete"
+        android:icon="@drawable/ic_action_discard"
         android:title="@string/action_delete" />
 </menu>
