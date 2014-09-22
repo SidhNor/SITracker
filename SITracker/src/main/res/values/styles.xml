@@ -22,50 +22,56 @@
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
     -->
     <style name="FrameworkRoot.Base" parent="@style/Theme.AppCompat.Light"/>
+    <style name="FrameworkRoot.ActionBar" parent="@style/Widget.AppCompat.Light.ActionBar"/>
+    <style name="FrameworkRoot.ActionBar.TitleText" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"/>
+    <style name="FrameworkRoot.ActionBar.TabBar" parent="@style/Widget.AppCompat.Base.ActionBar.TabBar"/>
+    <style name="FrameworkRoot.ActionBar.TabView" parent="@style/Widget.AppCompat.ActionBar.TabView"/>
+    <style name="FrameworkRoot.EditText" parent="android:Widget.EditText"/>
+    <style name="FrameworkRoot.Widget" parent="@style/Theme.AppCompat" />
+    <style name="FrameworkRoot.Widget.ActionButton.Overflow" parent="@style/Widget.AppCompat.ActionButton.Overflow" />
+    <style name="FrameworkRoot.Widget.PopupMenu" parent="@style/Widget.AppCompat.Light.PopupMenu"/>
+    <style name="FrameworkRoot.Widget.ListView.DropDown" parent="@style/Widget.AppCompat.Light.ListView.DropDown"/>
+    <style name="FrameworkRoot.ProgressBar.Horizontal" parent="@style/Widget.AppCompat.ProgressBar.Horizontal"/>
+    <style name="FrameworkRoot.ActionButton.CloseMode" parent="@style/Widget.AppCompat.Light.ActionButton.CloseMode"/>
+    <style name="FrameworkRoot.TextAppearance.Widget.PopupMenu.Large" parent="@style/TextAppearance.AppCompat.Light.Widget.PopupMenu.Large"/>
 
     <!-- Root styles that vary by API level -->
     <style name="FrameworkRoot.Theme" parent="FrameworkRoot.Base">
         <item name="actionBarSize">@dimen/abc_action_bar_default_height</item>
+        <item name="homeAsUpIndicator">@drawable/ic_up</item>
+        <item name="actionOverflowButtonStyle">@style/ActionButton.Overflow</item>
         <!-- API 11+ (compatibility) -->
         <item name="buttonBarStyle">@style/Compat.ButtonBar</item>
         <item name="buttonBarButtonStyle">@style/Compat.ButtonBarButton</item>
         <item name="indeterminateProgressStyle">@style/Compat.IndeterminateProgress</item>
         <!-- API 14+ (compatibility) -->
-        <item name="listPreferredItemPaddingLeft">@dimen/compat_list_preferred_item_padding_left
-        </item>
-        <item name="listPreferredItemPaddingRight">@dimen/compat_list_preferred_item_padding_right
-        </item>
-        <item name="listPreferredItemHeightSmall">@dimen/compat_list_preferred_item_height_small
-        </item>
+        <item name="listPreferredItemPaddingLeft">@dimen/compat_list_preferred_item_padding_left</item>
+        <item name="listPreferredItemPaddingRight">@dimen/compat_list_preferred_item_padding_right</item>
+        <item name="listPreferredItemHeightSmall">@dimen/compat_list_preferred_item_height_small</item>
+        <item name="android:editTextStyle">@style/Widget.SiTracker.EditText</item>
     </style>
-
-    <style name="FrameworkRoot.ActionBar" parent="@style/Widget.AppCompat.Light.ActionBar"/>
-
-    <style name="FrameworkRoot.ActionBar.TabBar" parent="@style/Widget.AppCompat.Base.ActionBar.TabBar"/>
-
-    <style name="FrameworkRoot.ActionBar.TabView" parent="@style/Widget.AppCompat.ActionBar.TabView"/>
-
-    <style name="FrameworkRoot.PopupMenu" parent="@style/Widget.AppCompat.Light.PopupMenu"/>
-
-    <style name="FrameworkRoot.DropDownListView" parent="@style/Widget.AppCompat.Light.ListView.DropDown"/>
-
-    <style name="FrameworkRoot.DropDownNav" parent="@style/Widget.AppCompat.Light.Spinner.DropDown.ActionBar"/>
-
-    <style name="FrameworkRoot.ProgressBar.Horizontal" parent="@style/Widget.AppCompat.ProgressBar.Horizontal"/>
-
-    <style name="FrameworkRoot.ActionButton.CloseMode" parent="@style/Widget.AppCompat.Light.ActionButton.CloseMode"/>
 
     <!-- Application theme. -->
     <style name="Theme.SiTracker" parent="FrameworkRoot.Theme">
-        <item name="actionBarItemBackground">@drawable/selectable_background_si</item>
-        <item name="popupMenuStyle">@style/PopupMenu</item>
-        <item name="dropDownListViewStyle">@style/DropDownListView</item>
-        <item name="actionBarTabStyle">@style/ActionBar.TabView</item>
-        <item name="actionDropDownStyle">@style/DropDownNav</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowBackground">@android:color/white</item>
         <item name="actionBarStyle">@style/ActionBar</item>
         <item name="actionModeBackground">@drawable/cab_background_top_si</item>
-        <item name="actionModeSplitBackground">@drawable/cab_background_bottom_si</item>
         <item name="actionModeCloseButtonStyle">@style/ActionButton.CloseMode</item>
+        <item name="actionBarItemBackground">@drawable/selectable_background_si</item>
+        <item name="actionBarWidgetTheme">@style/Theme.SiTracker.Widget</item>
+    </style>
+
+    <style name="Theme.SiTracker.Widget" parent="FrameworkRoot.Widget">
+        <item name="popupMenuStyle">@style/Widget.SiTracker.PopupMenu</item>
+        <item name="listPopupWindowStyle">@style/Widget.SiTracker.PopupMenu</item>
+        <!--<item name="dropDownListViewStyle">@style/Widget.SiTracker.ListView.DropDown</item>-->
+        <item name="actionDropDownStyle">@style/Widget.SiTracker.ListView.DropDown</item>
+        <item name="textAppearanceLargePopupMenu">@style/TextAppearance.LargePopupMenu</item>
+    </style>
+
+    <style name="ActionButton.Overflow" parent="FrameworkRoot.Widget.ActionButton.Overflow">
+        <item name="android:src">@drawable/ic_action_overflow</item>
     </style>
 
     <style name="Theme.SiTracker.Home" parent="Theme.SiTracker"/>
@@ -76,28 +82,27 @@
 
     <style name="ActionBar" parent="FrameworkRoot.ActionBar">
         <item name="background">@drawable/ab_solid</item>
-        <item name="backgroundStacked">@drawable/ab_stacked_solid_si</item>
-        <item name="backgroundSplit">@drawable/ab_bottom_solid_si</item>
+        <item name="backgroundStacked">@drawable/ab_solid</item>
+        <item name="displayOptions">showHome|showTitle</item>
+        <item name="backgroundSplit">@drawable/ab_solid</item>
+        <item name="titleTextStyle">@style/ActionBar.TitleText</item>
         <item name="progressBarStyle">@style/ProgressBar</item>
     </style>
 
-    <style name="PopupMenu" parent="FrameworkRoot.PopupMenu">
-        <item name="android:popupBackground">@drawable/menu_dropdown_panel_si</item>
+    <style name="ActionBar.TitleText" parent="FrameworkRoot.ActionBar.TitleText">
+        <item name="android:textColor">#fff</item>
+        <item name="android:textSize">18sp</item>
     </style>
 
-    <style name="DropDownListView" parent="FrameworkRoot.DropDownListView">
-        <item name="android:listSelector">@drawable/selectable_background_si</item>
+    <!-- Transparent Action Bar -->
+    <style name="TransparentActionBar" parent="ActionBar">
+        <item name="android:background">@null</item>
     </style>
 
     <style name="ActionBar.TabView" parent="FrameworkRoot.ActionBar.TabView">
         <item name="android:background">@drawable/tab_indicator_ab_si</item>
     </style>
 
-    <style name="DropDownNav" parent="FrameworkRoot.DropDownNav">
-        <item name="android:background">@drawable/spinner_background_ab_si</item>
-        <item name="android:popupBackground">@drawable/menu_dropdown_panel_si</item>
-        <item name="android:dropDownSelector">@drawable/selectable_background_si</item>
-    </style>
 
     <style name="ProgressBar" parent="FrameworkRoot.ProgressBar.Horizontal">
         <item name="android:progressDrawable">@drawable/progress_horizontal_si</item>
@@ -105,6 +110,17 @@
 
     <style name="ActionButton.CloseMode" parent="FrameworkRoot.ActionButton.CloseMode">
         <item name="android:background">@drawable/btn_cab_done_si</item>
+    </style>
+
+    <style name="Widget.SiTracker.PopupMenu" parent="FrameworkRoot.Widget.PopupMenu">
+        <item name="android:popupBackground">@drawable/menu_dropdown_panel_si</item>
+        <item name="android:dropDownSelector">@drawable/selectable_background_si</item>
+    </style>
+
+    <style name="Widget.SiTracker.ListView.DropDown" parent="FrameworkRoot.Widget.ListView.DropDown">
+        <item name="android:listSelector">@drawable/selectable_background_si</item>
+        <item name="android:divider">@null</item>
+        <item name="android:dividerHeight">0dp</item>
     </style>
 
     <style name="Theme.SiTracker.DividerThick">`
@@ -119,5 +135,13 @@
         <item name="android:background">?android:attr/listDivider</item>
     </style>
 
+    <style name="TextAppearance.LargePopupMenu" parent="FrameworkRoot.TextAppearance.Widget.PopupMenu.Large">
+        <item name="android:textColor">@color/body_text_1</item>
+    </style>
+
+    <style name="Widget.SiTracker.EditText" parent="android:Widget.EditText">
+        <item name="android:background">@drawable/edit_text</item>
+
+    </style>
 
 </resources>
