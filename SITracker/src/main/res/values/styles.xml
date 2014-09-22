@@ -91,6 +91,10 @@
         <item name="android:windowBackground">@color/gray_background</item>
     </style>
 
+    <style name="Theme.SiTracker.WithElevatedHeader" parent="Theme.SiTracker">
+        <item name="android:windowContentOverlay">@drawable/header_shadow</item>
+    </style>
+
     <style name="ActionBar" parent="FrameworkRoot.ActionBar">
         <item name="background">@drawable/ab_solid</item>
         <item name="backgroundStacked">@drawable/ab_solid</item>

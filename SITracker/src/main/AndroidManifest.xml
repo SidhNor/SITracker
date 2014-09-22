@@ -86,6 +86,7 @@
         <activity
             android:name=".ui.SettingsActivity_"
             android:label="@string/title_settings"
+            android:theme="@style/Theme.SiTracker.WithElevatedHeader"
             android:parentActivityName=".ui.HomeActivity_">
             <!-- Parent activity meta-data to support API level 7+ -->
             <meta-data
@@ -95,6 +96,7 @@
         <activity
             android:name=".ui.ImportAuthorsActivity_"
             android:label="@string/title_import"
+            android:theme="@style/Theme.SiTracker.WithElevatedHeader"
             android:parentActivityName=".ui.HomeActivity_">
             <!-- Parent activity meta-data to support API level 7+ -->
             <meta-data
@@ -108,6 +110,7 @@
             android:name=".ui.phone.PublicationsActivity_"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/title_publications"
+            android:theme="@style/Theme.SiTracker.WithElevatedHeader"
             android:parentActivityName=".ui.HomeActivity_">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
