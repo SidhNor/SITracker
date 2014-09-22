@@ -39,18 +39,6 @@
     <string name="action_export">Export</string>
     <string name="action_about">About</string>
     <string name="action_open_in_browser">Open selected in browser</string>
-    <string name="add_author_placeholder">samlib.ru/y/your_author</string>
-    <string name="designtime_placeholder_long">Lorem ipsum dolor sit amet, consectetur adipiscing
-        elit. Aenean fringilla
-        luctus tellus, in tristique ligula adipiscing id. Proin tempor purus sit amet orci iaculis
-        in accumsan justo
-        ultricies
-    </string>
-    <string name="designtime_placeholder_medium">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean </string>
-    <string name="designtime_placeholder_short">Lorem ipsum dolor</string>
-    <string name="designtime_placeholder_size">615+3kb</string>
-    <string name="designtime_placeholder_date">May 28</string>
-    <string name="designtime_placeholder_item_num">(24)</string>
 
     <string name="app_version_format">Version: %1$s</string>
     <string name="app_buildnr_format">Build number: %1$s</string>
@@ -96,7 +84,6 @@
     </string>
     <string name="publications_downloading">Downloading publication…</string>
     <string name="check_for_updates">Checking for updates</string>
-    <string name="action_add_ok">Add</string>
     <string name="notification_title">SITracker Updates</string>
     <string name="notification_import_title">SITracker - Importing authors</string>
     <string name="notification_import_progress">Importing %1$d out of %2$d</string>
