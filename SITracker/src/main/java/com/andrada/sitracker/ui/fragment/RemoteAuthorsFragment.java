@@ -116,22 +116,15 @@ public class RemoteAuthorsFragment extends Fragment implements
                 Constants.GA_EVENT_AUTHOR_ADDED,
                 Constants.GA_EVENT_AUTHOR_ADDED, (long) message.length());
 
-        //Stop progress bar
-
-        Style.Builder alertStyle = new Style.Builder()
-                .setTextAppearance(android.R.attr.textAppearanceLarge)
-                .setPaddingInPixels(25);
-
-        if (message.length() == 0) {
-            //This is success
-            alertStyle.setBackgroundColorValue(Style.holoGreenLight);
-            message = getResources().getString(R.string.author_add_success_crouton_message);
-        } else {
-            alertStyle.setBackgroundColorValue(Style.holoRedLight);
+        if (message.length() != 0) {
+            Style.Builder alertStyle = new Style.Builder()
+                    .setTextAppearance(android.R.attr.textAppearanceLarge)
+                    .setPaddingInPixels(25)
+                    .setBackgroundColorValue(Style.holoRedLight);
+            Crouton.makeText(getActivity(), message, alertStyle.build()).show();
+            BackupManager bm = new BackupManager(getActivity());
+            bm.dataChanged();
         }
-        Crouton.makeText(getActivity(), message, alertStyle.build()).show();
-        BackupManager bm = new BackupManager(getActivity());
-        bm.dataChanged();
     }
 
 
