@@ -218,7 +218,7 @@ public class RemoteAuthorsFragment extends Fragment implements
                 .setDisplayCols(displayCols)
                 .setShowHeader(false);
         int dataIndex = -1;
-        while (dataIndex < adapter.getCount()) {
+        while ((dataIndex + 1) < adapter.getCount()) {
             ++dataIndex;
             group.addItemWithCustomDataIndex(dataIndex);
         }
