@@ -15,18 +15,18 @@
   -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@android:color/white"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:descendantFocusability="blocksDescendants">
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              android:background="@android:color/white"
+              android:paddingLeft="@dimen/activity_horizontal_margin"
+              android:paddingRight="@dimen/activity_horizontal_margin"
+              android:descendantFocusability="blocksDescendants">
 
     <ExpandableListView
         android:id="@+id/publication_list"
         android:divider="@null"
-        android:groupIndicator="@drawable/expander_group_holo_light"
+        android:groupIndicator="@drawable/expander_group"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:listSelector="@drawable/authors_list_selector"/>
