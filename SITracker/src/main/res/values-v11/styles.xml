@@ -75,4 +75,13 @@
         <item name="windowActionBarOverlay">false</item>
     </style>
 
+    <style name="Publication.Category.Title" parent="">
+        <item name="android:textAppearance">@android:style/TextAppearance.Large</item>
+        <item name="android:textColor">@color/theme_accent_1</item>
+        <item name="android:textIsSelectable">false</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:focusable">false</item>
+        <item name="android:focusableInTouchMode">false</item>
+    </style>
+
 </resources>
