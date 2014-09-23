@@ -5,11 +5,10 @@
                 android:layout_height="match_parent">
 
     <TextView
-        android:text="@string/check_for_updates"
+        style="@style/Widget.WhiteBody.Title"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center_vertical|center_horizontal"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@color/theme_accent_1"/>
+        android:text="@string/check_for_updates"/>
 
 </RelativeLayout>

@@ -14,7 +14,7 @@
   limitations under the License.
   -->
 
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <style name="NoParent"/>
     <!--
@@ -164,12 +164,72 @@
         <item name="android:background">@drawable/edit_text</item>
     </style>
 
+    <style name="TextHeader">
+        <item name="android:textSize">@dimen/text_size_large</item>
+        <item name="android:fontFamily" tools:ignore="NewApi">sans-serif</item>
+        <item name="android:textColor">@color/body_text_1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:textIsSelectable" tools:ignore="NewApi">true</item>
+        <item name="android:textAlignment" tools:ignore="NewApi">viewStart</item>
+    </style>
+
+    <style name="TextBody">
+        <item name="android:textSize">@dimen/text_size_medium</item>
+        <item name="android:textColor">@color/body_text_1</item>
+        <item name="android:lineSpacingMultiplier">1.1</item>
+        <item name="android:textAlignment" tools:ignore="NewApi">textStart</item>
+    </style>
+
+    <style name="Widget.WhiteBody.Text" parent="">
+        <item name="android:textColor">@color/body_text_1_inverse</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/text_size_medium</item>
+    </style>
+
+
+    <style name="Widget.WhiteBody.Title" parent="Widget.WhiteBody.Text">
+        <item name="android:textSize">@dimen/text_size_large</item>
+    </style>
+
+    <style name="Widget.WhiteBody.Button" parent="@android:style/Widget.Button.Small">
+        <item name="android:textColor">@color/body_text_1_inverse</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+
+    <style name="EmptyText">
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">@dimen/text_size_medium</item>
+        <item name="android:textColor">@color/body_text_2</item>
+    </style>
+
     <style name="Publication.Category.Title" parent="">
-        <item name="android:textAppearance">@android:style/TextAppearance.Large</item>
+        <item name="android:textSize">@dimen/text_size_xlarge</item>
         <item name="android:textColor">@color/theme_accent_1</item>
         <item name="android:textStyle">bold</item>
         <item name="android:focusable">false</item>
         <item name="android:focusableInTouchMode">false</item>
+    </style>
+
+    <style name="Publication.Title" parent="">
+        <item name="android:ellipsize">end</item>
+        <item name="android:textSize">@dimen/text_size_large</item>
+        <item name="android:textColor">@color/body_text_1</item>
+        <item name="android:lines">1</item>
+    </style>
+
+    <style name="Publication.Subtitle" parent="">
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">3</item>
+        <item name="android:singleLine">false</item>
+        <item name="android:textSize">@dimen/text_size_medium</item>
+        <item name="android:textColor">@color/body_text_2</item>
+    </style>
+
+    <style name="Widget.UpdateDate.Text" parent="">
+        <item name="android:textSize">@dimen/text_size_small</item>
+        <item name="android:textAlignment" tools:ignore="NewApi">viewEnd</item>
+        <item name="android:layout_gravity">right</item>
     </style>
 
 </resources>

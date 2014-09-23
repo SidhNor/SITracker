@@ -43,7 +43,8 @@
         style="@style/Publication.Category.Title"
         android:layout_marginStart="25dp"
         android:layout_marginLeft="25dp"
-        android:editable="false"/>
+        android:editable="false"
+        />
 
     <View
         style="@style/Theme.SiTracker.DividerThick"
