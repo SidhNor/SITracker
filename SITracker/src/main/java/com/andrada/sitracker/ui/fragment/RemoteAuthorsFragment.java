@@ -35,7 +35,6 @@ import com.andrada.sitracker.util.UIUtils;
 
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.ItemClick;
 import org.androidannotations.annotations.ViewById;
 import org.jetbrains.annotations.NotNull;
 
@@ -48,9 +47,10 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 import static com.andrada.sitracker.util.LogUtils.LOGD;
 import static com.andrada.sitracker.util.LogUtils.makeLogTag;
 
+
 @EFragment(R.layout.fragment_search)
 public class RemoteAuthorsFragment extends Fragment implements
-        LoaderManager.LoaderCallbacks<List<SearchedAuthor>>, CollectionViewCallbacks {
+        LoaderManager.LoaderCallbacks<List<SearchedAuthor>>, CollectionViewCallbacks, Callbacks {
 
     private static final String TAG = makeLogTag(RemoteAuthorsFragment.class);
 
@@ -69,9 +69,17 @@ public class RemoteAuthorsFragment extends Fragment implements
     @Bean
     SearchResultsAdapter adapter;
 
-    @ItemClick
-    public void listItemClicked(int position) {
-        final SearchedAuthor author = ((SearchedAuthor) adapter.getItem(position));
+    private static Callbacks sDummyCallbacks = new Callbacks() {
+        @Override
+        public void onAuthorSelected(SearchedAuthor author) {
+        }
+    };
+
+    private Callbacks mCallbacks = sDummyCallbacks;
+
+    @Override
+    public void onAuthorSelected(SearchedAuthor author) {
+        final SearchedAuthor authorToAdd = author;
         if (author.isAdded()) {
             return;
         }
@@ -82,7 +90,7 @@ public class RemoteAuthorsFragment extends Fragment implements
                     public void onClick(DialogInterface dialogInterface, int i) {
                         //TODO make sure to run this in UI thread
                         loading.setVisibility(View.VISIBLE);
-                        new AddAuthorTask(getActivity()).execute(author.getAuthorUrl());
+                        new AddAuthorTask(getActivity()).execute(authorToAdd.getAuthorUrl());
                     }
                 })
                 .setNegativeButton(android.R.string.cancel, null);
@@ -132,6 +140,7 @@ public class RemoteAuthorsFragment extends Fragment implements
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
         setRetainInstance(true);
+        mCallbacks = this;
         //noinspection VariableNotUsedInsideIf
         if (mCurrentUri != null) {
             // Only if this is a config change should we initLoader(), to reconnect with an
@@ -296,7 +305,18 @@ public class RemoteAuthorsFragment extends Fragment implements
     public void bindCollectionItemView(Context context, View view, int groupId, int indexInGroup, int dataIndex, Object tag) {
         SearchAuthorItemView authView = (SearchAuthorItemView) view;
         if (dataIndex < adapter.getCount()) {
-            authView.bind((SearchedAuthor) adapter.getItem(dataIndex));
+            final SearchedAuthor auth = (SearchedAuthor) adapter.getItem(dataIndex);
+            authView.bind(auth, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mCallbacks.onAuthorSelected(auth);
+                }
+            });
         }
     }
+}
+
+
+interface Callbacks {
+    public void onAuthorSelected(SearchedAuthor author);
 }

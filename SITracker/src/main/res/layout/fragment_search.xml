@@ -11,6 +11,7 @@
         android:layout_height="match_parent"
         android:background="@drawable/authors_list_background"
         android:cacheColorHint="@color/light_color_hint"
+        android:padding="@dimen/half_search_grid_padding"
         android:clipToPadding="false"
         android:scrollbarStyle="outsideOverlay"
         sitracker:internalPadding="@dimen/explore_grid_padding"/>

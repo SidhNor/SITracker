@@ -37,12 +37,11 @@
     <color name="theme_accent_1_light">#8ad4fa</color>
     <color name="theme_accent_2">#e91e63</color>
 
+    <color name="search_back_positive">#0d5302</color>
+    <color name="search_back_default">#3f51b5</color>
 
     <color name="gray_background">#e5e5e5</color>
 
-    <color name="holo_red_light">#ffff4444</color>
-
-    <color name="orange_active">#ff9c00</color>
     <!-- Use Gingerbread-orange -->
     <color name="fp_selection_background_color">#FEBB20</color>
 </resources>
