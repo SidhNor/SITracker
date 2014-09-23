@@ -58,8 +58,6 @@
         <!--TODO Change CAB background to a dark one-->
         <item name="actionModeBackground">@drawable/cab_background_top_si</item>
         <item name="actionModeCloseButtonStyle">@style/ActionButton.CloseMode</item>
-        <!--TODO Change this drawable to a lighter tint-->
-        <item name="actionBarItemBackground">@drawable/selectable_background_si</item>
         <item name="actionBarWidgetTheme">@style/Theme.SiTracker.Widget</item>
 
         <item name="actionBarOverlayTopOffset">?attr/actionBarSize</item>
