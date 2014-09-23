@@ -67,6 +67,8 @@
         <item name="android:dropDownListViewStyle">@style/Widget.SiTracker.ListView.DropDown</item>
         <item name="android:actionDropDownStyle">@style/Widget.SiTracker.ListView.DropDown</item>
         <item name="android:textAppearanceLargePopupMenu">@style/TextAppearance.LargePopupMenu</item>
+        <item name="searchViewSearchIcon">@drawable/ic_action_search</item>
+        <item name="searchViewCloseIcon">@drawable/abc_ic_clear_normal</item>
     </style>
 
     <style name="Theme.SiTracker.Home" parent="Theme.SiTracker">
