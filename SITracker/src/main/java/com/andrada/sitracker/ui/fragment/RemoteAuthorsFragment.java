@@ -1,5 +1,6 @@
 package com.andrada.sitracker.ui.fragment;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.backup.BackupManager;
 import android.content.Context;
@@ -35,6 +36,7 @@ import com.andrada.sitracker.util.UIUtils;
 
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.jetbrains.annotations.NotNull;
 
@@ -48,34 +50,31 @@ import static com.andrada.sitracker.util.LogUtils.LOGD;
 import static com.andrada.sitracker.util.LogUtils.makeLogTag;
 
 
+interface Callbacks {
+    public void onAuthorSelected(SearchedAuthor author);
+}
+
 @EFragment(R.layout.fragment_search)
 public class RemoteAuthorsFragment extends Fragment implements
         LoaderManager.LoaderCallbacks<List<SearchedAuthor>>, CollectionViewCallbacks, Callbacks {
 
     private static final String TAG = makeLogTag(RemoteAuthorsFragment.class);
-
-    @ViewById
-    CollectionView list;
-
-    @ViewById
-    ProgressBar loading;
-
-    @ViewById
-    TextView emptyText;
-
-    private Bundle mArguments;
-    private Uri mCurrentUri;
-
-    @Bean
-    SearchResultsAdapter adapter;
-
     private static Callbacks sDummyCallbacks = new Callbacks() {
         @Override
         public void onAuthorSelected(SearchedAuthor author) {
         }
     };
-
     private Callbacks mCallbacks = sDummyCallbacks;
+    @ViewById
+    CollectionView list;
+    @ViewById
+    ProgressBar loading;
+    @ViewById
+    TextView emptyText;
+    @Bean
+    SearchResultsAdapter adapter;
+    private Bundle mArguments;
+    private Uri mCurrentUri;
 
     @Override
     public void onAuthorSelected(SearchedAuthor author) {
@@ -149,6 +148,11 @@ public class RemoteAuthorsFragment extends Fragment implements
         super.onDestroy();
     }
 
+    @UiThread(delay = 100)
+    void requestUpdateCollectionView(List<SearchedAuthor> data) {
+        updateCollectionView(data);
+    }
+
     public void requestQueryUpdate(String query) {
         //Test query for URL
         if (query.matches(Constants.SIMPLE_URL_REGEX) && query.startsWith(Constants.HTTP_PROTOCOL)) {
@@ -218,6 +222,21 @@ public class RemoteAuthorsFragment extends Fragment implements
         CollectionView.Inventory inventory = new CollectionView.Inventory();
         inventory.addGroup(group);
         return inventory;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mCallbacks = sDummyCallbacks;
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mCallbacks = this;
+        if (adapter != null && adapter.getCount() > 0) {
+            requestUpdateCollectionView(adapter.getData());
+        }
     }
 
     private void hideEmptyView() {
@@ -307,9 +326,4 @@ public class RemoteAuthorsFragment extends Fragment implements
             });
         }
     }
-}
-
-
-interface Callbacks {
-    public void onAuthorSelected(SearchedAuthor author);
 }

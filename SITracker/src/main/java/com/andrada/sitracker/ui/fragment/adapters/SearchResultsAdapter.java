@@ -105,4 +105,7 @@ public class SearchResultsAdapter extends BaseAdapter {
         return true;
     }
 
+    public List<SearchedAuthor> getData() {
+        return new ArrayList<SearchedAuthor>(mData);
+    }
 }
