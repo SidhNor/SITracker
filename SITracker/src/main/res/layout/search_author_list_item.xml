@@ -19,7 +19,7 @@
         android:gravity="center_vertical"
         android:orientation="vertical"
         android:paddingBottom="@dimen/divider_margin_top"
-        android:paddingRight="@dimen/divider_margin_top"
+        android:paddingRight="@dimen/default_grid_margin"
         android:paddingTop="@dimen/divider_margin_top"
         tools:ignore="RtlHardcoded,UseCompoundDrawables">
 
