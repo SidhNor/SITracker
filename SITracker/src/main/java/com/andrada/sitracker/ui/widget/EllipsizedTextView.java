@@ -37,6 +37,10 @@ public class EllipsizedTextView extends TextView {
 
     private int mMaxLines;
 
+    public EllipsizedTextView(@NotNull Context context) {
+        this(context, null, 0);
+    }
+
     public EllipsizedTextView(@NotNull Context context, @NotNull AttributeSet attrs) {
         this(context, attrs, 0);
     }
@@ -54,7 +58,7 @@ public class EllipsizedTextView extends TextView {
     }
 
     @Override
-    public void setText(@NotNull CharSequence text, BufferType type) {
+    public void setText(CharSequence text, BufferType type) {
         CharSequence newText = getWidth() == 0 || mMaxLines > MAX_ELLIPSIZE_LINES ? text :
                 TextUtils.ellipsize(text, getPaint(), (getWidth() - 40) * mMaxLines,
                         TextUtils.TruncateAt.END, false, null);

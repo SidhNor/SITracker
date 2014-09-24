@@ -48,7 +48,6 @@
                 android:visibility="visible"/>
         </RelativeLayout>
 
-
         <TextView
             android:id="@+id/item_title"
             style="@style/Publication.Title"
@@ -66,7 +65,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/item_title"
-            android:layout_gravity="left|center_vertical"
             android:layout_toLeftOf="@+id/actions_view"
             android:layout_toRightOf="@+id/pub_img_container"
             android:text="@string/designtime_placeholder_long"/>

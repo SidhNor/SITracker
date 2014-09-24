@@ -219,7 +219,6 @@
     </style>
 
     <style name="Publication.Subtitle" parent="">
-        <item name="android:ellipsize">end</item>
         <item name="android:maxLines">3</item>
         <item name="android:singleLine">false</item>
         <item name="android:textSize">@dimen/text_size_medium</item>
@@ -243,9 +242,8 @@
         <item name="android:textSize">@dimen/text_size_large</item>
         <item name="android:fontFamily" tools:ignore="NewApi">sans-serif</item>
         <item name="android:textColor">@color/body_text_1_inverse</item>
-        <item name="android:ellipsize">end</item>
+        <item name="android:ellipsize">none</item>
         <item name="android:textIsSelectable" tools:ignore="NewApi">true</item>
-        <item name="android:textAlignment" tools:ignore="NewApi">viewStart</item>
     </style>
 
     <style name="Searched.Subtitle" parent="">

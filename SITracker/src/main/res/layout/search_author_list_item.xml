@@ -43,8 +43,7 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_gravity="center_vertical">
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/authorName"
@@ -54,22 +53,21 @@
             android:layout_marginBottom="@dimen/text_vertical_spacing"
             android:text="@string/designtime_placeholder_short"/>
 
-        <TextView
+        <com.andrada.sitracker.ui.widget.AutoResizeTextView
             android:id="@+id/authorUrl"
             style="@style/Searched.Subtitle"
+            android:maxLines="1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/text_vertical_spacing"
-            android:text="@string/designtime_placeholder_short"
-            android:textAppearance="?android:attr/textAppearanceSmall"/>
+            android:text="@string/designtime_placeholder_short"/>
 
         <TextView
             android:id="@+id/matchDescription"
             style="@style/Searched.Subtitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/designtime_placeholder_medium"
-            android:textAppearance="?android:attr/textAppearanceSmall"/>
+            android:text="@string/designtime_placeholder_medium"/>
     </LinearLayout>
 
 </LinearLayout>
