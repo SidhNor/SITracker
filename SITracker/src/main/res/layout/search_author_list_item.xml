@@ -1,73 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:id="@+id/searchTarget"
-              android:layout_width="match_parent"
-              android:layout_height="130dp"
-              android:background="@color/search_back_default"
-              android:orientation="horizontal"
-              android:padding="16dp"
-              tools:context=".ui.SearchActivity">
+<FrameLayout
+    android:id="@+id/searchTarget"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/search_back_default">
 
     <LinearLayout
-        android:id="@+id/inLibraryContainer"
-        android:layout_width="@dimen/library_container_width"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:background="?attr/selectableItemBackground"
-        android:gravity="center_vertical"
-        android:orientation="vertical"
-        android:paddingBottom="@dimen/divider_margin_top"
-        android:paddingRight="@dimen/default_grid_margin"
-        android:paddingTop="@dimen/divider_margin_top"
-        tools:ignore="RtlHardcoded,UseCompoundDrawables">
+        android:layout_width="match_parent"
+        android:layout_height="130dp"
+        android:background="?photoItemForeground"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        tools:context=".ui.SearchActivity">
 
-        <TextView
-            android:id="@+id/actionText"
-            style="@style/Searched.AddText"
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:id="@+id/inLibraryContainer"
+            android:layout_width="@dimen/library_container_width"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/text_vertical_spacing"
-            android:text="@string/tap_to_add_to_library"/>
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="@dimen/default_grid_margin"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/divider_margin_top"
+            android:paddingTop="@dimen/divider_margin_top"
+            tools:ignore="RtlHardcoded,UseCompoundDrawables">
 
-        <ImageView
-            android:id="@+id/actionImg"
+            <TextView
+                android:id="@+id/actionText"
+                style="@style/Searched.AddText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/text_vertical_spacing"
+                android:text="@string/tap_to_add_to_library"/>
+
+            <ImageView
+                android:id="@+id/actionImg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:contentDescription="@string/already_in_library"
+                android:src="@drawable/not_in_library"/>
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:contentDescription="@string/already_in_library"
-            android:src="@drawable/not_in_library"/>
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/authorName"
+                style="@style/Searched.Title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/text_vertical_spacing"
+                android:text="@string/designtime_placeholder_short"/>
+
+            <com.andrada.sitracker.ui.widget.AutoResizeTextView
+                android:id="@+id/authorUrl"
+                style="@style/Searched.Subtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/text_vertical_spacing"
+                android:text="@string/designtime_placeholder_short"/>
+
+            <com.andrada.sitracker.ui.widget.AutoResizeTextView
+                android:id="@+id/matchDescription"
+                style="@style/Searched.Subtitle.TwoLines"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/designtime_placeholder_medium"/>
+        </LinearLayout>
     </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/authorName"
-            style="@style/Searched.Title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/text_vertical_spacing"
-            android:text="@string/designtime_placeholder_short"/>
-
-        <com.andrada.sitracker.ui.widget.AutoResizeTextView
-            android:id="@+id/authorUrl"
-            style="@style/Searched.Subtitle"
-            android:maxLines="1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/text_vertical_spacing"
-            android:text="@string/designtime_placeholder_short"/>
-
-        <TextView
-            android:id="@+id/matchDescription"
-            style="@style/Searched.Subtitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/designtime_placeholder_medium"/>
-    </LinearLayout>
-
-</LinearLayout>
+</FrameLayout>

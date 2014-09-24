@@ -39,6 +39,7 @@
 
         <item name="actionBarOverlayTopOffset">?android:actionBarSize</item>
         <item name="actionBarInsetStart">?android:actionBarSize</item>
+        <item name="photoItemForeground">?android:selectableItemBackground</item>
         <item name="popupItemBackground">?android:selectableItemBackground</item>
 
     </style>

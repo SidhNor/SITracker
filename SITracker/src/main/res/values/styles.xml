@@ -72,6 +72,7 @@
 
         <item name="actionBarOverlayTopOffset">?attr/actionBarSize</item>
         <item name="actionBarInsetStart">?attr/actionBarSize</item>
+        <item name="photoItemForeground">?attr/selectableItemBackground</item>
         <item name="popupItemBackground">?attr/selectableItemBackground</item>
 
         <item name="popupMenuStyle">@style/Widget.SiTracker.PopupMenu</item>
@@ -247,9 +248,13 @@
     </style>
 
     <style name="Searched.Subtitle" parent="">
-        <item name="android:maxLines">2</item>
+        <item name="android:maxLines">1</item>
         <item name="android:textColor">@color/body_text_2_inverse</item>
         <item name="android:textSize">@dimen/text_size_medium</item>
+    </style>
+
+    <style name="Searched.Subtitle.TwoLines" parent="Searched.Subtitle">
+        <item name="android:maxLines">2</item>
     </style>
 
 </resources>

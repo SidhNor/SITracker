@@ -4,8 +4,8 @@ import android.content.Context;
 import android.text.Html;
 import android.text.SpannableString;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.andrada.sitracker.R;
@@ -16,7 +16,7 @@ import org.androidannotations.annotations.ViewById;
 import org.jetbrains.annotations.NotNull;
 
 @EViewGroup(R.layout.search_author_list_item)
-public class SearchAuthorItemView extends LinearLayout {
+public class SearchAuthorItemView extends FrameLayout {
 
     @ViewById
     View searchTarget;
