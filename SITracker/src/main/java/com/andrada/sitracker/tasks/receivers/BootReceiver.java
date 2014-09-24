@@ -40,7 +40,7 @@ public class BootReceiver extends BroadcastReceiver {
             LOGD(Constants.APP_TAG, "Received " + intent.getAction() + " intent");
         }
 
-        if (!UpdateServiceHelper.isServiceRunning(context)) {
+        if (!UpdateServiceHelper.isServiceScheduled(context)) {
             UpdateServiceHelper.scheduleUpdates(context);
         }
     }

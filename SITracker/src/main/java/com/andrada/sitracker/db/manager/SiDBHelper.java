@@ -28,6 +28,7 @@ import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
@@ -160,7 +161,7 @@ public class SiDBHelper extends OrmLiteSqliteOpenHelper {
         }
     }
 
-    @Nullable
+    @NotNull
     public AuthorDao getAuthorDao() {
         if (authorDao == null) {
             try {
@@ -172,7 +173,7 @@ public class SiDBHelper extends OrmLiteSqliteOpenHelper {
         return authorDao;
     }
 
-    @Nullable
+    @NotNull
     public PublicationDao getPublicationDao() {
         if (publicationDao == null) {
             try {

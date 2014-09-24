@@ -262,6 +262,12 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
         slidingPane.setPanelSlideListener(slidingPaneListener);
         getSupportFragmentManager().addOnBackStackChangedListener(backStackListener);
 
+        if (UpdateServiceHelper.isServiceCurrentlyRunning(getApplicationContext())) {
+            globalProgress.setVisibility(View.VISIBLE);
+        } else {
+            globalProgress.setVisibility(View.GONE);
+        }
+
         UpdateStatusMessageFilter filter = new UpdateStatusMessageFilter();
         filter.setPriority(1);
         registerReceiver(updateStatusReceiver, filter);
@@ -271,7 +277,7 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
     public void ensureUpdatesAreRunningOnSchedule() {
         boolean isSyncing = prefs.updatesEnabled().get();
 
-        boolean updateServiceUp = UpdateServiceHelper.isServiceRunning(this);
+        boolean updateServiceUp = UpdateServiceHelper.isServiceScheduled(this);
         if (isSyncing && !updateServiceUp) {
             UpdateServiceHelper.scheduleUpdates(this);
         } else if (!isSyncing && updateServiceUp) {
