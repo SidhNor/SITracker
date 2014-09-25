@@ -1,60 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="wrap_content"
-    android:background="@color/author_activated_color"
-    android:padding="16dp">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="@color/white"
+              android:orientation="vertical"
+              android:padding="16dp">
 
-    <ImageView
-        android:id="@+id/appIcon"
+    <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_launcher"
-        android:contentDescription="@string/app_name" />
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/appIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/ic_launcher"/>
+
+        <TextView
+            android:id="@+id/appNameTextview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/appIcon"
+            android:layout_toRightOf="@id/appIcon"
+            android:padding="8dp"
+            android:text="@string/app_name"
+            android:textSize="@dimen/text_size_large"/>
+
+        <TextView
+            android:id="@+id/versionText"
+            style="@style/TextBody"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/appNameTextview"
+            android:layout_toEndOf="@id/appIcon"
+            android:layout_toRightOf="@id/appIcon"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:text="@string/app_version_format"/>
+
+        <TextView
+            android:id="@+id/buildNumber"
+            style="@style/TextBody"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/versionText"
+            android:layout_toEndOf="@id/appIcon"
+            android:layout_toRightOf="@id/appIcon"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:text="@string/app_buildnr_format"/>
+
+    </RelativeLayout>
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/app_name"
-        android:id="@+id/appNameTextview"
-        android:padding="8dp"
-        android:textSize="@dimen/text_size_large"
-        android:layout_toRightOf="@id/appIcon"
-        android:layout_toEndOf="@id/appIcon"/>
-
-    <TextView
-        android:id="@+id/versionText"
-        android:layout_below="@id/appNameTextview"
-        android:layout_toRightOf="@id/appIcon"
-        android:layout_toEndOf="@id/appIcon"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/app_version_format"
-        android:textSize="@dimen/text_size_medium"/>
-
-    <TextView
-        android:id="@+id/buildNumber"
-        android:layout_below="@id/versionText"
-        android:layout_toRightOf="@id/appIcon"
-        android:layout_toEndOf="@id/appIcon"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/app_buildnr_format"
-        android:textSize="@dimen/text_size_medium"/>
-
-
-    <TextView
-        android:layout_below="@id/buildNumber"
         android:id="@+id/generalText"
+        style="@style/TextBody"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:textSize="@dimen/text_size_medium"
         android:background="@android:color/white"
-        android:textColor="@android:color/black"/>
+        android:paddingTop="16dp"
+        android:text="@string/designtime_placeholder_long"/>
 
-</RelativeLayout>
+</LinearLayout>

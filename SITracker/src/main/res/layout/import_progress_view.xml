@@ -16,9 +16,10 @@
   limitations under the License.
   -->
 
-<RelativeLayout xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout
     android:id="@+id/progressPanel"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
 
     android:layout_height="wrap_content"
@@ -33,24 +34,22 @@
 
         <TextView
             android:id="@+id/progressTitle"
+            style="@style/TextBody"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:text="@string/import_message_connecting_title"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@color/body_text_1" />
+            android:text="@string/import_message_connecting_title"/>
 
         <TextView
             android:id="@+id/progressValue"
+            style="@style/TextBody"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:text="@string/import_progress_indication"
-            android:visibility="gone"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@color/body_text_1" />
+            android:visibility="gone"/>
 
         <ProgressBar
             android:id="@+id/importProgressBar"
@@ -60,9 +59,9 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_below="@id/progressTitle"
-            android:indeterminateOnly="false"
             android:indeterminate="true"
-            android:minHeight="16dp" />
+            android:indeterminateOnly="false"
+            android:minHeight="16dp"/>
     </RelativeLayout>
 
     <ImageButton
@@ -76,5 +75,5 @@
         android:layout_centerVertical="true"
         android:background="@color/transparent"
         android:contentDescription="@string/fp_cancel_label"
-        android:src="@drawable/ic_clear" />
+        android:src="@drawable/ic_clear"/>
 </RelativeLayout>

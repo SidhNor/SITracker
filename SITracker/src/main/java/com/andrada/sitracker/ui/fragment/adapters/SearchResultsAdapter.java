@@ -95,7 +95,7 @@ public class SearchResultsAdapter extends BaseAdapter {
             authorsItemView = (SearchAuthorItemView) convertView;
         }
         if (position < mData.size()) {
-            authorsItemView.bind(mData.get(position));
+            // authorsItemView.bind(mData.get(position));
         }
         return authorsItemView;
     }
@@ -105,4 +105,7 @@ public class SearchResultsAdapter extends BaseAdapter {
         return true;
     }
 
+    public List<SearchedAuthor> getData() {
+        return new ArrayList<SearchedAuthor>(mData);
+    }
 }

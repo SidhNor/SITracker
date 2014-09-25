@@ -32,6 +32,56 @@
         </item>
         <item name="listPreferredItemHeightSmall">@dimen/compat_list_preferred_item_height_small
         </item>
+        <item name="android:homeAsUpIndicator">@drawable/ic_up</item>
+        <item name="android:actionOverflowButtonStyle">@style/ActionButton.Overflow</item>
+        <item name="android:editTextBackground">@drawable/edit_text</item>
+    </style>
+
+    <style name="Theme.SiTracker" parent="FrameworkRoot.Theme">
+        <item name="android:actionBarTabStyle">@style/ActionBar.TabView</item>
+        <item name="android:actionBarStyle">@style/ActionBar</item>
+        <item name="android:actionModeBackground">@drawable/cab_background_top_si</item>
+        <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode</item>
+        <item name="android:editTextBackground">@drawable/edit_text</item>
+        <item name="actionBarWidgetTheme">@style/Theme.SiTracker.Widget</item>
+
+        <item name="android:popupMenuStyle">@style/Widget.SiTracker.PopupMenu</item>
+        <item name="android:listPopupWindowStyle">@style/Widget.SiTracker.PopupMenu</item>
+        <item name="android:dropDownListViewStyle">@style/Widget.SiTracker.ListView.DropDown</item>
+        <item name="android:actionDropDownStyle">@style/Widget.SiTracker.ListView.DropDown</item>
+        <item name="android:textAppearanceLargePopupMenu">@style/TextAppearance.LargePopupMenu</item>
+
+    </style>
+
+    <style name="ActionBar" parent="FrameworkRoot.ActionBar">
+        <item name="android:background">@drawable/ab_solid</item>
+        <item name="backgroundStacked">@drawable/ab_solid</item>
+        <item name="android:displayOptions">showHome|showTitle</item>
+        <item name="backgroundSplit">@drawable/ab_solid</item>
+        <item name="android:titleTextStyle">@style/ActionBar.TitleText</item>
+    </style>
+
+    <style name="Theme.SiTracker.Widget" parent="FrameworkRoot.Widget">
+        <item name="android:popupMenuStyle">@style/Widget.SiTracker.PopupMenu</item>
+        <item name="android:listPopupWindowStyle">@style/Widget.SiTracker.PopupMenu</item>
+        <item name="android:dropDownListViewStyle">@style/Widget.SiTracker.ListView.DropDown</item>
+        <item name="android:actionDropDownStyle">@style/Widget.SiTracker.ListView.DropDown</item>
+        <item name="android:textAppearanceLargePopupMenu">@style/TextAppearance.LargePopupMenu</item>
+        <item name="searchViewSearchIcon">@drawable/ic_action_search</item>
+        <item name="searchViewCloseIcon">@drawable/abc_ic_clear_normal</item>
+    </style>
+
+    <style name="Theme.SiTracker.Home" parent="Theme.SiTracker">
+        <item name="windowActionBarOverlay">false</item>
+    </style>
+
+    <style name="Publication.Category.Title" parent="">
+        <item name="android:textAppearance">@android:style/TextAppearance.Large</item>
+        <item name="android:textColor">@color/theme_accent_1</item>
+        <item name="android:textIsSelectable">false</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:focusable">false</item>
+        <item name="android:focusableInTouchMode">false</item>
     </style>
 
 </resources>

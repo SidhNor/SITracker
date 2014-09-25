@@ -1,40 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             android:padding="@dimen/default_grid_margin"
-             tools:context=".ui.SearchActivity">
+<FrameLayout
+    android:id="@+id/searchTarget"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/search_back_default">
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_width="match_parent"
+        android:layout_height="130dp"
+        android:background="?photoItemForeground"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        tools:context=".ui.SearchActivity">
 
         <LinearLayout
             android:id="@+id/inLibraryContainer"
             android:layout_width="@dimen/library_container_width"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:background="?attr/selectableItemBackground"
+            android:layout_marginRight="@dimen/default_grid_margin"
             android:gravity="center_vertical"
             android:orientation="vertical"
             android:paddingBottom="@dimen/divider_margin_top"
-            android:paddingRight="@dimen/divider_margin_top"
             android:paddingTop="@dimen/divider_margin_top"
             tools:ignore="RtlHardcoded,UseCompoundDrawables">
 
             <TextView
                 android:id="@+id/actionText"
+                style="@style/Searched.AddText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/text_vertical_spacing"
-                android:gravity="center"
-                android:maxLines="2"
-                android:text="@string/tap_to_add_to_library"
-                android:textAlignment="center"
-                android:textSize="@dimen/text_size_xsmall"/>
+                android:text="@string/tap_to_add_to_library"/>
 
             <ImageView
                 android:id="@+id/actionImg"
@@ -47,36 +47,31 @@
 
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/authorName"
+                style="@style/Searched.Title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/text_vertical_spacing"
-                android:fontFamily="sans-serif-condensed"
-                android:text="@string/designtime_placeholder_short"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/body_text_1"/>
+                android:text="@string/designtime_placeholder_short"/>
 
-            <TextView
+            <com.andrada.sitracker.ui.widget.AutoResizeTextView
                 android:id="@+id/authorUrl"
+                style="@style/Searched.Subtitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/text_vertical_spacing"
-                android:text="@string/designtime_placeholder_short"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="@color/body_text_2"/>
+                android:text="@string/designtime_placeholder_short"/>
 
-            <TextView
+            <com.andrada.sitracker.ui.widget.AutoResizeTextView
                 android:id="@+id/matchDescription"
+                style="@style/Searched.Subtitle.TwoLines"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/designtime_placeholder_medium"
-                android:textAppearance="?android:attr/textAppearanceSmall"/>
+                android:text="@string/designtime_placeholder_medium"/>
         </LinearLayout>
-
     </LinearLayout>
-
 </FrameLayout>

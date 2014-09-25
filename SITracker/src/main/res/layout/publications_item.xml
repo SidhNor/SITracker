@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   Copyright 2014 Gleb Godonoga.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,65 +20,53 @@
              android:layout_width="match_parent"
              android:layout_height="wrap_content"
              android:background="?attr/selectableItemBackground"
-             android:orientation="vertical"
-             android:showDividers="middle"
              tools:context=".ui.SimpleSinglePaneActivity">
 
     <RelativeLayout
         android:id="@+id/backgroundPane"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="@dimen/default_grid_margin"
-        android:paddingTop="@dimen/default_grid_margin">
+        android:layout_height="96dp"
+        android:paddingTop="8dp">
 
         <RelativeLayout
             android:id="@+id/pub_img_container"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true">
+            android:layout_height="wrap_content">
 
             <ImageView
                 android:id="@+id/publication_image"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/publication_pixel_size"
+                android:layout_width="@dimen/keyline_2_minus_16dp"
+                android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:paddingRight="@dimen/default_grid_margin"
+                android:contentDescription="@null"
+                android:paddingLeft="@dimen/keyline_1"
                 android:scaleType="centerInside"
                 android:src="@drawable/blank_book"
                 android:visibility="visible"/>
         </RelativeLayout>
 
-
         <TextView
             android:id="@+id/item_title"
+            style="@style/Publication.Title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_marginBottom="@dimen/text_vertical_spacing"
             android:layout_toLeftOf="@+id/actions_view"
             android:layout_toRightOf="@+id/pub_img_container"
-            android:ellipsize="end"
-            android:fontFamily="sans-serif-condensed"
-            android:lines="1"
-            android:scrollHorizontally="true"
-            android:text="@string/designtime_placeholder_short"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="?android:attr/textColorPrimary"/>
+            android:paddingLeft="@dimen/keyline_1"
+            android:text="@string/designtime_placeholder_short"/>
 
         <com.andrada.sitracker.ui.widget.EllipsizedTextView
             android:id="@+id/item_description"
+            style="@style/Publication.Subtitle"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:layout_below="@+id/item_title"
-            android:layout_gravity="left|center_vertical"
             android:layout_toLeftOf="@+id/actions_view"
             android:layout_toRightOf="@+id/pub_img_container"
-            android:ellipsize="end"
-            android:maxLines="3"
-            android:singleLine="false"
-            android:text="@string/designtime_placeholder_long"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="?android:attr/textColorSecondary"/>
+            android:paddingLeft="@dimen/keyline_1"
+            android:text="@string/designtime_placeholder_long"/>
 
         <LinearLayout
             android:id="@+id/actions_view"
@@ -86,17 +75,16 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
             android:layout_marginLeft="@dimen/default_grid_margin"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingRight="@dimen/keyline_1">
 
             <TextView
                 android:id="@+id/item_update_date"
+                style="@style/Widget.UpdateDate.Text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="right"
                 android:layout_marginBottom="@dimen/text_vertical_spacing"
-                android:text="@string/designtime_placeholder_date"
-                android:textAlignment="viewEnd"
-                android:textSize="12sp"/>
+                android:text="@string/designtime_placeholder_date"/>
 
             <TextView
                 android:id="@+id/itemSize"
@@ -105,7 +93,8 @@
                 android:layout_gravity="right"
                 android:layout_marginBottom="@dimen/text_vertical_spacing"
                 android:text="@string/designtime_placeholder_size"
-                android:textAlignment="viewEnd"/>
+                android:textAlignment="viewEnd"
+                android:textSize="@dimen/text_size_medium"/>
 
             <ImageButton
                 android:id="@+id/item_updated"
@@ -122,28 +111,25 @@
             android:id="@+id/publication_item_divider"
             style="@style/Theme.SiTracker.DividerThin"
             android:layout_alignParentBottom="true"
-            android:layout_below="@id/item_description"
-            android:layout_marginBottom="6dp"
-            android:layout_marginTop="4dp"/>
+            android:layout_marginTop="8dp"/>
 
     </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/downloadProgress"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="96dp"
         android:background="#FFFFFFFF"
-        android:minHeight="65dp"
+        android:paddingTop="16dp"
         android:visibility="gone">
 
         <TextView
             android:id="@+id/text1"
+            style="@style/TextHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"
-            android:text="@string/publications_downloading"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="?android:attr/textColorPrimary"/>
+            android:text="@string/publications_downloading"/>
 
         <ProgressBar
             android:layout_width="match_parent"
@@ -160,8 +146,7 @@
         <View
             style="@style/Theme.SiTracker.DividerThin"
             android:layout_alignParentBottom="true"
-            android:layout_marginBottom="6dp"
-            android:layout_marginTop="4dp"/>
+            android:layout_marginTop="8dp"/>
     </RelativeLayout>
 
 </FrameLayout>

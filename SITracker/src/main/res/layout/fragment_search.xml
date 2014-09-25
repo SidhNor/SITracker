@@ -1,37 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:sitracker="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+             xmlns:sitracker="http://schemas.android.com/apk/res-auto"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
 
     <com.andrada.sitracker.ui.components.CollectionView
         android:id="@+id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:scrollbarStyle="outsideOverlay"
         android:background="@drawable/authors_list_background"
         android:cacheColorHint="@color/light_color_hint"
-        sitracker:internalPadding="@dimen/explore_grid_padding" />
+        android:clipToPadding="false"
+        android:padding="@dimen/half_search_grid_padding"
+        android:scrollbarStyle="outsideOverlay"
+        sitracker:internalPadding="@dimen/search_grid_padding"/>
 
     <ProgressBar
         android:id="@+id/loading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:paddingTop="?actionBarSize"
-        android:visibility="gone" />
+        android:visibility="gone"/>
 
     <TextView
         android:id="@+id/emptyText"
+        style="@style/EmptyText"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:paddingTop="?actionBarSize"
-        android:textColor="@color/body_text_2"
-        android:textSize="@dimen/text_size_medium"
-        android:visibility="gone" />
+        android:text="@string/designtime_placeholder_short"
+        android:visibility="gone"/>
 
 </FrameLayout>

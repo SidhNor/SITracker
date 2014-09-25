@@ -14,23 +14,21 @@
   limitations under the License.
   -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@android:color/white"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:descendantFocusability="blocksDescendants">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:background="@android:color/white"
+             android:descendantFocusability="blocksDescendants"
+             android:paddingLeft="@dimen/tablet_horizontal_padding"
+             android:paddingRight="@dimen/tablet_horizontal_padding">
 
     <ExpandableListView
         android:id="@+id/publication_list"
-        android:divider="@null"
-        android:groupIndicator="@drawable/expander_group_holo_light"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:divider="@null"
+        android:groupIndicator="@drawable/expander_group"
         android:listSelector="@drawable/authors_list_selector"
-        android:paddingTop="@dimen/default_grid_margin"
-        android:paddingBottom="@dimen/default_grid_margin" />
-
-</LinearLayout>
+        android:paddingBottom="@dimen/default_list_vertical_spacing"
+        android:paddingTop="@dimen/default_list_vertical_spacing"/>
+</FrameLayout>

@@ -1,7 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <declare-styleable name="BaseTheme">
+        <attr name="actionBarOverlayTopOffset" format="dimension"/>
+        <attr name="actionBarInsetStart" format="dimension"/>
+        <attr name="selectableItemBackgroundBorderless" format="dimension"/>
+        <attr name="photoItemForeground" format="dimension"/>
+        <attr name="popupItemBackground" format="dimension"/>
+    </declare-styleable>
+
     <declare-styleable name="CollectionView">
-        <attr name="internalPadding" format="dimension" />
-        <attr name="contentTopClearance" format="dimension" />
+        <attr name="internalPadding" format="dimension"/>
+        <attr name="contentTopClearance" format="dimension"/>
     </declare-styleable>
 </resources>

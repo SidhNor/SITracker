@@ -18,32 +18,38 @@
 
     <style name="FrameworkRoot.Theme" parent="FrameworkRoot.Base">
         <!-- API 11+ -->
-        <item name="buttonBarStyle">?android:buttonBarStyle</item>
-        <item name="buttonBarButtonStyle">?android:buttonBarButtonStyle</item>
-        <item name="indeterminateProgressStyle">?android:indeterminateProgressStyle</item>
+        <item name="android:buttonBarStyle">?android:buttonBarStyle</item>
+        <item name="android:buttonBarButtonStyle">?android:buttonBarButtonStyle</item>
+        <item name="android:indeterminateProgressStyle">?android:indeterminateProgressStyle</item>
         <!-- API 14+ -->
-        <item name="listPreferredItemPaddingLeft">?android:listPreferredItemPaddingLeft</item>
-        <item name="listPreferredItemPaddingRight">?android:listPreferredItemPaddingRight</item>
-        <item name="listPreferredItemHeightSmall">?android:listPreferredItemHeightSmall</item>
+        <item name="android:listPreferredItemPaddingLeft">?android:listPreferredItemPaddingLeft</item>
+        <item name="android:listPreferredItemPaddingRight">?android:listPreferredItemPaddingRight</item>
+        <item name="android:listPreferredItemHeightSmall">?android:listPreferredItemHeightSmall</item>
+        <item name="android:homeAsUpIndicator">@drawable/ic_up</item>
+        <item name="android:actionOverflowButtonStyle">@style/ActionButton.Overflow</item>
+        <item name="android:editTextBackground">@drawable/edit_text</item>
     </style>
 
     <style name="Theme.SiTracker" parent="FrameworkRoot.Theme">
-        <item name="android:actionBarItemBackground">@drawable/selectable_background_si</item>
-        <item name="android:popupMenuStyle">@style/PopupMenu</item>
-        <item name="android:dropDownListViewStyle">@style/DropDownListView</item>
         <item name="android:actionBarTabStyle">@style/ActionBar.TabView</item>
-        <item name="android:actionDropDownStyle">@style/DropDownNav</item>
         <item name="android:actionBarStyle">@style/ActionBar</item>
-        <item name="actionModeBackground">@drawable/cab_background_top_si</item>
-        <item name="actionModeSplitBackground">@drawable/cab_background_bottom_si</item>
+        <item name="android:actionModeBackground">@drawable/cab_background_top_si</item>
         <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode</item>
+        <item name="android:actionBarWidgetTheme">@style/Theme.SiTracker.Widget</item>
+
+        <item name="actionBarOverlayTopOffset">?android:actionBarSize</item>
+        <item name="actionBarInsetStart">?android:actionBarSize</item>
+        <item name="photoItemForeground">?android:selectableItemBackground</item>
+        <item name="popupItemBackground">?android:selectableItemBackground</item>
+
     </style>
 
     <style name="ActionBar" parent="FrameworkRoot.ActionBar">
         <item name="android:background">@drawable/ab_solid</item>
-        <item name="android:backgroundStacked">@drawable/ab_stacked_solid_si</item>
-        <item name="android:backgroundSplit">@drawable/ab_bottom_solid_si</item>
-        <item name="android:progressBarStyle">@style/ProgressBar</item>
+        <item name="android:backgroundStacked">@drawable/ab_solid</item>
+        <item name="android:displayOptions">showHome|showTitle</item>
+        <item name="android:backgroundSplit">@drawable/ab_solid</item>
+        <item name="android:titleTextStyle">@style/ActionBar.TitleText</item>
     </style>
 
 </resources>

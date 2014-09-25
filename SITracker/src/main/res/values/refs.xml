@@ -1,11 +1,11 @@
 <!--
-  Copyright 2013 Gleb Godonoga.
+  Copyright 2014 Google Inc. All rights reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
 
-     http://www.apache.org/licenses/LICENSE-2.0
+       http://www.apache.org/licenses/LICENSE-2.0
 
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,13 +15,7 @@
   -->
 
 <resources>
-
-    <!--
-         Customize dimensions originally defined in res/values/dimens.xml (such as
-         screen margins) for sw720dp devices (e.g. 10" tablets) in landscape here.
-    -->
-    <dimen name="tablet_horizontal_padding">128dp</dimen>
-    <dimen name="default_grid_margin">16dp</dimen>
-    <dimen name="text_vertical_spacing">8dp</dimen>
-    <dimen name="import_activity_spacing">128dp</dimen>
+    <item name="toolbar_actionbar_with_headerbar" type="layout">@layout/toolbar_actionbar</item>
+    <item name="toolbar_actionbar_with_translucent_background" type="layout">@layout/toolbar_actionbar</item>
+    <item name="header_shadow" type="drawable">@drawable/bottom_shadow</item>
 </resources>

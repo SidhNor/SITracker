@@ -1,5 +1,6 @@
 package com.andrada.sitracker.ui.fragment;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.backup.BackupManager;
 import android.content.Context;
@@ -37,7 +38,7 @@ import com.andrada.sitracker.util.UIUtils;
 
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.ItemClick;
+import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.jetbrains.annotations.NotNull;
 
@@ -50,28 +51,37 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 import static com.andrada.sitracker.util.LogUtils.LOGD;
 import static com.andrada.sitracker.util.LogUtils.makeLogTag;
 
+
+interface Callbacks {
+    public void onAuthorSelected(SearchedAuthor author);
+}
+
 @EFragment(R.layout.fragment_search)
 public class RemoteAuthorsFragment extends Fragment implements
-        LoaderManager.LoaderCallbacks<AsyncTaskResult<List<SearchedAuthor>>>, CollectionViewCallbacks {
+        LoaderManager.LoaderCallbacks<AsyncTaskResult<List<SearchedAuthor>>>, 
+        CollectionViewCallbacks, Callbacks {
 
     private static final String TAG = makeLogTag(RemoteAuthorsFragment.class);
-
+    private static Callbacks sDummyCallbacks = new Callbacks() {
+        @Override
+        public void onAuthorSelected(SearchedAuthor author) {
+        }
+    };
+    private Callbacks mCallbacks = sDummyCallbacks;
     @ViewById
     CollectionView list;
-
     @ViewById
     ProgressBar loading;
-
     @ViewById
     TextView emptyText;
     @Bean
     SearchResultsAdapter adapter;
     private Bundle mArguments;
     private Uri mCurrentUri;
-
-    @ItemClick
-    public void listItemClicked(int position) {
-        final SearchedAuthor author = ((SearchedAuthor) adapter.getItem(position));
+   
+    @Override
+    public void onAuthorSelected(SearchedAuthor author) {
+        final SearchedAuthor authorToAdd = author;
         if (author.isAdded()) {
             return;
         }
@@ -82,7 +92,7 @@ public class RemoteAuthorsFragment extends Fragment implements
                     public void onClick(DialogInterface dialogInterface, int i) {
                         //TODO make sure to run this in UI thread
                         loading.setVisibility(View.VISIBLE);
-                        new AddAuthorTask(getActivity()).execute(author.getAuthorUrl());
+                        new AddAuthorTask(getActivity()).execute(authorToAdd.getAuthorUrl());
                     }
                 })
                 .setNegativeButton(android.R.string.cancel, null);
@@ -108,22 +118,13 @@ public class RemoteAuthorsFragment extends Fragment implements
                 Constants.GA_EVENT_AUTHOR_ADDED,
                 Constants.GA_EVENT_AUTHOR_ADDED, (long) message.length());
 
-        //Stop progress bar
-
-        Style.Builder alertStyle = new Style.Builder()
-                .setTextAppearance(android.R.attr.textAppearanceLarge)
-                .setPaddingInPixels(25);
-
-        if (message.length() == 0) {
-            //This is success
-            alertStyle.setBackgroundColorValue(Style.holoGreenLight);
-            message = getString(R.string.author_add_success_crouton_message);
-        } else {
-            alertStyle.setBackgroundColorValue(Style.holoRedLight);
+        if (message.length() != 0) {
+            Style.Builder alertStyle = new Style.Builder()
+                    .setTextAppearance(android.R.attr.textAppearanceLarge)
+                    .setPaddingInPixels(25)
+                    .setBackgroundColorValue(Style.holoRedLight);
+            Crouton.makeText(getActivity(), message, alertStyle.build()).show();
         }
-        Crouton.makeText(getActivity(), message, alertStyle.build()).show();
-        BackupManager bm = new BackupManager(getActivity());
-        bm.dataChanged();
     }
 
 
@@ -132,6 +133,7 @@ public class RemoteAuthorsFragment extends Fragment implements
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
         setRetainInstance(true);
+        mCallbacks = this;
         //noinspection VariableNotUsedInsideIf
         if (mCurrentUri != null) {
             // Only if this is a config change should we initLoader(), to reconnect with an
@@ -145,6 +147,11 @@ public class RemoteAuthorsFragment extends Fragment implements
     public void onDestroy() {
         EventBus.getDefault().unregister(this);
         super.onDestroy();
+    }
+
+    @UiThread(delay = 100)
+    void requestUpdateCollectionView(List<SearchedAuthor> data) {
+        updateCollectionView(data);
     }
 
     public void requestQueryUpdate(String query) {
@@ -209,13 +216,28 @@ public class RemoteAuthorsFragment extends Fragment implements
                 .setDisplayCols(displayCols)
                 .setShowHeader(false);
         int dataIndex = -1;
-        while (dataIndex < adapter.getCount()) {
+        while ((dataIndex + 1) < adapter.getCount()) {
             ++dataIndex;
             group.addItemWithCustomDataIndex(dataIndex);
         }
         CollectionView.Inventory inventory = new CollectionView.Inventory();
         inventory.addGroup(group);
         return inventory;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mCallbacks = sDummyCallbacks;
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mCallbacks = this;
+        if (adapter != null && adapter.getCount() > 0) {
+            requestUpdateCollectionView(adapter.getData());
+        }
     }
 
     private void hideEmptyView() {
@@ -319,7 +341,13 @@ public class RemoteAuthorsFragment extends Fragment implements
     public void bindCollectionItemView(Context context, View view, int groupId, int indexInGroup, int dataIndex, Object tag) {
         SearchAuthorItemView authView = (SearchAuthorItemView) view;
         if (dataIndex < adapter.getCount()) {
-            authView.bind((SearchedAuthor) adapter.getItem(dataIndex));
+            final SearchedAuthor auth = (SearchedAuthor) adapter.getItem(dataIndex);
+            authView.bind(auth, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mCallbacks.onAuthorSelected(auth);
+                }
+            });
         }
     }
 }

@@ -19,8 +19,8 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
              android:layout_width="match_parent"
              android:layout_height="wrap_content"
-             android:padding="@dimen/activity_vertical_margin"
-             android:background="#00000000">
+             android:background="@color/transparent"
+             android:padding="@dimen/activity_vertical_margin">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -33,13 +33,10 @@
 
         <TextView
             android:id="@+id/importResultTitle"
+            style="@style/Widget.WhiteBody.Title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/author_import_success_crouton_message"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#fff"
-            android:textStyle="bold"
-            />
+            android:text="@string/author_import_success_crouton_message"/>
 
         <View
             android:id="@+id/importDivider"
@@ -47,38 +44,32 @@
             android:layout_height="1dp"
             android:layout_below="@+id/importResultTitle"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="5dp"
             android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
             android:background="#FFDDDDDD"/>
 
         <TextView
             android:id="@+id/totalAuthorsText"
+            style="@style/Widget.WhiteBody.Text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/author_import_total_crouton_message"
-            android:textColor="#fff"
-            android:textStyle="bold"
             android:layout_below="@+id/importDivider"
-            />
+            android:text="@string/author_import_total_crouton_message"/>
 
         <TextView
             android:id="@+id/successAuthorsText"
+            style="@style/Widget.WhiteBody.Text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/author_import_processed_crouton_message"
-            android:textColor="#fff"
-            android:textStyle="bold"
             android:layout_below="@+id/totalAuthorsText"
-            />
+            android:text="@string/author_import_processed_crouton_message"/>
 
         <TextView
             android:id="@+id/failedAuthorsText"
+            style="@style/Widget.WhiteBody.Text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/author_import_failed_crouton_message"
-            android:textColor="#fff"
-            android:textStyle="bold"
             android:layout_below="@+id/successAuthorsText"
-            />
+            android:text="@string/author_import_failed_crouton_message"/>
     </RelativeLayout>
 </FrameLayout>

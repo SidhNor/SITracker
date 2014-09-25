@@ -18,11 +18,17 @@ package com.andrada.sitracker.ui.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Canvas;
+import android.text.Layout;
+import android.text.StaticLayout;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.widget.TextView;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link android.widget.TextView} subclass that uses {@link android.text.TextUtils#ellipsize(CharSequence,
@@ -33,9 +39,20 @@ import org.jetbrains.annotations.NotNull;
  * issues for the built-in TextView ellipsize function.
  */
 public class EllipsizedTextView extends TextView {
-    private static final int MAX_ELLIPSIZE_LINES = 100;
 
-    private int mMaxLines;
+    private static final String ELLIPSIS = "...";
+    private final List<EllipsizeListener> ellipsizeListeners = new ArrayList<EllipsizeListener>();
+    private boolean isEllipsized;
+    private boolean isStale;
+    private boolean programmaticChange;
+    private String fullText;
+    private int maxLines = -1;
+    private float lineSpacingMultiplier = 1.0f;
+    private float lineAdditionalVerticalPadding = 0.0f;
+
+    public EllipsizedTextView(@NotNull Context context) {
+        this(context, null, 0);
+    }
 
     public EllipsizedTextView(@NotNull Context context, @NotNull AttributeSet attrs) {
         this(context, attrs, 0);
@@ -48,30 +65,112 @@ public class EllipsizedTextView extends TextView {
         final TypedArray a = context.obtainStyledAttributes(attrs, new int[]{
                 android.R.attr.maxLines
         }, defStyle, 0);
-
-        mMaxLines = a.getInteger(0, 1);
+        maxLines = a.getInteger(0, 2);
         a.recycle();
     }
 
-    @Override
-    public void setText(@NotNull CharSequence text, BufferType type) {
-        CharSequence newText = getWidth() == 0 || mMaxLines > MAX_ELLIPSIZE_LINES ? text :
-                TextUtils.ellipsize(text, getPaint(), (getWidth() - 40) * mMaxLines,
-                        TextUtils.TruncateAt.END, false, null);
-        super.setText(newText, type);
+    public void addEllipsizeListener(EllipsizeListener listener) {
+        if (listener == null) {
+            throw new NullPointerException();
+        }
+        ellipsizeListeners.add(listener);
     }
 
-    @Override
-    protected void onSizeChanged(int width, int height, int oldWidth, int oldHeight) {
-        super.onSizeChanged(width, height, oldWidth, oldHeight);
-        if (width > 0 && oldWidth != width) {
-            setText(getText());
+    public void removeEllipsizeListener(EllipsizeListener listener) {
+        ellipsizeListeners.remove(listener);
+    }
+
+    public boolean isEllipsized() {
+        return isEllipsized;
+    }
+
+    private void resetText() {
+        int maxLines = getMaxLines();
+        String workingText = fullText;
+        boolean ellipsized = false;
+        if (maxLines != -1) {
+            Layout layout = createWorkingLayout(workingText);
+            if (layout.getLineCount() > maxLines) {
+                workingText = fullText.substring(0, layout.getLineEnd(maxLines - 1)).trim();
+                while (createWorkingLayout(workingText + ELLIPSIS).getLineCount() > maxLines) {
+                    int lastSpace = workingText.lastIndexOf(' ');
+                    if (lastSpace == -1) {
+                        break;
+                    }
+                    workingText = workingText.substring(0, lastSpace);
+                }
+                workingText = workingText + ELLIPSIS;
+                ellipsized = true;
+            }
+        }
+        if (!workingText.equals(getText())) {
+            programmaticChange = true;
+            try {
+                setText(workingText);
+            } finally {
+                programmaticChange = false;
+            }
+        }
+        isStale = false;
+        if (ellipsized != isEllipsized) {
+            isEllipsized = ellipsized;
+            for (EllipsizeListener listener : ellipsizeListeners) {
+                listener.ellipsizeStateChanged(ellipsized);
+            }
         }
     }
 
     @Override
-    public void setMaxLines(int maxlines) {
-        super.setMaxLines(maxlines);
-        mMaxLines = maxlines;
+    protected void onDraw(Canvas canvas) {
+        if (isStale) {
+            super.setEllipsize(null);
+            resetText();
+        }
+        super.onDraw(canvas);
     }
+
+    private Layout createWorkingLayout(String workingText) {
+        return new StaticLayout(workingText, getPaint(), getWidth() - getPaddingLeft() - getPaddingRight(),
+                Layout.Alignment.ALIGN_NORMAL, lineSpacingMultiplier, lineAdditionalVerticalPadding, false);
+    }
+
+    public interface EllipsizeListener {
+        void ellipsizeStateChanged(boolean ellipsized);
+    }
+
+    @Override
+    public void setMaxLines(int maxLines) {
+        super.setMaxLines(maxLines);
+        this.maxLines = maxLines;
+        isStale = true;
+    }
+
+
+    public int getMaxLines() {
+        return maxLines;
+    }
+
+    @Override
+    public void setEllipsize(TextUtils.TruncateAt where) {
+        // Ellipsize settings are not respected
+    }
+
+    @Override
+    public void setLineSpacing(float add, float mult) {
+        this.lineAdditionalVerticalPadding = add;
+        this.lineSpacingMultiplier = mult;
+        super.setLineSpacing(add, mult);
+    }
+
+
+    @Override
+    protected void onTextChanged(CharSequence text, int start, int before, int after) {
+        super.onTextChanged(text, start, before, after);
+        if (!programmaticChange) {
+            fullText = text.toString();
+            isStale = true;
+        }
+    }
+
+
 }
