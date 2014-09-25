@@ -6,7 +6,7 @@ import android.support.v4.content.AsyncTaskLoader;
 
 import com.andrada.sitracker.contracts.AppUriContract;
 import com.andrada.sitracker.db.beans.SearchedAuthor;
-import com.andrada.sitracker.exceptions.SamlibBusyException;
+import com.andrada.sitracker.exceptions.SearchException;
 import com.andrada.sitracker.reader.SamlibAuthorSearchReader;
 import com.github.kevinsawicki.http.HttpRequest;
 
@@ -32,12 +32,10 @@ import java.util.Map;
 import static com.andrada.sitracker.util.LogUtils.LOGD;
 import static com.andrada.sitracker.util.LogUtils.LOGE;
 
-public class SamlibSearchLoader extends AsyncTaskLoader<List<SearchedAuthor>> {
-
-    private static final String TAG = "SamlibSearchLoader";
+public class SamlibSearchLoader extends AsyncTaskLoader<AsyncTaskResult<List<SearchedAuthor>>> {
 
     public static final int SEARCH_TOKEN = 0x3;
-
+    private static final String TAG = "SamlibSearchLoader";
     private static final String SEARCH_URL = "http://samlib.ru/cgi-bin/seek?DIR=%s&FIND=%s&PLACE=index&JANR=%d&TYPE=%d&PAGE=%d";
     private static final String DEFAULT_SAMLIB_ENCODING = "windows-1251";
     private static final String DEFAULT_DIR = "";
@@ -60,8 +58,118 @@ public class SamlibSearchLoader extends AsyncTaskLoader<List<SearchedAuthor>> {
         mQuery = query;
     }
 
+    private void readData(BufferedReader reader, StringBuffer appendable) throws IOException {
+        try {
+            final CharBuffer buffer = CharBuffer.allocate(8192);
+            int read;
+            while ((read = reader.read(buffer)) != -1) {
+                buffer.rewind();
+                appendable.append(buffer, 0, read);
+                buffer.rewind();
+            }
+        } catch (IOException e) {
+            LOGE(TAG, "Could not read data", e);
+        } finally {
+            try {
+                reader.close();
+            } catch (IOException ignored) {
+
+            }
+            finishedLoading = true;
+        }
+    }
+
+    /**
+     * Called when there is new data to deliver to the client.  The
+     * super class will take care of delivering it; the implementation
+     * here just adds a little more logic.
+     */
     @Override
-    public List<SearchedAuthor> loadInBackground() {
+    public void deliverResult(@NotNull AsyncTaskResult<List<SearchedAuthor>> result) {
+        if (isReset()) {
+            // An async query came in while the loader is stopped.  We
+            // don't need the result.
+            if (result.getResult().size() != 0) {
+                onReleaseResources(result.getResult());
+            }
+        }
+        List<SearchedAuthor> oldAuthors = mAuthors;
+        mAuthors = result.getResult();
+
+        if (isStarted()) {
+            // If the Loader is currently started, we can immediately
+            // deliver its results.
+            super.deliverResult(result);
+        }
+
+        // At this point we can release the resources associated with
+        // 'oldApps' if needed; now that the new result is delivered we
+        // know that it is no longer in use.
+        if (mAuthors.size() != 0) {
+            onReleaseResources(oldAuthors);
+        }
+    }
+
+    /**
+     * Handles a request to start the Loader.
+     */
+    @Override
+    protected void onStartLoading() {
+        if (mAuthors.size() != 0) {
+            // If we currently have a result available, deliver it
+            // immediately.
+            deliverResult(new AsyncTaskResult<List<SearchedAuthor>>(mAuthors, null));
+        }
+        if (takeContentChanged() || mAuthors.size() == 0) {
+            // If the data has changed since the last time it was loaded
+            // or is not currently available, start a load.
+            forceLoad();
+        }
+    }
+
+    /**
+     * Handles a request to stop the Loader.
+     */
+    @Override
+    protected void onStopLoading() {
+        // Force cancel the current load task.
+        LOGD(TAG, "Force stopping task");
+        BackgroundExecutor.cancelAll(BUFF_READER_ID, true);
+        //Sanity
+        finishedLoading = true;
+        cancelLoad();
+    }
+
+    /**
+     * Handles a request to completely reset the Loader.
+     */
+    @Override
+    protected void onReset() {
+        super.onReset();
+
+        // Ensure the loader is stopped
+        onStopLoading();
+
+        // At this point we can release the resources associated with 'apps'
+        // if needed.
+        if (mAuthors.size() != 0) {
+            onReleaseResources(null);
+        }
+    }
+
+    /**
+     * Handles a request to cancel a load.
+     */
+    @Override
+    public void onCanceled(AsyncTaskResult<List<SearchedAuthor>> result) {
+        super.onCanceled(result);
+        BackgroundExecutor.cancelAll(BUFF_READER_ID, true);
+        // if needed.
+        onReleaseResources(result.getResult());
+    }
+
+    @Override
+    public AsyncTaskResult<List<SearchedAuthor>> loadInBackground() {
         String searchString = AppUriContract.getSanitizedSearchQuer(mQuery);
         try {
             searchString = URLEncoder.encode(searchString, DEFAULT_SAMLIB_ENCODING);
@@ -70,6 +178,7 @@ public class SamlibSearchLoader extends AsyncTaskLoader<List<SearchedAuthor>> {
         }
         String url = String.format(SEARCH_URL, DEFAULT_DIR, searchString, DEFAULT_GENRE, DEFAULT_TYPE, 1);
         Map<String, SearchedAuthor> hashAuthors = new HashMap<String, SearchedAuthor>();
+        Exception possibleException = null;
         try {
             long requestStart = new Date().getTime();
             final HttpRequest request = HttpRequest.get(new URL(url));
@@ -80,7 +189,7 @@ public class SamlibSearchLoader extends AsyncTaskLoader<List<SearchedAuthor>> {
             }
 
             if (request.code() == 500) {
-                throw new SamlibBusyException();
+                throw new SearchException(SearchException.SearchErrors.SAMLIB_BUSY);
             }
 
             final StringBuffer buffer = new StringBuffer();
@@ -128,137 +237,28 @@ public class SamlibSearchLoader extends AsyncTaskLoader<List<SearchedAuthor>> {
                     return searchedAuthor.weightedCompare(searchedAuthor2, unencodedQuery);
                 }
             });
+
         } catch (MalformedURLException e) {
-            //TODO post error event
-            e.printStackTrace();
+            possibleException = new SearchException(SearchException.SearchErrors.ERROR_UNKNOWN);
+            LOGE(TAG, "Got 404", e);
         } catch (HttpRequest.HttpRequestException e) {
-            //TODO post error event
-            e.printStackTrace();
-        } catch (SamlibBusyException e) {
-            //TODO post error event
-            e.printStackTrace();
+            possibleException = new SearchException(SearchException.SearchErrors.NETWORK_ERROR);
+            LOGE(TAG, "Error reading stream", e);
+        } catch (SearchException e) {
+            possibleException = e;
+            LOGE(TAG, "Samlib server is busy", e);
         } catch (InterruptedException e) {
-            //TODO post error event
-            e.printStackTrace();
+            possibleException = new SearchException(SearchException.SearchErrors.INTERNAL_ERROR);
+            LOGE(TAG, "Got thread interrupt", e);
         }
-        return mAuthors;
-    }
-
-    private void readData(BufferedReader reader, StringBuffer appendable) throws IOException {
-        try {
-            final CharBuffer buffer = CharBuffer.allocate(8192);
-            int read;
-            while ((read = reader.read(buffer)) != -1) {
-                buffer.rewind();
-                appendable.append(buffer, 0, read);
-                buffer.rewind();
-            }
-        } catch (HttpRequest.HttpRequestException e) {
-            throw e;
-        } catch (IOException e) {
-            LOGE(TAG, "Could not read data", e);
-        } finally {
-            try {
-                reader.close();
-            } catch (IOException ignored) {
-
-            }
-            finishedLoading = true;
-        }
-    }
-
-    /**
-     * Called when there is new data to deliver to the client.  The
-     * super class will take care of delivering it; the implementation
-     * here just adds a little more logic.
-     */
-    @Override
-    public void deliverResult(@NotNull List<SearchedAuthor> authors) {
-        if (isReset()) {
-            // An async query came in while the loader is stopped.  We
-            // don't need the result.
-            if (authors.size() != 0) {
-                onReleaseResources(authors);
-            }
-        }
-        List<SearchedAuthor> oldAuthors = mAuthors;
-        mAuthors = authors;
-
-        if (isStarted()) {
-            // If the Loader is currently started, we can immediately
-            // deliver its results.
-            super.deliverResult(authors);
-        }
-
-        // At this point we can release the resources associated with
-        // 'oldApps' if needed; now that the new result is delivered we
-        // know that it is no longer in use.
-        if (mAuthors.size() != 0) {
-            onReleaseResources(oldAuthors);
-        }
-    }
-
-    /**
-     * Handles a request to start the Loader.
-     */
-    @Override
-    protected void onStartLoading() {
-        if (mAuthors.size() != 0) {
-            // If we currently have a result available, deliver it
-            // immediately.
-            deliverResult(mAuthors);
-        }
-        if (takeContentChanged() || mAuthors.size() == 0) {
-            // If the data has changed since the last time it was loaded
-            // or is not currently available, start a load.
-            forceLoad();
-        }
-    }
-
-    /**
-     * Handles a request to stop the Loader.
-     */
-    @Override
-    protected void onStopLoading() {
-        // Attempt to cancel the current load task if possible.
-        BackgroundExecutor.cancelAll(BUFF_READER_ID, true);
-        cancelLoad();
-    }
-
-    /**
-     * Handles a request to cancel a load.
-     */
-    @Override
-    public void onCanceled(List<SearchedAuthor> apps) {
-        super.onCanceled(apps);
-        BackgroundExecutor.cancelAll(BUFF_READER_ID, true);
-        // At this point we can release the resources associated with 'apps'
-        // if needed.
-        onReleaseResources(apps);
-    }
-
-    /**
-     * Handles a request to completely reset the Loader.
-     */
-    @Override
-    protected void onReset() {
-        super.onReset();
-
-        // Ensure the loader is stopped
-        onStopLoading();
-
-        // At this point we can release the resources associated with 'apps'
-        // if needed.
-        if (mAuthors.size() != 0) {
-            onReleaseResources(mAuthors);
-        }
+        return new AsyncTaskResult<List<SearchedAuthor>>(mAuthors, possibleException);
     }
 
     /**
      * Helper function to take care of releasing resources associated
      * with an actively loaded data set.
      */
-    protected void onReleaseResources(List<SearchedAuthor> apps) {
+    protected void onReleaseResources(List<SearchedAuthor> result) {
         // For a simple List<> there is nothing to do.  For something
         // like a Cursor, we would close it here.
         mAuthors.clear();

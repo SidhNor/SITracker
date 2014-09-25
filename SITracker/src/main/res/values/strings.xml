@@ -44,6 +44,11 @@
     <string name="app_buildnr_format">Build number: %1$s</string>
 
     <string name="empty_search_results">No authors for your query</string>
+    <!--Search errors -->
+    <string name="cannot_search_busy">Could not perform search. Samlib is busy.</string>
+    <string name="cannot_search_network">Could not perform search. Check your internet connection.</string>
+    <string name="cannot_search_internal">An internal error occurred. Please try again.</string>
+    <string name="cannot_search_unknown">An unknown error occurred while searching. Please try again.</string>
 
     <!-- Shown as a link in the About screen of the app; user can click it to see the licenses. -->
     <string name="about_licenses">Open Source Licenses</string>
@@ -199,5 +204,6 @@
     <string name="book_folder_name">Books</string>
     <string name="export_folder_name">SiTrackerExport</string>
     <string name="cannot_write_export_file">Error writing to export file</string>
+
 
 </resources>

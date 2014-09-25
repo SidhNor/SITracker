@@ -16,6 +16,7 @@
 
 package com.andrada.sitracker.util;
 
+import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -27,9 +28,20 @@ import com.andrada.sitracker.tasks.UpdateAuthorsTask_;
 
 public class UpdateServiceHelper {
 
-    public static boolean isServiceRunning(Context context) {
+    public static boolean isServiceScheduled(Context context) {
         Intent updateIntent = UpdateAuthorsTask_.intent(context.getApplicationContext()).get();
         return PendingIntent.getService(context.getApplicationContext(), 0, updateIntent, PendingIntent.FLAG_NO_CREATE) != null;
+    }
+
+    public static boolean isServiceCurrentlyRunning(Context context) {
+        ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        final String updateServiceClassName = UpdateAuthorsTask_.class.getName();
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (updateServiceClassName.equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static boolean scheduleUpdates(Context context) {

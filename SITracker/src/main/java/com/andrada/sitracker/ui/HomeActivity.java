@@ -33,7 +33,6 @@ import android.view.ViewTreeObserver;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.andrada.sitracker.BuildConfig;
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.SIPrefs_;
@@ -52,8 +51,6 @@ import com.andrada.sitracker.util.AnalyticsHelper;
 import com.andrada.sitracker.util.ImageLoader;
 import com.andrada.sitracker.util.UIUtils;
 import com.andrada.sitracker.util.UpdateServiceHelper;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
@@ -245,14 +242,6 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
     @Override
     protected void onResume() {
         super.onResume();
-        if (!BuildConfig.DEBUG) {
-            //Check for Google Play services
-            int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
-            if (resultCode != ConnectionResult.SUCCESS) {
-                GooglePlayServicesUtil.getErrorDialog(resultCode, this, 2982).show();
-            }
-        }
-
         if (updateStatusReceiver == null) {
             //AuthorsFragment is the callback here
             updateStatusReceiver = new UpdateStatusReceiver(mAuthorsFragment);
@@ -261,6 +250,12 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
         mAuthorsFragment.getAdapter().reloadAuthors();
         slidingPane.setPanelSlideListener(slidingPaneListener);
         getSupportFragmentManager().addOnBackStackChangedListener(backStackListener);
+
+        if (UpdateServiceHelper.isServiceCurrentlyRunning(getApplicationContext())) {
+            globalProgress.setVisibility(View.VISIBLE);
+        } else {
+            globalProgress.setVisibility(View.GONE);
+        }
 
         UpdateStatusMessageFilter filter = new UpdateStatusMessageFilter();
         filter.setPriority(1);
@@ -271,7 +266,7 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
     public void ensureUpdatesAreRunningOnSchedule() {
         boolean isSyncing = prefs.updatesEnabled().get();
 
-        boolean updateServiceUp = UpdateServiceHelper.isServiceRunning(this);
+        boolean updateServiceUp = UpdateServiceHelper.isServiceScheduled(this);
         if (isSyncing && !updateServiceUp) {
             UpdateServiceHelper.scheduleUpdates(this);
         } else if (!isSyncing && updateServiceUp) {

@@ -44,6 +44,12 @@
     <string name="app_buildnr_format">Билд №: %1$s</string>
 
     <string name="empty_search_results">Не найдено авторов по вашему запросу.</string>
+    <!--Search errors -->
+    <string name="cannot_search_busy">Ошибка при поиске. Samlib сейчас перегружен.</string>
+    <string name="cannot_search_network">Ошибка при поиске. Проверьте Ваше соединение.</string>
+    <string name="cannot_search_internal">Ошибка при поиске. Попробуйте опять.</string>
+    <string name="cannot_search_unknown">Не удалось произвести поиск. Непредвиденная ошибка.</string>
+
     <!-- Shown as a link in the About screen of the app; user can click it to see the licenses. -->
     <string name="about_licenses">Лицензии с открытым исходным кодом</string>
     <string name="add_author_confirmation">Добавить автора?</string>

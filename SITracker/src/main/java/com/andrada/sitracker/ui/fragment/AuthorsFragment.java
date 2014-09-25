@@ -98,7 +98,8 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
     @Nullable
     private Crouton mNoNetworkCrouton;
 
-    private boolean mIsUpdating = false;
+    @InstanceState
+    boolean mIsUpdating = false;
 
     @Nullable
     @InstanceState
@@ -121,7 +122,6 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
     @Override
     public void onStart() {
         super.onStart();
-        mIsUpdating = false;
         getActivity().supportInvalidateOptionsMenu();
         currentAuthorIndex = currentAuthorIndex == -1 ? adapter.getFirstAuthorId() : currentAuthorIndex;
         EventBus.getDefault().post(new AuthorSelectedEvent(currentAuthorIndex));

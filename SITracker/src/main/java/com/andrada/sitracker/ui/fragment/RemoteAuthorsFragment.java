@@ -23,6 +23,8 @@ import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.AppUriContract;
 import com.andrada.sitracker.db.beans.SearchedAuthor;
 import com.andrada.sitracker.events.AuthorAddedEvent;
+import com.andrada.sitracker.exceptions.SearchException;
+import com.andrada.sitracker.loader.AsyncTaskResult;
 import com.andrada.sitracker.loader.SamlibSearchLoader;
 import com.andrada.sitracker.tasks.AddAuthorTask;
 import com.andrada.sitracker.ui.BaseActivity;
@@ -56,7 +58,8 @@ interface Callbacks {
 
 @EFragment(R.layout.fragment_search)
 public class RemoteAuthorsFragment extends Fragment implements
-        LoaderManager.LoaderCallbacks<List<SearchedAuthor>>, CollectionViewCallbacks, Callbacks {
+        LoaderManager.LoaderCallbacks<AsyncTaskResult<List<SearchedAuthor>>>, 
+        CollectionViewCallbacks, Callbacks {
 
     private static final String TAG = makeLogTag(RemoteAuthorsFragment.class);
     private static Callbacks sDummyCallbacks = new Callbacks() {
@@ -75,7 +78,7 @@ public class RemoteAuthorsFragment extends Fragment implements
     SearchResultsAdapter adapter;
     private Bundle mArguments;
     private Uri mCurrentUri;
-
+   
     @Override
     public void onAuthorSelected(SearchedAuthor author) {
         final SearchedAuthor authorToAdd = author;
@@ -121,8 +124,6 @@ public class RemoteAuthorsFragment extends Fragment implements
                     .setPaddingInPixels(25)
                     .setBackgroundColorValue(Style.holoRedLight);
             Crouton.makeText(getActivity(), message, alertStyle.build()).show();
-            BackupManager bm = new BackupManager(getActivity());
-            bm.dataChanged();
         }
     }
 
@@ -267,11 +268,11 @@ public class RemoteAuthorsFragment extends Fragment implements
     }
 
     @Override
-    public Loader<List<SearchedAuthor>> onCreateLoader(int id, Bundle data) {
+    public Loader<AsyncTaskResult<List<SearchedAuthor>>> onCreateLoader(int id, Bundle data) {
         LOGD(TAG, "onCreateLoader, id=" + id + ", data=" + data);
         final Intent intent = BaseActivity.fragmentArgumentsToIntent(data);
         Uri sessionsUri = intent.getData();
-        Loader<List<SearchedAuthor>> loader = null;
+        Loader<AsyncTaskResult<List<SearchedAuthor>>> loader = null;
         if (id == SamlibSearchLoader.SEARCH_TOKEN) {
             LOGD(TAG, "Creating search loader for " + sessionsUri);
             loader = new SamlibSearchLoader(getActivity(), sessionsUri);
@@ -279,8 +280,9 @@ public class RemoteAuthorsFragment extends Fragment implements
         return loader;
     }
 
+    @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
     @Override
-    public void onLoadFinished(Loader<List<SearchedAuthor>> loader, List<SearchedAuthor> data) {
+    public void onLoadFinished(Loader<AsyncTaskResult<List<SearchedAuthor>>> loader, AsyncTaskResult<List<SearchedAuthor>> data) {
         if (getActivity() == null) {
             return;
         }
@@ -288,12 +290,34 @@ public class RemoteAuthorsFragment extends Fragment implements
         int token = loader.getId();
         LOGD(TAG, "Loader finished: search");
         if (token == SamlibSearchLoader.SEARCH_TOKEN) {
-            updateCollectionView(data);
+            if (data.getError() instanceof SearchException) {
+                int errorMsg;
+                switch (((SearchException) data.getError()).getError()) {
+                    case SAMLIB_BUSY:
+                        errorMsg = R.string.cannot_search_busy;
+                        break;
+                    case NETWORK_ERROR:
+                        errorMsg = R.string.cannot_search_network;
+                        break;
+                    case INTERNAL_ERROR:
+                        errorMsg = R.string.cannot_search_internal;
+                        break;
+                    default:
+                        errorMsg = R.string.cannot_search_unknown;
+                        break;
+                }
+                Style.Builder alertStyle = new Style.Builder()
+                        .setTextAppearance(android.R.attr.textAppearanceLarge)
+                        .setPaddingInPixels(25)
+                        .setBackgroundColorValue(Style.holoRedLight);
+                Crouton.makeText(getActivity(), getString(errorMsg), alertStyle.build()).show();
+            }
+            updateCollectionView(data.getResult());
         }
     }
 
     @Override
-    public void onLoaderReset(Loader<List<SearchedAuthor>> listLoader) {
+    public void onLoaderReset(Loader<AsyncTaskResult<List<SearchedAuthor>>> listLoader) {
 
     }
 
