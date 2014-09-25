@@ -21,7 +21,6 @@
     <dimen name="publication_pixel_size">60dp</dimen>
     <dimen name="divider_margin_top">8dp</dimen>
     <dimen name="divider_margin_bottom">8dp</dimen>
-    <dimen name="library_container_width">100dp</dimen>
 
     <dimen name="author_fragment_width">370dp</dimen>
     <dimen name="publication_fragment_width">440dp</dimen>
