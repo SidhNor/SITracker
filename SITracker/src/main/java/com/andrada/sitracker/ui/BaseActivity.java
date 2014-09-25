@@ -23,7 +23,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 
+import com.andrada.sitracker.BuildConfig;
 import com.andrada.sitracker.R;
+import com.andrada.sitracker.util.PlayServicesUtils;
 import com.andrada.sitracker.util.UIUtils;
 import com.google.android.gms.analytics.GoogleAnalytics;
 
@@ -83,6 +85,21 @@ public abstract class BaseActivity extends ActionBarActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if (!BuildConfig.DEBUG) {
+            // Verifies the proper version of Google Play Services exists on the device.
+            PlayServicesUtils.checkGooglePlaySevices(this);
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        GoogleAnalytics.getInstance(this).reportActivityStart(this);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
@@ -90,12 +107,6 @@ public abstract class BaseActivity extends ActionBarActivity {
     @Override
     public void onStop() {
         super.onStop();
-        GoogleAnalytics.getInstance(this).reportActivityStart(this);
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
         GoogleAnalytics.getInstance(this).reportActivityStart(this);
     }
 
