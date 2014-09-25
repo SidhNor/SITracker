@@ -21,35 +21,30 @@
 
     <TextView
         android:id="@+id/category_item_count"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:text="@string/designtime_placeholder_item_num"
         style="@style/Publication.Category.Title"
-        android:layout_alignParentRight="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="@dimen/group_heading_margin_top"/>
-
+        android:layout_alignParentRight="true"
+        android:paddingBottom="@dimen/default_list_vertical_spacing"
+        android:paddingRight="@dimen/keyline_1"
+        android:paddingTop="@dimen/default_list_vertical_spacing"
+        android:text="@string/designtime_placeholder_item_num"/>
 
     <TextView
         android:id="@+id/category_title"
-        android:layout_toLeftOf="@id/category_item_count"
+        style="@style/Publication.Category.Title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/group_heading_margin_top"
-        android:layout_marginBottom="@dimen/group_heading_margin_top"
-        android:paddingStart="@dimen/list_left_padding"
-        android:paddingLeft="@dimen/list_left_padding"
-        android:text="@string/designtime_placeholder_medium"
-        style="@style/Publication.Category.Title"
-        android:layout_marginStart="25dp"
-        android:layout_marginLeft="25dp"
-        android:editable="false"
-        />
+        android:layout_marginLeft="30dp"
+        android:layout_marginStart="30dp"
+        android:layout_toLeftOf="@id/category_item_count"
+        android:paddingBottom="@dimen/default_list_vertical_spacing"
+        android:paddingTop="@dimen/default_list_vertical_spacing"
+        android:text="@string/designtime_placeholder_medium"/>
 
     <View
         style="@style/Theme.SiTracker.DividerThick"
-        android:layout_below="@+id/category_title"
-        android:layout_marginBottom="@dimen/divider_margin_bottom"
-        android:layout_marginTop="@dimen/divider_margin_top"/>
+        android:layout_below="@+id/category_title"/>
 
 </RelativeLayout>
