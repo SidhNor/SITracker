@@ -27,6 +27,7 @@ import com.andrada.sitracker.db.beans.Author;
 import com.andrada.sitracker.db.dao.AuthorDao;
 import com.andrada.sitracker.db.manager.SiDBHelper;
 import com.andrada.sitracker.events.AuthorMarkedAsReadEvent;
+import com.andrada.sitracker.events.AuthorSelectedEvent;
 import com.andrada.sitracker.ui.components.AuthorItemView;
 import com.andrada.sitracker.ui.components.AuthorItemView_;
 import com.andrada.sitracker.util.AnalyticsHelper;
@@ -207,6 +208,7 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
             potentialAuthorId = getFirstAuthorId();
         }
         this.mSelectedAuthorId = potentialAuthorId;
+        EventBus.getDefault().post(new AuthorSelectedEvent(mSelectedAuthorId, potentialSelectedItem == 0));
         this.mSelectedItem = potentialSelectedItem;
     }
 

@@ -80,33 +80,25 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListener,
         MultiSelectionUtil.MultiChoiceModeListener, View.OnClickListener {
 
+    private final ArrayList<Long> mSelectedAuthors = new ArrayList<Long>();
     @ViewById
     ListView list;
-
     @ViewById
     ViewStub empty;
-
     @Bean
     AuthorsAdapter adapter;
-
     @SystemService
     ConnectivityManager connectivityManager;
-
     @InstanceState
     long currentAuthorIndex = -1;
-
-    @Nullable
-    private Crouton mNoNetworkCrouton;
-
     @InstanceState
     boolean mIsUpdating = false;
 
     @Nullable
     @InstanceState
     long[] checkedItems;
-
-    private final ArrayList<Long> mSelectedAuthors = new ArrayList<Long>();
-
+    @Nullable
+    private Crouton mNoNetworkCrouton;
     @Nullable
     private MultiSelectionUtil.Controller mMultiSelectionController;
 
@@ -124,7 +116,6 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
         super.onStart();
         getActivity().supportInvalidateOptionsMenu();
         currentAuthorIndex = currentAuthorIndex == -1 ? adapter.getFirstAuthorId() : currentAuthorIndex;
-        EventBus.getDefault().post(new AuthorSelectedEvent(currentAuthorIndex));
         // Set the item as checked to be highlighted
         adapter.setSelectedItem(currentAuthorIndex);
         adapter.notifyDataSetChanged();
@@ -228,7 +219,6 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
     public void listItemClicked(int position) {
         // Notify the parent activity of selected item
         currentAuthorIndex = list.getItemIdAtPosition(position);
-        EventBus.getDefault().post(new AuthorSelectedEvent(currentAuthorIndex));
         // Set the item as checked to be highlighted
         adapter.setSelectedItem(currentAuthorIndex);
         adapter.notifyDataSetChanged();
@@ -326,13 +316,9 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
                     Constants.GA_ADMIN_CATEGORY,
                     Constants.GA_EVENT_AUTHOR_REMOVED,
                     Constants.GA_EVENT_AUTHOR_REMOVED, (long) mSelectedAuthors.size());
+
+            //This stuff is on background thread
             adapter.removeAuthors(mSelectedAuthors);
-            currentAuthorIndex = adapter.getSelectedAuthorId();
-            /*
-            BackupManager bm = new BackupManager(getActivity());
-            bm.dataChanged();
-            */
-            EventBus.getDefault().post(new AuthorSelectedEvent(currentAuthorIndex));
             return true;
         } else if (item.getItemId() == R.id.action_mark_read) {
             adapter.markAuthorsRead(mSelectedAuthors);
@@ -367,6 +353,12 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
                 Constants.GA_EVENT_AUTHOR_MANUAL_READ);
         if (event.refreshAuthor) {
             adapter.reloadAuthors();
+        }
+    }
+
+    public void onEvent(AuthorSelectedEvent event) {
+        if (event.isDefault) {
+            list.smoothScrollToPosition(0);
         }
     }
 
