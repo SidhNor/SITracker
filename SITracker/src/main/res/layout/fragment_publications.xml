@@ -15,12 +15,12 @@
   -->
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             android:background="@android:color/white"
-             android:descendantFocusability="blocksDescendants"
-             android:paddingLeft="@dimen/tablet_horizontal_padding"
-             android:paddingRight="@dimen/tablet_horizontal_padding">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:descendantFocusability="blocksDescendants"
+    android:paddingLeft="@dimen/tablet_horizontal_padding"
+    android:paddingRight="@dimen/tablet_horizontal_padding">
 
     <ExpandableListView
         android:id="@+id/publication_list"
@@ -28,7 +28,6 @@
         android:layout_height="match_parent"
         android:divider="@null"
         android:groupIndicator="@drawable/expander_group"
-        android:listSelector="@drawable/authors_list_selector"
         android:paddingBottom="@dimen/default_list_vertical_spacing"
-        android:paddingTop="@dimen/default_list_vertical_spacing"/>
+        android:paddingTop="@dimen/default_list_vertical_spacing" />
 </FrameLayout>

@@ -28,7 +28,6 @@ import android.widget.TextView;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.IsNewItemTappedListener;
 import com.andrada.sitracker.db.beans.Publication;
-import com.andrada.sitracker.ui.widget.EllipsizedTextView;
 import com.andrada.sitracker.ui.widget.TouchDelegateRelativeLayout;
 import com.andrada.sitracker.util.DateFormatterUtil;
 import com.andrada.sitracker.util.ImageLoader;
@@ -57,7 +56,7 @@ public class PublicationItemView extends TouchDelegateRelativeLayout {
     ViewGroup downloadProgress;
 
     @ViewById
-    EllipsizedTextView item_description;
+    TextView item_description;
 
     @ViewById
     ImageView publication_image;

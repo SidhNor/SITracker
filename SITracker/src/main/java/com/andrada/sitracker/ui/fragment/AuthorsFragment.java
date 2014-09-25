@@ -357,7 +357,7 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
     }
 
     public void onEvent(AuthorSelectedEvent event) {
-        if (event.isDefault) {
+        if (event.isDefault && list != null) {
             list.smoothScrollToPosition(0);
         }
     }

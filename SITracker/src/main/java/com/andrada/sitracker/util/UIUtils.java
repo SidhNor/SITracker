@@ -25,7 +25,6 @@ import android.content.res.Configuration;
 import android.os.Build;
 import android.text.Html;
 import android.text.TextUtils;
-import android.text.method.LinkMovementMethod;
 import android.widget.TextView;
 
 import org.jetbrains.annotations.NotNull;
@@ -68,7 +67,8 @@ public class UIUtils {
         }
         if ((text.contains("<") && text.contains(">")) || REGEX_HTML_ESCAPE.matcher(text).find()) {
             view.setText(Html.fromHtml(text));
-            view.setMovementMethod(LinkMovementMethod.getInstance());
+            //Commented movement method to make the textview focusable.
+            //view.setMovementMethod(LinkMovementMethod.getInstance());
         } else {
             view.setText(text);
         }

@@ -25,7 +25,7 @@
     <RelativeLayout
         android:id="@+id/backgroundPane"
         android:layout_width="match_parent"
-        android:layout_height="96dp"
+        android:layout_height="@dimen/publication_item_height"
         android:paddingTop="8dp">
 
         <RelativeLayout
@@ -61,7 +61,7 @@
             android:id="@+id/item_description"
             style="@style/Publication.Subtitle"
             android:layout_width="wrap_content"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             android:layout_below="@+id/item_title"
             android:layout_toLeftOf="@+id/actions_view"
             android:layout_toRightOf="@+id/pub_img_container"
@@ -118,7 +118,7 @@
     <RelativeLayout
         android:id="@+id/downloadProgress"
         android:layout_width="match_parent"
-        android:layout_height="96dp"
+        android:layout_height="@dimen/publication_item_height"
         android:background="#FFFFFFFF"
         android:paddingTop="16dp"
         android:visibility="gone">
