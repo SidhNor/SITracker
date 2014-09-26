@@ -166,6 +166,10 @@ public class RemoteAuthorsFragment extends Fragment implements
         }
     }
 
+    public void setContentTopClearance(int topClearance) {
+        list.setContentTopClearance(topClearance);
+    }
+
     public void reloadFromArguments(Bundle arguments) {
         // Load new arguments
         if (arguments == null) {

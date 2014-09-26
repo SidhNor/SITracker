@@ -11,11 +11,13 @@ import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
 
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.AppUriContract;
 import com.andrada.sitracker.ui.fragment.RemoteAuthorsFragment;
 import com.andrada.sitracker.ui.fragment.RemoteAuthorsFragment_;
+import com.andrada.sitracker.util.UIUtils;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
@@ -66,6 +68,25 @@ public class SearchActivity extends BaseActivity {
         overridePendingTransition(0, 0);
     }
 
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        ListView collectionView = (ListView) findViewById(R.id.list);
+        if (collectionView != null) {
+            enableActionBarAutoHide(collectionView);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mAuthorsFragment != null) {
+            int actionBarClearance = UIUtils.calculateActionBarSize(this);
+            int gridPadding = getResources().getDimensionPixelSize(R.dimen.search_grid_padding);
+            mAuthorsFragment.setContentTopClearance(actionBarClearance + gridPadding);
+        }
+    }
 
     @Override
     protected void onNewIntent(Intent intent) {

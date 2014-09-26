@@ -22,10 +22,14 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.os.Build;
 import android.text.Html;
 import android.text.TextUtils;
 import android.widget.TextView;
+
+import com.andrada.sitracker.R;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -180,6 +184,29 @@ public class UIUtils {
             sb.append(hex);
         }
         return sb.toString();
+    }
+
+    private static final int[] RES_IDS_ACTION_BAR_SIZE = { R.attr.actionBarOverlayTopOffset };
+
+    /** Calculates the Action Bar height in pixels. */
+    public static int calculateActionBarSize(Context context) {
+        if (context == null) {
+            return 0;
+        }
+
+        Resources.Theme curTheme = context.getTheme();
+        if (curTheme == null) {
+            return 0;
+        }
+
+        TypedArray att = curTheme.obtainStyledAttributes(RES_IDS_ACTION_BAR_SIZE);
+        if (att == null) {
+            return 0;
+        }
+
+        float size = att.getDimension(0, 0);
+        att.recycle();
+        return (int) size;
     }
 
 
