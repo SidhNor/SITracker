@@ -16,34 +16,34 @@
 
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="NoParent"/>
+    <style name="NoParent" />
     <!--
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
     -->
-    <style name="FrameworkRoot.Base" parent="@style/Theme.AppCompat.Light.DarkActionBar"/>
+    <style name="FrameworkRoot.Base" parent="@style/Theme.AppCompat.Light.DarkActionBar" />
 
-    <style name="FrameworkRoot.ActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse"/>
+    <style name="FrameworkRoot.ActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse" />
 
-    <style name="FrameworkRoot.ActionBar.TitleText" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"/>
+    <style name="FrameworkRoot.ActionBar.TitleText" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title" />
 
-    <style name="FrameworkRoot.ActionBar.TabBar" parent="@style/Widget.AppCompat.Base.ActionBar.TabBar"/>
+    <style name="FrameworkRoot.ActionBar.TabBar" parent="@style/Widget.AppCompat.Base.ActionBar.TabBar" />
 
-    <style name="FrameworkRoot.ActionBar.TabView" parent="@style/Widget.AppCompat.ActionBar.TabView"/>
+    <style name="FrameworkRoot.ActionBar.TabView" parent="@style/Widget.AppCompat.ActionBar.TabView" />
 
-    <style name="FrameworkRoot.EditText" parent="android:Widget.EditText"/>
+    <style name="FrameworkRoot.EditText" parent="android:Widget.EditText" />
 
-    <style name="FrameworkRoot.Widget" parent="@style/Theme.AppCompat"/>
+    <style name="FrameworkRoot.Widget" parent="@style/Theme.AppCompat" />
 
-    <style name="FrameworkRoot.Widget.ActionButton.Overflow" parent="@style/Widget.AppCompat.ActionButton.Overflow"/>
+    <style name="FrameworkRoot.Widget.ActionButton.Overflow" parent="@style/Widget.AppCompat.ActionButton.Overflow" />
 
-    <style name="FrameworkRoot.Widget.PopupMenu" parent="@style/Widget.AppCompat.Light.PopupMenu"/>
+    <style name="FrameworkRoot.Widget.PopupMenu" parent="@style/Widget.AppCompat.Light.PopupMenu" />
 
-    <style name="FrameworkRoot.Widget.ListView.DropDown" parent="@style/Widget.AppCompat.Light.ListView.DropDown"/>
+    <style name="FrameworkRoot.Widget.ListView.DropDown" parent="@style/Widget.AppCompat.Light.ListView.DropDown" />
 
-    <style name="FrameworkRoot.ActionButton.CloseMode" parent="@style/Widget.AppCompat.Light.ActionButton.CloseMode"/>
+    <style name="FrameworkRoot.ActionButton.CloseMode" parent="@style/Widget.AppCompat.Light.ActionButton.CloseMode" />
 
-    <style name="FrameworkRoot.TextAppearance.Widget.PopupMenu.Large" parent="@style/TextAppearance.AppCompat.Light.Widget.PopupMenu.Large"/>
+    <style name="FrameworkRoot.TextAppearance.Widget.PopupMenu.Large" parent="@style/TextAppearance.AppCompat.Light.Widget.PopupMenu.Large" />
 
     <!-- Root styles that vary by API level -->
     <style name="FrameworkRoot.Theme" parent="FrameworkRoot.Base">
@@ -55,9 +55,12 @@
         <item name="buttonBarButtonStyle">@style/Compat.ButtonBarButton</item>
         <item name="indeterminateProgressStyle">@style/Compat.IndeterminateProgress</item>
         <!-- API 14+ (compatibility) -->
-        <item name="listPreferredItemPaddingLeft">@dimen/compat_list_preferred_item_padding_left</item>
-        <item name="listPreferredItemPaddingRight">@dimen/compat_list_preferred_item_padding_right</item>
-        <item name="listPreferredItemHeightSmall">@dimen/compat_list_preferred_item_height_small</item>
+        <item name="listPreferredItemPaddingLeft">@dimen/compat_list_preferred_item_padding_left
+        </item>
+        <item name="listPreferredItemPaddingRight">@dimen/compat_list_preferred_item_padding_right
+        </item>
+        <item name="listPreferredItemHeightSmall">@dimen/compat_list_preferred_item_height_small
+        </item>
         <item name="android:editTextStyle">@style/Widget.SiTracker.EditText</item>
     </style>
 
@@ -171,7 +174,6 @@
         <item name="android:fontFamily" tools:ignore="NewApi">sans-serif</item>
         <item name="android:textColor">@color/body_text_1</item>
         <item name="android:ellipsize">end</item>
-        <item name="android:textIsSelectable" tools:ignore="NewApi">true</item>
         <item name="android:textAlignment" tools:ignore="NewApi">viewStart</item>
     </style>
 
