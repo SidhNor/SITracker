@@ -322,6 +322,9 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
             mNoNetworkCrouton.setConfiguration(croutonConfiguration);
             mNoNetworkCrouton.show();
 
+            //Remove extras to avoid reinitialization on config change
+            getIntent().removeExtra(AUTHORS_PROCESSED_EXTRA);
+            getIntent().removeExtra(AUTHORS_SUCCESSFULLY_IMPORTED_EXTRA);
             authorsSuccessfullyImported = -1;
             authorsProcessed = -1;
         }
