@@ -59,11 +59,8 @@ import de.greenrobot.event.EventBus;
 public class PublicationsAdapter extends BaseExpandableListAdapter implements
         IsNewItemTappedListener, AdapterView.OnItemLongClickListener {
 
-    public interface PublicationShareAttemptListener {
-        void publicationShare(Publication pub, boolean forceDownload);
-    }
 
-    List<String> mCategories = new ArrayList<String>();
+    List<CategoryValue> mCategories = new ArrayList<CategoryValue>();
     List<List<Publication>> mChildren = new ArrayList<List<Publication>>();
 
     @OrmLiteDao(helper = SiDBHelper.class, model = Publication.class)
@@ -95,19 +92,25 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
                 mLoader = null;
             }
             List<Publication> pubs = publicationsDao.getSortedPublicationsForAuthorId(id);
-            List<String> newCategories = new ArrayList<String>();
+            List<CategoryValue> newCategories = new ArrayList<CategoryValue>();
             List<List<Publication>> newChildren = new ArrayList<List<Publication>>();
 
             for (Publication publication : pubs) {
-                if (!newCategories.contains(publication.getCategory())) {
-                    newCategories.add(publication.getCategory());
+                CategoryValue possibleVal = new CategoryValue(publication.getCategory());
+                if (!newCategories.contains(possibleVal)) {
+                    if (publication.getNew()) {
+                        possibleVal.incrementNewCount();
+                    }
+                    newCategories.add(possibleVal);
+                } else if (publication.getNew()){
+                    newCategories.get(newCategories.indexOf(possibleVal)).incrementNewCount();
                 }
             }
 
-            for (String category : newCategories) {
+            for (CategoryValue category : newCategories) {
                 List<Publication> categoryList = new ArrayList<Publication>();
                 for (Publication publication : pubs) {
-                    if (publication.getCategory().equals(category)) {
+                    if (category.equals(publication.getCategory())) {
                         categoryList.add(publication);
                     }
                 }
@@ -119,10 +122,14 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
         }
     }
 
-    @UiThread
-    void updateAdapterDataSet(List<String> newCategories, List<List<Publication>> newChildren) {
+    void updateAdapterDataSet(List<CategoryValue> newCategories, List<List<Publication>> newChildren) {
         mCategories = newCategories;
         mChildren = newChildren;
+        postDataSetChanged();
+    }
+
+    @UiThread
+    void postDataSetChanged() {
         notifyDataSetChanged();
     }
 
@@ -170,7 +177,8 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
         } else {
             publicationCategoryView = (PublicationCategoryItemView) convertView;
         }
-        publicationCategoryView.bind(mCategories.get(groupPosition), mChildren.get(groupPosition).size());
+        publicationCategoryView.bind(mCategories.get(groupPosition).categoryName,
+                mChildren.get(groupPosition).size(), mCategories.get(groupPosition).getNewCount());
         return publicationCategoryView;
     }
 
@@ -234,11 +242,13 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
     protected void updateStatusOfPublication(@NotNull Publication pub) {
         if (pub.getNew()) {
             try {
+                mCategories.get(mCategories.indexOf(new CategoryValue(pub.getCategory()))).decrementNewCount();
                 boolean authorNewChanged = publicationsDao.markPublicationRead(pub);
                 EventBus.getDefault().post(new PublicationMarkedAsReadEvent(authorNewChanged));
             } catch (SQLException e) {
                 AnalyticsHelper.getInstance().sendException("Publication Set update", e);
             }
+            postDataSetChanged();
         }
     }
 
@@ -273,5 +283,50 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
         }
 
         return false;
+    }
+
+    public interface PublicationShareAttemptListener {
+        void publicationShare(Publication pub, boolean forceDownload);
+    }
+
+    class CategoryValue {
+        public final String categoryName;
+        private int newCount;
+
+        private CategoryValue(@NotNull String categoryName) {
+            this.categoryName = categoryName;
+            this.newCount = 0;
+        }
+        public void incrementNewCount() {
+            ++newCount;
+        }
+
+        public void decrementNewCount() {
+            --newCount;
+        }
+
+        public int getNewCount() {
+            return newCount;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            CategoryValue that = (CategoryValue) o;
+
+            return categoryName.equals(that.categoryName);
+
+        }
+
+        public boolean equals(String value) {
+            return categoryName.equals(value);
+        }
+
+        @Override
+        public int hashCode() {
+            return categoryName.hashCode();
+        }
     }
 }
