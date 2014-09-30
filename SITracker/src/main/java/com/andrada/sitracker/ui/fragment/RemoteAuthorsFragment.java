@@ -2,7 +2,6 @@ package com.andrada.sitracker.ui.fragment;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.backup.BackupManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -58,7 +57,7 @@ interface Callbacks {
 
 @EFragment(R.layout.fragment_search)
 public class RemoteAuthorsFragment extends Fragment implements
-        LoaderManager.LoaderCallbacks<AsyncTaskResult<List<SearchedAuthor>>>, 
+        LoaderManager.LoaderCallbacks<AsyncTaskResult<List<SearchedAuthor>>>,
         CollectionViewCallbacks, Callbacks {
 
     private static final String TAG = makeLogTag(RemoteAuthorsFragment.class);
@@ -78,7 +77,7 @@ public class RemoteAuthorsFragment extends Fragment implements
     SearchResultsAdapter adapter;
     private Bundle mArguments;
     private Uri mCurrentUri;
-   
+
     @Override
     public void onAuthorSelected(SearchedAuthor author) {
         final SearchedAuthor authorToAdd = author;

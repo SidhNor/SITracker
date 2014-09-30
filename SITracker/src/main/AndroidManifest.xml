@@ -105,26 +105,24 @@
         </activity>
         <activity android:name=".ui.DirectoryChooserActivity"/>
 
-        <!-- Phone-only activities -->
-        <activity
-            android:name=".ui.phone.PublicationsActivity_"
-            android:configChanges="orientation|keyboardHidden"
-            android:label="@string/title_publications"
-            android:theme="@style/Theme.SiTracker.WithElevatedHeader"
-            android:parentActivityName=".ui.HomeActivity_">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.HomeActivity_"/>
-            <meta-data
-                android:name="com.andrada.sitracker.meta.TARGET_FORM_FACTOR"
-                android:value="handset"/>
-        </activity>
         <activity
             android:name=".ui.phone.PublicationDetailsActivity_"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/title_publications_details"
-            android:parentActivityName=".ui.phone.PublicationsActivity_">
+            android:parentActivityName=".ui.HomeActivity_">
             <!-- PARENT_ACTIVITY alone is insufficient for Up navigation for this activity -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.HomeActivity_"/>
+        </activity>
+
+        <!-- Phone-only activities -->
+        <!-- Example of phone only activity
+        <activity
+            android:name=".ui.phone.PublicationDetailsActivity_"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="@string/title_publications_details"
+            android:parentActivityName=".ui.HomeActivity_">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.phone.PublicationsActivity_"/>
@@ -132,40 +130,16 @@
                 android:name="com.andrada.sitracker.meta.TARGET_FORM_FACTOR"
                 android:value="handset"/>
         </activity>
-        <activity
-            android:name=".ui.phone.CommentStreamActivity_"
-            android:configChanges="orientation|keyboardHidden"
-            android:label="@string/title_comment_stream"
-            android:parentActivityName=".ui.phone.PublicationDetailsActivity_">
-            <!-- PARENT_ACTIVITY alone is insufficient for Up navigation for this activity -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.phone.PublicationDetailsActivity_"/>
-            <meta-data
-                android:name="com.andrada.sitracker.meta.TARGET_FORM_FACTOR"
-                android:value="handset"/>
-        </activity>
+        -->
 
         <!-- Tablet-only activities -->
 
-        <activity
-            android:name=".ui.tablet.PublicationsMultiPaneActivity_"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/title_publications"
-            android:parentActivityName=".ui.HomeActivity_">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.HomeActivity_"/>
-            <meta-data
-                android:name="com.andrada.sitracker.meta.TARGET_FORM_FACTOR"
-                android:value="tablet"/>
-        </activity>
+        <!-- Example of table only activity
         <activity
             android:name=".ui.tablet.CommentsMultiPaneActivity_"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_comment_stream"
             android:parentActivityName=".ui.HomeActivity_">
-            <!-- PARENT_ACTIVITY alone is insufficient for Up navigation for this activity -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.HomeActivity_"/>
@@ -173,6 +147,7 @@
                 android:name="com.andrada.sitracker.meta.TARGET_FORM_FACTOR"
                 android:value="tablet"/>
         </activity>
+        -->
 
         <service android:name=".tasks.ClearPublicationCacheTask"/>
 
@@ -203,7 +178,7 @@
 
         <meta-data
             android:name="android.app.default_searchable"
-            android:value=".ui.HomeActivity_"/>
+            android:value=".ui.SearchActivity_"/>
 
 
     </application>

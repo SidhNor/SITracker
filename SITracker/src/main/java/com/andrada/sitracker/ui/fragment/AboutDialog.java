@@ -54,8 +54,16 @@ public class AboutDialog extends DialogFragment {
                 showOpenSourceLicenses(getActivity());
             }
         }, 0, licensesLink.length(), 0);
-        aboutBody.append("\n\n");
+        SpannableString whatsNewLink = new SpannableString(getString(R.string.whats_new));
+        whatsNewLink.setSpan(new ClickableSpan() {
+            @Override
+            public void onClick(View view) {
+                showWhatsNew(getActivity());
+            }
+        }, 0, whatsNewLink.length(), 0);
         aboutBody.append(licensesLink);
+        aboutBody.append("\n\n");
+        aboutBody.append(whatsNewLink);
 
         AboutDialogView aboutBodyView = AboutDialogView_.build(getActivity());
         aboutBodyView.bindData(getString(R.string.app_version_format, versionName),
@@ -73,6 +81,17 @@ public class AboutDialog extends DialogFragment {
                 ).create();
     }
 
+    public static void showWhatsNew(FragmentActivity activity) {
+        FragmentManager fm = activity.getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        Fragment prev = fm.findFragmentByTag(WhatsNewDialog.FRAGMENT_TAG);
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+
+        new WhatsNewDialog().show(ft, WhatsNewDialog.FRAGMENT_TAG);
+    }
 
     public static void showOpenSourceLicenses(FragmentActivity activity) {
         FragmentManager fm = activity.getSupportFragmentManager();
@@ -84,6 +103,30 @@ public class AboutDialog extends DialogFragment {
         ft.addToBackStack(null);
 
         new OpenSourceLicensesDialog().show(ft, OpenSourceLicensesDialog.FRAGMENT_TAG);
+    }
+
+    public static class WhatsNewDialog extends DialogFragment {
+        public static final String FRAGMENT_TAG = "dialog_whatsnew";
+
+        public WhatsNewDialog() {
+        }
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            WebView webView = new WebView(getActivity());
+            webView.loadData(getString(R.string.change_log), "text/html; charset=utf-8", "utf-8");
+            return new AlertDialog.Builder(getActivity())
+                    .setTitle(R.string.whats_new)
+                    .setView(webView)
+                    .setPositiveButton(android.R.string.ok,
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    dialog.dismiss();
+                                }
+                            }
+                    )
+                    .create();
+        }
     }
 
     public static class OpenSourceLicensesDialog extends DialogFragment {

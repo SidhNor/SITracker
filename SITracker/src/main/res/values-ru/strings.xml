@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+﻿<?xml version="1.0" encoding="utf-8"?><!--
   Copyright 2014 Gleb Godonoga.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,11 +19,8 @@
     <string name="app_name">СИ Трекер</string>
     <string name="title_search">Поиск</string>
     <string name="title_settings">Настройки</string>
-    <string name="title_publications">Произведения</string>
     <string name="title_import">Импорт авторов</string>
     <string name="title_publications_details">Детали произведения</string>
-    <string name="title_comment_stream">Комментарии</string>
-
 
     <string name="search_hint">Поиск авторов</string>
     <string name="search_label">Авторы на samlib.ru</string>
@@ -52,6 +49,8 @@
 
     <!-- Shown as a link in the About screen of the app; user can click it to see the licenses. -->
     <string name="about_licenses">Лицензии с открытым исходным кодом</string>
+    <string name="whats_new">Что нового</string>
+
     <string name="add_author_confirmation">Добавить автора?</string>
     <string name="cannot_import_authors_from_file">Не удалось импортировать авторов из файла.</string>
     <string name="cannot_add_author">Не удалось добавить автора.</string>
@@ -210,5 +209,72 @@
     <string name="book_folder_name">Книги</string>
     <string name="export_folder_name">СиТрекерЭкспорт</string>
     <string name="cannot_write_export_file">Не удалось экспортировать авторов. Ошибка при записи файла.</string>
+
+
+    <string name="change_log"><![CDATA[
+        <section>
+            <header><h2>Версия 1.2.1</h2></header>
+            <p>Мелкий релиз баг-фиксов.</p>
+            <ul>
+                <li>Исправлена ошибка при добавлении автора с посторонних сайтов.</li>
+                <li>Исправлена ошибка при импорте авторов с неправильными линками.</li>
+            </ul>
+        </section>
+
+        <section>
+            <header><h2>Версия 1.2.0</h2></header>
+            <ul>
+                <li>Добавлена поддержка импорта и экспорта авторов. Поддерживаются txt формат и authorts.xml от SIInformer-а</li>
+                <li>Добавлена синхронизация между вашими аккаунтами а также автоматический бэкап. Должно быть включено "автовосстановление" и "резервное копирование" в настройках.</li>
+                <li>Теперь можно добавлять аторов и с budclub.ru</li>
+                <li>Выбор папки сохранения в настройках теперь интерактивный.</li>
+                <li>Исправлено удаление авторов. Теперь произведения удаляются как надо.</li>
+            </ul>
+        </section>
+
+        <section>
+            <header><h2>Версия 1.1.2</h2></header>
+            <p>Мелкий релиз баг-фиксов.</p>
+            <ul>
+                <li>Исправлены ошибки на нескольких марках Motorola и Asus Transformer а также ошибка
+                    свойственая только GT-I8150.
+                </li>
+            </ul>
+        </section>
+
+        <section>
+            <header><h2>Версия 1.1.1</h2></header>
+            <ul>
+                <li>Добавлена опция указания папки для сохранения произведений. Более понятные имена
+                    файлов.
+                </li>
+                <li>Исправлены несколько ошибок при плохом соединении.</li>
+                <li>Добавлена опция очистки сохраненных произведений. (Очищает только папку приложения.
+                    Любые другие директории которые были указаны остаются нетронутыми.)
+                </li>
+                <li>Добавлены изображения для произведений если таковые имеются. Можно отключить в
+                    настройках.
+                </li>
+            </ul>
+        </section>
+
+
+        <section>
+            <header><h2>Версия 1.1.0</h2></header>
+            <p>Внимание: все ваши произведение посчитаются новыми после обновления</p>
+            <ul>
+                <li>Добавлено требуемое разрешение "Память" для сохранения произведений</li>
+                <li>При долгом нажатии на произведение, оно сохраняется на устройство с возможностью чтения
+                    в приложениях как CoolReader или AIReader (даже в оффлайне). Произведение сохраняется
+                    заново только если оно обновлено. Функционал запуска в браузере пока удален. Будет
+                    добавлен после мелкого редезайна.
+                </li>
+                <li>Аннотации сохраняются в html формате с рабочими ссылками</li>
+                <li>Улучшена производительность</li>
+                <li>Исправлены несколько ошибок связных с плохим соединением.</li>
+                <li>Добавлен множественный выбор для устройств с Android &lt; 3.0</li>
+            </ul>
+        </section>
+    ]]></string>
 
 </resources>

@@ -19,11 +19,8 @@
     <string name="app_name">SI Tracker</string>
     <string name="title_search">Search</string>
     <string name="title_settings">Settings</string>
-    <string name="title_publications">Publications</string>
     <string name="title_import">Import authors</string>
     <string name="title_publications_details">Publication Details</string>
-    <string name="title_comment_stream">Comment stream</string>
-
 
     <string name="search_hint">Search authors</string>
     <string name="search_label">Authors on samlib.ru</string>
@@ -50,8 +47,9 @@
     <string name="cannot_search_internal">An internal error occurred. Please try again.</string>
     <string name="cannot_search_unknown">An unknown error occurred while searching. Please try again.</string>
 
-    <!-- Shown as a link in the About screen of the app; user can click it to see the licenses. -->
+    <!-- Shown as a link in the About screen of the app; user can click it to see the licenses or change log. -->
     <string name="about_licenses">Open Source Licenses</string>
+    <string name="whats_new">What\'s new</string>
 
     <string name="add_author_confirmation">Are you sure you want to add this author?</string>
     <string name="cannot_import_authors_from_file">Could not import authors from file.</string>
@@ -204,6 +202,59 @@
     <string name="book_folder_name">Books</string>
     <string name="export_folder_name">SiTrackerExport</string>
     <string name="cannot_write_export_file">Error writing to export file</string>
+
+    <string name="change_log"><![CDATA[
+        <section>
+            <header><h2>Version 1.2.1</h2></header>
+            <p>Small bugfix release.</p>
+            <ul>
+                <li>Fixed a crash when adding authors from unknown urls.</li>
+                <li>Fixed a crash when importing authors from unknown urls.</li>
+            </ul>
+        </section>
+
+        <section>
+            <header><h2>Version 1.2.0</h2></header>
+            <ul>
+                <li>Added import and export support. txt and xml formats are supported.</li>
+                <li>Added google back-up. Now the content is synchronized between your devices. Not guaranteed, "backup" and "restore" must be enabled in device settings.</li>
+                <li>Added possibility to add authors from budclub.ru</li>
+                <li>Support for interactive download folder choosing.</li>
+                <li>Fixed author removal. Now all related publications are removed as well.</li>
+            </ul>
+        </section>
+
+        <section>
+            <header><h2>Version 1.1.2</h2></header>
+            <p>Small bugfix release.</p>
+            <ul>
+                <li>Multiple issue fixes. Specifically for Motorola and Asus Transformer as well as an issues specific to GT-I8150 only.</li>
+            </ul>
+        </section>
+
+        <section>
+            <header><h2>Version 1.1.1</h2></header>
+            <ul>
+                <li>Added option of configuring download directory for publications. When files are saved to a custom filder - they have a meaningfull name</li>
+                <li>Fixed several issues due to bad connection and samlib being unavailable.</li>
+                <li>Added option of clearing saved publications. (Clears only the default directory)</li>
+                <li>Added optional publication images when available</li>
+            </ul>
+        </section>
+
+
+        <section>
+            <header><h2>Version 1.1.0</h2></header>
+            <p>Warning: all your publications will be marked as new after the update.</p>
+            <ul>
+                <li>Added permission "Storage" for saving publications</li>
+                <li>On long press, publication is downloaded for viewing in apps like CoolReader or AIReader. "Open in browser" functionality was removed and will be added back later.</li>
+                <li>Publication description is save in html format now with working links</li>
+                <li>Fixed several issues related to poor connection</li>
+                <li>Added author multiselection for devices with Android &lt; 3.0</li>
+            </ul>
+        </section>
+    ]]></string>
 
 
 </resources>
