@@ -3,12 +3,12 @@ package com.andrada.sitracker.ui.fragment.adapters;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 
 import com.andrada.sitracker.db.beans.Author;
 import com.andrada.sitracker.db.beans.SearchedAuthor;
 import com.andrada.sitracker.db.dao.AuthorDao;
 import com.andrada.sitracker.db.manager.SiDBHelper;
+import com.andrada.sitracker.ui.components.CollectionViewCallbacks;
 import com.andrada.sitracker.ui.components.SearchAuthorItemView;
 import com.andrada.sitracker.ui.components.SearchAuthorItemView_;
 import com.andrada.sitracker.util.SamlibPageHelper;
@@ -17,7 +17,6 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.OrmLiteDao;
 import org.androidannotations.annotations.RootContext;
-import org.androidannotations.annotations.UiThread;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
@@ -27,7 +26,7 @@ import java.util.List;
 import static com.andrada.sitracker.util.LogUtils.LOGW;
 
 @EBean
-public class SearchResultsAdapter extends BaseAdapter {
+public class SearchResultsAdapter implements CollectionViewCallbacks {
 
     @RootContext
     Context context;
@@ -37,10 +36,15 @@ public class SearchResultsAdapter extends BaseAdapter {
 
     private List<SearchedAuthor> mData = new ArrayList<SearchedAuthor>();
 
+    private Callbacks mCallbacks = null;
+
+    public void setCallbacks(Callbacks mCallbacks) {
+        this.mCallbacks = mCallbacks;
+    }
+
     public void swapData(@NotNull List<SearchedAuthor> data) {
         mData.clear();
         mData.addAll(data);
-        notifyDataSetChanged();
         checkAuthExistance();
     }
 
@@ -54,20 +58,12 @@ public class SearchResultsAdapter extends BaseAdapter {
                 LOGW("SiTracker", "Could not check if author exists");
             }
         }
-        postDataSetChanged();
     }
 
-    @UiThread
-    protected void postDataSetChanged() {
-        notifyDataSetChanged();
-    }
-
-    @Override
     public int getCount() {
         return mData.size();
     }
 
-    @Override
     public Object getItem(int position) {
         return mData.get(position);
     }
@@ -81,31 +77,41 @@ public class SearchResultsAdapter extends BaseAdapter {
         return null;
     }
 
-    @Override
-    public long getItemId(int position) {
-        return mData.get(position).hashCode();
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        SearchAuthorItemView authorsItemView;
-        if (convertView == null) {
-            authorsItemView = SearchAuthorItemView_.build(context);
-        } else {
-            authorsItemView = (SearchAuthorItemView) convertView;
-        }
-        if (position < mData.size()) {
-            // authorsItemView.bind(mData.get(position));
-        }
-        return authorsItemView;
-    }
-
-    @Override
-    public boolean hasStableIds() {
-        return true;
-    }
-
     public List<SearchedAuthor> getData() {
         return new ArrayList<SearchedAuthor>(mData);
+    }
+
+
+    @Override
+    public View newCollectionHeaderView(Context context, ViewGroup parent) {
+        return null;
+    }
+
+    @Override
+    public void bindCollectionHeaderView(Context context, View view, int groupId, String groupLabel) {
+        //We don't have headers
+    }
+
+    @Override
+    public View newCollectionItemView(Context context, int groupId, ViewGroup parent) {
+        return SearchAuthorItemView_.build(context);
+    }
+
+    @Override
+    public void bindCollectionItemView(Context context, View view, int groupId, int indexInGroup, int dataIndex, Object tag) {
+        SearchAuthorItemView authView = (SearchAuthorItemView) view;
+        if (dataIndex < getCount()) {
+            final SearchedAuthor auth = (SearchedAuthor) getItem(dataIndex);
+            authView.bind(auth, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mCallbacks.onAuthorSelected(auth);
+                }
+            });
+        }
+    }
+
+    public interface Callbacks {
+        public void onAuthorSelected(SearchedAuthor author);
     }
 }

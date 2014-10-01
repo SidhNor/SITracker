@@ -2,7 +2,6 @@ package com.andrada.sitracker.ui.fragment;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -12,7 +11,6 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.text.TextUtils;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -28,9 +26,6 @@ import com.andrada.sitracker.loader.SamlibSearchLoader;
 import com.andrada.sitracker.tasks.AddAuthorTask;
 import com.andrada.sitracker.ui.BaseActivity;
 import com.andrada.sitracker.ui.components.CollectionView;
-import com.andrada.sitracker.ui.components.CollectionViewCallbacks;
-import com.andrada.sitracker.ui.components.SearchAuthorItemView;
-import com.andrada.sitracker.ui.components.SearchAuthorItemView_;
 import com.andrada.sitracker.ui.fragment.adapters.SearchResultsAdapter;
 import com.andrada.sitracker.util.AnalyticsHelper;
 import com.andrada.sitracker.util.UIUtils;
@@ -51,22 +46,16 @@ import static com.andrada.sitracker.util.LogUtils.LOGD;
 import static com.andrada.sitracker.util.LogUtils.makeLogTag;
 
 
-interface Callbacks {
-    public void onAuthorSelected(SearchedAuthor author);
-}
-
 @EFragment(R.layout.fragment_search)
 public class RemoteAuthorsFragment extends Fragment implements
-        LoaderManager.LoaderCallbacks<AsyncTaskResult<List<SearchedAuthor>>>,
-        CollectionViewCallbacks, Callbacks {
+        LoaderManager.LoaderCallbacks<AsyncTaskResult<List<SearchedAuthor>>>, SearchResultsAdapter.Callbacks {
 
     private static final String TAG = makeLogTag(RemoteAuthorsFragment.class);
-    private static Callbacks sDummyCallbacks = new Callbacks() {
+    private static SearchResultsAdapter.Callbacks sDummyCallbacks = new SearchResultsAdapter.Callbacks() {
         @Override
         public void onAuthorSelected(SearchedAuthor author) {
         }
     };
-    private Callbacks mCallbacks = sDummyCallbacks;
     @ViewById
     CollectionView list;
     @ViewById
@@ -132,7 +121,7 @@ public class RemoteAuthorsFragment extends Fragment implements
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
         setRetainInstance(true);
-        mCallbacks = this;
+        adapter.setCallbacks(this);
         //noinspection VariableNotUsedInsideIf
         if (mCurrentUri != null) {
             // Only if this is a config change should we initLoader(), to reconnect with an
@@ -207,7 +196,7 @@ public class RemoteAuthorsFragment extends Fragment implements
             hideEmptyView();
             inv = prepareInventory();
         }
-        list.setCollectionAdapter(this);
+        list.setCollectionAdapter(adapter);
         list.updateInventory(inv, UIUtils.hasHoneycombMR1());
 
     }
@@ -231,15 +220,17 @@ public class RemoteAuthorsFragment extends Fragment implements
     @Override
     public void onDetach() {
         super.onDetach();
-        mCallbacks = sDummyCallbacks;
+        adapter.setCallbacks(sDummyCallbacks);
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        mCallbacks = this;
-        if (adapter != null && adapter.getCount() > 0) {
-            requestUpdateCollectionView(adapter.getData());
+        if (adapter != null) {
+            adapter.setCallbacks(this);
+            if (adapter.getCount() > 0) {
+                requestUpdateCollectionView(adapter.getData());
+            }
         }
     }
 
@@ -322,35 +313,5 @@ public class RemoteAuthorsFragment extends Fragment implements
     @Override
     public void onLoaderReset(Loader<AsyncTaskResult<List<SearchedAuthor>>> listLoader) {
 
-    }
-
-
-    @Override
-    public View newCollectionHeaderView(Context context, ViewGroup parent) {
-        return null;
-    }
-
-    @Override
-    public void bindCollectionHeaderView(Context context, View view, int groupId, String groupLabel) {
-        //We don't have headers
-    }
-
-    @Override
-    public View newCollectionItemView(Context context, int groupId, ViewGroup parent) {
-        return SearchAuthorItemView_.build(context);
-    }
-
-    @Override
-    public void bindCollectionItemView(Context context, View view, int groupId, int indexInGroup, int dataIndex, Object tag) {
-        SearchAuthorItemView authView = (SearchAuthorItemView) view;
-        if (dataIndex < adapter.getCount()) {
-            final SearchedAuthor auth = (SearchedAuthor) adapter.getItem(dataIndex);
-            authView.bind(auth, new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mCallbacks.onAuthorSelected(auth);
-                }
-            });
-        }
     }
 }
