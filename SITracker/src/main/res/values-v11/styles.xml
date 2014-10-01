@@ -38,6 +38,8 @@
     </style>
 
     <style name="Theme.SiTracker" parent="FrameworkRoot.Theme">
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowBackground">@android:color/white</item>
         <item name="android:actionBarTabStyle">@style/ActionBar.TabView</item>
         <item name="android:actionBarStyle">@style/ActionBar</item>
         <item name="android:actionModeBackground">@drawable/cab_background_top_si</item>
@@ -82,6 +84,7 @@
 
     <style name="Theme.SiTracker.PublicationDetails" parent="Theme.SiTracker.PublicationDetails.Base">
         <item name="android:actionBarStyle">@style/TransparentActionBar</item>
+        <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowActionBarOverlay">true</item>
     </style>
 

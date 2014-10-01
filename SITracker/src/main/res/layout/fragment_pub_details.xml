@@ -41,7 +41,8 @@
                 android:id="@+id/pub_photo"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scaleType="centerCrop"/>
+                android:scaleType="fitCenter"
+                android:contentDescription="@null"/>
         </FrameLayout>
 
         <LinearLayout
@@ -57,64 +58,65 @@
 
             <TextView
                 android:id="@+id/pub_abstract"
+                style="@style/TextBody"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/keyline_2"
                 android:layout_marginBottom="16dp"
-                style="@style/TextBody"
+                android:layout_marginLeft="@dimen/keyline_2"
                 />
         </LinearLayout>
 
         <!-- Title/subtitle bar (floating; position determined at run time as the content view scrolls) -->
         <FrameLayout
+            android:id="@+id/header_pub"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:clipChildren="false"
-            android:clipToPadding="false"
-            android:id="@+id/header_pub">
+            android:clipToPadding="false">
 
             <!-- height assigned dynamically -->
             <View
                 android:id="@+id/header_background"
-                android:background="@color/theme_primary"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"/>
+                android:layout_height="0dp"
+                android:clickable="false"
+                android:background="@color/theme_primary"/>
 
             <LinearLayout
                 android:id="@+id/header_pub_contents"
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingLeft="@dimen/keyline_2_pub_detail"
-                android:paddingTop="16dp"
-                android:paddingRight="@dimen/keyline_1"
                 android:paddingBottom="16dp"
-                android:layout_height="wrap_content">
+                android:paddingLeft="@dimen/keyline_2_pub_detail"
+                android:paddingRight="@dimen/keyline_1"
+                android:paddingTop="16dp">
 
                 <!-- Publication title -->
                 <TextView
-                    android:layout_height="wrap_content"
-                    android:layout_width="match_parent"
-                    android:layout_marginBottom="0dp"
-                    android:text="@string/designtime_placeholder_short"
                     android:id="@+id/pub_title"
-                    android:maxLines="4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="0dp"
                     android:ellipsize="end"
-                    android:textSize="@dimen/text_size_large"
                     android:lineSpacingMultiplier="1.1"
+                    android:maxLines="4"
+                    android:text="@string/designtime_placeholder_short"
+                    android:textAlignment="viewStart"
                     android:textColor="@color/body_text_1_inverse"
-                    android:textAlignment="viewStart"/>
+                    android:textSize="@dimen/text_size_xlarge"/>
 
                 <!-- Publication subtitle -->
                 <TextView
-                    android:layout_height="wrap_content"
-                    android:layout_width="match_parent"
-                    android:text="@string/designtime_placeholder_medium"
                     android:id="@+id/pub_subtitle"
-                    android:maxLines="2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:ellipsize="end"
-                    android:textSize="16sp"
+                    android:maxLines="2"
+                    android:text="@string/designtime_placeholder_medium"
+                    android:textAlignment="viewStart"
                     android:textColor="@color/body_text_2_inverse"
-                    android:textAlignment="viewStart"/>
+                    android:textSize="16sp"/>
 
             </LinearLayout>
 

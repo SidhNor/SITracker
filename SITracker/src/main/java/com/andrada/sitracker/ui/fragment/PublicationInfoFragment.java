@@ -16,10 +16,8 @@
 
 package com.andrada.sitracker.ui.fragment;
 
-import android.annotation.TargetApi;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -43,6 +41,7 @@ import com.andrada.sitracker.ui.widget.ObservableScrollView;
 import com.andrada.sitracker.util.ImageLoader;
 import com.andrada.sitracker.util.UIUtils;
 import com.android.volley.VolleyError;
+import com.nineoldandroids.view.ViewHelper;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -50,6 +49,8 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.OrmLiteDao;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
+
+import static com.nineoldandroids.view.ViewPropertyAnimator.animate;
 
 @EFragment(R.layout.fragment_pub_details)
 public class PublicationInfoFragment extends Fragment implements
@@ -224,7 +225,6 @@ public class PublicationInfoFragment extends Fragment implements
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     @Override
     public void onScrollChanged(int deltaX, int deltaY) {
         final BaseActivity activity = (BaseActivity) getActivity();
@@ -238,44 +238,64 @@ public class PublicationInfoFragment extends Fragment implements
 
         float newTop = Math.max(mPhotoHeightPixels, scrollY + mHeaderTopClearance);
 
-        if (UIUtils.hasICS()) {
+        if (UIUtils.hasHoneycombMR1()) {
             mHeaderBox.setTranslationY(newTop);
-
             /*mAddScheduleButton.setTranslationY(newTop + mHeaderHeightPixels
                 - mAddScheduleButtonHeightPixels / 2);*/
-
             mHeaderBackgroundBox.setPivotY(mHeaderHeightPixels);
-            int gapFillDistance = (int) (mHeaderTopClearance * GAP_FILL_DISTANCE_MULTIPLIER);
-            boolean showGapFill = !mHasPhoto || (scrollY > (mPhotoHeightPixels - gapFillDistance));
-            float desiredHeaderScaleY = showGapFill ?
-                    ((mHeaderHeightPixels + gapFillDistance + 1) * 1f / mHeaderHeightPixels)
-                    : 1f;
-            if (!mHasPhoto) {
+        } else {
+            ViewHelper.setTranslationY(mHeaderBox, newTop);
+            ViewHelper.setPivotY(mHeaderBackgroundBox, mHeaderHeightPixels);
+        }
+        int gapFillDistance = (int) (mHeaderTopClearance * GAP_FILL_DISTANCE_MULTIPLIER);
+        boolean showGapFill = !mHasPhoto || (scrollY > (mPhotoHeightPixels - gapFillDistance));
+        float desiredHeaderScaleY = showGapFill ?
+                ((mHeaderHeightPixels + gapFillDistance + 1) * 1f / mHeaderHeightPixels)
+                : 1f;
+
+        if (!mHasPhoto) {
+            if (UIUtils.hasHoneycombMR1()) {
                 mHeaderBackgroundBox.setScaleY(desiredHeaderScaleY);
-            } else if (mGapFillShown != showGapFill) {
+            } else {
+                ViewHelper.setScaleY(mHeaderBackgroundBox, desiredHeaderScaleY);
+            }
+        } else if (mGapFillShown != showGapFill) {
+            if (UIUtils.hasICS()) {
                 mHeaderBackgroundBox.animate()
                         .scaleY(desiredHeaderScaleY)
                         .setInterpolator(new DecelerateInterpolator(2f))
                         .setDuration(250)
                         .start();
+            } else {
+                animate(mHeaderBackgroundBox)
+                        .scaleY(desiredHeaderScaleY)
+                        .setInterpolator(new DecelerateInterpolator(2f))
+                        .setDuration(250);
             }
-            mGapFillShown = showGapFill;
         }
+        mGapFillShown = showGapFill;
 
         mHeaderShadow.setVisibility(View.VISIBLE);
 
-        if (UIUtils.hasHoneycombMR1()) {
             if (mHeaderTopClearance != 0) {
                 // Fill the gap between status bar and header bar with color
                 float gapFillProgress = Math.min(Math.max(UIUtils.getProgress(scrollY,
                         mPhotoHeightPixels - mHeaderTopClearance * 2,
                         mPhotoHeightPixels - mHeaderTopClearance), 0), 1);
-                mHeaderShadow.setAlpha(gapFillProgress);
+                if (UIUtils.hasHoneycombMR1()) {
+                    mHeaderShadow.setAlpha(gapFillProgress);
+                } else {
+                    ViewHelper.setAlpha(mHeaderShadow, gapFillProgress);
+                }
             }
 
-            // Move background photo (parallax effect)
+        // Move background photo (parallax effect)
+        if (UIUtils.hasHoneycombMR1()) {
             mPhotoViewContainer.setTranslationY(scrollY * 0.5f);
+        } else {
+            ViewHelper.setTranslationY(mPhotoViewContainer, scrollY * 0.5f);
         }
+
 
     }
 
