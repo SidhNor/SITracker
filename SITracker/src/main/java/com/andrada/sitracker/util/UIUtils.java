@@ -1,11 +1,11 @@
 /*
- * Copyright 2013 Gleb Godonoga.
+ * Copyright 2014 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,6 +24,7 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.os.Build;
 import android.text.Html;
 import android.text.TextUtils;
@@ -186,9 +187,11 @@ public class UIUtils {
         return sb.toString();
     }
 
-    private static final int[] RES_IDS_ACTION_BAR_SIZE = { R.attr.actionBarOverlayTopOffset };
+    private static final int[] RES_IDS_ACTION_BAR_SIZE = {R.attr.actionBarOverlayTopOffset};
 
-    /** Calculates the Action Bar height in pixels. */
+    /**
+     * Calculates the Action Bar height in pixels.
+     */
     public static int calculateActionBarSize(Context context) {
         if (context == null) {
             return 0;
@@ -209,5 +212,18 @@ public class UIUtils {
         return (int) size;
     }
 
+    public static float getProgress(int value, int min, int max) {
+        if (min == max) {
+            throw new IllegalArgumentException("Max (" + max + ") cannot equal min (" + min + ")");
+        }
+
+        return (value - min) / (float) (max - min);
+    }
+
+    public static int scaleColor(int color, float factor, boolean scaleAlpha) {
+        return Color.argb(scaleAlpha ? (Math.round(Color.alpha(color) * factor)) : Color.alpha(color),
+                Math.round(Color.red(color) * factor), Math.round(Color.green(color) * factor),
+                Math.round(Color.blue(color) * factor));
+    }
 
 }

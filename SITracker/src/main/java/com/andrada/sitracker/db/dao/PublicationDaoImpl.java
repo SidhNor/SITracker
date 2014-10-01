@@ -1,11 +1,11 @@
 /*
- * Copyright 2013 Gleb Godonoga.
+ * Copyright 2014 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,13 +26,26 @@ import org.jetbrains.annotations.NotNull;
 import java.sql.SQLException;
 import java.util.List;
 
-public class PublicationDaoImpl extends BaseDaoImpl<Publication, Integer>
+import static com.andrada.sitracker.util.LogUtils.LOGE;
+
+public class PublicationDaoImpl extends BaseDaoImpl<Publication, Long>
         implements PublicationDao {
 
 
     public PublicationDaoImpl(ConnectionSource connectionSource)
             throws SQLException {
         super(connectionSource, Publication.class);
+    }
+
+    @Override
+    public Publication getPublicationForId(long id) {
+        Publication pub = null;
+        try {
+            pub = this.queryForId(id);
+        } catch (SQLException e) {
+            LOGE("SITracker", "Failed to retrieve publication by url and id");
+        }
+        return pub;
     }
 
     @NotNull

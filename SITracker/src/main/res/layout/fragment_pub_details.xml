@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  Copyright 2014 Gleb Godonoga.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<com.andrada.sitracker.ui.widget.ObservableScrollView
+    android:id="@+id/scroll_view"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#fff"
+    android:fillViewport="true"
+    android:overScrollMode="never">
+
+    <FrameLayout
+        android:id="@+id/scroll_view_child"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipChildren="false">
+        <!-- Background photo -->
+        <FrameLayout
+            android:id="@+id/pub_photo_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:foreground="@drawable/photo_banner_scrim">
+
+            <ImageView
+                android:id="@+id/pub_photo"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"/>
+        </FrameLayout>
+
+        <LinearLayout
+            android:id="@+id/details_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#fff"
+            android:clipToPadding="false"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/publication_details_extra_space_bottom"
+            android:paddingRight="@dimen/keyline_1"
+            android:paddingTop="16dp">
+
+            <TextView
+                android:id="@+id/pub_abstract"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/keyline_2"
+                android:layout_marginBottom="16dp"
+                style="@style/TextBody"
+                />
+        </LinearLayout>
+
+        <!-- Title/subtitle bar (floating; position determined at run time as the content view scrolls) -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:id="@+id/header_pub">
+
+            <!-- height assigned dynamically -->
+            <View
+                android:id="@+id/header_background"
+                android:background="@color/theme_primary"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"/>
+
+            <LinearLayout
+                android:id="@+id/header_pub_contents"
+                android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:paddingLeft="@dimen/keyline_2_pub_detail"
+                android:paddingTop="16dp"
+                android:paddingRight="@dimen/keyline_1"
+                android:paddingBottom="16dp"
+                android:layout_height="wrap_content">
+
+                <!-- Publication title -->
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_marginBottom="0dp"
+                    android:text="@string/designtime_placeholder_short"
+                    android:id="@+id/pub_title"
+                    android:maxLines="4"
+                    android:ellipsize="end"
+                    android:textSize="@dimen/text_size_large"
+                    android:lineSpacingMultiplier="1.1"
+                    android:textColor="@color/body_text_1_inverse"
+                    android:textAlignment="viewStart"/>
+
+                <!-- Publication subtitle -->
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:text="@string/designtime_placeholder_medium"
+                    android:id="@+id/pub_subtitle"
+                    android:maxLines="2"
+                    android:ellipsize="end"
+                    android:textSize="16sp"
+                    android:textColor="@color/body_text_2_inverse"
+                    android:textAlignment="viewStart"/>
+
+            </LinearLayout>
+
+            <View
+                android:id="@+id/header_shadow"
+                android:layout_width="match_parent"
+                android:layout_height="6dp"
+                android:layout_gravity="bottom"
+                android:layout_marginBottom="-6dp"
+                android:background="@drawable/bottom_shadow"/>
+
+        </FrameLayout>
+
+    </FrameLayout>
+</com.andrada.sitracker.ui.widget.ObservableScrollView>

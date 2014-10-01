@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,6 +16,7 @@
 
 package com.andrada.sitracker.ui.fragment;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -23,11 +24,13 @@ import android.view.View;
 import android.widget.ExpandableListView;
 
 import com.andrada.sitracker.R;
+import com.andrada.sitracker.contracts.AppUriContract;
 import com.andrada.sitracker.contracts.SIPrefs_;
 import com.andrada.sitracker.db.beans.Publication;
 import com.andrada.sitracker.events.AuthorMarkedAsReadEvent;
 import com.andrada.sitracker.events.AuthorSelectedEvent;
 import com.andrada.sitracker.exceptions.SharePublicationException;
+import com.andrada.sitracker.ui.PublicationDetailsActivity;
 import com.andrada.sitracker.ui.fragment.adapters.PublicationsAdapter;
 import com.andrada.sitracker.util.ShareHelper;
 import com.andrada.sitracker.util.UIUtils;
@@ -123,8 +126,12 @@ public class PublicationsFragment extends Fragment implements ExpandableListView
     @Override
     public boolean onChildClick(ExpandableListView expandableListView,
                                 View view, int groupPosition, int childPosition, long l) {
-        //TODO redirect to other publication details fragment
-        return false;
+        Publication pub = (Publication) adapter.getChild(groupPosition, childPosition);
+
+        Intent intent = new Intent(Intent.ACTION_VIEW,
+                AppUriContract.buildPublicationUri(pub.getId()), getActivity(), PublicationDetailsActivity.class);
+        getActivity().startActivity(intent);
+        return true;
     }
 
     @Override
