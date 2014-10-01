@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -215,7 +215,11 @@ class Samlib implements SiteStrategy {
                         !pub.getName().equals(old.getName())) {
                     //if something differs
                     //Store the old size
-                    pub.setOldSize(old.getSize());
+                    if (old.getOldSize() != 0) {
+                        pub.setOldSize(old.getOldSize());
+                    } else {
+                        pub.setOldSize(old.getSize());
+                    }
                     //Swap the ids, do an update in DB
                     pub.setId(old.getId());
                     pub.setNew(true);
