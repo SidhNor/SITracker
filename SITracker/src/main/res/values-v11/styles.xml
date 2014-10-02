@@ -35,6 +35,7 @@
         <item name="android:homeAsUpIndicator">@drawable/ic_up</item>
         <item name="android:actionOverflowButtonStyle">@style/ActionButton.Overflow</item>
         <item name="android:editTextBackground">@drawable/edit_text</item>
+        <item name="vpiCirclePageIndicatorStyle">@style/CustomCirclePageIndicator</item>
     </style>
 
     <style name="Theme.SiTracker" parent="FrameworkRoot.Theme">

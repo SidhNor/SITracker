@@ -22,8 +22,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#fff"
-    android:fillViewport="true"
     android:fadingEdge="none"
+    android:fillViewport="true"
     android:overScrollMode="never">
 
     <FrameLayout
@@ -58,15 +58,22 @@
             android:id="@+id/pub_photo_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:foreground="@drawable/photo_banner_scrim">
+            android:foreground="@drawable/photo_banner_scrim"
+            >
 
-            <ImageView
-                android:id="@+id/pub_photo"
+            <android.support.v4.view.ViewPager
+                android:id="@+id/pager"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:contentDescription="@null"
-                android:scaleType="fitCenter"
-                android:src="@drawable/empty_shelves"/>
+                />
+
+            <com.viewpagerindicator.CirclePageIndicator
+                android:id="@+id/pagerIndicators"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginBottom="16dp"
+                android:padding="2dp"/>
         </FrameLayout>
 
         <!-- Title/subtitle bar (floating; position determined at run time as the content view scrolls) -->
@@ -82,8 +89,8 @@
                 android:id="@+id/header_background"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:clickable="false"
-                android:background="@color/theme_primary"/>
+                android:background="@color/theme_primary"
+                android:clickable="false"/>
 
             <LinearLayout
                 android:id="@+id/header_pub_contents"

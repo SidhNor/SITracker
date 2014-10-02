@@ -62,6 +62,7 @@
         <item name="listPreferredItemHeightSmall">@dimen/compat_list_preferred_item_height_small
         </item>
         <item name="android:editTextStyle">@style/Widget.SiTracker.EditText</item>
+        <item name="vpiCirclePageIndicatorStyle">@style/CustomCirclePageIndicator</item>
     </style>
 
     <!-- Application theme. -->
@@ -278,6 +279,14 @@
 
     <style name="Searched.Subtitle.TwoLines" parent="Searched.Subtitle">
         <item name="android:maxLines">2</item>
+    </style>
+
+    <style name="CustomCirclePageIndicator">
+        <item name="fillColor">#FF888888</item>
+        <item name="strokeColor">#FF000000</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="radius">3dp</item>
+        <item name="centered">true</item>
     </style>
 
 </resources>

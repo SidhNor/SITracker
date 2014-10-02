@@ -16,12 +16,15 @@
 
 package com.andrada.sitracker.ui.fragment;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,6 +46,7 @@ import com.andrada.sitracker.util.SamlibPageHelper;
 import com.andrada.sitracker.util.UIUtils;
 import com.android.volley.VolleyError;
 import com.nineoldandroids.view.ViewHelper;
+import com.viewpagerindicator.CirclePageIndicator;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -50,6 +54,9 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.OrmLiteDao;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.nineoldandroids.view.ViewPropertyAnimator.animate;
 
@@ -86,8 +93,10 @@ public class PublicationInfoFragment extends Fragment implements
     View mDetailsContainer;
     @ViewById(R.id.pub_photo_container)
     View mPhotoViewContainer;
-    @ViewById(R.id.pub_photo)
-    ImageView mPhotoView;
+    @ViewById(R.id.pager)
+    ViewPager pager;
+    @ViewById(R.id.pagerIndicators)
+    CirclePageIndicator pagerIndicators;
 
     ImageLoader mImageLoader;
 
@@ -152,6 +161,9 @@ public class PublicationInfoFragment extends Fragment implements
     @AfterViews
     public void afterViews() {
         mScrollViewChild.setVisibility(View.INVISIBLE);
+        pager.setAdapter(new PublicationImagesAdapter(getActivity()));
+        pagerIndicators.setViewPager(pager);
+        pagerIndicators.setSnap(true);
         setupCustomScrolling();
     }
 
@@ -180,8 +192,20 @@ public class PublicationInfoFragment extends Fragment implements
 
         String imagesUrl = currentRecord.getImagePageUrl();
         if (!TextUtils.isEmpty(imagesUrl)) {
+            //Do a network request to detect number of images
+            //Add images
+            //Add image view to gallery.
+
             mHasPhoto = true;
-            mImageLoader.get("https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSjT0R32iIKaLh5ZuBgh4QZEuzJnEpa-YuwQ_V_iZDIjNNRRBmLSA", new com.android.volley.toolbox.ImageLoader.ImageListener() {
+            PublicationImagesAdapter adapter = (PublicationImagesAdapter) pager.getAdapter();
+            adapter.addImage("https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSjT0R32iIKaLh5ZuBgh4QZEuzJnEpa-YuwQ_V_iZDIjNNRRBmLSA");
+            adapter.addImage("https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSjT0R32iIKaLh5ZuBgh4QZEuzJnEpa-YuwQ_V_iZDIjNNRRBmLSA");
+            adapter.addImage("https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSjT0R32iIKaLh5ZuBgh4QZEuzJnEpa-YuwQ_V_iZDIjNNRRBmLSA");
+            adapter.addImage("https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSjT0R32iIKaLh5ZuBgh4QZEuzJnEpa-YuwQ_V_iZDIjNNRRBmLSA");
+            adapter.addImage("https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSjT0R32iIKaLh5ZuBgh4QZEuzJnEpa-YuwQ_V_iZDIjNNRRBmLSA");
+            adapter.addImage("https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSjT0R32iIKaLh5ZuBgh4QZEuzJnEpa-YuwQ_V_iZDIjNNRRBmLSA");
+
+            /*mImageLoader.get("https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSjT0R32iIKaLh5ZuBgh4QZEuzJnEpa-YuwQ_V_iZDIjNNRRBmLSA", new com.android.volley.toolbox.ImageLoader.ImageListener() {
                 @Override
                 public void onResponse(com.android.volley.toolbox.ImageLoader.ImageContainer response, boolean isImmediate) {
                     mPhotoView.setImageBitmap(response.getBitmap());
@@ -194,7 +218,7 @@ public class PublicationInfoFragment extends Fragment implements
                     mHasPhoto = false;
                     recomputePhotoAndScrollingMetrics();
                 }
-            }, mRootView.getWidth(), mPhotoHeightPixels);
+            }, mRootView.getWidth(), mPhotoHeightPixels);*/
             recomputePhotoAndScrollingMetrics();
         } else {
             mHasPhoto = false;
@@ -308,7 +332,7 @@ public class PublicationInfoFragment extends Fragment implements
 
         mPhotoHeightPixels = mHeaderTopClearance;
         if (mHasPhoto) {
-            mPhotoHeightPixels = (int) (mPhotoView.getWidth() / PHOTO_ASPECT_RATIO);
+            mPhotoHeightPixels = (int) (mPhotoViewContainer.getWidth() / PHOTO_ASPECT_RATIO);
             mPhotoHeightPixels = Math.min(mPhotoHeightPixels, mRootView.getHeight() * 2 / 3);
         }
 
@@ -347,4 +371,61 @@ public class PublicationInfoFragment extends Fragment implements
         onScrollChanged(0, 0); // trigger scroll handling
     }
 
+
+    class PublicationImagesAdapter extends PagerAdapter {
+
+        Context context;
+        List<ImageView> mImages;
+        int count = 0;
+
+        public PublicationImagesAdapter(Context context) {
+            this.context = context;
+            mImages = new ArrayList<ImageView>();
+        }
+
+        public void addImage(String url) {
+            final ImageView img = new ImageView(context);
+            img.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            mImages.add(img);
+            mImageLoader.get("https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSjT0R32iIKaLh5ZuBgh4QZEuzJnEpa-YuwQ_V_iZDIjNNRRBmLSA", new com.android.volley.toolbox.ImageLoader.ImageListener() {
+                @Override
+                public void onResponse(com.android.volley.toolbox.ImageLoader.ImageContainer response, boolean isImmediate) {
+                    img.setImageBitmap(response.getBitmap());
+                    // Trigger image transition
+                    recomputePhotoAndScrollingMetrics();
+                }
+
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    mHasPhoto = false;
+                    recomputePhotoAndScrollingMetrics();
+                }
+            }, mRootView.getWidth(), mPhotoHeightPixels);
+
+
+            notifyDataSetChanged();
+        }
+
+        @Override
+        public int getCount() {
+            return mImages.size();
+        }
+
+        @Override
+        public boolean isViewFromObject(View view, Object object) {
+            return view == object;
+        }
+
+        @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            container.removeView((View) object);
+        }
+
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+            ImageView v = mImages.get(position);
+            container.addView(v);
+            return v;
+        }
+    }
 }

@@ -38,6 +38,9 @@ dependencies {
     compile 'de.greenrobot:eventbus:2.2.1'
     compile 'com.mcxiaoke.volley:library:1.0.6'
     androidTestCompile 'com.squareup:fest-android:1.0.5'
+    compile('com.viewpagerindicator:library:2.4.1@aar') {
+        exclude group: 'com.google.android', module: 'support-v4'
+    }
     compile('de.keyboardsurfer.android.widget:crouton:1.8.4@aar') {
         exclude group: 'com.google.android', module: 'support-v4'
     }
