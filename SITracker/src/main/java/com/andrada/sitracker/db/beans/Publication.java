@@ -1,11 +1,11 @@
 /*
- * Copyright 2013 Gleb Godonoga.
+ * Copyright 2014 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -65,6 +65,8 @@ public class Publication implements Serializable {
     Date updateDate;
     @DatabaseField(canBeNull = true, useGetSet = true)
     String imageUrl;
+    @DatabaseField(canBeNull = true, useGetSet = true)
+    String imagePageUrl;
 
     boolean isLoading = false;
 
@@ -208,6 +210,14 @@ public class Publication implements Serializable {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public String getImagePageUrl() {
+        return imagePageUrl;
+    }
+
+    public void setImagePageUrl(String imagePageUrl) {
+        this.imagePageUrl = imagePageUrl;
     }
 
     public boolean getLoading() {

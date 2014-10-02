@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -38,7 +38,7 @@ import java.util.concurrent.Callable;
 public class SiDBHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "siinformer.db";
-    private static final int DATABASE_VERSION = 9;
+    private static final int DATABASE_VERSION = 10;
 
     @Nullable
     private PublicationDao publicationDao;
@@ -150,6 +150,10 @@ public class SiDBHelper extends OrmLiteSqliteOpenHelper {
                                 return null;
                             }
                         });
+                        break;
+                    }
+                    case 10: {
+                        getPublicationDao().executeRaw("ALTER TABLE 'publications' ADD COLUMN imagePageUrl TEXT;");
                         break;
                     }
                 }
