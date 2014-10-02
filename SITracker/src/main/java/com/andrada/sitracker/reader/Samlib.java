@@ -32,6 +32,7 @@ import com.andrada.sitracker.util.SamlibPageHelper;
 import com.github.kevinsawicki.http.HttpRequest;
 import com.j256.ormlite.dao.ForeignCollection;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -229,6 +230,10 @@ class Samlib implements SiteStrategy {
                     author.setUpdateDate(new Date());
                     author.setNew(true);
                     authorDao.update(author);
+                } else if (!StringUtils.equalsIgnoreCase(old.getImagePageUrl(), pub.getImagePageUrl())) {
+                    pub.setId(old.getId());
+                    //Update silently
+                    publicationsDao.update(pub);
                 }
             } else {
                 //Mark author new, update in DB
