@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,6 +20,9 @@ import android.app.Application;
 
 import com.andrada.sitracker.util.AnalyticsExceptionParser;
 import com.andrada.sitracker.util.AnalyticsHelper;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.GlideBuilder;
+import com.bumptech.glide.load.engine.cache.DiskLruCacheWrapper;
 import com.google.android.gms.analytics.ExceptionReporter;
 
 import java.io.File;
@@ -57,5 +60,11 @@ public class SITrackerApp extends Application {
                 this.getApplicationContext());
         myReporter.setExceptionParser(new AnalyticsExceptionParser());
         Thread.setDefaultUncaughtExceptionHandler(myReporter);
+
+        if (!Glide.isSetup()) {
+            Glide.setup(new GlideBuilder(this)
+                            .setDiskCache(DiskLruCacheWrapper.get(Glide.getPhotoCacheDir(this), 250 * 1024 * 1024))
+            );
+        }
     }
 }

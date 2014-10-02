@@ -26,6 +26,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,24 +37,32 @@ import android.widget.TextView;
 
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.AppUriContract;
+import com.andrada.sitracker.contracts.SIPrefs_;
 import com.andrada.sitracker.db.beans.Publication;
 import com.andrada.sitracker.db.dao.PublicationDao;
 import com.andrada.sitracker.db.manager.SiDBHelper;
+import com.andrada.sitracker.reader.SamlibPublicationPageReader;
 import com.andrada.sitracker.ui.BaseActivity;
 import com.andrada.sitracker.ui.widget.ObservableScrollView;
-import com.andrada.sitracker.util.ImageLoader;
 import com.andrada.sitracker.util.SamlibPageHelper;
 import com.andrada.sitracker.util.UIUtils;
-import com.android.volley.VolleyError;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.github.kevinsawicki.http.HttpRequest;
+import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.nineoldandroids.view.ViewHelper;
 import com.viewpagerindicator.CirclePageIndicator;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.OrmLiteDao;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
+import org.androidannotations.annotations.sharedpreferences.Pref;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,6 +70,7 @@ import java.util.List;
 import static com.nineoldandroids.view.ViewPropertyAnimator.animate;
 
 @EFragment(R.layout.fragment_pub_details)
+@OptionsMenu(R.menu.publication_info_menu)
 public class PublicationInfoFragment extends Fragment implements
         ObservableScrollView.Callbacks {
 
@@ -70,6 +80,8 @@ public class PublicationInfoFragment extends Fragment implements
     PublicationDao publicationsDao;
 
     Publication currentRecord;
+    @Pref
+    SIPrefs_ prefs;
 
     @ViewById(R.id.scroll_view_child)
     View mScrollViewChild;
@@ -98,14 +110,11 @@ public class PublicationInfoFragment extends Fragment implements
     @ViewById(R.id.pagerIndicators)
     CirclePageIndicator pagerIndicators;
 
-    ImageLoader mImageLoader;
-
     private Handler mHandler = new Handler();
     private ViewTreeObserver.OnGlobalLayoutListener mGlobalLayoutListener
             = new ViewTreeObserver.OnGlobalLayoutListener() {
         @Override
         public void onGlobalLayout() {
-            //mAddScheduleButtonHeightPixels = mAddScheduleButton.getHeight();
             recomputePhotoAndScrollingMetrics();
         }
     };
@@ -135,8 +144,12 @@ public class PublicationInfoFragment extends Fragment implements
         }
         mPublicationId = AppUriContract.getPublicationId(mPublicationUri);
         mHandler = new Handler();
-        mImageLoader = new ImageLoader(this.getActivity(), R.drawable.blank_book)
-                .setFadeInImage(UIUtils.hasHoneycombMR1());
+    }
+
+    @Override
+    public void onDestroy() {
+        OpenHelperManager.releaseHelper();
+        super.onDestroy();
     }
 
     @Override
@@ -191,34 +204,12 @@ public class PublicationInfoFragment extends Fragment implements
         mPhotoViewContainer.setBackgroundColor(UIUtils.scaleColor(0xe8552c, 0.65f, false));
 
         String imagesUrl = currentRecord.getImagePageUrl();
-        if (!TextUtils.isEmpty(imagesUrl)) {
+        if (!TextUtils.isEmpty(imagesUrl) && prefs.displayPubImages().get()) {
             //Do a network request to detect number of images
+            loadImageList(imagesUrl);
             //Add images
-            //Add image view to gallery.
-
+            //Add image view to pager.
             mHasPhoto = true;
-            PublicationImagesAdapter adapter = (PublicationImagesAdapter) pager.getAdapter();
-            adapter.addImage("https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSjT0R32iIKaLh5ZuBgh4QZEuzJnEpa-YuwQ_V_iZDIjNNRRBmLSA");
-            adapter.addImage("https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSjT0R32iIKaLh5ZuBgh4QZEuzJnEpa-YuwQ_V_iZDIjNNRRBmLSA");
-            adapter.addImage("https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSjT0R32iIKaLh5ZuBgh4QZEuzJnEpa-YuwQ_V_iZDIjNNRRBmLSA");
-            adapter.addImage("https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSjT0R32iIKaLh5ZuBgh4QZEuzJnEpa-YuwQ_V_iZDIjNNRRBmLSA");
-            adapter.addImage("https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSjT0R32iIKaLh5ZuBgh4QZEuzJnEpa-YuwQ_V_iZDIjNNRRBmLSA");
-            adapter.addImage("https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSjT0R32iIKaLh5ZuBgh4QZEuzJnEpa-YuwQ_V_iZDIjNNRRBmLSA");
-
-            /*mImageLoader.get("https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSjT0R32iIKaLh5ZuBgh4QZEuzJnEpa-YuwQ_V_iZDIjNNRRBmLSA", new com.android.volley.toolbox.ImageLoader.ImageListener() {
-                @Override
-                public void onResponse(com.android.volley.toolbox.ImageLoader.ImageContainer response, boolean isImmediate) {
-                    mPhotoView.setImageBitmap(response.getBitmap());
-                    // Trigger image transition
-                    recomputePhotoAndScrollingMetrics();
-                }
-
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    mHasPhoto = false;
-                    recomputePhotoAndScrollingMetrics();
-                }
-            }, mRootView.getWidth(), mPhotoHeightPixels);*/
             recomputePhotoAndScrollingMetrics();
         } else {
             mHasPhoto = false;
@@ -241,6 +232,40 @@ public class PublicationInfoFragment extends Fragment implements
             }
         });
     }
+
+    @Background
+    void loadImageList(String url) {
+        try {
+            final HttpRequest request = HttpRequest.get(SamlibPublicationPageReader.SAMLIB_URL_PREFIX + currentRecord.getImagePageUrl());
+            //Tolerate 10 days
+            request.getConnection().addRequestProperty("Cache-Control", "max-stale=" + (60 * 60 * 24 * 10));
+            String data = request.body();
+            List<Pair<String, String>> results = new SamlibPublicationPageReader().readPublicationImageUrlsAndDescriptions(data);
+            addImagesToList(results);
+        } catch (HttpRequest.HttpRequestException e) {
+            //TODO log exception to analytics
+            addImagesToList(new ArrayList<Pair<String, String>>());
+        }
+    }
+
+    @UiThread
+    void addImagesToList(List<Pair<String, String>> results) {
+        if (results.size() == 0) {
+            mHasPhoto = false;
+        } else {
+            if (results.size() == 1) {
+                pagerIndicators.setVisibility(View.GONE);
+            } else if (results.size() > 15) {
+                results = results.subList(0, 15);
+            }
+            PublicationImagesAdapter adapter = (PublicationImagesAdapter) pager.getAdapter();
+            for (Pair<String, String> res : results) {
+                adapter.addImage(res.first);
+            }
+        }
+        recomputePhotoAndScrollingMetrics();
+    }
+
 
     private void setupCustomScrolling() {
         mScrollView.addCallbacks(this);
@@ -302,17 +327,17 @@ public class PublicationInfoFragment extends Fragment implements
 
         mHeaderShadow.setVisibility(View.VISIBLE);
 
-            if (mHeaderTopClearance != 0) {
-                // Fill the gap between status bar and header bar with color
-                float gapFillProgress = Math.min(Math.max(UIUtils.getProgress(scrollY,
-                        mPhotoHeightPixels - mHeaderTopClearance * 2,
-                        mPhotoHeightPixels - mHeaderTopClearance), 0), 1);
-                if (UIUtils.hasHoneycombMR1()) {
-                    mHeaderShadow.setAlpha(gapFillProgress);
-                } else {
-                    ViewHelper.setAlpha(mHeaderShadow, gapFillProgress);
-                }
+        if (mHeaderTopClearance != 0) {
+            // Fill the gap between status bar and header bar with color
+            float gapFillProgress = Math.min(Math.max(UIUtils.getProgress(scrollY,
+                    mPhotoHeightPixels - mHeaderTopClearance * 2,
+                    mPhotoHeightPixels - mHeaderTopClearance), 0), 1);
+            if (UIUtils.hasHoneycombMR1()) {
+                mHeaderShadow.setAlpha(gapFillProgress);
+            } else {
+                ViewHelper.setAlpha(mHeaderShadow, gapFillProgress);
             }
+        }
 
         // Move background photo (parallax effect)
         if (UIUtils.hasHoneycombMR1()) {
@@ -376,7 +401,6 @@ public class PublicationInfoFragment extends Fragment implements
 
         Context context;
         List<ImageView> mImages;
-        int count = 0;
 
         public PublicationImagesAdapter(Context context) {
             this.context = context;
@@ -385,23 +409,30 @@ public class PublicationInfoFragment extends Fragment implements
 
         public void addImage(String url) {
             final ImageView img = new ImageView(context);
+            img.setImageResource(R.drawable.glyph_folder_white);
             img.setScaleType(ImageView.ScaleType.FIT_CENTER);
             mImages.add(img);
-            mImageLoader.get("https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSjT0R32iIKaLh5ZuBgh4QZEuzJnEpa-YuwQ_V_iZDIjNNRRBmLSA", new com.android.volley.toolbox.ImageLoader.ImageListener() {
-                @Override
-                public void onResponse(com.android.volley.toolbox.ImageLoader.ImageContainer response, boolean isImmediate) {
-                    img.setImageBitmap(response.getBitmap());
-                    // Trigger image transition
-                    recomputePhotoAndScrollingMetrics();
-                }
 
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    mHasPhoto = false;
-                    recomputePhotoAndScrollingMetrics();
-                }
-            }, mRootView.getWidth(), mPhotoHeightPixels);
+            int width = 320;
+            int height = (int) (320 / PHOTO_ASPECT_RATIO);
 
+            if (mRootView.getWidth() != 0 && mPhotoHeightPixels != 0) {
+                width = mRootView.getWidth();
+                height = mPhotoHeightPixels;
+            }
+            if (getActivity() != null) {
+                Glide.with(getActivity())
+                        .load(url)
+                        .fitCenter()
+                        .into(new SimpleTarget<GlideDrawable>(width, height) {
+                            @Override
+                            public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
+                                img.setImageDrawable(resource);
+                                // Trigger image transition
+                                recomputePhotoAndScrollingMetrics();
+                            }
+                        });
+            }
 
             notifyDataSetChanged();
         }

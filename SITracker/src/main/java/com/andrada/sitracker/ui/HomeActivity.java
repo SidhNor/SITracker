@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -48,7 +48,6 @@ import com.andrada.sitracker.ui.fragment.AuthorsFragment;
 import com.andrada.sitracker.ui.fragment.DirectoryChooserFragment;
 import com.andrada.sitracker.ui.fragment.PublicationsFragment;
 import com.andrada.sitracker.util.AnalyticsHelper;
-import com.andrada.sitracker.util.ImageLoader;
 import com.andrada.sitracker.util.UIUtils;
 import com.andrada.sitracker.util.UpdateServiceHelper;
 
@@ -76,7 +75,7 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 @SuppressLint("Registered")
 @EActivity(R.layout.activity_main)
 @OptionsMenu(R.menu.main_menu)
-public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoaderProvider, DirectoryChooserFragment.OnFragmentInteractionListener {
+public class HomeActivity extends BaseActivity implements DirectoryChooserFragment.OnFragmentInteractionListener {
 
     public static final String AUTHORS_PROCESSED_EXTRA = "authors_total_processed";
     public static final String AUTHORS_SUCCESSFULLY_IMPORTED_EXTRA = "authors_successfully_imported";
@@ -160,7 +159,6 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
     @StringRes(R.string.app_name)
     String mAppName;
     private TimerTask backUpTask;
-    private ImageLoader mImageLoader;
     private BroadcastReceiver updateStatusReceiver;
 
     @AfterViews
@@ -172,10 +170,6 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
 
         slidingPane.getViewTreeObserver().addOnGlobalLayoutListener(globalLayoutListener);
         ensureUpdatesAreRunningOnSchedule();
-
-        mImageLoader = new ImageLoader(this, R.drawable.blank_book)
-                .setMaxImageSize(getResources().getDimensionPixelSize(R.dimen.publication_pixel_size))
-                .setFadeInImage(UIUtils.hasHoneycombMR1());
     }
 
     @Override
@@ -399,11 +393,6 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
 
     public PublicationsFragment getPubFragment() {
         return mPubFragment;
-    }
-
-    @Override
-    public ImageLoader getImageLoaderInstance() {
-        return mImageLoader;
     }
 
     @Override

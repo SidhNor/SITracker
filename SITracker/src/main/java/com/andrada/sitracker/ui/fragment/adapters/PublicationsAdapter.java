@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -31,13 +31,11 @@ import com.andrada.sitracker.db.beans.Publication;
 import com.andrada.sitracker.db.dao.PublicationDao;
 import com.andrada.sitracker.db.manager.SiDBHelper;
 import com.andrada.sitracker.events.PublicationMarkedAsReadEvent;
-import com.andrada.sitracker.ui.HomeActivity;
 import com.andrada.sitracker.ui.components.PublicationCategoryItemView;
 import com.andrada.sitracker.ui.components.PublicationCategoryItemView_;
 import com.andrada.sitracker.ui.components.PublicationItemView;
 import com.andrada.sitracker.ui.components.PublicationItemView_;
 import com.andrada.sitracker.util.AnalyticsHelper;
-import com.andrada.sitracker.util.ImageLoader;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
@@ -77,20 +75,14 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
     private final HashMap<Long, Publication> mDownloadingPublications = new HashMap<Long, Publication>();
 
     @Nullable
-    ImageLoader mLoader;
-
-    @Nullable
     ListView listView = null;
+
+    boolean shouldShowImages;
 
     @Background
     public void reloadPublicationsForAuthorId(long id) {
         try {
-            boolean shouldShowImages = prefs.displayPubImages().get();
-            if (shouldShowImages) {
-                mLoader = ((HomeActivity) context).getImageLoaderInstance();
-            } else {
-                mLoader = null;
-            }
+            shouldShowImages = prefs.displayPubImages().get();
             List<Publication> pubs = publicationsDao.getSortedPublicationsForAuthorId(id);
             List<CategoryValue> newCategories = new ArrayList<CategoryValue>();
             List<List<Publication>> newChildren = new ArrayList<List<Publication>>();
@@ -102,7 +94,7 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
                         possibleVal.incrementNewCount();
                     }
                     newCategories.add(possibleVal);
-                } else if (publication.getNew()){
+                } else if (publication.getNew()) {
                     newCategories.get(newCategories.indexOf(possibleVal)).incrementNewCount();
                 }
             }
@@ -159,7 +151,7 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
         } else {
             publicationItemView = (PublicationItemView) convertView;
         }
-        publicationItemView.bind(pub, mLoader);
+        publicationItemView.bind(pub, shouldShowImages);
         return publicationItemView;
     }
 
@@ -297,6 +289,7 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
             this.categoryName = categoryName;
             this.newCount = 0;
         }
+
         public void incrementNewCount() {
             ++newCount;
         }

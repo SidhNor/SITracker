@@ -1,11 +1,11 @@
 /*
- * Copyright 2013 Gleb Godonoga.
+ * Copyright 2014 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -30,15 +30,14 @@ import com.andrada.sitracker.contracts.IsNewItemTappedListener;
 import com.andrada.sitracker.db.beans.Publication;
 import com.andrada.sitracker.ui.widget.TouchDelegateRelativeLayout;
 import com.andrada.sitracker.util.DateFormatterUtil;
-import com.andrada.sitracker.util.ImageLoader;
 import com.andrada.sitracker.util.SamlibPageHelper;
 import com.andrada.sitracker.util.UIUtils;
+import com.bumptech.glide.Glide;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 @EViewGroup(R.layout.publications_item)
 public class PublicationItemView extends TouchDelegateRelativeLayout {
@@ -107,7 +106,7 @@ public class PublicationItemView extends TouchDelegateRelativeLayout {
         mListener = listener;
     }
 
-    public void bind(@NotNull Publication publication, @Nullable ImageLoader loader) {
+    public void bind(@NotNull Publication publication, boolean loadImages) {
         mIsNew = publication.getNew();
         item_title.setText(publication.getName());
         item_updated.setImageResource(mIsNew ? R.drawable.star_selected : R.drawable.star_unselected);
@@ -115,9 +114,15 @@ public class PublicationItemView extends TouchDelegateRelativeLayout {
         item_update_date.setText(
                 DateFormatterUtil.getFriendlyDateRelativeToToday(publication.getUpdateDate(),
                         getResources().getConfiguration().locale));
-        if (loader != null && publication.getImageUrl() != null) {
+
+        if (loadImages && publication.getImageUrl() != null) {
             publication_image.setVisibility(VISIBLE);
-            loader.get(publication.getImageUrl(), publication_image);
+            Glide.with(this.getContext())
+                    .load(publication.getImageUrl())
+                    .fitCenter()
+                    .placeholder(R.drawable.blank_book)
+                    .crossFade()
+                    .into(publication_image);
         } else {
             publication_image.setVisibility(GONE);
         }
