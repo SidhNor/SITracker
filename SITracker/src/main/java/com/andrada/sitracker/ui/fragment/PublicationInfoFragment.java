@@ -39,6 +39,7 @@ import com.andrada.sitracker.db.manager.SiDBHelper;
 import com.andrada.sitracker.ui.BaseActivity;
 import com.andrada.sitracker.ui.widget.ObservableScrollView;
 import com.andrada.sitracker.util.ImageLoader;
+import com.andrada.sitracker.util.SamlibPageHelper;
 import com.andrada.sitracker.util.UIUtils;
 import com.android.volley.VolleyError;
 import com.nineoldandroids.view.ViewHelper;
@@ -177,10 +178,10 @@ public class PublicationInfoFragment extends Fragment implements
 
         mPhotoViewContainer.setBackgroundColor(UIUtils.scaleColor(0xe8552c, 0.65f, false));
 
-        String photo = currentRecord.getImageUrl();
-        if (!TextUtils.isEmpty(photo)) {
+        String imagesUrl = currentRecord.getImagePageUrl();
+        if (!TextUtils.isEmpty(imagesUrl)) {
             mHasPhoto = true;
-            mImageLoader.get(photo, new com.android.volley.toolbox.ImageLoader.ImageListener() {
+            mImageLoader.get("https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSjT0R32iIKaLh5ZuBgh4QZEuzJnEpa-YuwQ_V_iZDIjNNRRBmLSA", new com.android.volley.toolbox.ImageLoader.ImageListener() {
                 @Override
                 public void onResponse(com.android.volley.toolbox.ImageLoader.ImageContainer response, boolean isImmediate) {
                     mPhotoView.setImageBitmap(response.getBitmap());
@@ -200,7 +201,7 @@ public class PublicationInfoFragment extends Fragment implements
             recomputePhotoAndScrollingMetrics();
         }
 
-        String pubAbstract = currentRecord.getDescription();
+        String pubAbstract = SamlibPageHelper.stripDescriptionOfImages(currentRecord.getDescription());
         if (!TextUtils.isEmpty(pubAbstract)) {
             UIUtils.setTextMaybeHtml(mAbstract, pubAbstract);
             mAbstract.setVisibility(View.VISIBLE);
@@ -324,12 +325,25 @@ public class PublicationInfoFragment extends Fragment implements
             mHeaderBackgroundBox.setLayoutParams(lp);
         }
 
-        ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams)
-                mDetailsContainer.getLayoutParams();
-        if (mlp.topMargin != mHeaderHeightPixels + mPhotoHeightPixels) {
-            mlp.topMargin = mHeaderHeightPixels + mPhotoHeightPixels;
-            mDetailsContainer.setLayoutParams(mlp);
+        if (UIUtils.hasHoneycombMR1()) {
+            ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams)
+                    mDetailsContainer.getLayoutParams();
+            if (mlp.topMargin != mHeaderHeightPixels + mPhotoHeightPixels) {
+                mlp.topMargin = mHeaderHeightPixels + mPhotoHeightPixels;
+                mDetailsContainer.setLayoutParams(mlp);
+            }
+        } else {
+            //Set paddings instead
+            int paddTop = mDetailsContainer.getPaddingTop();
+            if (paddTop != mHeaderHeightPixels + mPhotoHeightPixels + 16) {
+                mDetailsContainer.setPadding(mDetailsContainer.getPaddingLeft(),
+                        mHeaderHeightPixels + mPhotoHeightPixels + 16,
+                        mDetailsContainer.getPaddingRight(),
+                        mDetailsContainer.getPaddingBottom());
+            }
+
         }
+
         onScrollChanged(0, 0); // trigger scroll handling
     }
 

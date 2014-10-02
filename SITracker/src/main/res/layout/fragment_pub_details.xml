@@ -23,6 +23,7 @@
     android:layout_height="match_parent"
     android:background="#fff"
     android:fillViewport="true"
+    android:fadingEdge="none"
     android:overScrollMode="never">
 
     <FrameLayout
@@ -30,20 +31,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clipChildren="false">
-        <!-- Background photo -->
-        <FrameLayout
-            android:id="@+id/pub_photo_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:foreground="@drawable/photo_banner_scrim">
-
-            <ImageView
-                android:id="@+id/pub_photo"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="fitCenter"
-                android:contentDescription="@null"/>
-        </FrameLayout>
 
         <LinearLayout
             android:id="@+id/details_container"
@@ -66,12 +53,28 @@
                 />
         </LinearLayout>
 
+        <!-- Background photo -->
+        <FrameLayout
+            android:id="@+id/pub_photo_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:foreground="@drawable/photo_banner_scrim">
+
+            <ImageView
+                android:id="@+id/pub_photo"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@null"
+                android:scaleType="fitCenter"
+                android:src="@drawable/empty_shelves"/>
+        </FrameLayout>
+
         <!-- Title/subtitle bar (floating; position determined at run time as the content view scrolls) -->
         <FrameLayout
             android:id="@+id/header_pub"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:clipChildren="false"
+
             android:clipToPadding="false">
 
             <!-- height assigned dynamically -->
