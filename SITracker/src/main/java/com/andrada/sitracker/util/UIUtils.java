@@ -79,6 +79,10 @@ public class UIUtils {
         }
     }
 
+    //TODO remove on next release
+    public static boolean hasGingerbreadMR1() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD_MR1;
+    }
 
     public static boolean hasHoneycomb() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;

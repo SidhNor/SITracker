@@ -115,7 +115,9 @@ public class PublicationItemView extends TouchDelegateRelativeLayout {
                 DateFormatterUtil.getFriendlyDateRelativeToToday(publication.getUpdateDate(),
                         getResources().getConfiguration().locale));
 
-        if (loadImages && publication.getImageUrl() != null) {
+        if (loadImages && publication.getImageUrl() != null &&
+                //TODO Remove gingerbread check on next release
+                UIUtils.hasGingerbreadMR1()) {
             publication_image.setVisibility(VISIBLE);
             Glide.with(this.getContext())
                     .load(publication.getImageUrl())

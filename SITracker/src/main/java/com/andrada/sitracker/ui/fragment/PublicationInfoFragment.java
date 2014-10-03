@@ -16,9 +16,11 @@
 
 package com.andrada.sitracker.ui.fragment;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -204,7 +206,9 @@ public class PublicationInfoFragment extends Fragment implements
         mPhotoViewContainer.setBackgroundColor(UIUtils.scaleColor(0xe8552c, 0.65f, false));
 
         String imagesUrl = currentRecord.getImagePageUrl();
-        if (!TextUtils.isEmpty(imagesUrl) && prefs.displayPubImages().get()) {
+        if (!TextUtils.isEmpty(imagesUrl) && prefs.displayPubImages().get() &&
+                //TODO remove Gingerbread check on next release
+                UIUtils.hasGingerbreadMR1()) {
             //Do a network request to detect number of images
             loadImageList(imagesUrl);
             //Add images
@@ -275,6 +279,7 @@ public class PublicationInfoFragment extends Fragment implements
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     @Override
     public void onScrollChanged(int deltaX, int deltaY) {
         final BaseActivity activity = (BaseActivity) getActivity();
