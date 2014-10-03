@@ -32,6 +32,7 @@ import com.andrada.sitracker.events.AuthorSelectedEvent;
 import com.andrada.sitracker.exceptions.SharePublicationException;
 import com.andrada.sitracker.ui.PublicationDetailsActivity;
 import com.andrada.sitracker.ui.fragment.adapters.PublicationsAdapter;
+import com.andrada.sitracker.ui.fragment.adapters.PublicationsAdapter_;
 import com.andrada.sitracker.util.ShareHelper;
 import com.github.kevinsawicki.http.HttpRequest;
 
@@ -85,6 +86,7 @@ public class PublicationsFragment extends Fragment implements ExpandableListView
 
     @AfterViews
     void bindAdapter() {
+        ((PublicationsAdapter_) adapter).rebind(getActivity());
         mListView.setAdapter(adapter);
         adapter.setShareListener(this);
         mListView.setOnChildClickListener(this);
