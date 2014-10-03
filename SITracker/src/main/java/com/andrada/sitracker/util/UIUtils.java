@@ -34,8 +34,6 @@ import com.andrada.sitracker.R;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.regex.Pattern;
 
 import static com.andrada.sitracker.util.LogUtils.LOGE;
@@ -158,23 +156,6 @@ public class UIUtils {
         } catch (ClassNotFoundException e) {
             LOGE(TAG, "Activity not found within package.", e);
         }
-    }
-
-
-    /**
-     * A hashing method that changes a string (like a URL) into a hash suitable for using as a
-     * disk filename.
-     */
-    public static String hashKeyForDisk(@NotNull String key) {
-        String cacheKey;
-        try {
-            final MessageDigest mDigest = MessageDigest.getInstance("MD5");
-            mDigest.update(key.getBytes());
-            cacheKey = bytesToHexString(mDigest.digest());
-        } catch (NoSuchAlgorithmException e) {
-            cacheKey = String.valueOf(key.hashCode());
-        }
-        return cacheKey;
     }
 
     @NotNull

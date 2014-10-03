@@ -33,7 +33,6 @@ import com.andrada.sitracker.exceptions.SharePublicationException;
 import com.andrada.sitracker.ui.PublicationDetailsActivity;
 import com.andrada.sitracker.ui.fragment.adapters.PublicationsAdapter;
 import com.andrada.sitracker.util.ShareHelper;
-import com.andrada.sitracker.util.UIUtils;
 import com.github.kevinsawicki.http.HttpRequest;
 
 import org.androidannotations.annotations.AfterViews;
@@ -145,7 +144,8 @@ public class PublicationsFragment extends Fragment implements ExpandableListView
 
         File file;
         if (pubFolder.equals("")) {
-            file = ShareHelper.getPublicationStorageFile(getActivity(), UIUtils.hashKeyForDisk(pubUrl));
+            file = ShareHelper.getPublicationStorageFile(getActivity(),
+                    pub.getAuthor().getName() + "_" + pub.getName());
         } else {
             file = ShareHelper.getPublicationStorageFileWithPath(pubFolder,
                     pub.getAuthor().getName() + "_" + pub.getName());
