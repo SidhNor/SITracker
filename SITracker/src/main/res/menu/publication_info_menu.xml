@@ -26,9 +26,9 @@
         android:icon="@drawable/ic_action_read"
         android:title="@string/action_markread"/>
     <item
-        android:id="@+id/action_open_authors_browser"
+        android:id="@+id/open_pub_in_browser"
         sitracker:showAsAction="ifRoom"
         android:orderInCategory="100"
         android:icon="@drawable/ic_action_open_outside"
-        android:title="@string/action_open_in_browser"/>
+        android:title="@string/action_open_pub_in_browser"/>
 </menu>

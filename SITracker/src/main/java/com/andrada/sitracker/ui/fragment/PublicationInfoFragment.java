@@ -30,6 +30,9 @@ import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.util.Pair;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -60,12 +63,15 @@ import com.viewpagerindicator.CirclePageIndicator;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
+import org.androidannotations.annotations.OptionsMenuItem;
 import org.androidannotations.annotations.OrmLiteDao;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.sharedpreferences.Pref;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -76,9 +82,10 @@ import static com.nineoldandroids.view.ViewPropertyAnimator.animate;
 public class PublicationInfoFragment extends Fragment implements
         ObservableScrollView.Callbacks {
 
-    private ViewGroup mRootView;
+    private static final float PHOTO_ASPECT_RATIO = 1.7777777f;
+    private static final float GAP_FILL_DISTANCE_MULTIPLIER = 1.5f;
 
-    @OrmLiteDao(helper = SiDBHelper.class, model = Publication.class)
+    @OrmLiteDao(helper = SiDBHelper.class)
     PublicationDao publicationsDao;
 
     Publication currentRecord;
@@ -111,7 +118,9 @@ public class PublicationInfoFragment extends Fragment implements
     ViewPager pager;
     @ViewById(R.id.pagerIndicators)
     CirclePageIndicator pagerIndicators;
-
+    @OptionsMenuItem(R.id.action_mark_read)
+    MenuItem mMarkAsReadAction;
+    private ViewGroup mRootView;
     private Handler mHandler = new Handler();
     private ViewTreeObserver.OnGlobalLayoutListener mGlobalLayoutListener
             = new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -123,10 +132,6 @@ public class PublicationInfoFragment extends Fragment implements
 
     private Uri mPublicationUri;
     private long mPublicationId;
-
-    private static final float PHOTO_ASPECT_RATIO = 1.7777777f;
-    private static final float GAP_FILL_DISTANCE_MULTIPLIER = 1.5f;
-
     private boolean mHasPhoto;
     private boolean mGapFillShown;
     private int mHeaderTopClearance;
@@ -149,15 +154,15 @@ public class PublicationInfoFragment extends Fragment implements
     }
 
     @Override
-    public void onDestroy() {
-        OpenHelperManager.releaseHelper();
-        super.onDestroy();
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mRootView = (ViewGroup) inflater.inflate(R.layout.fragment_pub_details, container, false);
         return mRootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadData();
     }
 
     @Override
@@ -173,6 +178,18 @@ public class PublicationInfoFragment extends Fragment implements
         }
     }
 
+    @Override
+    public void onDestroy() {
+        OpenHelperManager.releaseHelper();
+        super.onDestroy();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        mMarkAsReadAction.setVisible(currentRecord != null && currentRecord.getNew());
+    }
+
     @AfterViews
     public void afterViews() {
         mScrollViewChild.setVisibility(View.INVISIBLE);
@@ -180,13 +197,6 @@ public class PublicationInfoFragment extends Fragment implements
         pagerIndicators.setViewPager(pager);
         pagerIndicators.setSnap(true);
         setupCustomScrolling();
-    }
-
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        loadData();
     }
 
     @Background
@@ -270,6 +280,29 @@ public class PublicationInfoFragment extends Fragment implements
         recomputePhotoAndScrollingMetrics();
     }
 
+    @OptionsItem(R.id.action_mark_read)
+    void menuMarkAsReadSelected() {
+        try {
+            publicationsDao.markPublicationRead(currentRecord);
+        } catch (SQLException e) {
+            //TODO send analytics exception
+        }
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                mMarkAsReadAction.setVisible(false);
+            }
+        });
+    }
+
+    @OptionsItem(R.id.open_pub_in_browser)
+    void menuOpenInBrowserSelected() {
+        if (currentRecord != null) {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse(currentRecord.getUrl()));
+            getActivity().startActivity(intent);
+        }
+    }
 
     private void setupCustomScrolling() {
         mScrollView.addCallbacks(this);
@@ -448,8 +481,10 @@ public class PublicationInfoFragment extends Fragment implements
         }
 
         @Override
-        public boolean isViewFromObject(View view, Object object) {
-            return view == object;
+        public Object instantiateItem(ViewGroup container, int position) {
+            ImageView v = mImages.get(position);
+            container.addView(v);
+            return v;
         }
 
         @Override
@@ -458,10 +493,8 @@ public class PublicationInfoFragment extends Fragment implements
         }
 
         @Override
-        public Object instantiateItem(ViewGroup container, int position) {
-            ImageView v = mImages.get(position);
-            container.addView(v);
-            return v;
+        public boolean isViewFromObject(View view, Object object) {
+            return view == object;
         }
     }
 }

@@ -20,7 +20,6 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.andrada.sitracker.db.beans.Author;
 import com.andrada.sitracker.db.beans.SearchedAuthor;
 import com.andrada.sitracker.db.dao.AuthorDao;
 import com.andrada.sitracker.db.manager.SiDBHelper;
@@ -47,7 +46,7 @@ public class SearchResultsAdapter implements CollectionViewCallbacks {
     @RootContext
     Context context;
 
-    @OrmLiteDao(helper = SiDBHelper.class, model = Author.class)
+    @OrmLiteDao(helper = SiDBHelper.class)
     AuthorDao authorDao;
 
     private List<SearchedAuthor> mData = new ArrayList<SearchedAuthor>();

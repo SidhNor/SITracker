@@ -38,6 +38,7 @@
     <string name="action_export">Экспорт</string>
     <string name="action_about">О приложении</string>
     <string name="action_open_in_browser">Открыть выбранных в браузере</string>
+    <string name="action_open_pub_in_browser">Открыть в браузере</string>
 
     <string name="app_version_format">Версия: %1$s</string>
     <string name="app_buildnr_format">Билд №: %1$s</string>

@@ -61,7 +61,7 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
     List<CategoryValue> mCategories = new ArrayList<CategoryValue>();
     List<List<Publication>> mChildren = new ArrayList<List<Publication>>();
 
-    @OrmLiteDao(helper = SiDBHelper.class, model = Publication.class)
+    @OrmLiteDao(helper = SiDBHelper.class)
     PublicationDao publicationsDao;
 
     @RootContext

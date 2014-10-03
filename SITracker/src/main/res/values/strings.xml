@@ -5,7 +5,7 @@
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
 
-     http://www.apache.org/licenses/LICENSE-2.0
+      http://www.apache.org/licenses/LICENSE-2.0
 
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
@@ -36,6 +36,7 @@
     <string name="action_export">Export</string>
     <string name="action_about">About</string>
     <string name="action_open_in_browser">Open selected in browser</string>
+    <string name="action_open_pub_in_browser">Open in browser</string>
 
     <string name="app_version_format">Version: %1$s</string>
     <string name="app_buildnr_format">Build number: %1$s</string>

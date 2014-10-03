@@ -137,6 +137,8 @@ public class PublicationsFragment extends Fragment implements ExpandableListView
     @Override
     @Background
     public void publicationShare(@NotNull Publication pub, boolean forceDownload) {
+
+        //TODO move this whole block to a helper for reuse
         HttpRequest request;
         String pubUrl = pub.getUrl();
         String pubFolder = prefs.downloadFolder().get();
@@ -158,8 +160,8 @@ public class PublicationsFragment extends Fragment implements ExpandableListView
                         SharePublicationException.SharePublicationErrors.STORAGE_NOT_ACCESSIBLE_FOR_PERSISTANCE);
             }
             if (forceDownload || !file.exists()) {
-                URL authorURL = new URL(pubUrl);
-                request = HttpRequest.get(authorURL);
+                URL publicaitonUrl = new URL(pubUrl);
+                request = HttpRequest.get(publicaitonUrl);
                 if (request.code() == 200) {
                     String content = request.body();
                     boolean result = ShareHelper.saveHtmlPageToFile(file, content, request.charset());
