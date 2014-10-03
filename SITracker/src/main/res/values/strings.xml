@@ -37,6 +37,7 @@
     <string name="action_about">About</string>
     <string name="action_open_in_browser">Open selected in browser</string>
     <string name="action_open_pub_in_browser">Open in browser</string>
+    <string name="action_force_download">Force download</string>
 
     <string name="app_version_format">Version: %1$s</string>
     <string name="app_buildnr_format">Build number: %1$s</string>

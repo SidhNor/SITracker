@@ -69,6 +69,9 @@ public class UIUtils {
             return;
         }
         if ((text.contains("<") && text.contains(">")) || REGEX_HTML_ESCAPE.matcher(text).find()) {
+            //Sanitize urls in hrefs:
+            text = text.replace("<a href=\" ", "<a href=\"");
+            text = text.replace("<a href=' ", "<a href='");
             view.setText(Html.fromHtml(text));
             //Commented movement method to make the textview focusable.
             //view.setMovementMethod(LinkMovementMethod.getInstance());

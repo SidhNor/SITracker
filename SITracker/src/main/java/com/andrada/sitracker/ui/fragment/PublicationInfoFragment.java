@@ -25,9 +25,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -120,6 +122,9 @@ public class PublicationInfoFragment extends Fragment implements
     CirclePageIndicator pagerIndicators;
     @OptionsMenuItem(R.id.action_mark_read)
     MenuItem mMarkAsReadAction;
+    @OptionsMenuItem(R.id.action_force_download)
+    MenuItem mForceDownloadAction;
+
     private ViewGroup mRootView;
     private Handler mHandler = new Handler();
     private ViewTreeObserver.OnGlobalLayoutListener mGlobalLayoutListener
@@ -134,6 +139,7 @@ public class PublicationInfoFragment extends Fragment implements
     private long mPublicationId;
     private boolean mHasPhoto;
     private boolean mGapFillShown;
+    private boolean mIsDownloading;
     private int mHeaderTopClearance;
     private int mPhotoHeightPixels;
     private int mHeaderHeightPixels;
@@ -233,6 +239,7 @@ public class PublicationInfoFragment extends Fragment implements
         String pubAbstract = SamlibPageHelper.stripDescriptionOfImages(currentRecord.getDescription());
         if (!TextUtils.isEmpty(pubAbstract)) {
             UIUtils.setTextMaybeHtml(mAbstract, pubAbstract);
+            mAbstract.setMovementMethod(LinkMovementMethod.getInstance());
             mAbstract.setVisibility(View.VISIBLE);
         } else {
             mAbstract.setVisibility(View.GONE);
@@ -301,6 +308,17 @@ public class PublicationInfoFragment extends Fragment implements
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setData(Uri.parse(currentRecord.getUrl()));
             getActivity().startActivity(intent);
+        }
+    }
+
+    @OptionsItem(R.id.action_force_download)
+    void menuForceDownloadSelected() {
+        if (currentRecord != null && !mIsDownloading) {
+            mIsDownloading = true;
+            final View view = MenuItemCompat.getActionView(mForceDownloadAction);
+            //Change action view
+            //Start downloading in a background thread
+            //Change action view on a ui thread.
         }
     }
 

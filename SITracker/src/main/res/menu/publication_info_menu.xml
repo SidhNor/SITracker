@@ -20,15 +20,21 @@
       xmlns:sitracker="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/action_force_download"
+        android:icon="@drawable/ic_action_download"
+        android:orderInCategory="98"
+        android:title="@string/action_force_download"
+        sitracker:showAsAction="ifRoom"/>
+    <item
         android:id="@+id/action_mark_read"
-        android:orderInCategory="99"
-        sitracker:showAsAction="ifRoom"
         android:icon="@drawable/ic_action_read"
-        android:title="@string/action_markread"/>
+        android:orderInCategory="99"
+        android:title="@string/action_markread"
+        sitracker:showAsAction="ifRoom"/>
     <item
         android:id="@+id/open_pub_in_browser"
-        sitracker:showAsAction="ifRoom"
-        android:orderInCategory="100"
         android:icon="@drawable/ic_action_open_outside"
-        android:title="@string/action_open_pub_in_browser"/>
+        android:orderInCategory="100"
+        android:title="@string/action_open_pub_in_browser"
+        sitracker:showAsAction="ifRoom"/>
 </menu>
