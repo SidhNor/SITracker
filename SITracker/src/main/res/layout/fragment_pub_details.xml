@@ -105,28 +105,19 @@
                 <!-- Publication title -->
                 <TextView
                     android:id="@+id/pub_title"
+                    style="@style/PublicationDetail.Title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="0dp"
-                    android:ellipsize="end"
-                    android:lineSpacingMultiplier="1.1"
-                    android:maxLines="4"
-                    android:text="@string/designtime_placeholder_short"
-                    android:textAlignment="viewStart"
-                    android:textColor="@color/body_text_1_inverse"
-                    android:textSize="@dimen/text_size_xlarge"/>
+                    android:text="@string/designtime_placeholder_short"/>
 
                 <!-- Publication subtitle -->
                 <TextView
                     android:id="@+id/pub_subtitle"
+                    style="@style/PublicationDetail.SubTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:maxLines="2"
-                    android:text="@string/designtime_placeholder_medium"
-                    android:textAlignment="viewStart"
-                    android:textColor="@color/body_text_2_inverse"
-                    android:textSize="16sp"/>
+                    android:text="@string/designtime_placeholder_medium"/>
 
             </LinearLayout>
 

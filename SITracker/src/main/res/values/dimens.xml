@@ -33,7 +33,8 @@
     <dimen name="text_size_small">12sp</dimen>
     <dimen name="text_size_medium">14sp</dimen>
     <dimen name="text_size_large">16sp</dimen>
-    <dimen name="text_size_xlarge">20sp</dimen>
+    <dimen name="text_size_xlarge">18sp</dimen>
+    <dimen name="text_size_xxlarge">20sp</dimen>
     <dimen name="library_container_width">65dp</dimen>
     <dimen name="search_grid_padding">4dp</dimen>
     <dimen name="half_search_grid_padding">2dp</dimen>

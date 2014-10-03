@@ -229,7 +229,7 @@
     </style>
 
     <style name="Publication.Category.Title" parent="">
-        <item name="android:textSize">@dimen/text_size_xlarge</item>
+        <item name="android:textSize">@dimen/text_size_xxlarge</item>
         <item name="android:textColor">@color/theme_accent_1</item>
         <item name="android:textStyle">bold</item>
         <item name="android:focusable">false</item>
@@ -248,6 +248,22 @@
         <item name="android:singleLine">false</item>
         <item name="android:textSize">@dimen/text_size_medium</item>
         <item name="android:textColor">@color/body_text_2</item>
+    </style>
+
+    <style name="PublicationDetail.Title" parent="">
+        <item name="android:ellipsize">end</item>
+        <item name="android:textSize">@dimen/text_size_xlarge</item>
+        <item name="android:textColor">@color/body_text_1_inverse</item>
+        <item name="android:maxLines">4</item>
+        <item name="android:lineSpacingMultiplier">1.1</item>
+        <item name="android:fontFamily" tools:ignore="NewApi">sans-serif</item>
+    </style>
+
+    <style name="PublicationDetail.SubTitle" parent="">
+        <item name="android:ellipsize">end</item>
+        <item name="android:textSize">@dimen/text_size_large</item>
+        <item name="android:textColor">@color/body_text_2_inverse</item>
+        <item name="android:maxLines">2</item>
     </style>
 
     <style name="Widget.UpdateDate.Text" parent="">
