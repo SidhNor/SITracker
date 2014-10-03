@@ -53,8 +53,8 @@ import com.andrada.sitracker.util.SamlibPageHelper;
 import com.andrada.sitracker.util.UIUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.github.kevinsawicki.http.HttpRequest;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.nineoldandroids.view.ViewHelper;
@@ -447,29 +447,29 @@ public class PublicationInfoFragment extends Fragment implements
 
         public void addImage(String url) {
             final ImageView img = new ImageView(context);
-            img.setImageResource(R.drawable.glyph_folder_white);
-            img.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            img.setScaleType(ImageView.ScaleType.CENTER_CROP);
             mImages.add(img);
 
-            int width = 320;
-            int height = (int) (320 / PHOTO_ASPECT_RATIO);
-
-            if (mRootView.getWidth() != 0 && mPhotoHeightPixels != 0) {
-                width = mRootView.getWidth();
-                height = mPhotoHeightPixels;
-            }
             if (getActivity() != null) {
                 Glide.with(getActivity())
                         .load(url)
-                        .fitCenter()
-                        .into(new SimpleTarget<GlideDrawable>(width, height) {
+                        .placeholder(R.drawable.placeholder_img_art)
+                        .centerCrop()
+                        .crossFade()
+                        .listener(new RequestListener<String, GlideDrawable>() {
                             @Override
-                            public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
-                                img.setImageDrawable(resource);
+                            public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                                return false;
+                            }
+
+                            @Override
+                            public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
                                 // Trigger image transition
                                 recomputePhotoAndScrollingMetrics();
+                                return false;
                             }
-                        });
+                        })
+                        .into(img);
             }
 
             notifyDataSetChanged();
