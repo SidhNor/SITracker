@@ -315,7 +315,9 @@ public class PublicationInfoFragment extends Fragment implements
     void menuForceDownloadSelected() {
         if (currentRecord != null && !mIsDownloading) {
             mIsDownloading = true;
-            final View view = MenuItemCompat.getActionView(mForceDownloadAction);
+            MenuItemCompat.setActionView(mForceDownloadAction, R.layout.ab_download_progress);
+            //final View view = MenuItemCompat.getActionView(mForceDownloadAction);
+
             //Change action view
             //Start downloading in a background thread
             //Change action view on a ui thread.
