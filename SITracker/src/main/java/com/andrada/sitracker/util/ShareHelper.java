@@ -82,7 +82,10 @@ public final class ShareHelper {
             throw new SharePublicationException(
                     SharePublicationException.SharePublicationErrors.STORAGE_NOT_ACCESSIBLE_FOR_PERSISTANCE);
         }
-        if (forceDownload || !file.exists()) {
+
+        if (forceDownload ||
+                !file.exists() ||
+                file.lastModified() < pub.getUpdateDate().getTime()) {
             try {
                 URL publicaitonUrl = new URL(pubUrl);
                 HttpRequest request = HttpRequest.get(publicaitonUrl);
