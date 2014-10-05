@@ -269,6 +269,7 @@ public class PublicationInfoFragment extends Fragment implements
                 }
             });
         } finally {
+            mIsDownloading = false;
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
@@ -278,7 +279,7 @@ public class PublicationInfoFragment extends Fragment implements
         }
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     void bindData() {
         String mTitleString = currentRecord.getName();
         String subtitle = currentRecord.getCategory();
@@ -337,7 +338,7 @@ public class PublicationInfoFragment extends Fragment implements
         }
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     void addImagesToList(List<Pair<String, String>> results) {
         if (results.size() == 0) {
             mHasPhoto = false;
@@ -348,6 +349,7 @@ public class PublicationInfoFragment extends Fragment implements
                 results = results.subList(0, 15);
             }
             PublicationImagesAdapter adapter = (PublicationImagesAdapter) pager.getAdapter();
+            adapter.removeAllItems();
             for (Pair<String, String> res : results) {
                 adapter.addImage(res.first);
             }
@@ -479,9 +481,9 @@ public class PublicationInfoFragment extends Fragment implements
 
         // Move background photo (parallax effect)
         if (UIUtils.hasHoneycombMR1()) {
-            mPhotoViewContainer.setTranslationY(scrollY * 0.5f);
+            mPhotoViewContainer.setTranslationY(scrollY * 0.3f);
         } else {
-            ViewHelper.setTranslationY(mPhotoViewContainer, scrollY * 0.5f);
+            ViewHelper.setTranslationY(mPhotoViewContainer, scrollY * 0.3f);
         }
 
 
@@ -520,7 +522,7 @@ public class PublicationInfoFragment extends Fragment implements
                 mDetailsContainer.setLayoutParams(mlp);
             }
         } else {
-            //Set paddings instead
+            //Set padding instead
             int paddTop = mDetailsContainer.getPaddingTop();
             if (paddTop != mHeaderHeightPixels + mPhotoHeightPixels + 16) {
                 mDetailsContainer.setPadding(mDetailsContainer.getPaddingLeft(),
@@ -618,13 +620,21 @@ public class PublicationInfoFragment extends Fragment implements
                             @Override
                             public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
                                 // Trigger image transition
-                                recomputePhotoAndScrollingMetrics();
+                                mHandler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        recomputePhotoAndScrollingMetrics();
+                                    }
+                                });
                                 return false;
                             }
-                        })
-                        .into(img);
+                        }).into(img);
             }
+            notifyDataSetChanged();
+        }
 
+        public void removeAllItems() {
+            mImages.clear();
             notifyDataSetChanged();
         }
 
