@@ -53,6 +53,8 @@ import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
+import static com.andrada.sitracker.util.LogUtils.LOGE;
+
 @EBean
 public class PublicationsAdapter extends BaseExpandableListAdapter implements
         IsNewItemTappedListener, AdapterView.OnItemLongClickListener {
@@ -110,17 +112,18 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
             }
             updateAdapterDataSet(newCategories, newChildren);
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGE("SiTracker", "Exception while reloading pubs", e);
         }
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     void updateAdapterDataSet(List<CategoryValue> newCategories, List<List<Publication>> newChildren) {
         mCategories = newCategories;
         mChildren = newChildren;
         postDataSetChanged();
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     void postDataSetChanged() {
         notifyDataSetChanged();
     }
