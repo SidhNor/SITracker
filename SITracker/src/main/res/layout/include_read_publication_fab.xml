@@ -11,6 +11,14 @@
     android:contentDescription="@string/download_and_read">
 
     <ImageView
+        android:id="@+id/static_download_pub_icon"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="center"
+        android:contentDescription="@null"
+        android:layout_gravity="center"/>
+
+    <ImageView
         android:id="@+id/read_pub_icon"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

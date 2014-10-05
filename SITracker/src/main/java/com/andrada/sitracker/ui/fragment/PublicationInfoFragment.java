@@ -66,6 +66,7 @@ import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorListenerAdapter;
 import com.nineoldandroids.animation.AnimatorSet;
 import com.nineoldandroids.animation.ObjectAnimator;
+import com.nineoldandroids.animation.ValueAnimator;
 import com.nineoldandroids.view.ViewHelper;
 import com.viewpagerindicator.CirclePageIndicator;
 
@@ -400,10 +401,11 @@ public class PublicationInfoFragment extends Fragment implements
 
     private void showDownloaded(boolean downloaded, boolean allowAnimate) {
         mDownloaded = downloaded;
-        mReadPubButton.setChecked(mDownloaded, allowAnimate);
+        //mReadPubButton.setChecked(mDownloaded, allowAnimate);
 
         ImageView iconView = (ImageView) mReadPubButton.findViewById(R.id.read_pub_icon);
-        setOrAnimatePlusCheckIcon(iconView, downloaded, allowAnimate);
+        ImageView staticView = (ImageView) mReadPubButton.findViewById(R.id.static_download_pub_icon);
+        setOrAnimatePlusCheckIcon(iconView, staticView, downloaded, allowAnimate);
     }
 
     private void setupCustomScrolling() {
@@ -536,11 +538,11 @@ public class PublicationInfoFragment extends Fragment implements
         onScrollChanged(0, 0); // trigger scroll handling
     }
 
-    private void setOrAnimatePlusCheckIcon(final ImageView imageView, boolean isCheck,
+    private void setOrAnimatePlusCheckIcon(final ImageView imageView, final ImageView staticView, boolean isCheck,
                                            boolean allowAnimate) {
         final int imageResId = isCheck
-                ? R.drawable.read_pub_button_icon_checked
-                : R.drawable.read_pub_button_icon_unchecked;
+                ? R.drawable.download_pub_icon_fab_up
+                : R.drawable.read_pub_button_icon_checked;
 
         if (imageView.getTag() != null) {
             if (imageView.getTag() instanceof Animator) {
@@ -553,23 +555,25 @@ public class PublicationInfoFragment extends Fragment implements
         if (allowAnimate && isCheck) {
             int duration = getResources().getInteger(android.R.integer.config_shortAnimTime);
             Animator outAnimator = ObjectAnimator.ofFloat(imageView, "alpha", 0f);
-            outAnimator.setDuration(duration / 2);
+            outAnimator.setDuration(duration);
             outAnimator.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
+                    ViewHelper.setAlpha(imageView, 1f);
+                    staticView.setImageResource(R.drawable.download_pub_icon_fab_down);
                     imageView.setImageResource(imageResId);
                 }
             });
+            staticView.setImageResource(R.drawable.download_pub_icon_fab_down);
+            imageView.setImageResource(imageResId);
 
-            AnimatorSet inAnimator = new AnimatorSet();
-            outAnimator.setDuration(duration);
-            inAnimator.playTogether(
-                    ObjectAnimator.ofFloat(imageView, "alpha", 1f),
-                    ObjectAnimator.ofFloat(imageView, "scaleX", 0f, 1f),
-                    ObjectAnimator.ofFloat(imageView, "scaleY", 0f, 1f)
-            );
+            int backDuration = getResources().getInteger(android.R.integer.config_longAnimTime);
+            final ValueAnimator inAnimator = ObjectAnimator.ofFloat(imageView, "translationY", -25f, 10f);
+            inAnimator.setDuration(backDuration * 2);
+            inAnimator.setRepeatCount(500);
+            inAnimator.setRepeatMode(ValueAnimator.RESTART);
 
-            AnimatorSet set = new AnimatorSet();
+            final AnimatorSet set = new AnimatorSet();
             set.playSequentially(outAnimator, inAnimator);
             set.addListener(new AnimatorListenerAdapter() {
                 @Override
