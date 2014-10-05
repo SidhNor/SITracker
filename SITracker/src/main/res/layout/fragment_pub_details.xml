@@ -130,6 +130,8 @@
                 android:background="@drawable/bottom_shadow"/>
 
         </FrameLayout>
+        <!-- FAB -->
+        <include layout="@layout/include_read_publication_fab"/>
 
     </FrameLayout>
 </com.andrada.sitracker.ui.widget.ObservableScrollView>

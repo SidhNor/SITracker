@@ -20,8 +20,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
+import android.text.TextUtils;
 
 import com.andrada.sitracker.Constants;
+import com.andrada.sitracker.db.beans.Publication;
+import com.andrada.sitracker.exceptions.SharePublicationException;
+import com.github.kevinsawicki.http.HttpRequest;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -31,6 +35,8 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.regex.Matcher;
@@ -46,6 +52,60 @@ public final class ShareHelper {
         share.addCategory(Intent.CATEGORY_DEFAULT);
         share.setDataAndType(file, "text/html");
         return share;
+    }
+
+    /**
+     * Fetches publication html file into downloadFolder or default files folder
+     *
+     * @param context       of the App, can be null if pubFolder is not blank
+     * @param pub           the actual publication to download
+     * @param pubFolder     folder to download or to look into
+     * @param forceDownload if the file exists
+     * @return Intent for downloaded or existing file
+     * @throws SharePublicationException
+     */
+    public static Intent fetchPublication(Context context, @NotNull Publication pub,
+                                          String pubFolder, boolean forceDownload)
+            throws SharePublicationException {
+
+        String pubUrl = pub.getUrl();
+        File file;
+        if (TextUtils.isEmpty(pubFolder)) {
+            file = ShareHelper.getPublicationStorageFile(context,
+                    pub.getAuthor().getName() + "_" + pub.getName());
+        } else {
+            file = ShareHelper.getPublicationStorageFileWithPath(pubFolder,
+                    pub.getAuthor().getName() + "_" + pub.getName());
+        }
+
+        if (file == null) {
+            throw new SharePublicationException(
+                    SharePublicationException.SharePublicationErrors.STORAGE_NOT_ACCESSIBLE_FOR_PERSISTANCE);
+        }
+        if (forceDownload || !file.exists()) {
+            try {
+                URL publicaitonUrl = new URL(pubUrl);
+                HttpRequest request = HttpRequest.get(publicaitonUrl);
+                if (request.code() == 200) {
+                    String content = request.body();
+                    boolean result = ShareHelper.saveHtmlPageToFile(file, content, request.charset());
+                    if (!result) {
+                        throw new SharePublicationException(
+                                SharePublicationException.SharePublicationErrors.COULD_NOT_PERSIST);
+                    }
+                } else {
+                    throw new SharePublicationException(
+                            SharePublicationException.SharePublicationErrors.COULD_NOT_LOAD);
+                }
+            } catch (MalformedURLException e) {
+                throw new SharePublicationException(
+                        SharePublicationException.SharePublicationErrors.WRONG_PUBLICATION_URL);
+            } catch (HttpRequest.HttpRequestException e) {
+                throw new SharePublicationException(
+                        SharePublicationException.SharePublicationErrors.COULD_NOT_LOAD);
+            }
+        }
+        return getSharePublicationIntent(Uri.fromFile(file));
     }
 
     /**

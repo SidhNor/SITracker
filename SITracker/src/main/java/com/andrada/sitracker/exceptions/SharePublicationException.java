@@ -17,6 +17,7 @@
 package com.andrada.sitracker.exceptions;
 
 public class SharePublicationException extends Exception {
+
     private static final long serialVersionUID = 1926675132307831316L;
 
     private SharePublicationErrors mError = SharePublicationErrors.ERROR_UNKOWN;
@@ -25,6 +26,7 @@ public class SharePublicationException extends Exception {
         COULD_NOT_PERSIST,
         STORAGE_NOT_ACCESSIBLE_FOR_PERSISTANCE,
         COULD_NOT_LOAD,
+        WRONG_PUBLICATION_URL,
         ERROR_UNKOWN
     }
 

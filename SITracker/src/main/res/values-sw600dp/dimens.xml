@@ -25,6 +25,9 @@
     <dimen name="author_fragment_width">350dp</dimen>
     <dimen name="publication_fragment_width">440dp</dimen>
 
+    <dimen name="read_pub_button_height">72dp</dimen>
+    <!-- including padding -->
+    <dimen name="read_pub_button_height_no_padding">56dp</dimen>
     <dimen name="keyline_2_pub_detail">104dp</dimen>
 
     <!--Keylines-->

@@ -178,6 +178,7 @@
     <string name="pref_content_img_display_summ">Скачивать и показывать обложки произведений если
         таковые доступны
     </string>
+    <string name="download_and_read">Скачать и читать</string>
 
     <!--Updates-->
     <string name="pref_update_category_title">Обновления</string>

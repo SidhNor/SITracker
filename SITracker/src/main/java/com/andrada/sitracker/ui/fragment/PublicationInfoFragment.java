@@ -48,10 +48,13 @@ import com.andrada.sitracker.contracts.SIPrefs_;
 import com.andrada.sitracker.db.beans.Publication;
 import com.andrada.sitracker.db.dao.PublicationDao;
 import com.andrada.sitracker.db.manager.SiDBHelper;
+import com.andrada.sitracker.exceptions.SharePublicationException;
 import com.andrada.sitracker.reader.SamlibPublicationPageReader;
 import com.andrada.sitracker.ui.BaseActivity;
+import com.andrada.sitracker.ui.widget.CheckableFrameLayout;
 import com.andrada.sitracker.ui.widget.ObservableScrollView;
 import com.andrada.sitracker.util.SamlibPageHelper;
+import com.andrada.sitracker.util.ShareHelper;
 import com.andrada.sitracker.util.UIUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
@@ -59,12 +62,18 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.github.kevinsawicki.http.HttpRequest;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
+import com.nineoldandroids.animation.Animator;
+import com.nineoldandroids.animation.AnimatorListenerAdapter;
+import com.nineoldandroids.animation.AnimatorSet;
+import com.nineoldandroids.animation.ObjectAnimator;
 import com.nineoldandroids.view.ViewHelper;
 import com.viewpagerindicator.CirclePageIndicator;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
+import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.InstanceState;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.OptionsMenuItem;
@@ -76,6 +85,9 @@ import org.androidannotations.annotations.sharedpreferences.Pref;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.nineoldandroids.view.ViewPropertyAnimator.animate;
 
@@ -120,17 +132,23 @@ public class PublicationInfoFragment extends Fragment implements
     ViewPager pager;
     @ViewById(R.id.pagerIndicators)
     CirclePageIndicator pagerIndicators;
+    @ViewById(R.id.read_pub_button)
+    CheckableFrameLayout mReadPubButton;
     @OptionsMenuItem(R.id.action_mark_read)
     MenuItem mMarkAsReadAction;
     @OptionsMenuItem(R.id.action_force_download)
     MenuItem mForceDownloadAction;
+    @InstanceState
+    boolean mIsDownloading = false;
 
+    private boolean mDownloaded;
     private ViewGroup mRootView;
     private Handler mHandler = new Handler();
     private ViewTreeObserver.OnGlobalLayoutListener mGlobalLayoutListener
             = new ViewTreeObserver.OnGlobalLayoutListener() {
         @Override
         public void onGlobalLayout() {
+            mReadPubButtonHeightPixels = mReadPubButton.getHeight();
             recomputePhotoAndScrollingMetrics();
         }
     };
@@ -139,11 +157,10 @@ public class PublicationInfoFragment extends Fragment implements
     private long mPublicationId;
     private boolean mHasPhoto;
     private boolean mGapFillShown;
-    private boolean mIsDownloading;
     private int mHeaderTopClearance;
     private int mPhotoHeightPixels;
     private int mHeaderHeightPixels;
-    //private int mAddScheduleButtonHeightPixels;
+    private int mReadPubButtonHeightPixels;
 
 
     @Override
@@ -193,6 +210,9 @@ public class PublicationInfoFragment extends Fragment implements
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
+        if (mIsDownloading) {
+            MenuItemCompat.setActionView(mForceDownloadAction, R.layout.ab_download_progress);
+        }
         mMarkAsReadAction.setVisible(currentRecord != null && currentRecord.getNew());
     }
 
@@ -211,6 +231,53 @@ public class PublicationInfoFragment extends Fragment implements
         bindData();
     }
 
+    @Background
+    void forceDownloadPublication() {
+        int errorMessage = -1;
+        try {
+            //We are not interested in the actual result intent.
+            ShareHelper.fetchPublication(getActivity(), currentRecord, prefs.downloadFolder().get(), true);
+        } catch (SharePublicationException e) {
+            switch (e.getError()) {
+                case COULD_NOT_PERSIST:
+                    errorMessage = R.string.publication_error_save;
+                    break;
+                case STORAGE_NOT_ACCESSIBLE_FOR_PERSISTANCE:
+                    errorMessage = R.string.publication_error_storage;
+                    break;
+                case ERROR_UNKOWN:
+                    errorMessage = R.string.publication_error_unknown;
+                    break;
+                case COULD_NOT_LOAD:
+                    errorMessage = R.string.cannot_download_publication;
+                    break;
+                case WRONG_PUBLICATION_URL:
+                    errorMessage = R.string.publication_error_url;
+                    break;
+                default:
+                    break;
+            }
+            final String msg = getResources().getString(errorMessage);
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    Style.Builder alertStyle = new Style.Builder()
+                            .setTextAppearance(android.R.attr.textAppearanceLarge)
+                            .setPaddingInPixels(25);
+                    alertStyle.setBackgroundColorValue(Style.holoRedLight);
+                    Crouton.makeText(getActivity(), msg, alertStyle.build()).show();
+                }
+            });
+        } finally {
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    MenuItemCompat.setActionView(mForceDownloadAction, null);
+                }
+            });
+        }
+    }
+
     @UiThread
     void bindData() {
         String mTitleString = currentRecord.getName();
@@ -219,6 +286,7 @@ public class PublicationInfoFragment extends Fragment implements
         mTitle.setText(mTitleString);
         mSubtitle.setText(subtitle);
 
+        mReadPubButton.setVisibility(View.VISIBLE);
         mPhotoViewContainer.setBackgroundColor(UIUtils.scaleColor(0xe8552c, 0.65f, false));
 
         String imagesUrl = currentRecord.getImagePageUrl();
@@ -315,13 +383,25 @@ public class PublicationInfoFragment extends Fragment implements
     void menuForceDownloadSelected() {
         if (currentRecord != null && !mIsDownloading) {
             mIsDownloading = true;
-            MenuItemCompat.setActionView(mForceDownloadAction, R.layout.ab_download_progress);
-            //final View view = MenuItemCompat.getActionView(mForceDownloadAction);
-
             //Change action view
+            MenuItemCompat.setActionView(mForceDownloadAction, R.layout.ab_download_progress);
             //Start downloading in a background thread
-            //Change action view on a ui thread.
+            forceDownloadPublication();
         }
+    }
+
+    @Click(R.id.read_pub_button)
+    void downloadAndReadButtonClicked() {
+        boolean downloaded = !mDownloaded;
+        showDownloaded(downloaded, true);
+    }
+
+    private void showDownloaded(boolean downloaded, boolean allowAnimate) {
+        mDownloaded = downloaded;
+        mReadPubButton.setChecked(mDownloaded, allowAnimate);
+
+        ImageView iconView = (ImageView) mReadPubButton.findViewById(R.id.read_pub_icon);
+        setOrAnimatePlusCheckIcon(iconView, downloaded, allowAnimate);
     }
 
     private void setupCustomScrolling() {
@@ -348,8 +428,8 @@ public class PublicationInfoFragment extends Fragment implements
 
         if (UIUtils.hasHoneycombMR1()) {
             mHeaderBox.setTranslationY(newTop);
-            /*mAddScheduleButton.setTranslationY(newTop + mHeaderHeightPixels
-                - mAddScheduleButtonHeightPixels / 2);*/
+            mReadPubButton.setTranslationY(newTop + mHeaderHeightPixels
+                    - mReadPubButtonHeightPixels / 2);
             mHeaderBackgroundBox.setPivotY(mHeaderHeightPixels);
         } else {
             ViewHelper.setTranslationY(mHeaderBox, newTop);
@@ -452,6 +532,59 @@ public class PublicationInfoFragment extends Fragment implements
         }
 
         onScrollChanged(0, 0); // trigger scroll handling
+    }
+
+    private void setOrAnimatePlusCheckIcon(final ImageView imageView, boolean isCheck,
+                                           boolean allowAnimate) {
+        final int imageResId = isCheck
+                ? R.drawable.read_pub_button_icon_checked
+                : R.drawable.read_pub_button_icon_unchecked;
+
+        if (imageView.getTag() != null) {
+            if (imageView.getTag() instanceof Animator) {
+                Animator anim = (Animator) imageView.getTag();
+                anim.end();
+                ViewHelper.setAlpha(imageView, 1f);
+            }
+        }
+
+        if (allowAnimate && isCheck) {
+            int duration = getResources().getInteger(android.R.integer.config_shortAnimTime);
+            Animator outAnimator = ObjectAnimator.ofFloat(imageView, "alpha", 0f);
+            outAnimator.setDuration(duration / 2);
+            outAnimator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    imageView.setImageResource(imageResId);
+                }
+            });
+
+            AnimatorSet inAnimator = new AnimatorSet();
+            outAnimator.setDuration(duration);
+            inAnimator.playTogether(
+                    ObjectAnimator.ofFloat(imageView, "alpha", 1f),
+                    ObjectAnimator.ofFloat(imageView, "scaleX", 0f, 1f),
+                    ObjectAnimator.ofFloat(imageView, "scaleY", 0f, 1f)
+            );
+
+            AnimatorSet set = new AnimatorSet();
+            set.playSequentially(outAnimator, inAnimator);
+            set.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    imageView.setTag(null);
+                }
+            });
+            imageView.setTag(set);
+            set.start();
+        } else {
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    imageView.setImageResource(imageResId);
+                }
+            });
+        }
     }
 
 

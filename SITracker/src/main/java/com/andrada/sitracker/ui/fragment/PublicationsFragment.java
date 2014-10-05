@@ -17,7 +17,6 @@
 package com.andrada.sitracker.ui.fragment;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.View;
@@ -34,7 +33,6 @@ import com.andrada.sitracker.ui.PublicationDetailsActivity;
 import com.andrada.sitracker.ui.fragment.adapters.PublicationsAdapter;
 import com.andrada.sitracker.ui.fragment.adapters.PublicationsAdapter_;
 import com.andrada.sitracker.util.ShareHelper;
-import com.github.kevinsawicki.http.HttpRequest;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -46,10 +44,6 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.sharedpreferences.Pref;
 import org.jetbrains.annotations.NotNull;
-
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 import de.greenrobot.event.EventBus;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
@@ -139,52 +133,10 @@ public class PublicationsFragment extends Fragment implements ExpandableListView
     @Background
     public void publicationShare(@NotNull Publication pub, boolean forceDownload) {
 
-        //TODO move this whole block to a helper for reuse
-        HttpRequest request;
-        String pubUrl = pub.getUrl();
-        String pubFolder = prefs.downloadFolder().get();
-
-        File file;
-        if (pubFolder.equals("")) {
-            file = ShareHelper.getPublicationStorageFile(getActivity(),
-                    pub.getAuthor().getName() + "_" + pub.getName());
-        } else {
-            file = ShareHelper.getPublicationStorageFileWithPath(pubFolder,
-                    pub.getAuthor().getName() + "_" + pub.getName());
-        }
-
         int errorMessage = -1;
-        boolean shareResult = true;
-
         try {
-            if (file == null) {
-                throw new SharePublicationException(
-                        SharePublicationException.SharePublicationErrors.STORAGE_NOT_ACCESSIBLE_FOR_PERSISTANCE);
-            }
-            if (forceDownload || !file.exists()) {
-                URL publicaitonUrl = new URL(pubUrl);
-                request = HttpRequest.get(publicaitonUrl);
-                if (request.code() == 200) {
-                    String content = request.body();
-                    boolean result = ShareHelper.saveHtmlPageToFile(file, content, request.charset());
-                    if (!result) {
-                        throw new SharePublicationException(
-                                SharePublicationException.SharePublicationErrors.COULD_NOT_PERSIST);
-                    }
-                    getActivity().startActivity(ShareHelper.getSharePublicationIntent(Uri.fromFile(file)));
-                } else {
-                    throw new SharePublicationException(
-                            SharePublicationException.SharePublicationErrors.COULD_NOT_LOAD);
-                }
-            } else {
-                getActivity().startActivity(ShareHelper.getSharePublicationIntent(Uri.fromFile(file)));
-            }
-        } catch (MalformedURLException e) {
-            errorMessage = R.string.publication_error_url;
-            shareResult = false;
-        } catch (HttpRequest.HttpRequestException e) {
-            errorMessage = R.string.cannot_download_publication;
-            shareResult = false;
+            Intent intent = ShareHelper.fetchPublication(getActivity(), pub, prefs.downloadFolder().get(), forceDownload);
+            getActivity().startActivity(intent);
         } catch (SharePublicationException e) {
             switch (e.getError()) {
                 case COULD_NOT_PERSIST:
@@ -199,14 +151,18 @@ public class PublicationsFragment extends Fragment implements ExpandableListView
                 case COULD_NOT_LOAD:
                     errorMessage = R.string.cannot_download_publication;
                     break;
+                case WRONG_PUBLICATION_URL:
+                    errorMessage = R.string.publication_error_url;
+                    break;
+                default:
+                    break;
             }
-            shareResult = false;
         } finally {
             String msg = "";
             if (errorMessage != -1 && getActivity() != null) {
                 msg = getActivity().getResources().getString(errorMessage);
             }
-            stopProgressAfterShare(shareResult, msg, pub.getId());
+            stopProgressAfterShare(errorMessage == -1, msg, pub.getId());
 
         }
     }

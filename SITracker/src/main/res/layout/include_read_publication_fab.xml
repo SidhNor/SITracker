@@ -1,0 +1,22 @@
+<com.andrada.sitracker.ui.widget.CheckableFrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/read_pub_button"
+    android:layout_width="@dimen/read_pub_button_height"
+    android:layout_height="@dimen/read_pub_button_height"
+    android:layout_marginLeft="@dimen/keyline_1_minus_8dp"
+    android:visibility="invisible"
+    android:clickable="true"
+    android:focusable="true"
+    android:background="@drawable/read_pub_fab_background"
+    android:contentDescription="@string/download_and_read">
+
+    <ImageView
+        android:id="@+id/read_pub_icon"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="center"
+        android:src="@drawable/read_pub_button_icon_unchecked"
+        android:contentDescription="@null"
+        android:layout_gravity="center"/>
+
+</com.andrada.sitracker.ui.widget.CheckableFrameLayout>

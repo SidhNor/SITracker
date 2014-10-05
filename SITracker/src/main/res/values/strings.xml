@@ -164,6 +164,7 @@
     <string name="pref_content_img_display_summ">Download and display related publication images if
         available
     </string>
+    <string name="download_and_read">Download and read</string>
 
     <!--Updates-->
     <string name="pref_update_category_title">Updates</string>
