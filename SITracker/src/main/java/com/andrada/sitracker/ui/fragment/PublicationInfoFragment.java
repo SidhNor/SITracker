@@ -232,11 +232,27 @@ public class PublicationInfoFragment extends Fragment implements
     }
 
     @Background
-    void forceDownloadPublication() {
+    void downloadPublication(boolean forceDownload, boolean startActivity) {
         int errorMessage = -1;
         try {
-            //We are not interested in the actual result intent.
-            ShareHelper.fetchPublication(getActivity(), currentRecord, prefs.downloadFolder().get(), true);
+            final Intent intent = ShareHelper.fetchPublication(getActivity(), currentRecord, prefs.downloadFolder().get(), forceDownload);
+            if (startActivity) {
+                mIsDownloading = false;
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        showPublicationState(PublicationState.READY_FOR_READING, true);
+                    }
+                });
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (getActivity() != null) {
+                            getActivity().startActivity(intent);
+                        }
+                    }
+                }, 1000);
+            }
         } catch (SharePublicationException e) {
             switch (e.getError()) {
                 case COULD_NOT_PERSIST:
@@ -261,6 +277,7 @@ public class PublicationInfoFragment extends Fragment implements
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
+                    showPublicationState(PublicationState.WAITING_REFRESH, false);
                     Style.Builder alertStyle = new Style.Builder()
                             .setTextAppearance(android.R.attr.textAppearanceLarge)
                             .setPaddingInPixels(25);
@@ -303,6 +320,18 @@ public class PublicationInfoFragment extends Fragment implements
         } else {
             mHasPhoto = false;
             recomputePhotoAndScrollingMetrics();
+        }
+
+        //Check if file is new version of pub is loaded.
+        if (mIsDownloading) {
+            showPublicationState(PublicationState.DOWNLOADING, false);
+        } else {
+            boolean isRefreshable = ShareHelper.shouldRefreshPublication(getActivity(), currentRecord, prefs.downloadFolder().get());
+            if (isRefreshable) {
+                showPublicationState(PublicationState.WAITING_REFRESH, false);
+            } else {
+                showPublicationState(PublicationState.READY_FOR_READING, false);
+            }
         }
 
         String pubAbstract = SamlibPageHelper.stripDescriptionOfImages(currentRecord.getDescription());
@@ -388,22 +417,37 @@ public class PublicationInfoFragment extends Fragment implements
             //Change action view
             MenuItemCompat.setActionView(mForceDownloadAction, R.layout.ab_download_progress);
             //Start downloading in a background thread
-            forceDownloadPublication();
+            //Do force, no activity start
+            downloadPublication(true, false);
         }
     }
 
     @Click(R.id.read_pub_button)
     void downloadAndReadButtonClicked() {
-        boolean downloaded = !mDownloaded;
-        showDownloaded(downloaded, true);
+        if (mIsDownloading) {
+            return;
+        }
+        if (!mDownloaded) {
+            //Start download here
+            mIsDownloading = true;
+            showPublicationState(PublicationState.DOWNLOADING, true);
+            downloadPublication(false, true);
+
+        } else {
+            //Open the shit right away
+            downloadPublication(false, true);
+        }
     }
 
-    private void showDownloaded(boolean downloaded, boolean allowAnimate) {
-        mDownloaded = downloaded;
-        //mReadPubButton.setChecked(mDownloaded, allowAnimate);
-
-        ImageView iconView = (ImageView) mReadPubButton.findViewById(R.id.read_pub_icon);
-        setOrAnimateReadPubIcon(iconView, downloaded, allowAnimate);
+    private void showPublicationState(PublicationState state, boolean allowAnimate) {
+        if (!isDetached()) {
+            mDownloaded = state.equals(PublicationState.READY_FOR_READING);
+            if (!mIsDownloading) {
+                mReadPubButton.setChecked(mDownloaded, allowAnimate);
+            }
+            ImageView iconView = (ImageView) mReadPubButton.findViewById(R.id.read_pub_icon);
+            setOrAnimateReadPubIcon(iconView, state, allowAnimate);
+        }
     }
 
     private void setupCustomScrolling() {
@@ -546,11 +590,12 @@ public class PublicationInfoFragment extends Fragment implements
         onScrollChanged(0, 0); // trigger scroll handling
     }
 
-    private void setOrAnimateReadPubIcon(final ImageView imageView, boolean isCheck,
+    private void setOrAnimateReadPubIcon(final ImageView imageView, PublicationState currentState,
                                          boolean allowAnimate) {
-        final int imageResId = isCheck
-                ? R.drawable.download_pub_icon_fab_up
-                : R.drawable.read_pub_button_icon_checked;
+        final int imageResId = currentState.equals(PublicationState.READY_FOR_READING)
+                ? R.drawable.read_pub_button_icon_checked
+                : currentState.equals(PublicationState.DOWNLOADING) ? R.drawable.download_pub_icon_fab_up
+                : R.drawable.read_pub_button_icon_unchecked;
 
         if (imageView.getTag() != null) {
             if (imageView.getTag() instanceof Animator) {
@@ -559,13 +604,14 @@ public class PublicationInfoFragment extends Fragment implements
                 ViewHelper.setAlpha(imageView, 1f);
             }
         }
+        /*
         if (imageView.getBackground() instanceof AnimationDrawable) {
             AnimationDrawable frameAnimation = (AnimationDrawable) imageView.getBackground();
             frameAnimation.stop();
             imageView.setBackgroundResource(0);
-        }
+        }*/
 
-        if (allowAnimate && isCheck) {
+        if (allowAnimate && currentState.equals(PublicationState.DOWNLOADING)) {
             int duration = getResources().getInteger(android.R.integer.config_shortAnimTime);
             Animator outAnimator = ObjectAnimator.ofFloat(imageView, "alpha", 0f);
             outAnimator.setDuration(duration);
@@ -592,16 +638,55 @@ public class PublicationInfoFragment extends Fragment implements
             imageView.setTag(set);
             set.start();
 
+        } else if (allowAnimate && currentState.equals(PublicationState.READY_FOR_READING)) {
+            int duration = getResources().getInteger(android.R.integer.config_shortAnimTime);
+            Animator outAnimator = ObjectAnimator.ofFloat(imageView, "alpha", 0f);
+            outAnimator.setDuration(duration);
+            outAnimator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    imageView.setBackgroundResource(0);
+                    imageView.setImageResource(imageResId);
+                }
+            });
+            ObjectAnimator inAnimator = ObjectAnimator.ofFloat(imageView, "alpha", 1f);
+            inAnimator.setDuration(duration * 2);
+            final AnimatorSet set = new AnimatorSet();
+            set.playSequentially(outAnimator, inAnimator);
+            set.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    imageView.setTag(null);
+                }
+            });
+            imageView.setTag(set);
+            set.start();
+        } else if (!allowAnimate && currentState.equals(PublicationState.DOWNLOADING)) {
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    imageView.setImageDrawable(null);
+                    imageView.setBackgroundResource(imageResId);
+                    AnimationDrawable frameAnimation = (AnimationDrawable) imageView.getBackground();
+                    frameAnimation.start();
+                }
+            });
         } else {
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
+                    imageView.setBackgroundResource(0);
                     imageView.setImageResource(imageResId);
                 }
             });
         }
     }
 
+    enum PublicationState {
+        WAITING_REFRESH,
+        DOWNLOADING,
+        READY_FOR_READING
+    }
 
     class PublicationImagesAdapter extends PagerAdapter {
 

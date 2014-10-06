@@ -18,13 +18,13 @@
 
 <animation-list xmlns:android="http://schemas.android.com/apk/res/android"
                 android:oneshot="false">
-    <item android:duration="100">
-        <bitmap
+    <item android:duration="150">
+    <bitmap
             android:gravity="center"
             android:src="@drawable/download_pub_icon_fab_up0"/>
     </item>
-    <item android:duration="150">
-        <bitmap
+    <item android:duration="200">
+    <bitmap
             android:gravity="center"
             android:src="@drawable/download_pub_icon_fab_up1"/>
     </item>
@@ -33,8 +33,8 @@
             android:gravity="center"
             android:src="@drawable/download_pub_icon_fab_up2"/>
     </item>
-    <item android:duration="200">
-        <bitmap
+    <item android:duration="150">
+    <bitmap
             android:gravity="center"
             android:src="@drawable/download_pub_icon_fab_up3"/>
     </item>
@@ -43,8 +43,8 @@
             android:gravity="center"
             android:src="@drawable/download_pub_icon_fab_up4"/>
     </item>
-    <item android:duration="100">
-        <bitmap
+    <item android:duration="150">
+    <bitmap
             android:gravity="center"
             android:src="@drawable/download_pub_icon_fab_up5"/>
     </item>
@@ -53,8 +53,8 @@
             android:gravity="center"
             android:src="@drawable/download_pub_icon_fab_up6"/>
     </item>
-    <item android:duration="150">
-        <bitmap
+    <item android:duration="200">
+    <bitmap
             android:gravity="center"
             android:src="@drawable/download_pub_icon_fab_up7"/>
     </item>
@@ -62,5 +62,25 @@
         <bitmap
             android:gravity="center"
             android:src="@drawable/download_pub_icon_fab_up8"/>
+    </item>
+    <item android:duration="200">
+        <bitmap
+            android:gravity="center"
+            android:src="@drawable/download_pub_icon_fab_up9"/>
+    </item>
+    <item android:duration="150">
+        <bitmap
+            android:gravity="center"
+            android:src="@drawable/download_pub_icon_fab_up10"/>
+    </item>
+    <item android:duration="150">
+        <bitmap
+            android:gravity="center"
+            android:src="@drawable/download_pub_icon_fab_up11"/>
+    </item>
+    <item android:duration="200">
+        <bitmap
+            android:gravity="center"
+            android:src="@drawable/download_pub_icon_fab_up12"/>
     </item>
 </animation-list>

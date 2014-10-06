@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -111,6 +111,19 @@ public final class ShareHelper {
         return getSharePublicationIntent(Uri.fromFile(file));
     }
 
+    public static boolean shouldRefreshPublication(Context context, @NotNull Publication pub,
+                                                   String pubFolder) {
+        File file;
+        if (TextUtils.isEmpty(pubFolder)) {
+            file = ShareHelper.getPublicationStorageFile(context,
+                    pub.getAuthor().getName() + "_" + pub.getName());
+        } else {
+            file = ShareHelper.getPublicationStorageFileWithPath(pubFolder,
+                    pub.getAuthor().getName() + "_" + pub.getName());
+        }
+        return file == null || !file.exists() || file.lastModified() < pub.getUpdateDate().getTime();
+    }
+
     /**
      * Get a usable File of the publication on external storage
      *
@@ -191,8 +204,9 @@ public final class ShareHelper {
                 Environment.isExternalStorageRemovable()) {
             return null;
         }
-        File sdCard = Environment.getExternalStorageDirectory();
-        File dir = new File(sdCard.getAbsolutePath() + path);
+        //Path here is always absolute.
+        //File sdCard = Environment.getExternalStorageDirectory();
+        File dir = new File(/*sdCard.getAbsolutePath() + */path);
         //Make sure we create directories if they do not exist
         if (!dir.exists()) {
             dir.mkdirs();
