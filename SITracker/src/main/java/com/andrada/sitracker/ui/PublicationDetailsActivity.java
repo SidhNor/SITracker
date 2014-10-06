@@ -29,6 +29,8 @@ import com.andrada.sitracker.R;
 import com.andrada.sitracker.ui.fragment.PublicationInfoFragment_;
 import com.andrada.sitracker.util.UIUtils;
 
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+
 public class PublicationDetailsActivity extends SimpleSinglePaneActivity {
 
     @Override
@@ -85,5 +87,11 @@ public class PublicationDetailsActivity extends SimpleSinglePaneActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Crouton.cancelAllCroutons();
     }
 }

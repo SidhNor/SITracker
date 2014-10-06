@@ -20,6 +20,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -32,6 +33,7 @@ import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.util.Pair;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -83,6 +85,7 @@ import org.androidannotations.annotations.OrmLiteDao;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.sharedpreferences.Pref;
+import org.androidannotations.api.BackgroundExecutor;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -207,6 +210,7 @@ public class PublicationInfoFragment extends Fragment implements
     @Override
     public void onDestroy() {
         OpenHelperManager.releaseHelper();
+        BackgroundExecutor.cancelAll("publicationDownload", true);
         super.onDestroy();
     }
 
@@ -234,12 +238,12 @@ public class PublicationInfoFragment extends Fragment implements
         bindData();
     }
 
-    @Background
+    @Background(id = "publicationDownload")
     void downloadPublication(boolean forceDownload, boolean startActivity) {
         int errorMessage = -1;
         try {
             final Intent intent = ShareHelper.fetchPublication(getActivity(), currentRecord, prefs.downloadFolder().get(), forceDownload);
-            if (startActivity) {
+            if (startActivity && getActivity() != null) {
                 mIsDownloading = false;
                 mHandler.post(new Runnable() {
                     @Override
@@ -257,6 +261,10 @@ public class PublicationInfoFragment extends Fragment implements
                 }, 1000);
             }
         } catch (SharePublicationException e) {
+            if (getActivity() == null) {
+                //Fragment is detached, we won't be abel to show anything
+                return;
+            }
             switch (e.getError()) {
                 case COULD_NOT_PERSIST:
                     errorMessage = R.string.publication_error_save;
@@ -283,6 +291,7 @@ public class PublicationInfoFragment extends Fragment implements
                     showPublicationState(PublicationState.WAITING_REFRESH, false);
                     Style.Builder alertStyle = new Style.Builder()
                             .setTextAppearance(android.R.attr.textAppearanceLarge)
+                            .setGravity(Gravity.BOTTOM)
                             .setPaddingInPixels(25);
                     alertStyle.setBackgroundColorValue(Style.holoRedLight);
                     Crouton.makeText(getActivity(), msg, alertStyle.build()).show();
@@ -290,12 +299,14 @@ public class PublicationInfoFragment extends Fragment implements
             });
         } finally {
             mIsDownloading = false;
-            mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    MenuItemCompat.setActionView(mForceDownloadAction, null);
-                }
-            });
+            if (getActivity() != null) {
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        MenuItemCompat.setActionView(mForceDownloadAction, null);
+                    }
+                });
+            }
         }
     }
 
@@ -641,8 +652,10 @@ public class PublicationInfoFragment extends Fragment implements
                 public void onAnimationEnd(Animator animation) {
                     imageView.setImageDrawable(null);
                     imageView.setBackgroundResource(imageResId);
-                    AnimationDrawable frameAnimation = (AnimationDrawable) imageView.getBackground();
-                    frameAnimation.start();
+                    Drawable frameAnimation = imageView.getBackground();
+                    if (frameAnimation instanceof AnimationDrawable) {
+                        ((AnimationDrawable)frameAnimation).start();
+                    }
                 }
             });
 
