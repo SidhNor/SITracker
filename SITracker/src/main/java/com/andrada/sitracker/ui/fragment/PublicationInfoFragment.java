@@ -19,6 +19,7 @@ package com.andrada.sitracker.ui.fragment;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.AnimationDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -66,7 +67,6 @@ import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorListenerAdapter;
 import com.nineoldandroids.animation.AnimatorSet;
 import com.nineoldandroids.animation.ObjectAnimator;
-import com.nineoldandroids.animation.ValueAnimator;
 import com.nineoldandroids.view.ViewHelper;
 import com.viewpagerindicator.CirclePageIndicator;
 
@@ -162,7 +162,6 @@ public class PublicationInfoFragment extends Fragment implements
     private int mPhotoHeightPixels;
     private int mHeaderHeightPixels;
     private int mReadPubButtonHeightPixels;
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -404,8 +403,7 @@ public class PublicationInfoFragment extends Fragment implements
         //mReadPubButton.setChecked(mDownloaded, allowAnimate);
 
         ImageView iconView = (ImageView) mReadPubButton.findViewById(R.id.read_pub_icon);
-        ImageView staticView = (ImageView) mReadPubButton.findViewById(R.id.static_download_pub_icon);
-        setOrAnimatePlusCheckIcon(iconView, staticView, downloaded, allowAnimate);
+        setOrAnimateReadPubIcon(iconView, downloaded, allowAnimate);
     }
 
     private void setupCustomScrolling() {
@@ -437,6 +435,14 @@ public class PublicationInfoFragment extends Fragment implements
             mHeaderBackgroundBox.setPivotY(mHeaderHeightPixels);
         } else {
             ViewHelper.setTranslationY(mHeaderBox, newTop);
+
+            //TODO get rid of this on next release with API 14
+            ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams)
+                    mReadPubButton.getLayoutParams();
+            if (mlp.topMargin != Math.round(newTop + mHeaderHeightPixels - mReadPubButtonHeightPixels / 2)) {
+                mlp.topMargin = Math.round(newTop + mHeaderHeightPixels - mReadPubButtonHeightPixels / 2);
+                mReadPubButton.setLayoutParams(mlp);
+            }
             ViewHelper.setPivotY(mHeaderBackgroundBox, mHeaderHeightPixels);
         }
         int gapFillDistance = (int) (mHeaderTopClearance * GAP_FILL_DISTANCE_MULTIPLIER);
@@ -459,6 +465,7 @@ public class PublicationInfoFragment extends Fragment implements
                         .setDuration(250)
                         .start();
             } else {
+                //TODO get rid of this on next release with API 14
                 animate(mHeaderBackgroundBox)
                         .scaleY(desiredHeaderScaleY)
                         .setInterpolator(new DecelerateInterpolator(2f))
@@ -485,6 +492,7 @@ public class PublicationInfoFragment extends Fragment implements
         if (UIUtils.hasHoneycombMR1()) {
             mPhotoViewContainer.setTranslationY(scrollY * 0.3f);
         } else {
+            //TODO get rid of this on next release with API 14
             ViewHelper.setTranslationY(mPhotoViewContainer, scrollY * 0.3f);
         }
 
@@ -538,8 +546,8 @@ public class PublicationInfoFragment extends Fragment implements
         onScrollChanged(0, 0); // trigger scroll handling
     }
 
-    private void setOrAnimatePlusCheckIcon(final ImageView imageView, final ImageView staticView, boolean isCheck,
-                                           boolean allowAnimate) {
+    private void setOrAnimateReadPubIcon(final ImageView imageView, boolean isCheck,
+                                         boolean allowAnimate) {
         final int imageResId = isCheck
                 ? R.drawable.download_pub_icon_fab_up
                 : R.drawable.read_pub_button_icon_checked;
@@ -551,6 +559,11 @@ public class PublicationInfoFragment extends Fragment implements
                 ViewHelper.setAlpha(imageView, 1f);
             }
         }
+        if (imageView.getBackground() instanceof AnimationDrawable) {
+            AnimationDrawable frameAnimation = (AnimationDrawable) imageView.getBackground();
+            frameAnimation.stop();
+            imageView.setBackgroundResource(0);
+        }
 
         if (allowAnimate && isCheck) {
             int duration = getResources().getInteger(android.R.integer.config_shortAnimTime);
@@ -559,20 +572,15 @@ public class PublicationInfoFragment extends Fragment implements
             outAnimator.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    ViewHelper.setAlpha(imageView, 1f);
-                    staticView.setImageResource(R.drawable.download_pub_icon_fab_down);
-                    imageView.setImageResource(imageResId);
+                    imageView.setImageDrawable(null);
+                    imageView.setBackgroundResource(imageResId);
+                    AnimationDrawable frameAnimation = (AnimationDrawable) imageView.getBackground();
+                    frameAnimation.start();
                 }
             });
-            staticView.setImageResource(R.drawable.download_pub_icon_fab_down);
-            imageView.setImageResource(imageResId);
 
-            int backDuration = getResources().getInteger(android.R.integer.config_longAnimTime);
-            final ValueAnimator inAnimator = ObjectAnimator.ofFloat(imageView, "translationY", -25f, 10f);
-            inAnimator.setDuration(backDuration * 2);
-            inAnimator.setRepeatCount(500);
-            inAnimator.setRepeatMode(ValueAnimator.RESTART);
-
+            ObjectAnimator inAnimator = ObjectAnimator.ofFloat(imageView, "alpha", 1f);
+            inAnimator.setDuration(duration * 2);
             final AnimatorSet set = new AnimatorSet();
             set.playSequentially(outAnimator, inAnimator);
             set.addListener(new AnimatorListenerAdapter() {
@@ -583,6 +591,7 @@ public class PublicationInfoFragment extends Fragment implements
             });
             imageView.setTag(set);
             set.start();
+
         } else {
             mHandler.post(new Runnable() {
                 @Override
