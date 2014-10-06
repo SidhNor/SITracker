@@ -62,6 +62,7 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.github.kevinsawicki.http.HttpRequest;
+import com.google.android.gms.plus.PlusOneButton;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorListenerAdapter;
@@ -135,6 +136,8 @@ public class PublicationInfoFragment extends Fragment implements
     CirclePageIndicator pagerIndicators;
     @ViewById(R.id.read_pub_button)
     CheckableFrameLayout mReadPubButton;
+    @ViewById(R.id.plus_one_button)
+    PlusOneButton mPlusOneButton;
     @OptionsMenuItem(R.id.action_mark_read)
     MenuItem mMarkAsReadAction;
     @OptionsMenuItem(R.id.action_force_download)
@@ -307,6 +310,8 @@ public class PublicationInfoFragment extends Fragment implements
         mReadPubButton.setVisibility(View.VISIBLE);
         mPhotoViewContainer.setBackgroundColor(UIUtils.scaleColor(0xe8552c, 0.65f, false));
 
+        updatePlusOneButton();
+
         String imagesUrl = currentRecord.getImagePageUrl();
         if (!TextUtils.isEmpty(imagesUrl) && prefs.displayPubImages().get() &&
                 //TODO remove Gingerbread check on next release
@@ -350,6 +355,22 @@ public class PublicationInfoFragment extends Fragment implements
                 mScrollViewChild.setVisibility(View.VISIBLE);
             }
         });
+    }
+
+    private void updatePlusOneButton() {
+        if (mPlusOneButton == null) {
+            return;
+        }
+        if (currentRecord == null) {
+            return;
+        }
+
+        if (!TextUtils.isEmpty(currentRecord.getUrl())) {
+            mPlusOneButton.initialize(currentRecord.getUrl(), 0);
+            mPlusOneButton.setVisibility(View.VISIBLE);
+        } else {
+            mPlusOneButton.setVisibility(View.GONE);
+        }
     }
 
     @Background

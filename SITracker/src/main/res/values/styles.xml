@@ -266,6 +266,14 @@
         <item name="android:maxLines">2</item>
     </style>
 
+    <style name="PublicationDetail.PlusOne" parent="">
+        <item name="android:layout_alignParentRight">true</item>
+        <item name="android:layout_alignParentTop">true</item>
+        <item name="android:layout_marginLeft">@dimen/content_padding_normal</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
     <style name="Widget.UpdateDate.Text" parent="">
         <item name="android:textSize">@dimen/text_size_small</item>
         <item name="android:textAlignment" tools:ignore="NewApi">viewEnd</item>
