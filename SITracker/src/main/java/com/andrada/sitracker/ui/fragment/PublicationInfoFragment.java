@@ -56,6 +56,7 @@ import com.andrada.sitracker.reader.SamlibPublicationPageReader;
 import com.andrada.sitracker.ui.BaseActivity;
 import com.andrada.sitracker.ui.widget.CheckableFrameLayout;
 import com.andrada.sitracker.ui.widget.ObservableScrollView;
+import com.andrada.sitracker.util.AnalyticsHelper;
 import com.andrada.sitracker.util.SamlibPageHelper;
 import com.andrada.sitracker.util.ShareHelper;
 import com.andrada.sitracker.util.UIUtils;
@@ -394,7 +395,7 @@ public class PublicationInfoFragment extends Fragment implements
             List<Pair<String, String>> results = new SamlibPublicationPageReader().readPublicationImageUrlsAndDescriptions(data);
             addImagesToList(results);
         } catch (HttpRequest.HttpRequestException e) {
-            //TODO log exception to analytics
+            AnalyticsHelper.getInstance().sendException("Could not load publication image list", e);
             addImagesToList(new ArrayList<Pair<String, String>>());
         }
     }
@@ -423,7 +424,7 @@ public class PublicationInfoFragment extends Fragment implements
         try {
             publicationsDao.markPublicationRead(currentRecord);
         } catch (SQLException e) {
-            //TODO send analytics exception
+            AnalyticsHelper.getInstance().sendException(e);
         }
         mHandler.post(new Runnable() {
             @Override
