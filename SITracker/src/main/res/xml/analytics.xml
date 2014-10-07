@@ -37,5 +37,7 @@
     <screenName name="com.andrada.sitracker.ui.DirectoryChooserActivity">Directory chooser
     </screenName>
     <screenName name="com.andrada.sitracker.ui.SearchActivity_">Search</screenName>
+    <screenName name="com.andrada.sitracker.ui.PublicationDetailsActivity">Publication details
+    </screenName>
 
 </resources>

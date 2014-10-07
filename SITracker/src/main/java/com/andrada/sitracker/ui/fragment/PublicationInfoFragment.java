@@ -43,8 +43,10 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.AppUriContract;
 import com.andrada.sitracker.contracts.SIPrefs_;
@@ -122,8 +124,14 @@ public class PublicationInfoFragment extends Fragment implements
     ObservableScrollView mScrollView;
     @ViewById(R.id.pub_abstract)
     TextView mAbstract;
-    @ViewById(R.id.publication_rating)
+    @ViewById(R.id.publication_rating_block)
+    ViewGroup mRatingContainer;
+    @ViewById(R.id.publication_rating_text)
     TextView mPubRating;
+    @ViewById(R.id.publication_rating_count)
+    TextView mPubRatingCount;
+    @ViewById(R.id.publication_rating)
+    RatingBar mRatingBar;
     @ViewById(R.id.header_pub)
     View mHeaderBox;
     @ViewById(R.id.header_pub_contents)
@@ -154,15 +162,6 @@ public class PublicationInfoFragment extends Fragment implements
     private boolean mDownloaded;
     private ViewGroup mRootView;
     private Handler mHandler = new Handler();
-    private ViewTreeObserver.OnGlobalLayoutListener mGlobalLayoutListener
-            = new ViewTreeObserver.OnGlobalLayoutListener() {
-        @Override
-        public void onGlobalLayout() {
-            mReadPubButtonHeightPixels = mReadPubButton.getHeight();
-            recomputePhotoAndScrollingMetrics();
-        }
-    };
-
     private Uri mPublicationUri;
     private long mPublicationId;
     private boolean mHasPhoto;
@@ -171,6 +170,14 @@ public class PublicationInfoFragment extends Fragment implements
     private int mPhotoHeightPixels;
     private int mHeaderHeightPixels;
     private int mReadPubButtonHeightPixels;
+    private ViewTreeObserver.OnGlobalLayoutListener mGlobalLayoutListener
+            = new ViewTreeObserver.OnGlobalLayoutListener() {
+        @Override
+        public void onGlobalLayout() {
+            mReadPubButtonHeightPixels = mReadPubButton.getHeight();
+            recomputePhotoAndScrollingMetrics();
+        }
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -341,9 +348,14 @@ public class PublicationInfoFragment extends Fragment implements
             recomputePhotoAndScrollingMetrics();
         }
 
-        if (!TextUtils.isEmpty(currentRecord.getRating())) {
-            mPubRating.setVisibility(View.VISIBLE);
-            mPubRating.setText(currentRecord.getRating());
+        String ratingString = currentRecord.getRating();
+        if (!TextUtils.isEmpty(ratingString) && ratingString.split("\\*").length == 2) {
+            float rating = Float.valueOf(ratingString.split("\\*")[0]);
+            int ratingCount = Integer.valueOf(ratingString.split("\\*")[1]);
+            mRatingContainer.setVisibility(View.VISIBLE);
+            mRatingBar.setRating(rating);
+            mPubRating.setText(String.valueOf(rating));
+            mPubRatingCount.setText(String.valueOf(ratingCount));
         }
 
         //Check if file is new version of pub is loaded.
@@ -459,6 +471,10 @@ public class PublicationInfoFragment extends Fragment implements
             //Start downloading in a background thread
             //Do force, no activity start
             downloadPublication(true, false);
+            AnalyticsHelper.getInstance().sendEvent(
+                    Constants.GA_ADMIN_CATEGORY,
+                    Constants.GA_EVENT_PUB_MANUAL_REFRESH,
+                    Constants.GA_EVENT_AUTHOR_PUB_OPEN);
         }
     }
 
@@ -467,6 +483,10 @@ public class PublicationInfoFragment extends Fragment implements
         if (mIsDownloading) {
             return;
         }
+        AnalyticsHelper.getInstance().sendEvent(
+                Constants.GA_READ_CATEGORY,
+                Constants.GA_EVENT_FAB_CLICK,
+                Constants.GA_EVENT_AUTHOR_PUB_OPEN);
         if (!mDownloaded) {
             //Start download here
             mIsDownloading = true;
@@ -477,6 +497,11 @@ public class PublicationInfoFragment extends Fragment implements
             //Open the shit right away
             downloadPublication(false, true);
         }
+    }
+
+    @Click(R.id.publication_rating_block)
+    void voteForPubClicked() {
+        //TODO open voting dialog
     }
 
     private void showPublicationState(PublicationState state, boolean allowAnimate) {
@@ -662,7 +687,7 @@ public class PublicationInfoFragment extends Fragment implements
                     imageView.setBackgroundResource(imageResId);
                     Drawable frameAnimation = imageView.getBackground();
                     if (frameAnimation instanceof AnimationDrawable) {
-                        ((AnimationDrawable)frameAnimation).start();
+                        ((AnimationDrawable) frameAnimation).start();
                     }
                 }
             });
