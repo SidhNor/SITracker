@@ -50,8 +50,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                android:layout_marginLeft="@dimen/keyline_2"
-                />
+                android:layout_marginLeft="@dimen/keyline_2"/>
 
             <com.google.android.gms.plus.PlusOneButton
                 android:id="@+id/plus_one_button"
@@ -62,8 +61,17 @@
                 plus:size="standard"
                 android:layout_marginLeft="@dimen/keyline_2_pub_detail"
                 android:layout_marginBottom="16dp"
-                android:layout_marginRight="16dp"
-                />
+                android:layout_marginRight="16dp"/>
+
+            <TextView
+                android:id="@+id/publication_rating"
+                style="@style/TextBody"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:layout_marginLeft="@dimen/keyline_2"/>
+
         </LinearLayout>
 
         <!-- Background photo -->

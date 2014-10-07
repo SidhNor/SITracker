@@ -122,6 +122,8 @@ public class PublicationInfoFragment extends Fragment implements
     ObservableScrollView mScrollView;
     @ViewById(R.id.pub_abstract)
     TextView mAbstract;
+    @ViewById(R.id.publication_rating)
+    TextView mPubRating;
     @ViewById(R.id.header_pub)
     View mHeaderBox;
     @ViewById(R.id.header_pub_contents)
@@ -337,6 +339,11 @@ public class PublicationInfoFragment extends Fragment implements
         } else {
             mHasPhoto = false;
             recomputePhotoAndScrollingMetrics();
+        }
+
+        if (!TextUtils.isEmpty(currentRecord.getRating())) {
+            mPubRating.setVisibility(View.VISIBLE);
+            mPubRating.setText(currentRecord.getRating());
         }
 
         //Check if file is new version of pub is loaded.
