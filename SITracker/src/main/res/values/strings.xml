@@ -165,7 +165,10 @@
         available
     </string>
     <string name="download_and_read">Download and read</string>
+
+    <!--Rating-->
     <string name="publication_ratings">Rating</string>
+    <string name="publication_submit_rating_link">SUBMIT RATING</string>
 
     <!--Updates-->
     <string name="pref_update_category_title">Updates</string>

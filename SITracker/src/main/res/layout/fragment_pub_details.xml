@@ -44,20 +44,20 @@
             android:orientation="vertical"
             android:paddingBottom="@dimen/publication_details_extra_space_bottom"
             android:paddingRight="@dimen/keyline_1"
-            android:paddingTop="16dp">
+            android:paddingTop="@dimen/content_padding_normal">
 
             <TextView
                 android:id="@+id/pub_abstract"
                 style="@style/TextBody"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="@dimen/content_padding_normal"
                 android:layout_marginLeft="@dimen/keyline_2_pub_detail"/>
 
             <com.google.android.gms.plus.PlusOneButton
                 android:id="@+id/plus_one_button"
                 style="@style/PublicationDetail.PlusOne"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="@dimen/content_padding_normal"
                 android:layout_marginLeft="@dimen/keyline_2_pub_detail"
                 android:layout_marginRight="16dp"
                 android:clickable="true"
@@ -94,11 +94,11 @@
                         android:id="@+id/publication_rating_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="16dp"/>
+                        android:layout_marginBottom="@dimen/content_padding_normal"/>
 
                     <RatingBar
                         android:id="@+id/publication_rating"
-                        style="?android:attr/ratingBarStyleSmall"
+                        style="@style/Publication.Rating.BarSmall"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_toRightOf="@id/publication_rating_text"
@@ -140,7 +140,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="@dimen/content_padding_normal"
                 android:padding="2dp"/>
         </FrameLayout>
 
@@ -165,12 +165,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingBottom="16dp"
+                android:paddingBottom="@dimen/content_padding_normal"
                 android:paddingLeft="@dimen/keyline_2_pub_detail"
                 android:paddingRight="@dimen/keyline_1"
-                android:paddingTop="16dp">
+                android:paddingTop="@dimen/content_padding_normal">
 
-                <!-- Publication title -->
+            <!-- Publication title -->
                 <TextView
                     android:id="@+id/pub_title"
                     style="@style/PublicationDetail.Title"

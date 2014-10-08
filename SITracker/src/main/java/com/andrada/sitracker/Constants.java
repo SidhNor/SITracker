@@ -71,6 +71,7 @@ public class Constants {
     public static final String GA_SCREEN_IMPORT_PROGRESS = "Import progress";
     public static final String GA_SCREEN_EXPORT_DIALOG = "Export authors dialog";
     public static final String GA_SCREEN_PREFS_DOWNLOAD_DIALOG = "Download folder setting dialog";
+    public static final String GA_SCREEN_RATING_DIALOG = "Publication Rating";
     public static final String GA_SCREEN_ABOUT_DIALOG = "About";
 
     //Analytics event names
@@ -78,6 +79,7 @@ public class Constants {
     public static final String GA_EVENT_AUTHOR_UPDATE = "author_update";
     public static final String GA_EVENT_AUTHORS_MANUAL_REFRESH = "author_manual_refresh";
     public static final String GA_EVENT_PUB_MANUAL_REFRESH = "pub_manual_refresh";
+    public static final String GA_EVENT_PUB_RATED = "pub_rated";
     public static final String GA_EVENT_FAB_CLICK = "fab_used";
     public static final String GA_EVENT_LONG_TAP = "long_tap_used";
     public static final String GA_EVENT_AUTHOR_REMOVED = "authors_removed";

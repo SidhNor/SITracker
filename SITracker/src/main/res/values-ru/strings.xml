@@ -179,7 +179,10 @@
         таковые доступны
     </string>
     <string name="download_and_read">Скачать и читать</string>
+
+    <!--Rating-->
     <string name="publication_ratings">Рэйтинг</string>
+    <string name="publication_submit_rating_link">ГОЛОСОВАТЬ</string>
 
     <!--Updates-->
     <string name="pref_update_category_title">Обновления</string>

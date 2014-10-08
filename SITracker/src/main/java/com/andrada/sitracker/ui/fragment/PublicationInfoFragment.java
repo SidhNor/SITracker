@@ -27,6 +27,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -501,7 +503,19 @@ public class PublicationInfoFragment extends Fragment implements
 
     @Click(R.id.publication_rating_block)
     void voteForPubClicked() {
-        //TODO open voting dialog
+        if (currentRecord != null && getActivity() != null) {
+            AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_RATING_DIALOG);
+            FragmentManager fm = this.getActivity().getSupportFragmentManager();
+            FragmentTransaction ft = fm.beginTransaction();
+            Fragment prev = fm.findFragmentByTag(RatePublicationDialog.FRAGMENT_TAG);
+            if (prev != null) {
+                ft.remove(prev);
+            }
+            ft.addToBackStack(null);
+            RatePublicationDialog_.builder()
+                    .publicationUrl(currentRecord.getUrl())
+                    .build().show(ft, AboutDialog.FRAGMENT_TAG);
+        }
     }
 
     private void showPublicationState(PublicationState state, boolean allowAnimate) {
