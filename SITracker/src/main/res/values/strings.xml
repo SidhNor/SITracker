@@ -169,6 +169,8 @@
     <!--Rating-->
     <string name="publication_ratings">Rating</string>
     <string name="publication_submit_rating_link">SUBMIT RATING</string>
+    <string name="publication_rating_submit_success">Your vote was submitted successfully.</string>
+    <string name="publication_rating_submit_error">Failed to submit your vote. Please try again later.</string>
 
     <!--Updates-->
     <string name="pref_update_category_title">Updates</string>
@@ -262,6 +264,5 @@
             </ul>
         </section>
     ]]></string>
-
 
 </resources>

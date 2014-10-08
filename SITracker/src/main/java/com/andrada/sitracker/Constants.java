@@ -32,6 +32,8 @@ public class Constants {
 
     public final static String AUTHOR_UPDATE_DATE_REGEX = "Обновлялось:</font></a></b>\\s*(.*?)\\s*$";
 
+    public static final String PUB_RATING_LINK_EXTRACT_REGEX = ".*?href=\"(.*?)\".*";
+
     public final static String AUTHOR_DESCRIPTION_TEXT_REGEX = "Об авторе:</font></b><i>(.*?)</i>";
 
     public final static String AUTHOR_IMAGE_REGEX = "<font color=\"#555555\">\\s*(<a href=about.shtml>)?\\s*<img src=(.*?) .*\\s*(</a>)?";

@@ -25,8 +25,9 @@ import android.widget.TextView;
 
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
+import com.andrada.sitracker.events.RatingResultEvent;
 import com.andrada.sitracker.util.AnalyticsHelper;
-import com.github.kevinsawicki.http.HttpRequest;
+import com.andrada.sitracker.util.RatingUtil;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Click;
@@ -35,15 +36,12 @@ import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.res.StringArrayRes;
 
-import java.net.HttpURLConnection;
-import java.util.HashMap;
-import java.util.Map;
+import de.greenrobot.event.EventBus;
 
 @EFragment(R.layout.fragment_rate_publication)
 public class RatePublicationDialog extends DialogFragment implements RatingBar.OnRatingBarChangeListener {
 
     public static final String FRAGMENT_TAG = "rate_pub_dialog";
-    private static final String SAMLIB_VOTE_URL = "http://samlib.ru/cgi-bin/votecounter";
 
     @FragmentArg
     String publicationUrl;
@@ -101,47 +99,18 @@ public class RatePublicationDialog extends DialogFragment implements RatingBar.O
 
     @Background
     void submitRatingSilently(int ratingToSubmit, String publicationUrl) {
-        if (TextUtils.isEmpty(publicationUrl)) {
-            return;
+
+        String result = RatingUtil.submitRatingForPublication(ratingToSubmit, publicationUrl);
+        if (TextUtils.isEmpty(result)) {
+            //Vote submitted successfully
+            AnalyticsHelper.getInstance().sendEvent(
+                    Constants.GA_EXPLORE_CATEGORY,
+                    Constants.GA_EVENT_PUB_RATED,
+                    Constants.GA_EVENT_PUB_RATED);
+            EventBus.getDefault().post(new RatingResultEvent(true));
+        } else {
+            AnalyticsHelper.getInstance().sendException(result);
+            EventBus.getDefault().post(new RatingResultEvent(false));
         }
-
-        try {
-            String urlCopy = publicationUrl.replace(".shtml", "");
-            urlCopy = urlCopy.replaceFirst(".*?samlib.ru/", "");
-            String[] urlParts = urlCopy.split("/");
-            if (urlParts.length != 3) {
-                return;
-            }
-            String authorId = urlParts[0] + "/" + urlParts[1];
-            String fileName = urlParts[2];
-
-            Map<String, String> formData = new HashMap<String, String>();
-            formData.put("BALL", String.valueOf(ratingToSubmit));
-            formData.put("FILE", fileName);
-            formData.put("DIR", authorId);
-            formData.put("OK", "ОК");
-
-            HttpRequest request = HttpRequest.post(SAMLIB_VOTE_URL)
-                    .header("Host", "samlib.ru")
-                    .header("Origin", "http://samlib.ru")
-                    .header("Referer", "publicationUrl")
-                    .form(formData, "windows-1251");
-
-            int code = request.code();
-            //We expect a 200
-            if (code == HttpURLConnection.HTTP_OK) {
-                //Vote submitted successfully
-                AnalyticsHelper.getInstance().sendEvent(
-                        Constants.GA_EXPLORE_CATEGORY,
-                        Constants.GA_EVENT_PUB_RATED,
-                        Constants.GA_EVENT_PUB_RATED);
-            } else {
-                //Send analytics error
-                AnalyticsHelper.getInstance().sendException("Could not submit rating for publicaiton");
-            }
-        } catch (Exception e) {
-            //Eat stuff
-        }
-
     }
 }

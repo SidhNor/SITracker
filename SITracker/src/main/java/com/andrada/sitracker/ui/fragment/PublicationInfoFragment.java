@@ -55,6 +55,7 @@ import com.andrada.sitracker.contracts.SIPrefs_;
 import com.andrada.sitracker.db.beans.Publication;
 import com.andrada.sitracker.db.dao.PublicationDao;
 import com.andrada.sitracker.db.manager.SiDBHelper;
+import com.andrada.sitracker.events.RatingResultEvent;
 import com.andrada.sitracker.exceptions.SharePublicationException;
 import com.andrada.sitracker.reader.SamlibPublicationPageReader;
 import com.andrada.sitracker.ui.BaseActivity;
@@ -96,6 +97,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.greenrobot.event.EventBus;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
@@ -203,7 +205,14 @@ public class PublicationInfoFragment extends Fragment implements
     @Override
     public void onResume() {
         super.onResume();
+        EventBus.getDefault().register(this);
         loadData();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -303,7 +312,6 @@ public class PublicationInfoFragment extends Fragment implements
                     showPublicationState(PublicationState.WAITING_REFRESH, false);
                     Style.Builder alertStyle = new Style.Builder()
                             .setTextAppearance(android.R.attr.textAppearanceLarge)
-                            .setGravity(Gravity.BOTTOM)
                             .setPaddingInPixels(25);
                     alertStyle.setBackgroundColorValue(Style.holoRedLight);
                     Crouton.makeText(getActivity(), msg, alertStyle.build()).show();
@@ -516,6 +524,23 @@ public class PublicationInfoFragment extends Fragment implements
                     .publicationUrl(currentRecord.getUrl())
                     .build().show(ft, AboutDialog.FRAGMENT_TAG);
         }
+    }
+
+    public void onEventMainThread(RatingResultEvent result) {
+        Style.Builder alertStyle = new Style.Builder()
+                .setTextAppearance(android.R.attr.textAppearanceLarge)
+                .setGravity(Gravity.BOTTOM)
+                .setPaddingInPixels(25);
+        String msg = "";
+        if (result.ratingSubmissionResult) {
+            alertStyle.setBackgroundColorValue(Style.holoGreenLight);
+            msg = getString(R.string.publication_rating_submit_success);
+        } else {
+            msg = getString(R.string.publication_rating_submit_error);
+            alertStyle.setBackgroundColorValue(Style.holoRedLight);
+        }
+
+        Crouton.makeText(getActivity(), msg, alertStyle.build()).show();
     }
 
     private void showPublicationState(PublicationState state, boolean allowAnimate) {
