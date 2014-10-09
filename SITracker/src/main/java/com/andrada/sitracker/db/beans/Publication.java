@@ -67,6 +67,12 @@ public class Publication implements Serializable {
     String imageUrl;
     @DatabaseField(canBeNull = true, useGetSet = true)
     String imagePageUrl;
+    @DatabaseField(canBeNull = true, useGetSet = true)
+    String voteCookie;
+    @DatabaseField(canBeNull = true, useGetSet = true)
+    int myVote;
+    @DatabaseField(canBeNull = true, useGetSet = true)
+    Date voteDate;
 
     boolean isLoading = false;
 
@@ -218,6 +224,30 @@ public class Publication implements Serializable {
 
     public void setImagePageUrl(String imagePageUrl) {
         this.imagePageUrl = imagePageUrl;
+    }
+
+    public String getVoteCookie() {
+        return voteCookie;
+    }
+
+    public void setVoteCookie(String voteCookie) {
+        this.voteCookie = voteCookie;
+    }
+
+    public int getMyVote() {
+        return myVote;
+    }
+
+    public void setMyVote(int myVote) {
+        this.myVote = myVote;
+    }
+
+    public Date getVoteDate() {
+        return voteDate;
+    }
+
+    public void setVoteDate(Date voteDate) {
+        this.voteDate = voteDate;
     }
 
     public boolean getLoading() {

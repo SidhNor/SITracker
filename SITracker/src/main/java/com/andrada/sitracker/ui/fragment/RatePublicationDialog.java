@@ -18,6 +18,7 @@ package com.andrada.sitracker.ui.fragment;
 
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -48,6 +49,12 @@ public class RatePublicationDialog extends DialogFragment implements RatingBar.O
     @FragmentArg
     String publicationUrl;
 
+    @FragmentArg
+    int currentRating = -1;
+
+    @FragmentArg
+    String votingCookie = "";
+
     @ViewById(R.id.rating_bar)
     RatingBar mRatingBar;
 
@@ -64,12 +71,17 @@ public class RatePublicationDialog extends DialogFragment implements RatingBar.O
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setStyle(DialogFragment.STYLE_NO_TITLE, 0);
+        //We have our fragment args here
+
     }
 
     @Override
     public void onStart() {
         super.onStart();
         mRatingBar.setOnRatingBarChangeListener(this);
+        if (currentRating != -1 && !TextUtils.isEmpty(votingCookie)) {
+            mRatingBar.setRating(currentRating / 2f);
+        }
     }
 
     @Override
@@ -95,22 +107,30 @@ public class RatePublicationDialog extends DialogFragment implements RatingBar.O
     @Click(R.id.submit_rating_button)
     void submitRatingClicked() {
         int rating = (int) (mRatingBar.getRating() * 2);
-        submitRatingSilently(rating, publicationUrl);
+        if (rating != currentRating) {
+            //Submit only if this is a new rating or it is updated
+            submitRatingSilently(rating, publicationUrl, votingCookie);
+        }
+
         this.dismiss();
     }
 
     @Background
-    void submitRatingSilently(int ratingToSubmit, String publicationUrl) {
-
-        String voteCookie = "";
+    void submitRatingSilently(int ratingToSubmit, String publicationUrl, String votingCookie) {
         try {
-            voteCookie = RatingUtil.submitRatingForPublication(ratingToSubmit, publicationUrl);
+            if (TextUtils.isEmpty(votingCookie)) {
+                //Submit a new vote
+                String resultingVoteCookie = RatingUtil.submitRatingForPublication(ratingToSubmit, publicationUrl);
+                EventBus.getDefault().post(new RatingResultEvent(true, ratingToSubmit, resultingVoteCookie));
+            } else {
+                RatingUtil.updateRatingForPublicaiton(ratingToSubmit, publicationUrl, votingCookie);
+                EventBus.getDefault().post(new RatingResultEvent(true, ratingToSubmit, votingCookie));
+            }
             //Vote submitted successfully
             AnalyticsHelper.getInstance().sendEvent(
                     Constants.GA_EXPLORE_CATEGORY,
                     Constants.GA_EVENT_PUB_RATED,
                     Constants.GA_EVENT_PUB_RATED);
-            EventBus.getDefault().post(new RatingResultEvent(true, ratingToSubmit, voteCookie));
         } catch (RatingException e) {
             LOGE("SiTracker", "Could not submit rating", e);
             AnalyticsHelper.getInstance().sendException(e.getMessage());

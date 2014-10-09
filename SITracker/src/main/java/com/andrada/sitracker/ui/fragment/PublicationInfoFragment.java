@@ -33,6 +33,7 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
+import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -94,6 +95,7 @@ import org.androidannotations.api.BackgroundExecutor;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -136,6 +138,8 @@ public class PublicationInfoFragment extends Fragment implements
     TextView mPubRatingCount;
     @ViewById(R.id.publication_rating)
     RatingBar mRatingBar;
+    @ViewById(R.id.voted_on_field)
+    TextView mVotedOnField;
     @ViewById(R.id.header_pub)
     View mHeaderBox;
     @ViewById(R.id.header_pub_contents)
@@ -170,6 +174,7 @@ public class PublicationInfoFragment extends Fragment implements
     private long mPublicationId;
     private boolean mHasPhoto;
     private boolean mGapFillShown;
+    private float newTop;
     private int mHeaderTopClearance;
     private int mPhotoHeightPixels;
     private int mHeaderHeightPixels;
@@ -345,6 +350,7 @@ public class PublicationInfoFragment extends Fragment implements
         mPhotoViewContainer.setBackgroundColor(UIUtils.scaleColor(0xe8552c, 0.65f, false));
 
         updatePlusOneButton();
+        updateRating();
 
         String imagesUrl = currentRecord.getImagePageUrl();
         if (!TextUtils.isEmpty(imagesUrl) && prefs.displayPubImages().get() &&
@@ -357,16 +363,6 @@ public class PublicationInfoFragment extends Fragment implements
         } else {
             mHasPhoto = false;
             recomputePhotoAndScrollingMetrics();
-        }
-
-        String ratingString = currentRecord.getRating();
-        if (!TextUtils.isEmpty(ratingString) && ratingString.split("\\*").length == 2) {
-            float rating = Float.valueOf(ratingString.split("\\*")[0]);
-            int ratingCount = Integer.valueOf(ratingString.split("\\*")[1]);
-            mRatingContainer.setVisibility(View.VISIBLE);
-            mRatingBar.setRating(rating);
-            mPubRating.setText(String.valueOf(rating));
-            mPubRatingCount.setText(String.valueOf(ratingCount));
         }
 
         //Check if file is new version of pub is loaded.
@@ -397,6 +393,33 @@ public class PublicationInfoFragment extends Fragment implements
                 mScrollViewChild.setVisibility(View.VISIBLE);
             }
         });
+    }
+
+    private void updateRating() {
+        String ratingString = currentRecord.getRating();
+        if (!TextUtils.isEmpty(ratingString) && ratingString.split("\\*").length == 2) {
+            float rating = Float.valueOf(ratingString.split("\\*")[0]);
+            int ratingCount = Integer.valueOf(ratingString.split("\\*")[1]);
+            mRatingContainer.setVisibility(View.VISIBLE);
+            mPubRating.setText(String.valueOf(rating));
+            mPubRatingCount.setText(String.valueOf(ratingCount));
+
+            //Handle personal rating
+            if (!TextUtils.isEmpty(currentRecord.getVoteCookie()) && currentRecord.getVoteDate() != null) {
+                mRatingBar.setRating(currentRecord.getMyVote());
+                mVotedOnField.setVisibility(View.VISIBLE);
+                String formattedVoteDate = DateUtils.getRelativeTimeSpanString(
+                        currentRecord.getVoteDate().getTime(), new Date().getTime(),
+                        DateUtils.MINUTE_IN_MILLIS).toString();
+                mVotedOnField.setText(getString(R.string.publication_rating_vote_date, formattedVoteDate));
+            } else {
+                mRatingBar.setRating(rating);
+                mVotedOnField.setVisibility(View.GONE);
+            }
+
+        } else {
+            mRatingContainer.setVisibility(View.GONE);
+        }
     }
 
     private void updatePlusOneButton() {
@@ -434,6 +457,19 @@ public class PublicationInfoFragment extends Fragment implements
     void markCurrentPublicationRead() {
         try {
             publicationsDao.markPublicationRead(currentRecord);
+        } catch (SQLException e) {
+            AnalyticsHelper.getInstance().sendException(e);
+        }
+    }
+
+    @Background
+    void saveVoteResult(String voteCookie, int rating) {
+        try {
+            currentRecord.setMyVote(rating);
+            currentRecord.setVoteCookie(voteCookie);
+            currentRecord.setVoteDate(new Date());
+            publicationsDao.update(currentRecord);
+            bindData();
         } catch (SQLException e) {
             AnalyticsHelper.getInstance().sendException(e);
         }
@@ -527,9 +563,20 @@ public class PublicationInfoFragment extends Fragment implements
                 ft.remove(prev);
             }
             ft.addToBackStack(null);
-            RatePublicationDialog_.builder()
-                    .publicationUrl(currentRecord.getUrl())
-                    .build().show(ft, AboutDialog.FRAGMENT_TAG);
+            RatePublicationDialog dg;
+            if (currentRecord.getVoteDate() != null && !TextUtils.isEmpty(currentRecord.getVoteCookie())) {
+                dg = RatePublicationDialog_.builder()
+                        .publicationUrl(currentRecord.getUrl())
+                        .currentRating(currentRecord.getMyVote())
+                        .votingCookie(currentRecord.getVoteCookie())
+                        .build();
+            } else {
+                dg = RatePublicationDialog_.builder()
+                        .publicationUrl(currentRecord.getUrl())
+                        .build();
+            }
+            dg.show(ft, AboutDialog.FRAGMENT_TAG);
+
         }
     }
 
@@ -537,6 +584,7 @@ public class PublicationInfoFragment extends Fragment implements
         String msg;
         if (result.ratingSubmissionResult) {
             msg = getString(R.string.publication_rating_submit_success);
+            saveVoteResult(result.voteCookie, result.ratingValue);
         } else {
             msg = getString(R.string.publication_rating_submit_error);
         }
@@ -554,7 +602,11 @@ public class PublicationInfoFragment extends Fragment implements
         } else {
             view.findViewById(android.R.id.background).setBackgroundColor(Style.holoRedLight);
         }
-        view.setPadding(view.getPaddingLeft(), UIUtils.calculateActionBarSize(getActivity()),
+        int topPadding = UIUtils.calculateActionBarSize(getActivity());
+        if (!mHasPhoto) {
+            topPadding = (int) (newTop + mHeaderHeightPixels);
+        }
+        view.setPadding(view.getPaddingLeft(), topPadding,
                 view.getPaddingRight(), view.getPaddingBottom());
         TextView tv = (TextView) view.findViewById(android.R.id.text1);
         tv.setText(message);
@@ -595,7 +647,7 @@ public class PublicationInfoFragment extends Fragment implements
         // but locks to the top of the screen on scroll
         int scrollY = mScrollView.getScrollY();
 
-        float newTop = Math.max(mPhotoHeightPixels, scrollY + mHeaderTopClearance);
+        newTop = Math.max(mPhotoHeightPixels, scrollY + mHeaderTopClearance);
 
         if (UIUtils.hasHoneycombMR1()) {
             mHeaderBox.setTranslationY(newTop);

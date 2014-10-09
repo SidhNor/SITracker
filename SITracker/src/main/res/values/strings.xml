@@ -171,6 +171,7 @@
     <string name="publication_submit_rating_link">SUBMIT RATING</string>
     <string name="publication_rating_submit_success">Your vote was submitted successfully.</string>
     <string name="publication_rating_submit_error">Failed to submit your vote. Please try again later.</string>
+    <string name="publication_rating_vote_date">You rated %1$s</string>
 
     <!--Updates-->
     <string name="pref_update_category_title">Updates</string>

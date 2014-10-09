@@ -185,6 +185,7 @@
     <string name="publication_submit_rating_link">ГОЛОСОВАТЬ</string>
     <string name="publication_rating_submit_success">Ваша оценка зачтена.</string>
     <string name="publication_rating_submit_error">Не удалось сохранить оценку. Попробуйте позже.</string>
+    <string name="publication_rating_vote_date">Вы проголосовали %1$s</string>
 
     <!--Updates-->
     <string name="pref_update_category_title">Обновления</string>

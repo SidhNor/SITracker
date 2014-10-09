@@ -16,22 +16,15 @@
 
 package com.andrada.sitracker.events;
 
-import java.util.Date;
-
 public class RatingResultEvent {
 
     public final boolean ratingSubmissionResult;
     public final int ratingValue;
-    private final Date ratingTime = new Date();
     public final String voteCookie;
 
     public RatingResultEvent(boolean result, int ratingValue, String voteCookie) {
         ratingSubmissionResult = result;
         this.ratingValue = ratingValue;
         this.voteCookie = voteCookie;
-    }
-
-    public Date getRatingTime() {
-        return (Date) ratingTime.clone();
     }
 }

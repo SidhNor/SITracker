@@ -23,6 +23,8 @@ import com.andrada.sitracker.exceptions.RatingException;
 import com.github.kevinsawicki.http.HttpRequest;
 
 import java.net.HttpURLConnection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,40 +35,15 @@ public class RatingUtil {
     public static String submitRatingForPublication(int ratingToSubmit, String publicationUrl)
             throws RatingException {
 
-        if (TextUtils.isEmpty(publicationUrl)) {
-            throw new RatingException("Rating submission: publication URL is empty");
+
+        Map<String, String> dataMap = submitFirstStepForm(ratingToSubmit, publicationUrl, "");
+
+        String pageContent = dataMap.get("pageContent");
+        String cookieHeader = dataMap.get("cookieHeader");
+        if (cookieHeader == null) {
+            throw new RatingException("Rating submission: error submitting first part of rating, no cookie header");
         }
-        String urlCopy = publicationUrl.replace(".shtml", "");
-        urlCopy = urlCopy.replaceFirst(".*?samlib.ru/", "");
-        String[] urlParts = urlCopy.split("/");
-        if (urlParts.length != 3) {
-            throw new RatingException("Rating submission: url has a wrong structure");
-        }
-        String authorId = urlParts[0] + "/" + urlParts[1];
-        String fileName = urlParts[2];
-
-        HttpRequest request = HttpRequest.post(SAMLIB_VOTE_URL)
-                .accept("text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8")
-                .acceptEncoding("gzip,deflate")
-                .contentType("application/x-www-form-urlencoded")
-                .header("Host", "samlib.ru")
-                .header("Origin", "http://samlib.ru")
-                .header("Referer", publicationUrl)
-                .header("User-Agent", "SiTracker/Android")
-                .form("BALL", String.valueOf(ratingToSubmit), null)
-                .form("FILE", fileName, null)
-                .form("DIR", authorId, null);
-
-        int code = request.code();
-
-        if (code != HttpURLConnection.HTTP_OK || request.header("Set-Cookie") == null) {
-            throw new RatingException("Rating submission: error submitting first part of rating, not ok or no cookie");
-        }
-
-        //Get new url from body that does rating submit
-        String pageContent = request.body();
-        String untouchedCookie = request.header("Set-Cookie");
-        String cookieToUse = untouchedCookie.split(";")[0];
+        String cookieToUse = cookieHeader.split(";")[0];
 
         if (TextUtils.isEmpty(cookieToUse)) {
             throw new RatingException("Could not get vote Cookie");
@@ -83,15 +60,81 @@ public class RatingUtil {
             throw new RatingException("Rating submission: Link was not correct in first part response");
         }
         String newUrl = "http://samlib.ru/" + redirectUrl;
-        HttpRequest finalRequest = HttpRequest.get(newUrl)
-                .header("Cookie", cookieToUse);
+
         //This request is the one that actually submits the rating
-        int finalCode = finalRequest.code();
+        int finalCode = submitSecondRatingStep(newUrl, cookieToUse);
         if (finalCode != HttpURLConnection.HTTP_OK) {
             throw new RatingException("Rating submission: Samlib did not accept final rating submission");
         }
 
         return cookieToUse;
+    }
+
+    public static void updateRatingForPublicaiton(int newRating, String publicationUrl, String votingCookie)
+            throws RatingException {
+        submitFirstStepForm(newRating, publicationUrl, votingCookie);
+    }
+
+    private static Map<String, String> submitFirstStepForm(int ratingToSubmit, String publicationUrl,
+                                                           String possibleCookie) throws RatingException {
+        if (TextUtils.isEmpty(publicationUrl)) {
+            throw new RatingException("Rating submission: publication URL is empty");
+        }
+        String urlCopy = publicationUrl.replace(".shtml", "");
+        urlCopy = urlCopy.replaceFirst(".*?samlib.ru/", "");
+        String[] urlParts = urlCopy.split("/");
+        if (urlParts.length != 3) {
+            throw new RatingException("Rating submission: url has a wrong structure");
+        }
+        String authorId = urlParts[0] + "/" + urlParts[1];
+        String fileName = urlParts[2];
+
+        HttpRequest request;
+        Map<String, String> result = new HashMap<String, String>();
+
+
+        try {
+            request = HttpRequest.post(SAMLIB_VOTE_URL)
+                    .accept("text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8")
+                    .acceptEncoding("gzip,deflate")
+                    .contentType("application/x-www-form-urlencoded")
+                    .header("Cookie", possibleCookie)
+                    .header("Host", "samlib.ru")
+                    .header("Origin", "http://samlib.ru")
+                    .header("Referer", publicationUrl)
+                    .header("User-Agent", "SiTracker/Android")
+                    .form("BALL", String.valueOf(ratingToSubmit), null)
+                    .form("FILE", fileName, null)
+                    .form("DIR", authorId, null);
+
+            int code = request.code();
+            String cookieHeader = request.header("Set-Cookie");
+            if (code != HttpURLConnection.HTTP_OK) {
+                throw new RatingException("Rating submission: error submitting first part of rating, not ok");
+            }
+            String pageContent = request.body("windows-1251");
+            result.put("cookieHeader", cookieHeader);
+            result.put("pageContent", pageContent);
+
+        } catch (HttpRequest.HttpRequestException e) {
+            throw new RatingException("Rating submission: http error occurred");
+        }
+
+        return result;
+    }
+
+    private static int submitSecondRatingStep(String url, String cookieToUse) throws RatingException {
+        int code;
+
+        try {
+            HttpRequest finalRequest = HttpRequest.get(url)
+                    .header("Cookie", cookieToUse);
+            code = finalRequest.code();
+        } catch (HttpRequest.HttpRequestException e) {
+            throw new RatingException("Rating submission: http error occurred");
+        }
+
+        return code;
     }
 
 }
