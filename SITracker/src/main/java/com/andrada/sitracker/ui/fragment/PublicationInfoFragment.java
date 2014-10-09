@@ -270,6 +270,7 @@ public class PublicationInfoFragment extends Fragment implements
         int errorMessage = -1;
         try {
             final Intent intent = ShareHelper.fetchPublication(getActivity(), currentRecord, prefs.downloadFolder().get(), forceDownload);
+            markCurrentPublicationRead();
             if (startActivity && getActivity() != null) {
                 mIsDownloading = false;
                 mHandler.post(new Runnable() {
@@ -429,6 +430,15 @@ public class PublicationInfoFragment extends Fragment implements
         }
     }
 
+    @Background
+    void markCurrentPublicationRead() {
+        try {
+            publicationsDao.markPublicationRead(currentRecord);
+        } catch (SQLException e) {
+            AnalyticsHelper.getInstance().sendException(e);
+        }
+    }
+
     @UiThread(propagation = UiThread.Propagation.REUSE)
     void addImagesToList(List<Pair<String, String>> results) {
         if (results.size() == 0) {
@@ -451,11 +461,7 @@ public class PublicationInfoFragment extends Fragment implements
 
     @OptionsItem(R.id.action_mark_read)
     void menuMarkAsReadSelected() {
-        try {
-            publicationsDao.markPublicationRead(currentRecord);
-        } catch (SQLException e) {
-            AnalyticsHelper.getInstance().sendException(e);
-        }
+        markCurrentPublicationRead();
         mHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -505,7 +511,7 @@ public class PublicationInfoFragment extends Fragment implements
             downloadPublication(false, true);
 
         } else {
-            //Open the shit right away
+            //Open the pub right away
             downloadPublication(false, true);
         }
     }

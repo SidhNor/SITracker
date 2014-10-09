@@ -18,7 +18,6 @@ package com.andrada.sitracker.ui.fragment;
 
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -26,6 +25,7 @@ import android.widget.TextView;
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.events.RatingResultEvent;
+import com.andrada.sitracker.exceptions.RatingException;
 import com.andrada.sitracker.util.AnalyticsHelper;
 import com.andrada.sitracker.util.RatingUtil;
 
@@ -37,6 +37,8 @@ import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.res.StringArrayRes;
 
 import de.greenrobot.event.EventBus;
+
+import static com.andrada.sitracker.util.LogUtils.LOGE;
 
 @EFragment(R.layout.fragment_rate_publication)
 public class RatePublicationDialog extends DialogFragment implements RatingBar.OnRatingBarChangeListener {
@@ -100,17 +102,19 @@ public class RatePublicationDialog extends DialogFragment implements RatingBar.O
     @Background
     void submitRatingSilently(int ratingToSubmit, String publicationUrl) {
 
-        String result = RatingUtil.submitRatingForPublication(ratingToSubmit, publicationUrl);
-        if (TextUtils.isEmpty(result)) {
+        String voteCookie = "";
+        try {
+            voteCookie = RatingUtil.submitRatingForPublication(ratingToSubmit, publicationUrl);
             //Vote submitted successfully
             AnalyticsHelper.getInstance().sendEvent(
                     Constants.GA_EXPLORE_CATEGORY,
                     Constants.GA_EVENT_PUB_RATED,
                     Constants.GA_EVENT_PUB_RATED);
-            EventBus.getDefault().post(new RatingResultEvent(true));
-        } else {
-            AnalyticsHelper.getInstance().sendException(result);
-            EventBus.getDefault().post(new RatingResultEvent(false));
+            EventBus.getDefault().post(new RatingResultEvent(true, ratingToSubmit, voteCookie));
+        } catch (RatingException e) {
+            LOGE("SiTracker", "Could not submit rating", e);
+            AnalyticsHelper.getInstance().sendException(e.getMessage());
+            EventBus.getDefault().post(new RatingResultEvent(false, -1, ""));
         }
     }
 }

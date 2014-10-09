@@ -14,24 +14,13 @@
  * limitations under the License.
  */
 
-package com.andrada.sitracker.events;
+package com.andrada.sitracker.exceptions;
 
-import java.util.Date;
+public class RatingException extends Exception {
 
-public class RatingResultEvent {
+    private static final long serialVersionUID = 4558387758023723591L;
 
-    public final boolean ratingSubmissionResult;
-    public final int ratingValue;
-    private final Date ratingTime = new Date();
-    public final String voteCookie;
-
-    public RatingResultEvent(boolean result, int ratingValue, String voteCookie) {
-        ratingSubmissionResult = result;
-        this.ratingValue = ratingValue;
-        this.voteCookie = voteCookie;
-    }
-
-    public Date getRatingTime() {
-        return (Date) ratingTime.clone();
+    public RatingException(String message) {
+        super(message);
     }
 }
