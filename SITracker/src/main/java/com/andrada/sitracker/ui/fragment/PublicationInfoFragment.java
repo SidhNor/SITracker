@@ -35,7 +35,6 @@ import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.util.Pair;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -98,6 +97,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
+import de.keyboardsurfer.android.widget.crouton.Configuration;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
@@ -215,6 +215,7 @@ public class PublicationInfoFragment extends Fragment implements
         EventBus.getDefault().unregister(this);
     }
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void onDestroyView() {
         super.onDestroyView();
@@ -224,7 +225,12 @@ public class PublicationInfoFragment extends Fragment implements
         ViewTreeObserver vto = mScrollView.getViewTreeObserver();
         if (vto.isAlive()) {
             //noinspection deprecation
-            vto.removeGlobalOnLayoutListener(mGlobalLayoutListener);
+            if (UIUtils.hasJellyBean()) {
+                vto.removeOnGlobalLayoutListener(mGlobalLayoutListener);
+            } else {
+                vto.removeGlobalOnLayoutListener(mGlobalLayoutListener);
+            }
+
         }
     }
 
@@ -310,11 +316,7 @@ public class PublicationInfoFragment extends Fragment implements
                 @Override
                 public void run() {
                     showPublicationState(PublicationState.WAITING_REFRESH, false);
-                    Style.Builder alertStyle = new Style.Builder()
-                            .setTextAppearance(android.R.attr.textAppearanceLarge)
-                            .setPaddingInPixels(25);
-                    alertStyle.setBackgroundColorValue(Style.holoRedLight);
-                    Crouton.makeText(getActivity(), msg, alertStyle.build()).show();
+                    showCustomPositionedCrouton(msg, false);
                 }
             });
         } finally {
@@ -351,8 +353,6 @@ public class PublicationInfoFragment extends Fragment implements
             loadImageList(imagesUrl);
             //Add images
             //Add image view to pager.
-            mHasPhoto = true;
-            recomputePhotoAndScrollingMetrics();
         } else {
             mHasPhoto = false;
             recomputePhotoAndScrollingMetrics();
@@ -434,6 +434,7 @@ public class PublicationInfoFragment extends Fragment implements
         if (results.size() == 0) {
             mHasPhoto = false;
         } else {
+            mHasPhoto = true;
             if (results.size() == 1) {
                 pagerIndicators.setVisibility(View.GONE);
             } else if (results.size() > 15) {
@@ -527,20 +528,34 @@ public class PublicationInfoFragment extends Fragment implements
     }
 
     public void onEventMainThread(RatingResultEvent result) {
-        Style.Builder alertStyle = new Style.Builder()
-                .setTextAppearance(android.R.attr.textAppearanceLarge)
-                .setGravity(Gravity.BOTTOM)
-                .setPaddingInPixels(25);
-        String msg = "";
+        String msg;
         if (result.ratingSubmissionResult) {
-            alertStyle.setBackgroundColorValue(Style.holoGreenLight);
             msg = getString(R.string.publication_rating_submit_success);
         } else {
             msg = getString(R.string.publication_rating_submit_error);
-            alertStyle.setBackgroundColorValue(Style.holoRedLight);
         }
+        showCustomPositionedCrouton(msg, result.ratingSubmissionResult);
 
-        Crouton.makeText(getActivity(), msg, alertStyle.build()).show();
+    }
+
+    private void showCustomPositionedCrouton(String message, boolean success) {
+        if (getActivity() == null) {
+            return;
+        }
+        View view = getLayoutInflater(null).inflate(R.layout.crouton_custom_pos_textview, null);
+        if (success) {
+            view.findViewById(android.R.id.background).setBackgroundColor(Style.holoGreenLight);
+        } else {
+            view.findViewById(android.R.id.background).setBackgroundColor(Style.holoRedLight);
+        }
+        view.setPadding(view.getPaddingLeft(), UIUtils.calculateActionBarSize(getActivity()),
+                view.getPaddingRight(), view.getPaddingBottom());
+        TextView tv = (TextView) view.findViewById(android.R.id.text1);
+        tv.setText(message);
+        Crouton cr = Crouton.make(getActivity(), view);
+        cr.setConfiguration(new Configuration.Builder()
+                .setDuration(Configuration.DURATION_LONG).build());
+        cr.show();
     }
 
     private void showPublicationState(PublicationState state, boolean allowAnimate) {
