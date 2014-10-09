@@ -353,4 +353,26 @@
         <item name="centered">true</item>
     </style>
 
+    <style name="ShowcaseView.Base">
+        <item name="sv_titleTextAppearance">@style/TextAppearance.ShowcaseView.Title.White</item>
+        <item name="sv_detailTextAppearance">@style/TextAppearance.ShowcaseView.Detail</item>
+        <item name="sv_backgroundColor">#9c33b5e5</item>
+        <item name="sv_buttonText">@android:string/ok</item>
+    </style>
+
+    <style name="ShowcaseButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">48dp</item>
+        <item name="android:minWidth">96dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:background">@drawable/button</item>
+    </style>
+
+    <style name="TextAppearance.ShowcaseView.Title.White" parent="android:style/TextAppearance.Large">
+        <item name="android:textColor">@color/body_text_1_inverse</item>
+    </style>
+
 </resources>
