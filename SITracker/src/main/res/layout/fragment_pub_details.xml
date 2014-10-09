@@ -17,17 +17,17 @@
   -->
 
 <com.andrada.sitracker.ui.widget.ObservableScrollView
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/scroll_view"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:plus="http://schemas.android.com/apk/lib/com.google.android.gms.plus"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#fff"
     android:fadingEdge="none"
     android:fillViewport="true"
-    tools:ignore="RtlHardcoded"
-    android:overScrollMode="never">
+    android:overScrollMode="never"
+    tools:ignore="RtlHardcoded">
 
     <FrameLayout
         android:id="@+id/scroll_view_child"
@@ -90,8 +90,8 @@
                     android:layout_marginLeft="@dimen/keyline_2_pub_detail">
 
                     <TextView
-                        style="@style/PublicationDetail.Rating.Value"
                         android:id="@+id/publication_rating_text"
+                        style="@style/PublicationDetail.Rating.Value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/content_padding_normal"/>
@@ -101,18 +101,28 @@
                         style="@style/Publication.Rating.BarSmall"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_toRightOf="@id/publication_rating_text"
                         android:layout_toEndOf="@id/publication_rating_text"
+                        android:layout_toRightOf="@id/publication_rating_text"
                         android:numStars="10"/>
 
                     <TextView
-                        style="@style/TextBody"
                         android:id="@+id/publication_rating_count"
+                        style="@style/TextBody"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/publication_rating"
-                        android:layout_toRightOf="@id/publication_rating_text"
-                        android:layout_toEndOf="@id/publication_rating_text"/>
+                        android:layout_toEndOf="@id/publication_rating_text"
+                        android:layout_toRightOf="@id/publication_rating_text"/>
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="20dp"
+                        android:layout_below="@id/publication_rating"
+                        android:layout_toRightOf="@id/publication_rating_count"
+                        android:contentDescription="@string/publication_ratings"
+                        android:scaleType="center"
+                        android:src="@drawable/rating_user"/>
+
                 </RelativeLayout>
 
 
@@ -170,7 +180,7 @@
                 android:paddingRight="@dimen/keyline_1"
                 android:paddingTop="@dimen/content_padding_normal">
 
-            <!-- Publication title -->
+                <!-- Publication title -->
                 <TextView
                     android:id="@+id/pub_title"
                     style="@style/PublicationDetail.Title"
