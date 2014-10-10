@@ -61,6 +61,14 @@ public class Constants {
 
     public static final String NUMBER_OF_UPDATED_AUTHORS = "number_of_updated_authors";
 
+    //Showcase one-shot view id's
+    public static final int SHOWCASE_START_SEARCH_SHOT_ID = 101;
+    public static final int SHOWCASE_ADD_AUTHORS_SEARCH_SHOT_ID = 102;
+    public static final int SHOWCASE_PUBLICATION_QUICK_ACCESS_SHOT_ID = 103;
+    public static final int SHOWCASE_PUBLICATION_DETAIL_IMAGES_SHOT_ID = 104;
+    public static final int SHOWCASE_PUBLICATION_DETAIL_RATING_SHOT_ID = 105;
+    public static final int SHOWCASE_PUBLICATION_DETAIL_FAB_SHOT_ID = 105;
+
     //Analytics category names
     public static final String GA_EXPLORE_CATEGORY = "explore_action";
     public static final String GA_READ_CATEGORY = "read_action";

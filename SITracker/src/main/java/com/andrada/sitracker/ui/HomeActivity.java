@@ -33,6 +33,7 @@ import android.view.ViewTreeObserver;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.andrada.sitracker.BuildConfig;
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.SIPrefs_;
@@ -50,6 +51,8 @@ import com.andrada.sitracker.ui.fragment.PublicationsFragment;
 import com.andrada.sitracker.util.AnalyticsHelper;
 import com.andrada.sitracker.util.UIUtils;
 import com.andrada.sitracker.util.UpdateServiceHelper;
+import com.github.amlcurran.showcaseview.ShowcaseView;
+import com.github.amlcurran.showcaseview.targets.ActionItemTarget;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
@@ -170,6 +173,16 @@ public class HomeActivity extends BaseActivity implements DirectoryChooserFragme
 
         slidingPane.getViewTreeObserver().addOnGlobalLayoutListener(globalLayoutListener);
         ensureUpdatesAreRunningOnSchedule();
+
+        ShowcaseView.Builder bldr = new ShowcaseView.Builder(this)
+                .setTarget(new ActionItemTarget(this, R.id.action_search))
+                .setContentTitle(getString(R.string.showcase_getting_started_title))
+                .setContentText(getString(R.string.showcase_getting_started_detail))
+                .setStyle(R.style.ShowcaseView_Base);
+        if (!BuildConfig.DEBUG) {
+            bldr.singleShot(Constants.SHOWCASE_START_SEARCH_SHOT_ID);
+        }
+        bldr.build();
     }
 
     @Override

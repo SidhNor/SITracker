@@ -35,4 +35,11 @@
     <dimen name="keyline_1_minus_8dp">16dp</dimen>
     <dimen name="keyline_2">80dp</dimen>
     <dimen name="keyline_2_minus_16dp">64dp</dimen>
+
+    <!-- Showcase text dimensions -->
+    <dimen name="showcase_title_size">34sp</dimen>
+    <dimen name="showcase_detail_size">24sp</dimen>
+    <dimen name="showcase_title_size_overlay">24sp</dimen>
+    <dimen name="showcase_detail_size_overlay">18sp</dimen>
+
 </resources>

@@ -1,3 +1,19 @@
+/*
+ * Copyright 2014 Gleb Godonoga.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.andrada.sitracker.ui;
 
 
@@ -13,11 +29,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
 
+import com.andrada.sitracker.BuildConfig;
+import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.AppUriContract;
 import com.andrada.sitracker.ui.fragment.RemoteAuthorsFragment;
 import com.andrada.sitracker.ui.fragment.RemoteAuthorsFragment_;
 import com.andrada.sitracker.util.UIUtils;
+import com.github.amlcurran.showcaseview.ShowcaseView;
+import com.github.amlcurran.showcaseview.targets.ViewTarget;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
@@ -137,6 +157,16 @@ public class SearchActivity extends BaseActivity {
                         return false;
                     }
                 });
+
+                ShowcaseView.Builder bldr = new ShowcaseView.Builder(this)
+                        .setTarget(new ViewTarget(mSearchView))
+                        .setContentTitle(getString(R.string.showcase_search_title))
+                        .setContentText(getString(R.string.showcase_search_detail))
+                        .setStyle(R.style.ShowcaseView_Base);
+                if (!BuildConfig.DEBUG) {
+                    bldr.singleShot(Constants.SHOWCASE_ADD_AUTHORS_SEARCH_SHOT_ID);
+                }
+                bldr.build();
 
                 if (!TextUtils.isEmpty(mQuery)) {
                     view.setQuery(mQuery, false);

@@ -19,6 +19,7 @@ package com.andrada.sitracker.ui.fragment;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -48,6 +49,7 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.andrada.sitracker.BuildConfig;
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.AppUriContract;
@@ -69,6 +71,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.github.amlcurran.showcaseview.ShowcaseView;
+import com.github.amlcurran.showcaseview.targets.PointTarget;
 import com.github.kevinsawicki.http.HttpRequest;
 import com.google.android.gms.plus.PlusOneButton;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
@@ -493,6 +497,27 @@ public class PublicationInfoFragment extends Fragment implements
             }
         }
         recomputePhotoAndScrollingMetrics();
+        attemptToShowShowcaseForImageSettings();
+    }
+
+    @UiThread(delay = 500)
+    void attemptToShowShowcaseForImageSettings() {
+        if (getActivity() != null) {
+            Rect pointOnImage = new Rect();
+            mPhotoViewContainer.getHitRect(pointOnImage);
+            int x = (int) (pointOnImage.left + pointOnImage.right / 1.3);
+            int y = pointOnImage.top + pointOnImage.bottom / 2;
+
+            ShowcaseView.Builder bldr = new ShowcaseView.Builder(getActivity())
+                    .setTarget(new PointTarget(x, y))
+                    .setContentTitle(getString(R.string.showcase_pub_detail_image_title))
+                    .setContentText(getString(R.string.showcase_pub_detail_image_detail))
+                    .setStyle(R.style.ShowcaseView_Base_Overlayed);
+            if (!BuildConfig.DEBUG) {
+                bldr.singleShot(Constants.SHOWCASE_PUBLICATION_DETAIL_IMAGES_SHOT_ID);
+            }
+            bldr.build();
+        }
     }
 
     @OptionsItem(R.id.action_mark_read)

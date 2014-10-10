@@ -154,6 +154,17 @@
     <string name="already_in_library">Уже есть</string>
     <string name="tap_to_add_to_library">Добавить?</string>
 
+    <!-- Showcase texts -->
+    <string name="showcase_getting_started_title">Для начала</string>
+    <string name="showcase_getting_started_detail">Если у Вас нет добавленных авторов, стоит начать с их посика.</string>
+    <string name="showcase_search_title">Добавление авторов</string>
+    <string name="showcase_search_detail">Вы можете использовать поиск авторов по имени. Также вы можете вставить полный линк автора и он автоматически добавится без поиска.</string>
+    <string name="showcase_pub_quick_title">Быстрый доступ к произведениям</string>
+    <string name="showcase_pub_quick_detail">Нажмите и удерживайте чтобы скачать/отрыть произведение. Нажмите чтобы открыть детали.</string>
+    <string name="showcase_pub_detail_image_title">Отключение картинок</string>
+    <string name="showcase_pub_detail_image_detail">Так как авторы заведуют картинками, они могут быть очень большими. Если вы хотите сохранить трафик при просмотре произведений, вы можете отключить отображение картинок в настройках.</string>
+
+
     <!--Preferences -->
 
     <!--Authors-->

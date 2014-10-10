@@ -62,5 +62,13 @@
     <dimen name="action_bar_auto_hide_min_y">152dp</dimen>
     <dimen name="action_bar_auto_hide_sensivity">48dp</dimen>
 
+
+    <!-- Showcase text dimensions -->
+    <dimen name="showcase_title_size">24sp</dimen>
+    <dimen name="showcase_detail_size">18sp</dimen>
+    <dimen name="showcase_title_size_overlay">24sp</dimen>
+    <dimen name="showcase_detail_size_overlay">18sp</dimen>
+    <dimen name="text_padding">16dp</dimen>
+
 </resources>
 

@@ -354,10 +354,15 @@
     </style>
 
     <style name="ShowcaseView.Base">
-        <item name="sv_titleTextAppearance">@style/TextAppearance.ShowcaseView.Title.White</item>
-        <item name="sv_detailTextAppearance">@style/TextAppearance.ShowcaseView.Detail</item>
-        <item name="sv_backgroundColor">#9c33b5e5</item>
+        <item name="sv_titleTextAppearance">@style/SITracker.TextAppearance.ShowcaseView.Title</item>
+        <item name="sv_detailTextAppearance">@style/SITracker.TextAppearance.ShowcaseView.Detail</item>
+        <item name="sv_backgroundColor">#b433b5e5</item>
         <item name="sv_buttonText">@android:string/ok</item>
+    </style>
+
+    <style name="ShowcaseView.Base.Overlayed" parent="ShowcaseView.Base">
+        <item name="sv_titleTextAppearance">@style/SITracker.TextAppearance.ShowcaseView.Title.Overlay</item>
+        <item name="sv_detailTextAppearance">@style/SITracker.TextAppearance.ShowcaseView.Detail.Overlay</item>
     </style>
 
     <style name="ShowcaseButton">
@@ -371,8 +376,24 @@
         <item name="android:background">@drawable/button</item>
     </style>
 
-    <style name="TextAppearance.ShowcaseView.Title.White" parent="android:style/TextAppearance.Large">
+    <style name="SITracker.TextAppearance.ShowcaseView.Title" parent="android:style/TextAppearance.Large">
         <item name="android:textColor">@color/body_text_1_inverse</item>
+        <item name="android:textSize">@dimen/showcase_title_size</item>
+    </style>
+
+    <style name="SITracker.TextAppearance.ShowcaseView.Detail" parent="android:style/TextAppearance">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/showcase_detail_size</item>
+    </style>
+
+    <style name="SITracker.TextAppearance.ShowcaseView.Title.Overlay" parent="SITracker.TextAppearance.ShowcaseView.Title">
+        <item name="android:textColor">@color/body_text_1_inverse</item>
+        <item name="android:textSize">@dimen/showcase_title_size_overlay</item>
+    </style>
+
+    <style name="SITracker.TextAppearance.ShowcaseView.Detail.Overlay" parent="SITracker.TextAppearance.ShowcaseView.Detail">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/showcase_detail_size_overlay</item>
     </style>
 
 </resources>

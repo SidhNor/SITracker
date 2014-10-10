@@ -16,6 +16,7 @@
 
 package com.andrada.sitracker.ui.fragment.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +25,9 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
 
+import com.andrada.sitracker.BuildConfig;
 import com.andrada.sitracker.Constants;
+import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.IsNewItemTappedListener;
 import com.andrada.sitracker.contracts.SIPrefs_;
 import com.andrada.sitracker.db.beans.Publication;
@@ -36,6 +39,8 @@ import com.andrada.sitracker.ui.components.PublicationCategoryItemView_;
 import com.andrada.sitracker.ui.components.PublicationItemView;
 import com.andrada.sitracker.ui.components.PublicationItemView_;
 import com.andrada.sitracker.util.AnalyticsHelper;
+import com.github.amlcurran.showcaseview.ShowcaseView;
+import com.github.amlcurran.showcaseview.targets.ViewTarget;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
@@ -60,26 +65,20 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
         IsNewItemTappedListener, AdapterView.OnItemLongClickListener {
 
 
+    private final HashMap<Long, Publication> mDownloadingPublications = new HashMap<Long, Publication>();
     List<CategoryValue> mCategories = new ArrayList<CategoryValue>();
     List<List<Publication>> mChildren = new ArrayList<List<Publication>>();
-
     @OrmLiteDao(helper = SiDBHelper.class)
     PublicationDao publicationsDao;
-
     @RootContext
     Context context;
-
     @Pref
     SIPrefs_ prefs;
-
-    private PublicationShareAttemptListener listener;
-
-    private final HashMap<Long, Publication> mDownloadingPublications = new HashMap<Long, Publication>();
-
     @Nullable
     ListView listView = null;
-
     boolean shouldShowImages;
+    private PublicationShareAttemptListener listener;
+    private boolean showcaseViewShown = false;
 
     @Background
     public void reloadPublicationsForAuthorId(long id) {
@@ -123,9 +122,39 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
         postDataSetChanged();
     }
 
+    @UiThread(delay = 300)
+    void createAndShowShowcaseView(View view) {
+        if (context instanceof Activity) {
+            ShowcaseView.Builder bldr = new ShowcaseView.Builder((Activity) context)
+                    .setTarget(new ViewTarget(view))
+                    .setContentTitle(context.getString(R.string.showcase_pub_quick_title))
+                    .setContentText(context.getString(R.string.showcase_pub_quick_detail))
+                    .setStyle(R.style.ShowcaseView_Base);
+            if (!BuildConfig.DEBUG) {
+                bldr.singleShot(Constants.SHOWCASE_PUBLICATION_QUICK_ACCESS_SHOT_ID);
+            }
+            bldr.build();
+        }
+    }
+
     @UiThread(propagation = UiThread.Propagation.REUSE)
     void postDataSetChanged() {
         notifyDataSetChanged();
+    }
+
+    @Override
+    public int getGroupCount() {
+        return mCategories.size();
+    }
+
+    @Override
+    public int getChildrenCount(int groupPosition) {
+        return mChildren.get(groupPosition).size();
+    }
+
+    @Override
+    public Object getGroup(int groupPosition) {
+        return mCategories.get(groupPosition);
     }
 
     @Override
@@ -135,27 +164,19 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
     }
 
     @Override
+    public long getGroupId(int groupPosition) {
+        return groupPosition;
+    }
+
+    @Override
     public long getChildId(int groupPosition, int childPosition) {
         List<Publication> items = mChildren.get(groupPosition);
         return items.get(childPosition).getId();
     }
 
-    @NotNull
     @Override
-    public View getChildView(int groupPosition, int childPosition,
-                             boolean isLastChild, @Nullable View convertView, ViewGroup parent) {
-
-        Publication pub = (Publication) getChild(groupPosition, childPosition);
-
-        PublicationItemView publicationItemView;
-        if (convertView == null) {
-            publicationItemView = PublicationItemView_.build(context);
-            publicationItemView.setListener(this);
-        } else {
-            publicationItemView = (PublicationItemView) convertView;
-        }
-        publicationItemView.bind(pub, shouldShowImages);
-        return publicationItemView;
+    public boolean hasStableIds() {
+        return false;
     }
 
     @NotNull
@@ -177,29 +198,28 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
         return publicationCategoryView;
     }
 
+    @NotNull
     @Override
-    public int getChildrenCount(int groupPosition) {
-        return mChildren.get(groupPosition).size();
-    }
+    public View getChildView(int groupPosition, int childPosition,
+                             boolean isLastChild, @Nullable View convertView, ViewGroup parent) {
 
-    @Override
-    public Object getGroup(int groupPosition) {
-        return mCategories.get(groupPosition);
-    }
+        Publication pub = (Publication) getChild(groupPosition, childPosition);
 
-    @Override
-    public int getGroupCount() {
-        return mCategories.size();
-    }
+        PublicationItemView publicationItemView;
+        if (convertView == null) {
+            publicationItemView = PublicationItemView_.build(context);
+            publicationItemView.setListener(this);
+        } else {
+            publicationItemView = (PublicationItemView) convertView;
+        }
+        publicationItemView.bind(pub, shouldShowImages);
 
-    @Override
-    public long getGroupId(int groupPosition) {
-        return groupPosition;
-    }
+        if (!showcaseViewShown) {
+            showcaseViewShown = true;
+            createAndShowShowcaseView(publicationItemView);
+        }
 
-    @Override
-    public boolean hasStableIds() {
-        return false;
+        return publicationItemView;
     }
 
     @Override
@@ -316,13 +336,13 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
 
         }
 
-        public boolean equals(String value) {
-            return categoryName.equals(value);
-        }
-
         @Override
         public int hashCode() {
             return categoryName.hashCode();
+        }
+
+        public boolean equals(String value) {
+            return categoryName.equals(value);
         }
     }
 }

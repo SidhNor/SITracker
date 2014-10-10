@@ -51,7 +51,9 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 
 @EFragment(R.layout.fragment_publications)
 @OptionsMenu(R.menu.publications_menu)
-public class PublicationsFragment extends Fragment implements ExpandableListView.OnChildClickListener, PublicationsAdapter.PublicationShareAttemptListener {
+public class PublicationsFragment extends Fragment implements
+        ExpandableListView.OnChildClickListener,
+        PublicationsAdapter.PublicationShareAttemptListener {
 
     @Bean
     PublicationsAdapter adapter;
