@@ -16,21 +16,18 @@
   limitations under the License.
   -->
 
-<resources xmlns:tools="http://schemas.android.com/tools"
-           tools:ignore="MissingTranslation">
-
-    <string name="add_author_placeholder">samlib.ru/y/your_author</string>
+<resources>
     <string
-        name="designtime_placeholder_long">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean fringilla luctus tellus, in tristique ligula adipiscing id. Proin tempor purus sit amet orci iaculis in accumsan justo ultricies
+        name="designtime_placeholder_long" translatable="false">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean fringilla luctus tellus, in tristique ligula adipiscing id. Proin tempor purus sit amet orci iaculis in accumsan justo ultricies
     </string>
     <string
-        name="designtime_placeholder_medium">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean
+        name="designtime_placeholder_medium" translatable="false">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean
     </string>
-    <string name="designtime_placeholder_short">Lorem ipsum dolor</string>
-    <string name="designtime_placeholder_size">615+3kb</string>
-    <string name="designtime_placeholder_date">May 28</string>
-    <string name="designtime_placeholder_item_num">(24)</string>
-    <string name="designtime_placeholder_rating_value">7.8</string>
-    <string name="designtime_placeholder_rating_count">541</string>
-    <string name="designtime_placeholder_rating_date">You rated on May 25th</string>
+    <string name="designtime_placeholder_short" translatable="false">Lorem ipsum dolor</string>
+    <string name="designtime_placeholder_size" translatable="false">615+3kb</string>
+    <string name="designtime_placeholder_date" translatable="false">May 28</string>
+    <string name="designtime_placeholder_item_num" translatable="false">(24)</string>
+    <string name="designtime_placeholder_rating_value" translatable="false">7.8</string>
+    <string name="designtime_placeholder_rating_count" translatable="false">541</string>
+    <string name="designtime_placeholder_rating_date" translatable="false">You rated on May 25th</string>
 </resources>

@@ -17,6 +17,7 @@
 package com.andrada.sitracker.ui;
 
 
+import android.annotation.SuppressLint;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -48,6 +49,7 @@ import static com.andrada.sitracker.util.LogUtils.LOGD;
 import static com.andrada.sitracker.util.LogUtils.LOGW;
 import static com.andrada.sitracker.util.LogUtils.makeLogTag;
 
+@SuppressLint("Registered")
 @EActivity(R.layout.activity_search)
 @OptionsMenu(R.menu.search_menu)
 public class SearchActivity extends BaseActivity {

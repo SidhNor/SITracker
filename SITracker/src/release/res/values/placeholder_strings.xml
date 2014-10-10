@@ -17,7 +17,6 @@
   -->
 
 <resources>
-    <string name="add_author_placeholder" translatable="false"/>
     <string name="designtime_placeholder_long" translatable="false"/>
     <string name="designtime_placeholder_medium" translatable="false"/>
     <string name="designtime_placeholder_short" translatable="false"/>

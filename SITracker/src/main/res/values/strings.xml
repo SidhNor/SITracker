@@ -16,95 +16,29 @@
 
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
+    <!-- Generic strings -->
     <string name="app_name">SI Tracker</string>
-    <string name="title_search">Search</string>
-    <string name="title_settings">Settings</string>
-    <string name="title_import">Import authors</string>
-    <string name="title_publications_details">Publication Details</string>
+    <string name="no_network_error">No network</string>
+    <string name="no_network_retry">RETRY</string>
+    <string name="backup_restored_crouton_message">Backup restored</string>
+    <string name="crouton_image_desc">info</string>
 
-    <string name="search_hint">Search authors</string>
-    <string name="search_label">Authors on samlib.ru</string>
-
+    <!-- Home AB actions -->
     <string name="action_search">Search</string>
     <string name="action_settings">Settings</string>
     <string name="action_refresh">Update authors</string>
-    <string name="action_add">Add author</string>
-    <string name="action_delete">Delete author</string>
-    <string name="action_markread">Mark as read</string>
-    <string name="action_clear_saved_pubs">Clear cached</string>
     <string name="action_import">Import</string>
     <string name="action_export">Export</string>
     <string name="action_about">About</string>
-    <string name="action_open_in_browser">Open selected in browser</string>
-    <string name="action_open_pub_in_browser">Open in browser</string>
-    <string name="action_force_download">Force download</string>
-
-    <string name="app_version_format">Version: %1$s</string>
-    <string name="app_buildnr_format">Build number: %1$s</string>
-
-    <string name="empty_search_results">No authors for your query</string>
-    <!--Search errors -->
-    <string name="cannot_search_busy">Could not perform search. Samlib is busy.</string>
-    <string name="cannot_search_network">Could not perform search. Check your internet connection.</string>
-    <string name="cannot_search_internal">An internal error occurred. Please try again.</string>
-    <string name="cannot_search_unknown">An unknown error occurred while searching. Please try again.</string>
-
-    <!-- Shown as a link in the About screen of the app; user can click it to see the licenses or change log. -->
-    <string name="about_licenses">Open Source Licenses</string>
-    <string name="whats_new">What\'s new</string>
-
-    <string name="add_author_confirmation">Are you sure you want to add this author?</string>
-    <string name="cannot_import_authors_from_file">Could not import authors from file.</string>
-    <string name="cannot_add_author">Cannot add author.</string>
-    <string name="supported_urls">Only samlib.ru and budclub.ru author urls are supported.</string>
-    <string name="cannot_add_author_internal">Cannot add author. Some internal error occurred.
-    </string>
-    <string name="cannot_add_author_malformed">Cannot add author. Make sure the link is correct.
-    </string>
-    <string name="cannot_add_author_network">Cannot add author. Check your internet connection.
-    </string>
-    <string name="cannot_add_author_already_exits">Author already exists.</string>
-    <string name="cannot_add_author_no_update_date">Cannot add author. No update date found.
-    </string>
-    <string name="cannot_add_author_no_name">Cannot add author. No author name found.</string>
-    <string name="cannot_add_author_unknown">Cannot add author. An unexpected error occurred.
-    </string>
-    <string name="cannot_add_author_no_publications">Cannot add author. No publications found.
-    </string>
-
-    <string name="cannot_download_publication">Cannot download publication. Check your internet
-        connection.
-    </string>
-    <string name="publication_error_url">Cannot download publication. Publications seems to have a
-        wrong url. The only thing that could help is to remove and re-add the author
-    </string>
-    <string name="publication_error_save">Cannot save publication. Check if there is free space on
-        your device.
-    </string>
-    <string name="publication_error_storage">Cannot save publication. Your external storage seems to
-        be inaccessible.
-    </string>
-    <string name="publication_error_unknown">Cannot download publication. Some internal error
-        occurred.
-    </string>
-    <string name="publications_downloading">Downloading publication…</string>
     <string name="check_for_updates">Checking for updates</string>
-    <string name="notification_title">SITracker Updates</string>
-    <string name="notification_import_title">SITracker - Importing authors</string>
-    <string name="notification_import_progress">Importing %1$d out of %2$d</string>
-    <string name="import_message_title">Import in progress…</string>
-    <string name="import_message_connecting_title">Connecting…</string>
-    <string name="import_progress_indication">%1$d/%2$d</string>
-    <string name="notification_import_complete">Importing complete.</string>
-    <string name="update_failed_crouton_message">Update failed for an unexpected reason.</string>
-    <string name="author_add_success_crouton_message">Author added</string>
-    <string name="author_export_success_crouton_message">Authors exported</string>
-    <string name="author_import_success_crouton_message">Authors import finished</string>
-    <string name="author_import_total_crouton_message">Total processed: %1$d</string>
-    <string name="author_import_processed_crouton_message">Added: %1$d</string>
-    <string name="author_import_failed_crouton_message">Duplicate or failed: %1$d</string>
 
-    <string name="backup_restored_crouton_message">Backup restored</string>
+
+    <!-- Authors fragment -->
+    <string name="action_open_in_browser">Open selected in browser</string>
+    <string name="action_delete">Delete author</string>
+    <string name="action_markread">Mark as read</string>
+
+    <string name="update_failed_crouton_message">Update failed for an unexpected reason.</string>
     <string name="no_authors">You haven\'t added any authors yet</string>
     <plurals name="authors_selected">
         <item quantity="one">1 selected</item>
@@ -121,6 +55,131 @@
             selected
         </item>
     </plurals>
+
+
+    <!-- Publication list fragment -->
+    <string name="cannot_download_publication">Cannot download publication. Check your internet connection.</string>
+    <string name="publication_error_url">Cannot download publication. Publications seems to have a wrong url. The only thing that could help is to remove and re-add the author</string>
+    <string name="publication_error_save">Cannot save publication. Check if there is free space on your device.</string>
+    <string name="publication_error_storage">Cannot save publication. Your external storage seems to be inaccessible.</string>
+    <string name="publication_error_unknown">Cannot download publication. Some internal error occurred.</string>
+    <string name="publications_downloading">Downloading publication…</string>
+
+    <!-- Search activity -->
+    <string name="title_search">Search</string>
+    <string name="search_hint">Search authors</string>
+    <string name="search_label">Authors on samlib.ru</string>
+    <string name="empty_search_results">No authors for your query</string>
+    <string name="add_author_confirmation">Are you sure you want to add this author?</string>
+    <string name="author_add_success_crouton_message">Author added</string>
+    <string name="already_in_library">Already in library</string>
+    <string name="tap_to_add_to_library">Tap to add</string>
+
+    <string name="cannot_search_busy">Could not perform search. Samlib is busy.</string>
+    <string name="cannot_search_network">Could not perform search. Check your internet connection.</string>
+    <string name="cannot_search_internal">An internal error occurred. Please try again.</string>
+    <string name="cannot_search_unknown">An unknown error occurred while searching. Please try again.</string>
+
+
+    <!-- Author add and import -->
+    <string name="cannot_add_author">Cannot add author.</string>
+    <string name="supported_urls">Only samlib.ru and budclub.ru author urls are supported.</string>
+    <string name="cannot_add_author_internal">Cannot add author. Some internal error occurred.</string>
+    <string name="cannot_add_author_malformed">Cannot add author. Make sure the link is correct.</string>
+    <string name="cannot_add_author_network">Cannot add author. Check your internet connection.</string>
+    <string name="cannot_add_author_already_exits">Author already exists.</string>
+    <string name="cannot_add_author_no_update_date">Cannot add author. No update date found.</string>
+    <string name="cannot_add_author_no_name">Cannot add author. No author name found.</string>
+    <string name="cannot_add_author_unknown">Cannot add author. An unexpected error occurred.</string>
+    <string name="cannot_add_author_no_publications">Cannot add author. No publications found.</string>
+
+
+    <!-- Settings activity -->
+    <string name="title_settings">Settings</string>
+    <string name="action_clear_saved_pubs">Clear cached</string>
+        <!--Authors-->
+        <string name="pref_authors_category_title">Authors</string>
+        <string name="pref_authors_sort">Authors sort</string>
+        <!--Content-->
+        <string name="pref_content_title">Content</string>
+        <string name="pref_content_download_title">Download folder</string>
+        <string name="pref_content_download_summ">You can specify a folder where publications will be downloaded. If left blank, the default app folder is used.</string>
+        <string name="pref_content_download_summ_short">Publications are downloaded to:</string>
+        <string name="pref_content_clear_saved_title">Clear saved publications</string>
+        <string name="pref_content_clear_saved_summ">Only the default folder will be cleared</string>
+        <string name="pref_content_img_display">Display publication images</string>
+        <string name="pref_content_img_display_summ">Download and display related publication images if available</string>
+        <!--Updates-->
+        <string name="pref_update_category_title">Updates</string>
+        <string name="pref_updates_check">Automatic updates</string>
+        <string name="pref_updates_check_summ">Automatic authors updates in background at the specified interval</string>
+        <string name="pref_update_wifi_only">Update via Wi-Fi only</string>
+        <string name="pref_update_wifi_only_summ">To reduce network provider data charges, don\'t update over mobile networks</string>
+        <string name="pref_update_interval">Update interval</string>
+
+        <!--Statistics-->
+        <string name="pref_usage_category_title">Usage statistics</string>
+        <string name="pref_opt_out_statistics_title">Opt out</string>
+        <string name="pref_opt_out_statistics_summ">Prevent sending usage statistics to the author.</string>
+
+
+    <!-- Import Export authors activity -->
+    <string name="title_import">Import authors</string>
+    <string name="choose_import_file">Pick file</string>
+    <string name="perform_import">Import</string>
+    <string name="cannot_import_authors_from_file">Could not import authors from file.</string>
+    <string name="import_message_title">Import in progress…</string>
+    <string name="import_message_connecting_title">Connecting…</string>
+    <string name="import_progress_indication">%1$d/%2$d</string>
+    <string name="author_export_success_crouton_message">Authors exported</string>
+    <string name="author_import_success_crouton_message">Authors import finished</string>
+    <string name="author_import_total_crouton_message">Total processed: %1$d</string>
+    <string name="author_import_processed_crouton_message">Added: %1$d</string>
+    <string name="author_import_failed_crouton_message">Duplicate or failed: %1$d</string>
+    <string name="fp_cancel_label">Cancel</string>
+    <string name="fp_confirm_label">Confirm</string>
+    <string name="fp_selected_folder_label">Selected folder:</string>
+    <string name="fp_selected_file_label">Selected file:</string>
+    <string name="fp_create_folder_label">Create folder</string>
+    <string name="fp_create_folder_msg">Create new folder with name "%1$s"?</string>
+    <string name="fp_create_folder_success">Created new folder</string>
+    <string name="fp_create_folder_error_no_write_access">Cannot write to this folder</string>
+    <string name="fp_create_folder_error_already_exists">Folder already exists</string>
+    <string name="fp_create_folder_error">Could not create folder</string>
+    <string name="fp_up_label">Up</string>
+    <string name="file_descriptor">File type descriptor</string>
+    <string name="book_folder_name">Books</string>
+    <string name="export_folder_name">SiTrackerExport</string>
+    <string name="cannot_write_export_file">Error writing to export file</string>
+
+
+    <!-- Publicaiton details activity -->
+    <string name="title_publications_details">Publication Details</string>
+    <string name="action_open_pub_in_browser">Open in browser</string>
+    <string name="action_force_download">Force download</string>
+    <string name="download_and_read">Download and read</string>
+
+
+    <!--Rating Dialog-->
+    <string name="publication_ratings">Rating</string>
+    <string name="publication_submit_rating_link">SUBMIT RATING</string>
+    <string name="publication_rating_submit_success">Your vote was submitted successfully.</string>
+    <string name="publication_rating_submit_error">Failed to submit your vote. Please try again later.</string>
+    <string name="publication_rating_vote_date">You rated %1$s</string>
+
+
+    <!-- About Dialog -->
+    <string name="app_version_format">Version: %1$s</string>
+    <string name="app_buildnr_format">Build number: %1$s</string>
+    <string name="about_licenses">Open Source Licenses</string>
+    <string name="whats_new">What\'s new</string>
+
+
+    <!-- Notifications -->
+    <string name="notification_title">SITracker Updates</string>
+    <string name="notification_import_title">SITracker - Importing authors</string>
+    <string name="notification_import_progress">Importing %1$d out of %2$d</string>
+    <string name="notification_import_complete">Importing complete.</string>
     <plurals name="authors_updated">
         <item quantity="one">Author updated</item>
         <item quantity="few">
@@ -137,10 +196,6 @@
         </item>
     </plurals>
 
-    <string name="choose_import_file">Pick file</string>
-    <string name="perform_import">Import</string>
-    <string name="already_in_library">Already in library</string>
-    <string name="tap_to_add_to_library">Tap to add</string>
 
     <!-- Showcase texts -->
     <string name="showcase_getting_started_title">Getting started</string>
@@ -152,77 +207,6 @@
     <string name="showcase_pub_detail_image_title">Disabling images</string>
     <string name="showcase_pub_detail_image_detail">As publication images are managed by authors, they can have large size. If you want to save traffic while browsing through publications, you can disable publication image download in settings.</string>
 
-
-    <!--Preferences -->
-
-    <!--Authors-->
-    <string name="pref_authors_category_title">Authors</string>
-    <string name="pref_authors_sort">Authors sort</string>
-
-    <!--Content-->
-    <string name="pref_content_title">Content</string>
-
-    <string name="pref_content_download_title">Download folder</string>
-    <string name="pref_content_download_summ">You can specify a folder where publications will be
-        downloaded. If left blank, the default app folder is used.
-    </string>
-    <string name="pref_content_download_summ_short">Publications are downloaded to:</string>
-
-    <string name="pref_content_clear_saved_title">Clear saved publications</string>
-    <string name="pref_content_clear_saved_summ">Only the default folder will be cleared</string>
-
-    <string name="pref_content_img_display">Display publication images</string>
-    <string name="pref_content_img_display_summ">Download and display related publication images if
-        available
-    </string>
-    <string name="download_and_read">Download and read</string>
-
-    <!--Rating-->
-    <string name="publication_ratings">Rating</string>
-    <string name="publication_submit_rating_link">SUBMIT RATING</string>
-    <string name="publication_rating_submit_success">Your vote was submitted successfully.</string>
-    <string name="publication_rating_submit_error">Failed to submit your vote. Please try again later.</string>
-    <string name="publication_rating_vote_date">You rated %1$s</string>
-
-    <!--Updates-->
-    <string name="pref_update_category_title">Updates</string>
-    <string name="pref_updates_check">Automatic updates</string>
-    <string name="pref_updates_check_summ">Automatic authors updates in background at the
-        specified interval
-    </string>
-    <string name="pref_update_wifi_only">Update via Wi-Fi only</string>
-    <string name="pref_update_wifi_only_summ">To reduce network provider data charges, don\'t
-        update over mobile networks
-    </string>
-    <string name="pref_update_interval">Update interval</string>
-
-    <!--Statistics-->
-    <string name="pref_usage_category_title">Usage statistics</string>
-    <string name="pref_opt_out_statistics_title">Opt out</string>
-    <string name="pref_opt_out_statistics_summ">Prevent sending usage statistics to the author.</string>
-
-    <string name="no_network_error">No network</string>
-    <string name="no_network_retry">RETRY</string>
-
-    <!--Image descriptors -->
-    <string name="crouton_image_desc">info</string>
-
-    <!--File picker stuff -->
-    <string name="fp_cancel_label">Cancel</string>
-    <string name="fp_confirm_label">Confirm</string>
-    <string name="fp_selected_folder_label">Selected folder:</string>
-    <string name="fp_selected_file_label">Selected file:</string>
-    <string name="fp_create_folder_label">Create folder</string>
-    <string name="fp_create_folder_msg">Create new folder with name "%1$s"?</string>
-    <string name="fp_create_folder_success">Created new folder</string>
-    <string name="fp_create_folder_error_no_write_access">Cannot write to this folder</string>
-    <string name="fp_create_folder_error_already_exists">Folder already exists</string>
-    <string name="fp_create_folder_error">Could not create folder</string>
-    <string name="fp_up_label">Up</string>
-    <string name="file_descriptor">File type descriptor</string>
-    <string name="book_folder_name">Books</string>
-    <string name="export_folder_name">SiTrackerExport</string>
-    <string name="cannot_write_export_file">Error writing to export file</string>
 
     <string name="change_log"><![CDATA[
         <section>
