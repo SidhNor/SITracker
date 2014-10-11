@@ -157,8 +157,11 @@
     <string name="title_publications_details">Publication Details</string>
     <string name="action_open_pub_in_browser">Open in browser</string>
     <string name="action_force_download">Force download</string>
+    <string name="action_ignore_updates">Ignore updates</string>
     <string name="download_and_read">Download and read</string>
-
+    <string name="publication_marked_as_ignored_for_updates_message">This publication is marked as ignored for updates and you will not be notified about any changes.\nWould you like to enable updates back?</string>
+    <string name="no_keep_it">KEEP IGNORED</string>
+    <string name="yes_enable_updates">YES</string>
 
     <!--Rating Dialog-->
     <string name="publication_ratings">Rating</string>

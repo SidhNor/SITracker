@@ -60,6 +60,9 @@ public class PublicationItemView extends TouchDelegateRelativeLayout {
     @ViewById
     ImageView publication_image;
 
+    @ViewById(R.id.dim_verlay)
+    View dimOverlay;
+
     @ViewById
     TextView itemSize;
 
@@ -127,6 +130,12 @@ public class PublicationItemView extends TouchDelegateRelativeLayout {
                     .into(publication_image);
         } else {
             publication_image.setVisibility(GONE);
+        }
+
+        if (publication.getUpdatesIgnored()) {
+            dimOverlay.setVisibility(VISIBLE);
+        } else {
+            dimOverlay.setVisibility(GONE);
         }
 
         UIUtils.setTextMaybeHtml(item_description,

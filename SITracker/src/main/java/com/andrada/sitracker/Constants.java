@@ -92,6 +92,7 @@ public class Constants {
     public static final String GA_EVENT_PUB_RATED = "pub_rated";
     public static final String GA_EVENT_FAB_CLICK = "fab_used";
     public static final String GA_EVENT_LONG_TAP = "long_tap_used";
+    public static final String GA_EVENT_ENABLE_UPDATES_BACK = "pub_updates_reenabled";
     public static final String GA_EVENT_AUTHOR_REMOVED = "authors_removed";
     public static final String GA_EVENT_AUTHOR_MANUAL_READ = "author_manual_marked_read";
     public static final String GA_EVENT_AUTHOR_PUB_OPEN = "publication_opened";

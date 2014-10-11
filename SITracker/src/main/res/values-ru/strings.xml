@@ -160,7 +160,11 @@
     <string name="title_publications_details">Детали произведения</string>
     <string name="action_open_pub_in_browser">Открыть в браузере</string>
     <string name="action_force_download">Загрузить принудительно</string>
+    <string name="action_ignore_updates">Игнорировать обновления</string>
     <string name="download_and_read">Скачать и читать</string>
+    <string name="publication_marked_as_ignored_for_updates_message">Это произведение помечено как игнорированное для обновления. Вы не будете получать уведомлении при каких либо изменениях.\nВключить обновления обратно?</string>
+    <string name="no_keep_it">НЕТ</string>
+    <string name="yes_enable_updates">ДА</string>
 
 
     <!--Rating Dialog-->
@@ -276,5 +280,6 @@
             </ul>
         </section>
     ]]></string>
+
 
 </resources>

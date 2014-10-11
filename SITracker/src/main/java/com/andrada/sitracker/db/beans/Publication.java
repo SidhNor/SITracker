@@ -73,6 +73,8 @@ public class Publication implements Serializable {
     int myVote;
     @DatabaseField(canBeNull = true, useGetSet = true)
     Date voteDate;
+    @DatabaseField(canBeNull = false, useGetSet = true, defaultValue = "false")
+    boolean updatesIgnored;
 
     boolean isLoading = false;
 
@@ -248,6 +250,14 @@ public class Publication implements Serializable {
 
     public void setVoteDate(Date voteDate) {
         this.voteDate = voteDate;
+    }
+
+    public boolean getUpdatesIgnored() {
+        return updatesIgnored;
+    }
+
+    public void setUpdatesIgnored(boolean updatesIgnored) {
+        this.updatesIgnored = updatesIgnored;
     }
 
     public boolean getLoading() {

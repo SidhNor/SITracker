@@ -20,6 +20,8 @@
     <string name="designtime_placeholder_long" translatable="false"/>
     <string name="designtime_placeholder_medium" translatable="false"/>
     <string name="designtime_placeholder_short" translatable="false"/>
+    <string name="designtime_placeholder_button_yes" translatable="false"/>
+    <string name="designtime_placeholder_button_no" translatable="false"/>
     <string name="designtime_placeholder_size" translatable="false"/>
     <string name="designtime_placeholder_date" translatable="false"/>
     <string name="designtime_placeholder_item_num" translatable="false"/>

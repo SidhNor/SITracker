@@ -376,6 +376,18 @@
         <item name="android:background">@drawable/button</item>
     </style>
 
+    <style name="MessageCard.Button" parent="">
+        <item name="android:textAllCaps">true</item>
+        <item name="android:minWidth">48dp</item>
+        <item name="android:textSize">@dimen/text_size_medium</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:textColor">#80000000</item>
+    </style>
+
     <style name="SITracker.TextAppearance.ShowcaseView.Title" parent="android:style/TextAppearance.Large">
         <item name="android:textColor">@color/body_text_1_inverse</item>
         <item name="android:textSize">@dimen/showcase_title_size</item>

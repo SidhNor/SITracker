@@ -37,12 +37,12 @@
                 android:id="@+id/publication_image"
                 android:layout_width="@dimen/keyline_2_minus_16dp"
                 android:layout_height="@dimen/keyline_2"
+                android:layout_centerHorizontal="true"
                 android:contentDescription="@null"
                 android:paddingLeft="@dimen/keyline_1"
                 android:scaleType="centerInside"
                 android:src="@drawable/blank_book"
-                android:visibility="visible"
-                android:layout_centerHorizontal="true"/>
+                android:visibility="visible"/>
         </RelativeLayout>
 
         <TextView
@@ -114,6 +114,13 @@
             android:layout_marginTop="8dp"/>
 
     </RelativeLayout>
+
+    <View
+        android:id="@+id/dim_verlay"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/publication_item_height"
+        android:background="@color/ignored_pub_overlay"
+        android:visibility="gone"/>
 
     <RelativeLayout
         android:id="@+id/downloadProgress"

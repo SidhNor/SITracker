@@ -42,7 +42,6 @@
         <item name="actionBarInsetStart">?android:actionBarSize</item>
         <item name="photoItemForeground">?android:selectableItemBackground</item>
         <item name="popupItemBackground">?android:selectableItemBackground</item>
-
     </style>
 
     <style name="ActionBar" parent="FrameworkRoot.ActionBar">
@@ -51,6 +50,18 @@
         <item name="android:displayOptions">showHome|showTitle</item>
         <item name="android:backgroundSplit">@drawable/ab_solid</item>
         <item name="android:titleTextStyle">@style/ActionBar.TitleText</item>
+    </style>
+
+    <style name="MessageCard.Button" parent="">
+        <item name="android:textAllCaps">true</item>
+        <item name="android:minWidth">48dp</item>
+        <item name="android:textSize">@dimen/text_size_medium</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:background">?android:selectableItemBackground</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:textColor">#80000000</item>
     </style>
 
 </resources>

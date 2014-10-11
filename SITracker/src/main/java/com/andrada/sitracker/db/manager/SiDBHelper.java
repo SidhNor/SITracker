@@ -157,6 +157,7 @@ public class SiDBHelper extends OrmLiteSqliteOpenHelper {
                         getPublicationDao().executeRaw("ALTER TABLE 'publications' ADD COLUMN voteCookie TEXT;");
                         getPublicationDao().executeRaw("ALTER TABLE 'publications' ADD COLUMN myVote INTEGER;");
                         getPublicationDao().executeRaw("ALTER TABLE 'publications' ADD COLUMN voteDate TEXT;");
+                        getPublicationDao().executeRaw("ALTER TABLE 'publications' ADD COLUMN updatesIgnored SMALLINT DEFAULT 0 NOT NULL;");
                         break;
                     }
                 }

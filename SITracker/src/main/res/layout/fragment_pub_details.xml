@@ -20,6 +20,7 @@
     android:id="@+id/scroll_view"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:plus="http://schemas.android.com/apk/lib/com.google.android.gms.plus"
+    xmlns:sitracker="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -45,6 +46,20 @@
             android:paddingBottom="@dimen/publication_details_extra_space_bottom"
             android:paddingRight="@dimen/keyline_1"
             android:paddingTop="@dimen/content_padding_normal">
+
+            <com.andrada.sitracker.ui.widget.MessageCardView
+                android:id="@+id/message_card_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                sitracker:messageText="@string/publication_marked_as_ignored_for_updates_message"
+                sitracker:button1text="@string/no_keep_it"
+                sitracker:button2text="@string/yes_enable_updates"
+                sitracker:button2tag="ENABLE_UPDATES_BACK"
+                sitracker:button2emphasis="true"
+                sitracker:emphasisColor="@color/theme_primary"
+                android:layout_marginLeft="@dimen/keyline_2_pub_detail"
+                android:layout_marginBottom="16dp"
+                android:visibility="gone"/>
 
             <TextView
                 android:id="@+id/pub_abstract"

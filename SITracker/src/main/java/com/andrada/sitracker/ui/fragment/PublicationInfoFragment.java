@@ -62,6 +62,7 @@ import com.andrada.sitracker.exceptions.SharePublicationException;
 import com.andrada.sitracker.reader.SamlibPublicationPageReader;
 import com.andrada.sitracker.ui.BaseActivity;
 import com.andrada.sitracker.ui.widget.CheckableFrameLayout;
+import com.andrada.sitracker.ui.widget.MessageCardView;
 import com.andrada.sitracker.ui.widget.ObservableScrollView;
 import com.andrada.sitracker.util.AnalyticsHelper;
 import com.andrada.sitracker.util.SamlibPageHelper;
@@ -354,6 +355,15 @@ public class PublicationInfoFragment extends Fragment implements
         mPhotoViewContainer.setBackgroundColor(UIUtils.scaleColor(0xe8552c, 0.65f, false));
 
         updatePlusOneButton();
+        if (currentRecord.getUpdatesIgnored()) {
+            showEnableUpdatesBackCard();
+        } else {
+            final MessageCardView messageCardView = (MessageCardView) mRootView.findViewById(
+                    R.id.message_card_view);
+            if (messageCardView != null) {
+                messageCardView.setVisibility(View.GONE);
+            }
+        }
         updateRating();
 
         String imagesUrl = currentRecord.getImagePageUrl();
@@ -467,6 +477,19 @@ public class PublicationInfoFragment extends Fragment implements
     }
 
     @Background
+    void markPublicationAsIgnored(boolean ignored) {
+        if (currentRecord != null) {
+            try {
+                currentRecord.setUpdatesIgnored(ignored);
+                publicationsDao.update(currentRecord);
+                bindData();
+            } catch (SQLException e) {
+                AnalyticsHelper.getInstance().sendException(e);
+            }
+        }
+    }
+
+    @Background
     void saveVoteResult(String voteCookie, int rating) {
         try {
             currentRecord.setMyVote(rating);
@@ -495,9 +518,9 @@ public class PublicationInfoFragment extends Fragment implements
             for (Pair<String, String> res : results) {
                 adapter.addImage(res.first);
             }
+            attemptToShowShowcaseForImageSettings();
         }
         recomputePhotoAndScrollingMetrics();
-        attemptToShowShowcaseForImageSettings();
     }
 
     @UiThread(delay = 500)
@@ -531,7 +554,7 @@ public class PublicationInfoFragment extends Fragment implements
         });
     }
 
-    @OptionsItem(R.id.open_pub_in_browser)
+    @OptionsItem(R.id.action_open_pub_in_browser)
     void menuOpenInBrowserSelected() {
         if (currentRecord != null) {
             Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -554,6 +577,11 @@ public class PublicationInfoFragment extends Fragment implements
                     Constants.GA_EVENT_PUB_MANUAL_REFRESH,
                     Constants.GA_EVENT_AUTHOR_PUB_OPEN);
         }
+    }
+
+    @OptionsItem(R.id.action_ignore_updates)
+    void ignoreUpdatesSelected() {
+        markPublicationAsIgnored(true);
     }
 
     @Click(R.id.read_pub_button)
@@ -615,6 +643,26 @@ public class PublicationInfoFragment extends Fragment implements
         }
         showCustomPositionedCrouton(msg, result.ratingSubmissionResult);
 
+    }
+
+    private void showEnableUpdatesBackCard() {
+        final MessageCardView messageCardView = (MessageCardView) mRootView.findViewById(
+                R.id.message_card_view);
+        messageCardView.show();
+        messageCardView.setListener(new MessageCardView.OnMessageCardButtonClicked() {
+            @Override
+            public void onMessageCardButtonClicked(String tag) {
+                if ("ENABLE_UPDATES_BACK".equals(tag)) {
+                    AnalyticsHelper.getInstance().sendEvent(
+                            Constants.GA_ADMIN_CATEGORY,
+                            Constants.GA_EVENT_ENABLE_UPDATES_BACK,
+                            Constants.GA_EVENT_ENABLE_UPDATES_BACK);
+                    markPublicationAsIgnored(false);
+                } else {
+                    messageCardView.dismiss(true);
+                }
+            }
+        });
     }
 
     private void showCustomPositionedCrouton(String message, boolean success) {

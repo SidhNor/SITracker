@@ -26,6 +26,7 @@
     <color name="body_text_2_inverse">#8affffff</color>
 
     <color name="light_color_hint">#eeeeee</color>
+    <color name="ignored_pub_overlay">#8affffff</color>
     <color name="white">#ffffff</color>
 
 

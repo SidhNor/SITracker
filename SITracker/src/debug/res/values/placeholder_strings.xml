@@ -24,6 +24,8 @@
         name="designtime_placeholder_medium" translatable="false">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean
     </string>
     <string name="designtime_placeholder_short" translatable="false">Lorem ipsum dolor</string>
+    <string name="designtime_placeholder_button_yes" translatable="false">YES</string>
+    <string name="designtime_placeholder_button_no" translatable="false">NO</string>
     <string name="designtime_placeholder_size" translatable="false">615+3kb</string>
     <string name="designtime_placeholder_date" translatable="false">May 28</string>
     <string name="designtime_placeholder_item_num" translatable="false">(24)</string>

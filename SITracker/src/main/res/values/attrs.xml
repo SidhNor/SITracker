@@ -30,6 +30,19 @@
         <attr name="contentTopClearance" format="dimension"/>
     </declare-styleable>
 
+
+    <declare-styleable name="MessageCard">
+        <attr name="messageTitle" format="string" />
+        <attr name="messageText" format="string" />
+        <attr name="button1text" format="string" />
+        <attr name="button1tag" format="string" />
+        <attr name="button1emphasis" format="boolean" />
+        <attr name="button2text" format="string" />
+        <attr name="button2tag" format="string" />
+        <attr name="button2emphasis" format="boolean" />
+        <attr name="emphasisColor" format="color" />
+    </declare-styleable>
+
     <declare-styleable name="ThemeSITracker">
         <attr name="isFloatingWindow" format="boolean"/>
     </declare-styleable>

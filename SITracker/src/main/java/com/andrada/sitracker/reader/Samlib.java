@@ -211,6 +211,10 @@ class Samlib implements SiteStrategy {
             //Find pub in oldItems
             if (oldItemsMap.containsKey(pub.getUrl())) {
                 Publication old = oldItemsMap.get(pub.getUrl());
+                if (old.getUpdatesIgnored()) {
+                    //Do not check anything
+                    continue;
+                }
                 //Check size/name/description
                 if (pub.getSize() != old.getSize() ||
                         !pub.getName().equals(old.getName())) {
@@ -223,6 +227,11 @@ class Samlib implements SiteStrategy {
                     }
                     //Swap the ids, do an update in DB
                     pub.setId(old.getId());
+                    //Copy over custom properties that do not relate to samlib
+                    pub.setMyVote(old.getMyVote());
+                    pub.setVoteCookie(old.getVoteCookie());
+                    pub.setVoteDate(old.getVoteDate());
+                    pub.setUpdatesIgnored(old.getUpdatesIgnored());
                     pub.setNew(true);
                     authorUpdated = true;
                     publicationsDao.update(pub);
