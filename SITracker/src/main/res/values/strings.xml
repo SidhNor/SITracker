@@ -213,6 +213,21 @@
 
     <string name="change_log"><![CDATA[
         <section>
+            <header><h2>Версия 1.3.0</h2></header>
+            <ul>
+                <li>Small redesign</li>
+                <li>Enable updates when device starts/storage mounts</li>
+                <li>Added author search</li>
+                <li>Added publicaiton info screen with images</li>
+                <li>Ability to rate publicaitons and +1</li>
+                <li>Added indicator to group header if it contains a new publication</li>
+                <li>Added "ignore update" feature for marking a publication as ignored</li>
+                <li>Added tutorial showcase views to highlight less understandable in-app scenarios</li>
+                <li>A lot of bug fixes and cosmetic improvements</li>
+            </ul>
+        </section>
+
+        <section>
             <header><h2>Version 1.2.1</h2></header>
             <p>Small bugfix release.</p>
             <ul>

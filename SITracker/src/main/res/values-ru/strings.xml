@@ -23,7 +23,7 @@
     <string name="no_network_error">Нет соединения</string>
     <string name="no_network_retry">ЕЩЕ РАЗ</string>
     <string name="backup_restored_crouton_message">Бэк-ап данных востановлен</string>
-    <string name="crouton_image_desc">info</string>
+    <string name="crouton_image_desc">информация</string>
 
 
     <!-- Home AB actions -->
@@ -216,6 +216,21 @@
 
 
     <string name="change_log"><![CDATA[
+        <section>
+            <header><h2>Версия 1.3.0</h2></header>
+            <ul>
+                <li>Мелкий ре-дизайн</li>
+                <li>Исправлен запуск обновлении при запуске системы/подключении устройств</li>
+                <li>Добавлен поиск авторов</li>
+                <li>Добавлены детали произведений и просмотр иллюстраций</li>
+                <li>Возможность оценки произведений и +1</li>
+                <li>Добавлен индикатор обновлений на категориях</li>
+                <li>Добавлена возможность игнорировать обновлении для определенных произведений</li>
+                <li>Добавлено несколько одноразовых "showcase" скринов для помощи в использовании приложения</li>
+                <li>Множество исправленных ошибок и косметических исправлений</li>
+            </ul>
+        </section>
+
         <section>
             <header><h2>Версия 1.2.1</h2></header>
             <p>Мелкий релиз баг-фиксов.</p>
