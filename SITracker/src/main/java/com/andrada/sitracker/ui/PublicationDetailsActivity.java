@@ -28,6 +28,7 @@ import android.view.WindowManager;
 
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.ui.fragment.PublicationInfoFragment_;
+import com.andrada.sitracker.util.BeamUtils;
 import com.andrada.sitracker.util.UIUtils;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
@@ -38,7 +39,7 @@ public class PublicationDetailsActivity extends SimpleSinglePaneActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //UIUtils.tryTranslateHttpIntent(this);
-        //BeamUtils.tryUpdateIntentFromBeam(this);
+        BeamUtils.tryUpdateIntentFromBeam(this);
         if (UIUtils.hasHoneycomb()) {
             requestWindowFeature(Window.FEATURE_ACTION_BAR);
         }
@@ -49,8 +50,8 @@ public class PublicationDetailsActivity extends SimpleSinglePaneActivity {
         super.onCreate(savedInstanceState);
 
         if (savedInstanceState == null) {
-            Uri sessionUri = getIntent().getData();
-            //BeamUtils.setBeamSessionUri(this, sessionUri);
+            Uri publicationUri = getIntent().getData();
+            BeamUtils.setBeamPublicationUri(this, publicationUri);
         }
 
         setTitle("");

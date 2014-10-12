@@ -22,6 +22,23 @@ import java.util.List;
 
 public class AppUriContract {
 
+    public static class Authors {
+
+        public static final String CONTENT_TYPE =
+                "vnd.android.cursor.dir/vnd.sitracker.author";
+        public static final String CONTENT_ITEM_TYPE =
+                "vnd.android.cursor.item/vnd.sitracker.author";
+    }
+
+    public static class Publications {
+
+        public static final String CONTENT_TYPE =
+                "vnd.android.cursor.dir/vnd.sitracker.publication";
+        public static final String CONTENT_ITEM_TYPE =
+                "vnd.android.cursor.item/vnd.sitracker.publication";
+    }
+
+
     private static final String PATH_SEARCH_SAMLIB = "search";
     private static final String PATH_AUTHORS = "authors";
     private static final String PATH_PUBLICATIONS = "publicaitons";
