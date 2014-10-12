@@ -116,6 +116,11 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
         super.onStart();
         getActivity().supportInvalidateOptionsMenu();
         currentAuthorIndex = currentAuthorIndex == -1 ? adapter.getFirstAuthorId() : currentAuthorIndex;
+        setStartupSelected();
+    }
+
+    @UiThread(delay = 100)
+    void setStartupSelected() {
         // Set the item as checked to be highlighted
         adapter.setSelectedItem(currentAuthorIndex);
         adapter.notifyDataSetChanged();
