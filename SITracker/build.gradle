@@ -67,17 +67,21 @@ android {
         versionProps.load(new FileInputStream(versionPropsFile))
         def value = 0
         def runTasks = gradle.startParameter.taskNames
-        if ('assemble' in runTasks || 'assembleRelease' in runTasks || 'aR' in runTasks) {
+        println('Run tasks:')
+        println(runTasks.toString())
+        if (':SITracker:assembleRelease' in runTasks) {
+            println('Release build detected - incrementing versionCode and patch')
             value = 1;
         }
         def versionMajor = versionProps['VERSION_MAJOR'].toInteger()
         def versionMinor = versionProps['VERSION_MINOR'].toInteger()
         def versionPatch = versionProps['VERSION_PATCH'].toInteger() + value
-        def versionBuild = versionProps['VERSION_BUILD'].toInteger() + 1
+        def versionBuildLong = Long.parseLong(versionProps['VERSION_BUILD'].toString(), 16) + 1
+        def versionBuild = Long.toHexString(versionBuildLong)
         def version_Code = versionProps['VERSION_CODE'].toInteger() + value
 
         versionProps['VERSION_PATCH'] = versionPatch.toString()
-        versionProps['VERSION_BUILD'] = versionBuild.toString()
+        versionProps['VERSION_BUILD'] = versionBuild
         versionProps['VERSION_CODE'] = version_Code.toString()
 
         versionProps.store(versionPropsFile.newWriter(), null)

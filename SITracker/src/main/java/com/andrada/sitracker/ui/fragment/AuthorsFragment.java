@@ -322,6 +322,11 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
             return true;
         } else if (item.getItemId() == R.id.action_mark_read) {
             adapter.markAuthorsRead(mSelectedAuthors);
+            AnalyticsHelper.getInstance().sendEvent(
+                    Constants.GA_ADMIN_CATEGORY,
+                    Constants.GA_EVENT_AUTHOR_MANUAL_READ,
+                    Constants.GA_EVENT_AUTHOR_MANUAL_READ, (long) mSelectedAuthors.size());
+
             BackupManager bm = new BackupManager(getActivity());
             bm.dataChanged();
             return true;

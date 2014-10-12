@@ -173,7 +173,6 @@
 
     <!-- About Dialog -->
     <string name="app_version_format">Version: %1$s</string>
-    <string name="app_buildnr_format">Build number: %1$s</string>
     <string name="about_licenses">Open Source Licenses</string>
     <string name="whats_new">What\'s new</string>
 
@@ -213,7 +212,7 @@
 
     <string name="change_log"><![CDATA[
         <section>
-            <header><h2>Версия 1.3.0</h2></header>
+            <header><h2>Version 1.3.0</h2></header>
             <ul>
                 <li>Small redesign</li>
                 <li>Enable updates when device starts/storage mounts</li>

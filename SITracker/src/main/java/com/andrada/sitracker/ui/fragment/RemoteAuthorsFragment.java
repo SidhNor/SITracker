@@ -120,7 +120,7 @@ public class RemoteAuthorsFragment extends Fragment implements
         AnalyticsHelper.getInstance().sendEvent(
                 Constants.GA_EXPLORE_CATEGORY,
                 Constants.GA_EVENT_AUTHOR_ADDED,
-                Constants.GA_EVENT_AUTHOR_ADDED, (long) message.length());
+                Constants.GA_EVENT_AUTHOR_ADDED);
 
         if (message.length() != 0) {
             Style.Builder alertStyle = new Style.Builder()

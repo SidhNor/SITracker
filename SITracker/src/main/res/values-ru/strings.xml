@@ -177,7 +177,6 @@
 
     <!-- About Dialog -->
     <string name="app_version_format">Версия: %1$s</string>
-    <string name="app_buildnr_format">Билд №: %1$s</string>
     <string name="about_licenses">Лицензии с открытым исходным кодом</string>
     <string name="whats_new">Что нового</string>
 

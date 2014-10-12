@@ -21,16 +21,12 @@ public class AboutDialogView extends RelativeLayout {
     @ViewById
     TextView versionText;
 
-    @ViewById
-    TextView buildNumber;
-
     public AboutDialogView(@NotNull Context context) {
         super(context);
     }
 
-    public void bindData(String versionTxt, String buildNr, CharSequence aboutBody) {
+    public void bindData(String versionTxt, CharSequence aboutBody) {
         versionText.setText(versionTxt);
-        buildNumber.setText(buildNr);
         generalText.setText(aboutBody);
         generalText.setMovementMethod(new LinkMovementMethod());
     }

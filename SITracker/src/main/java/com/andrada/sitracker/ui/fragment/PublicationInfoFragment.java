@@ -581,6 +581,9 @@ public class PublicationInfoFragment extends Fragment implements
 
     @OptionsItem(R.id.action_ignore_updates)
     void ignoreUpdatesSelected() {
+        AnalyticsHelper.getInstance().sendEvent(Constants.GA_ADMIN_CATEGORY,
+                Constants.GA_EVENT_PUB_IGNORED,
+                Constants.GA_EVENT_PUB_IGNORED);
         markPublicationAsIgnored(true);
     }
 
