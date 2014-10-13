@@ -138,7 +138,10 @@ public class PublicationsFragment extends Fragment implements
         int errorMessage = -1;
         try {
             Intent intent = ShareHelper.fetchPublication(getActivity(), pub, prefs.downloadFolder().get(), forceDownload);
-            getActivity().startActivity(intent);
+            //Open only if our app is actually running
+            if (getActivity() != null) {
+                getActivity().startActivity(intent);
+            }
         } catch (SharePublicationException e) {
             switch (e.getError()) {
                 case COULD_NOT_PERSIST:
