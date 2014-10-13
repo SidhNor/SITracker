@@ -36,14 +36,11 @@ public class AboutDialog extends DialogFragment {
         PackageManager pm = getActivity().getPackageManager();
         String packageName = getActivity().getPackageName();
         String versionName;
-        String buildNr;
         try {
             PackageInfo info = pm.getPackageInfo(packageName, 0);
             versionName = info.versionName;
-            buildNr = String.valueOf(info.versionCode);
         } catch (PackageManager.NameNotFoundException e) {
             versionName = VERSION_UNAVAILABLE;
-            buildNr = VERSION_UNAVAILABLE;
         }
 
         SpannableStringBuilder aboutBody = new SpannableStringBuilder();
@@ -66,8 +63,7 @@ public class AboutDialog extends DialogFragment {
         aboutBody.append(whatsNewLink);
 
         AboutDialogView aboutBodyView = AboutDialogView_.build(getActivity());
-        aboutBodyView.bindData(getString(R.string.app_version_format, versionName),
-                getString(R.string.app_buildnr_format, buildNr), aboutBody);
+        aboutBodyView.bindData(getString(R.string.app_version_format, versionName), aboutBody);
 
         return new AlertDialog.Builder(getActivity())
                 .setTitle(R.string.action_about)

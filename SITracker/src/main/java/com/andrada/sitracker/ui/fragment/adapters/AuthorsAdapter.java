@@ -79,21 +79,24 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
     public void reloadAuthors() {
         try {
             int sortType = Integer.parseInt(prefs.authorsSortType().get());
+            List<Author> newList;
             if (sortType == 0) {
-                authors = authorDao.getAllAuthorsSortedAZ();
+                newList = authorDao.getAllAuthorsSortedAZ();
             } else {
-                authors = authorDao.getAllAuthorsSortedNew();
+                newList = authorDao.getAllAuthorsSortedNew();
             }
             mNewAuthors = authorDao.getNewAuthorsCount();
             setSelectedItem(mSelectedAuthorId);
-            postDataSetChanged();
+            postDataSetChanged(newList);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     @UiThread
-    protected void postDataSetChanged() {
+    protected void postDataSetChanged(List<Author> newAuthors) {
+        authors.clear();
+        authors.addAll(newAuthors);
         notifyDataSetChanged();
     }
 
@@ -178,11 +181,12 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
         }
 
         boolean removingCurrentlySelected = false;
+        List<Author> authorCopy = new ArrayList<Author>(authors);
         for (Long anAuthorToRemove : authorsToRemove) {
             if (anAuthorToRemove == mSelectedAuthorId) {
                 removingCurrentlySelected = true;
             }
-            authors.remove(getAuthorById(anAuthorToRemove));
+            authorCopy.remove(getAuthorById(anAuthorToRemove));
         }
         if (removingCurrentlySelected) {
             //Try select the first one
@@ -190,7 +194,7 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
         } else {
             setSelectedItem(mSelectedAuthorId);
         }
-        postDataSetChanged();
+        postDataSetChanged(authorCopy);
     }
 
     public long getFirstAuthorId() {

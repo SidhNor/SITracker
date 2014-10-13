@@ -116,6 +116,11 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
         super.onStart();
         getActivity().supportInvalidateOptionsMenu();
         currentAuthorIndex = currentAuthorIndex == -1 ? adapter.getFirstAuthorId() : currentAuthorIndex;
+        setStartupSelected();
+    }
+
+    @UiThread(delay = 100)
+    void setStartupSelected() {
         // Set the item as checked to be highlighted
         adapter.setSelectedItem(currentAuthorIndex);
         adapter.notifyDataSetChanged();
@@ -322,6 +327,11 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
             return true;
         } else if (item.getItemId() == R.id.action_mark_read) {
             adapter.markAuthorsRead(mSelectedAuthors);
+            AnalyticsHelper.getInstance().sendEvent(
+                    Constants.GA_ADMIN_CATEGORY,
+                    Constants.GA_EVENT_AUTHOR_MANUAL_READ,
+                    Constants.GA_EVENT_AUTHOR_MANUAL_READ, (long) mSelectedAuthors.size());
+
             BackupManager bm = new BackupManager(getActivity());
             bm.dataChanged();
             return true;

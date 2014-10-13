@@ -41,18 +41,6 @@
             android:paddingRight="8dp"
             android:text="@string/app_version_format"/>
 
-        <TextView
-            android:id="@+id/buildNumber"
-            style="@style/TextBody"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/versionText"
-            android:layout_toEndOf="@id/appIcon"
-            android:layout_toRightOf="@id/appIcon"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
-            android:text="@string/app_buildnr_format"/>
-
     </RelativeLayout>
 
     <TextView

@@ -34,10 +34,8 @@
     <screenName name="com.andrada.sitracker.ui.HomeActivity_">Home</screenName>
     <screenName name="com.andrada.sitracker.ui.ImportAuthorsActivity_">Import</screenName>
     <screenName name="com.andrada.sitracker.ui.SettingsActivity_">Preferences</screenName>
-    <screenName name="com.andrada.sitracker.ui.DirectoryChooserActivity">Directory chooser
-    </screenName>
+    <screenName name="com.andrada.sitracker.ui.DirectoryChooserActivity">Directory chooser</screenName>
     <screenName name="com.andrada.sitracker.ui.SearchActivity_">Search</screenName>
-    <screenName name="com.andrada.sitracker.ui.PublicationDetailsActivity">Publication details
-    </screenName>
+    <screenName name="com.andrada.sitracker.ui.PublicationDetailsActivity">Publication details</screenName>
 
 </resources>

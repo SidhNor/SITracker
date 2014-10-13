@@ -173,7 +173,6 @@
 
     <!-- About Dialog -->
     <string name="app_version_format">Version: %1$s</string>
-    <string name="app_buildnr_format">Build number: %1$s</string>
     <string name="about_licenses">Open Source Licenses</string>
     <string name="whats_new">What\'s new</string>
 
@@ -204,7 +203,7 @@
     <string name="showcase_getting_started_title">Getting started</string>
     <string name="showcase_getting_started_detail">If you do not have any added authors yet, you can start by searching for them.</string>
     <string name="showcase_search_title">Adding authors</string>
-    <string name="showcase_search_detail">You can  search for authors by their name. You could also paste a full author url here and the will be added right away.</string>
+    <string name="showcase_search_detail">You can  search for authors by their name. You could also paste a full author url here and he will be added right away.</string>
     <string name="showcase_pub_quick_title">Quick publication access</string>
     <string name="showcase_pub_quick_detail">Tap once to go to publication details. Tap\'n\'Hold for downloading/opening the publication directly.</string>
     <string name="showcase_pub_detail_image_title">Disabling images</string>
@@ -212,6 +211,21 @@
 
 
     <string name="change_log"><![CDATA[
+        <section>
+            <header><h2>Version 1.3.0</h2></header>
+            <ul>
+                <li>Small redesign</li>
+                <li>Enable updates when device starts/storage mounts</li>
+                <li>Added author search</li>
+                <li>Added publicaiton info screen with images</li>
+                <li>Ability to rate publicaitons and +1</li>
+                <li>Added indicator to group header if it contains a new publication</li>
+                <li>Added "ignore update" feature for marking a publication as ignored</li>
+                <li>Added tutorial showcase views to highlight less understandable in-app scenarios</li>
+                <li>A lot of bug fixes and cosmetic improvements</li>
+            </ul>
+        </section>
+
         <section>
             <header><h2>Version 1.2.1</h2></header>
             <p>Small bugfix release.</p>
