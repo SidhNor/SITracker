@@ -20,13 +20,20 @@ import com.andrada.sitracker.db.beans.Author;
 import com.andrada.sitracker.db.beans.Publication;
 import com.andrada.sitracker.exceptions.AddAuthorException;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
 
 public interface AuthorPageReader {
 
+    @NotNull
     Author getAuthor(String url) throws AddAuthorException;
+    @NotNull
     List<Publication> getPublications(Author author);
+    @Nullable
     String getAuthorImageUrl(String authorUrl);
+    @Nullable
     String getAuthorDescription();
     boolean isPageBlank();
 

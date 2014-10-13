@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Gleb Godonoga.
+ * Copyright 2014 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package com.andrada.sitracker.exceptions;
 
 public class AddAuthorException extends Exception {
 
+    private static final long serialVersionUID = -4023488793049313635L;
     private AuthorAddErrors mError = AuthorAddErrors.AUTHOR_UNKNOWN;
 
     public enum AuthorAddErrors {

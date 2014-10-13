@@ -16,6 +16,8 @@
 
 package com.andrada.sitracker.util;
 
+import org.jetbrains.annotations.NotNull;
+
 public class SamlibPageHelper {
 
     public static String stripDescriptionOfImages(String value) {
@@ -25,7 +27,8 @@ public class SamlibPageHelper {
         return value;
     }
 
-    public static String getUrlIdFromCompleteUrl(String completeUrl) {
+    @NotNull
+    public static String getUrlIdFromCompleteUrl(@NotNull String completeUrl) {
         String result = completeUrl.toLowerCase()
                 .replace("http://", "")
                 .replace("indexdate.shtml", "")

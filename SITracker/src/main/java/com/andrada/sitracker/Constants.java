@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,13 +20,19 @@ public class Constants {
 
     public final static String APP_TAG = "sitracker";
 
+    public final static long STARTUP_UPDATE_DELAY = 600000L;
+
     public final static String PUBLICATIONS_REGEX =
-            "<DL><DT><li>(?:<font.*?>.*?</font>)?\\s*(<b>(.*?)\\s*</b>\\s*)?<A HREF=(.*?)><b>\\s*(.*?)\\s*</b></A>.*?<b>(\\d+)k</b>.*?<small>(?:Оценка:<b>((\\d+(?:\\.\\d+)?).*?)</b>.*?)?\\s*\\\"(.*?)\\\"\\s*(.*?)?\\s*(?:<A HREF=\\\"(.*?)\\\">Комментарии:\\s*((\\d+).*?)</A>\\s*)?</small>.*?(?:<br><DD>(.*?))?</DL>";
+            "<DL><DT><li>(?:<font.*?>.*?</font>)?\\s*(<b>(.*?)\\s*</b>\\s*)?<A HREF=(.*?)><b>\\s*(.*?)\\s*</b></A>.*?<b>(\\d+)k</b>.*?<small>(?:Оценка:<b>((\\d+(?:\\.\\d+)?).*?)</b>.*?)?\\s*\\\"(.*?)\\\"\\s*(.*?)?\\s*(?:<A HREF=\\\"(.*?)\\\">Комментарии:\\s*((\\d+).*?)</A>\\s*)?</small>.*?(?:<br><DD>(.*?)(?:<small><a href=(.*?)>Иллюстрации/приложения.*?</a></small>)?)?</DL>";
+
+    public static final String SAMLIB_AUTHOR_SEARCH_REGEX = "<td.*?><p><a href=(.*?)><font.*?>(.*?)</font>.+?</font><br>\\s*(.*?)</td></tr></tbody>";
 
     public final static String SIMPLE_URL_REGEX =
             "^(https?:\\/\\/)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\/\\w \\.-]*)*\\/?$";
 
     public final static String AUTHOR_UPDATE_DATE_REGEX = "Обновлялось:</font></a></b>\\s*(.*?)\\s*$";
+
+    public static final String PUB_RATING_LINK_EXTRACT_REGEX = ".*?href=\"(.*?)\".*";
 
     public final static String AUTHOR_DESCRIPTION_TEXT_REGEX = "Об авторе:</font></b><i>(.*?)</i>";
 
@@ -55,21 +61,38 @@ public class Constants {
 
     public static final String NUMBER_OF_UPDATED_AUTHORS = "number_of_updated_authors";
 
+    //Showcase one-shot view id's
+    public static final int SHOWCASE_START_SEARCH_SHOT_ID = 101;
+    public static final int SHOWCASE_ADD_AUTHORS_SEARCH_SHOT_ID = 102;
+    public static final int SHOWCASE_PUBLICATION_QUICK_ACCESS_SHOT_ID = 103;
+    public static final int SHOWCASE_PUBLICATION_DETAIL_IMAGES_SHOT_ID = 104;
+    public static final int SHOWCASE_PUBLICATION_DETAIL_RATING_SHOT_ID = 105;
+    public static final int SHOWCASE_PUBLICATION_DETAIL_FAB_SHOT_ID = 105;
+
     //Analytics category names
-    public static final String GA_UI_CATEGORY = "ui_action";
+    public static final String GA_EXPLORE_CATEGORY = "explore_action";
+    public static final String GA_READ_CATEGORY = "read_action";
+    public static final String GA_ADMIN_CATEGORY = "admin_action";
 
     //Analytics screen names
     public static final String GA_SCREEN_PUBLICATIONS = "Publications";
     public static final String GA_SCREEN_AUTHORS = "Authors";
-    public static final String GA_SCREEN_ADD_DIALOG = "Add author dialog";
     public static final String GA_SCREEN_IMPORT_PROGRESS = "Import progress";
     public static final String GA_SCREEN_EXPORT_DIALOG = "Export authors dialog";
     public static final String GA_SCREEN_PREFS_DOWNLOAD_DIALOG = "Download folder setting dialog";
+    public static final String GA_SCREEN_RATING_DIALOG = "Publication Rating";
+    public static final String GA_SCREEN_ABOUT_DIALOG = "About";
 
     //Analytics event names
     public static final String GA_EVENT_AUTHOR_ADDED = "author_added";
     public static final String GA_EVENT_AUTHOR_UPDATE = "author_update";
     public static final String GA_EVENT_AUTHORS_MANUAL_REFRESH = "author_manual_refresh";
+    public static final String GA_EVENT_PUB_MANUAL_REFRESH = "pub_manual_refresh";
+    public static final String GA_EVENT_PUB_RATED = "pub_rated";
+    public static final String GA_EVENT_PUB_IGNORED = "pub_updates_ignored";
+    public static final String GA_EVENT_ENABLE_UPDATES_BACK = "pub_updates_reenabled";
+    public static final String GA_EVENT_FAB_CLICK = "fab_used";
+    public static final String GA_EVENT_LONG_TAP = "long_tap_used";
     public static final String GA_EVENT_AUTHOR_REMOVED = "authors_removed";
     public static final String GA_EVENT_AUTHOR_MANUAL_READ = "author_manual_marked_read";
     public static final String GA_EVENT_AUTHOR_PUB_OPEN = "publication_opened";

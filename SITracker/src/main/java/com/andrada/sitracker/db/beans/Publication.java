@@ -1,11 +1,11 @@
 /*
- * Copyright 2013 Gleb Godonoga.
+ * Copyright 2014 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,6 +19,9 @@ package com.andrada.sitracker.db.beans;
 import com.andrada.sitracker.db.dao.PublicationDaoImpl;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -62,6 +65,16 @@ public class Publication implements Serializable {
     Date updateDate;
     @DatabaseField(canBeNull = true, useGetSet = true)
     String imageUrl;
+    @DatabaseField(canBeNull = true, useGetSet = true)
+    String imagePageUrl;
+    @DatabaseField(canBeNull = true, useGetSet = true)
+    String voteCookie;
+    @DatabaseField(canBeNull = true, useGetSet = true)
+    int myVote;
+    @DatabaseField(canBeNull = true, useGetSet = true)
+    Date voteDate;
+    @DatabaseField(canBeNull = false, useGetSet = true, defaultValue = "false")
+    boolean updatesIgnored;
 
     boolean isLoading = false;
 
@@ -70,10 +83,11 @@ public class Publication implements Serializable {
     }
 
     @Override
-    public boolean equals(Object object) {
+    @Contract("null -> false")
+    public boolean equals(@Nullable Object object) {
         boolean sameSame = false;
 
-        if (object != null && object instanceof Publication) {
+        if (object instanceof Publication) {
             sameSame = this.getUrl().equals(((Publication) object).getUrl());
         }
 
@@ -204,6 +218,46 @@ public class Publication implements Serializable {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public String getImagePageUrl() {
+        return imagePageUrl;
+    }
+
+    public void setImagePageUrl(String imagePageUrl) {
+        this.imagePageUrl = imagePageUrl;
+    }
+
+    public String getVoteCookie() {
+        return voteCookie;
+    }
+
+    public void setVoteCookie(String voteCookie) {
+        this.voteCookie = voteCookie;
+    }
+
+    public int getMyVote() {
+        return myVote;
+    }
+
+    public void setMyVote(int myVote) {
+        this.myVote = myVote;
+    }
+
+    public Date getVoteDate() {
+        return voteDate;
+    }
+
+    public void setVoteDate(Date voteDate) {
+        this.voteDate = voteDate;
+    }
+
+    public boolean getUpdatesIgnored() {
+        return updatesIgnored;
+    }
+
+    public void setUpdatesIgnored(boolean updatesIgnored) {
+        this.updatesIgnored = updatesIgnored;
     }
 
     public boolean getLoading() {

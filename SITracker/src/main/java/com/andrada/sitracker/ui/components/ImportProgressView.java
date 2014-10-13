@@ -28,6 +28,7 @@ import com.andrada.sitracker.tasks.ImportAuthorsTask;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
+import org.jetbrains.annotations.NotNull;
 
 import de.greenrobot.event.EventBus;
 
@@ -43,11 +44,11 @@ public class ImportProgressView extends RelativeLayout {
     @ViewById
     TextView progressTitle;
 
-    public ImportProgressView(Context context) {
+    public ImportProgressView(@NotNull Context context) {
         super(context);
     }
 
-    public void updateProgress(ImportAuthorsTask.ImportProgress importProgress) {
+    public void updateProgress(@NotNull ImportAuthorsTask.ImportProgress importProgress) {
         if (importProgress.getTotalProcessed() == 0) {
             importProgressBar.setIndeterminate(true);
             progressTitle.setText(getResources().getString(R.string.import_message_connecting_title));

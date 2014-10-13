@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,23 +20,108 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
+import android.text.TextUtils;
+
+import com.andrada.sitracker.Constants;
+import com.andrada.sitracker.db.beans.Publication;
+import com.andrada.sitracker.exceptions.SharePublicationException;
+import com.github.kevinsawicki.http.HttpRequest;
+
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.andrada.sitracker.util.LogUtils.LOGW;
+
 public final class ShareHelper {
 
+    @NotNull
     public static Intent getSharePublicationIntent(Uri file) {
         Intent share = new Intent(Intent.ACTION_VIEW);
         share.addCategory(Intent.CATEGORY_DEFAULT);
         share.setDataAndType(file, "text/html");
         return share;
+    }
+
+    /**
+     * Fetches publication html file into downloadFolder or default files folder
+     *
+     * @param context       of the App, can be null if pubFolder is not blank
+     * @param pub           the actual publication to download
+     * @param pubFolder     folder to download or to look into
+     * @param forceDownload if the file exists
+     * @return Intent for downloaded or existing file
+     * @throws SharePublicationException
+     */
+    public static Intent fetchPublication(Context context, @NotNull Publication pub,
+                                          String pubFolder, boolean forceDownload)
+            throws SharePublicationException {
+
+        String pubUrl = pub.getUrl();
+        File file;
+        if (TextUtils.isEmpty(pubFolder)) {
+            file = ShareHelper.getPublicationStorageFile(context,
+                    pub.getAuthor().getName() + "_" + pub.getName());
+        } else {
+            file = ShareHelper.getPublicationStorageFileWithPath(pubFolder,
+                    pub.getAuthor().getName() + "_" + pub.getName());
+        }
+
+        if (file == null) {
+            throw new SharePublicationException(
+                    SharePublicationException.SharePublicationErrors.STORAGE_NOT_ACCESSIBLE_FOR_PERSISTANCE);
+        }
+
+        if (forceDownload ||
+                !file.exists() ||
+                file.lastModified() < pub.getUpdateDate().getTime()) {
+            try {
+                URL publicaitonUrl = new URL(pubUrl);
+                HttpRequest request = HttpRequest.get(publicaitonUrl);
+                if (request.code() == 200) {
+                    String content = request.body();
+                    boolean result = ShareHelper.saveHtmlPageToFile(file, content, request.charset());
+                    if (!result) {
+                        throw new SharePublicationException(
+                                SharePublicationException.SharePublicationErrors.COULD_NOT_PERSIST);
+                    }
+                } else {
+                    throw new SharePublicationException(
+                            SharePublicationException.SharePublicationErrors.COULD_NOT_LOAD);
+                }
+            } catch (MalformedURLException e) {
+                throw new SharePublicationException(
+                        SharePublicationException.SharePublicationErrors.WRONG_PUBLICATION_URL);
+            } catch (HttpRequest.HttpRequestException e) {
+                throw new SharePublicationException(
+                        SharePublicationException.SharePublicationErrors.COULD_NOT_LOAD);
+            }
+        }
+        return getSharePublicationIntent(Uri.fromFile(file));
+    }
+
+    public static boolean shouldRefreshPublication(Context context, @NotNull Publication pub,
+                                                   String pubFolder) {
+        File file;
+        if (TextUtils.isEmpty(pubFolder)) {
+            file = ShareHelper.getPublicationStorageFile(context,
+                    pub.getAuthor().getName() + "_" + pub.getName());
+        } else {
+            file = ShareHelper.getPublicationStorageFileWithPath(pubFolder,
+                    pub.getAuthor().getName() + "_" + pub.getName());
+        }
+        return file == null || !file.exists() || file.lastModified() < pub.getUpdateDate().getTime();
     }
 
     /**
@@ -46,26 +131,27 @@ public final class ShareHelper {
      * @param hashedPublicationName A unique hash of the publication url
      * @return The file or null if storage is not accessible.
      */
-    public static File getPublicationStorageFile(Context context, String hashedPublicationName) {
+    @Nullable
+    public static File getPublicationStorageFile(@NotNull Context context, String hashedPublicationName) {
 
         File storageDir = getPublicationStorageDirectory(context);
         if (storageDir == null) {
-            return storageDir;
+            return null;
         }
-
         return new File(storageDir, hashedPublicationName + ".html");
     }
 
-    public static File getPublicationStorageFileWithPath(Context context, String path, String filename) {
+    @Nullable
+    public static File getPublicationStorageFileWithPath(String path, String filename) {
         File storageDir = getExternalDirectoryBasedOnPath(path);
         if (storageDir == null) {
-            return storageDir;
+            return null;
         }
 
         return new File(storageDir, sanitizeFileName(filename + ".html"));
     }
 
-    private static String sanitizeFileName(String badFileName) {
+    private static String sanitizeFileName(@NotNull String badFileName) {
         final String pattern = "[^0-9\\s_\\p{L}\\(\\)%\\-\\.]";
         StringBuffer cleanFileName = new StringBuffer();
         Pattern filePattern = Pattern.compile(pattern);
@@ -85,7 +171,8 @@ public final class ShareHelper {
      * @param context The context to use
      * @return external directory path, null if directory not available
      */
-    public static File getPublicationStorageDirectory(Context context) {
+    @Nullable
+    public static File getPublicationStorageDirectory(@NotNull Context context) {
         // Check if media is mounted or storage is built-in, if so, try and use external cache dir
         // otherwise return null
         if (!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState()) &&
@@ -101,7 +188,9 @@ public final class ShareHelper {
      * @param path path to try
      * @return File instance or null if storage is not accessible or path is invalid
      */
-    public static File getExternalDirectoryBasedOnPath(String path) {
+    @Nullable
+    @Contract("null -> null")
+    public static File getExternalDirectoryBasedOnPath(@Nullable String path) {
         //Sanity check 1
         if (path == null) {
             return null;
@@ -115,8 +204,9 @@ public final class ShareHelper {
                 Environment.isExternalStorageRemovable()) {
             return null;
         }
-        File sdCard = Environment.getExternalStorageDirectory();
-        File dir = new File(sdCard.getAbsolutePath() + path);
+        //Path here is always absolute.
+        //File sdCard = Environment.getExternalStorageDirectory();
+        File dir = new File(/*sdCard.getAbsolutePath() + */path);
         //Make sure we create directories if they do not exist
         if (!dir.exists()) {
             dir.mkdirs();
@@ -129,9 +219,8 @@ public final class ShareHelper {
         }
     }
 
-    public static String getTimestampFilename(String prefix, String extension) {
-        assert prefix != null;
-        assert extension != null;
+    @NotNull
+    public static String getTimestampFilename(@NotNull String prefix, @NotNull String extension) {
         SimpleDateFormat fmt = new SimpleDateFormat("dd-MM-yyyy");
         return prefix + fmt.format(new Date()) + extension;
     }
@@ -145,7 +234,7 @@ public final class ShareHelper {
      * @param charSet Character set to use during save
      * @return true if save was successful, false otherwise
      */
-    public static boolean saveHtmlPageToFile(File file, String content, String charSet) {
+    public static boolean saveHtmlPageToFile(@NotNull File file, @NotNull String content, String charSet) {
         boolean result = true;
         if (!content.contains("<meta http-equiv=\"Content-Type\"")) {
             //Use UTF-8
@@ -153,15 +242,31 @@ public final class ShareHelper {
             content = content.replace("<head>",
                     "<head><meta http-equiv=\"Content-Type\" content=\"text/html;charset=UTF-8\">");
         }
+        BufferedOutputStream bs = null;
+        FileOutputStream fs = null;
+
         try {
-            BufferedOutputStream bs;
-            FileOutputStream fs = new FileOutputStream(file);
+            fs = new FileOutputStream(file);
             bs = new BufferedOutputStream(fs);
             bs.write(content.getBytes(charSet));
             bs.close();
 
         } catch (IOException e) {
             result = false;
+        } finally {
+            if (bs != null) {
+                try {
+                    bs.close();
+                } catch (IOException e) {
+                    LOGW(Constants.APP_TAG, "Could not closed saved html page", e);
+                }
+            } else if (fs != null) {
+                try {
+                    fs.close();
+                } catch (IOException e) {
+                    LOGW(Constants.APP_TAG, "Could not closed saved html page", e);
+                }
+            }
         }
 
         return result;

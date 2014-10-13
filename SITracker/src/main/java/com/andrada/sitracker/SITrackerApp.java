@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,7 +20,15 @@ import android.app.Application;
 
 import com.andrada.sitracker.util.AnalyticsExceptionParser;
 import com.andrada.sitracker.util.AnalyticsHelper;
+import com.andrada.sitracker.util.UIUtils;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.GlideBuilder;
+import com.bumptech.glide.load.engine.cache.DiskLruCacheWrapper;
 import com.google.android.gms.analytics.ExceptionReporter;
+
+import java.io.File;
+
+import static com.andrada.sitracker.util.LogUtils.LOGD;
 
 public class SITrackerApp extends Application {
 
@@ -30,14 +38,38 @@ public class SITrackerApp extends Application {
       */
     public void onCreate() {
 
-        AnalyticsHelper.initHelper(this);
-        // Change uncaught exception parser...
-        // Note: Checking uncaughtExceptionHandler type can be useful if clearing ga_trackingId during development to disable analytics - avoid NullPointerException.
-        Thread.UncaughtExceptionHandler uncaughtExceptionHandler = Thread.getDefaultUncaughtExceptionHandler();
+        //Setup cache if possible
+        try {
+            File httpCacheDir = new File(this.getCacheDir(), "http");
+            long httpCacheSize = 1 * 1024 * 1024; // 1 MiB
+            Class.forName("android.net.http.HttpResponseCache")
+                    .getMethod("install", File.class, long.class)
+                    .invoke(null, httpCacheDir, httpCacheSize);
+            LOGD("SiTracker", "Cache installed");
 
-        if (uncaughtExceptionHandler instanceof ExceptionReporter) {
-            ExceptionReporter exceptionReporter = (ExceptionReporter) uncaughtExceptionHandler;
-            exceptionReporter.setExceptionParser(new AnalyticsExceptionParser());
+        } catch (Exception ignored) {
+            //Ignore everything
         }
+
+        AnalyticsHelper.initHelper(this);
+        ExceptionReporter myReporter = new ExceptionReporter(
+                // Currently used Tracker.
+                AnalyticsHelper.getInstance().getTracker(AnalyticsHelper.TrackerName.APP_TRACKER),
+                // Current default uncaught exception handler.
+                Thread.getDefaultUncaughtExceptionHandler(),
+                // Context of the application.
+                this.getApplicationContext());
+        myReporter.setExceptionParser(new AnalyticsExceptionParser());
+        Thread.setDefaultUncaughtExceptionHandler(myReporter);
+
+        //TODO remove Gingerbread check on next release
+        if (UIUtils.hasGingerbreadMR1()) {
+            if (!Glide.isSetup()) {
+                Glide.setup(new GlideBuilder(this)
+                                .setDiskCache(DiskLruCacheWrapper.get(Glide.getPhotoCacheDir(this), 250 * 1024 * 1024))
+                );
+            }
+        }
+
     }
 }

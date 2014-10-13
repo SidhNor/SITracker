@@ -17,6 +17,7 @@
 package com.andrada.sitracker.ui;
 
 
+import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -50,6 +51,8 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,6 +61,7 @@ import de.greenrobot.event.EventBus;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
+@SuppressLint("Registered")
 @EActivity(R.layout.activity_import)
 public class ImportAuthorsActivity extends BaseActivity {
 
@@ -84,11 +88,14 @@ public class ImportAuthorsActivity extends BaseActivity {
     @SystemService
     ActivityManager activityManager;
 
+    @Nullable
     ImportAuthorsTask importTask;
     private boolean isBound = false;
-    private List<String> authorsToImport;
+    @NotNull
+    private List<String> authorsToImport = new ArrayList<String>();
 
-    private ServiceConnection mConnection = new ServiceConnection() {
+    @NotNull
+    private final ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName className,
                                        IBinder service) {
@@ -129,24 +136,24 @@ public class ImportAuthorsActivity extends BaseActivity {
 
     @Click(R.id.performImportButton)
     void importParsedAuthors() {
-        if (authorsToImport != null) {
-            AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_IMPORT_PROGRESS);
-            //Inflate
-            Intent importSvc = ImportAuthorsTask_.intent(getApplicationContext()).get();
-            importSvc.putStringArrayListExtra(ImportAuthorsTask.AUTHOR_LIST_EXTRA, new ArrayList<String>(authorsToImport));
-            getApplicationContext().startService(importSvc);
-            getApplicationContext().bindService(importSvc, mConnection, Context.BIND_AUTO_CREATE);
-        }
+        AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_IMPORT_PROGRESS);
+        //Inflate
+        Intent importSvc = ImportAuthorsTask_.intent(getApplicationContext()).get();
+        importSvc.putStringArrayListExtra(ImportAuthorsTask.AUTHOR_LIST_EXTRA, new ArrayList<String>(authorsToImport));
+        getApplicationContext().startService(importSvc);
+        getApplicationContext().bindService(importSvc, mConnection, Context.BIND_AUTO_CREATE);
     }
 
     public void onEvent(CancelImportEvent event) {
         if (isBound) {
-            this.importTask.cancelImport();
+            if (importTask != null) {
+                importTask.cancelImport();
+            }
             getApplicationContext().unbindService(mConnection);
             isBound = false;
         }
         AnalyticsHelper.getInstance().sendEvent(
-                Constants.GA_UI_CATEGORY,
+                Constants.GA_ADMIN_CATEGORY,
                 Constants.GA_EVENT_AUTHOR_IMPORT,
                 Constants.GA_EVENT_IMPORT_CANCELED);
         getApplicationContext().stopService(ImportAuthorsTask_.intent(getApplicationContext()).get());
@@ -154,7 +161,7 @@ public class ImportAuthorsActivity extends BaseActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, @NotNull Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == Constants.REQUEST_DIRECTORY) {
@@ -197,11 +204,11 @@ public class ImportAuthorsActivity extends BaseActivity {
     }
 
     @Background
-    void tryParseOutTheChosenFile(String fileName) {
+    void tryParseOutTheChosenFile(@NotNull String fileName) {
         showParseResults(new AuthorFileImportContext().getAuthorListFromFile(fileName));
     }
 
-    public void onEventMainThread(ImportUpdates event) {
+    public void onEventMainThread(@NotNull ImportUpdates event) {
         if (event.isFinished()) {
             toggleButtonAndProgressPanels(false);
             HomeActivity_.intent(this)
@@ -229,8 +236,8 @@ public class ImportAuthorsActivity extends BaseActivity {
     }
 
     @UiThread
-    void showParseResults(List<String> authorLinks) {
-        if (authorLinks != null && authorLinks.size() > 0) {
+    void showParseResults(@NotNull List<String> authorLinks) {
+        if (authorLinks.size() > 0) {
             authorsToImport = authorLinks;
             list.setAdapter(new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1, authorLinks) {
                 @Override
@@ -245,14 +252,14 @@ public class ImportAuthorsActivity extends BaseActivity {
             performImportButton.setEnabled(true);
         } else {
             list.setAdapter(null);
-            authorsToImport = null;
+            authorsToImport.clear();
             performImportButton.setEnabled(false);
             Crouton.makeText(this, getResources().getString(R.string.cannot_import_authors_from_file), Style.ALERT).show();
         }
         progressBar.setVisibility(View.GONE);
     }
 
-    private boolean isImportServiceRunning(Class<?> serviceClass) {
+    private boolean isImportServiceRunning(@NotNull Class<?> serviceClass) {
         for (ActivityManager.RunningServiceInfo service : activityManager.getRunningServices(Integer.MAX_VALUE)) {
             if (serviceClass.getName().equals(service.service.getClassName())) {
                 return true;

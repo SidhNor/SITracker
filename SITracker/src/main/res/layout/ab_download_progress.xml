@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:paddingLeft="16dp"
+             android:paddingRight="16dp"
+             android:layout_width="wrap_content"
+             android:layout_height="match_parent">
+
+    <com.andrada.sitracker.ui.widget.ColoredSpinnerBar
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_gravity="center"/>
+
+</FrameLayout>

@@ -15,20 +15,34 @@
   -->
 
 <resources>
-    <color name="light_color_hint">#EEEEEE</color>
-    <color name="left_menu_text_gray">#949294</color>
-    <color name="gray_foreground">#ff4c4c4c</color>
-    <color name="primary_black">#ff000000</color>
     <color name="transparent">#00000000</color>
-    <color name="secondary_gray">#ff777777</color>
-    <color name="holo_blue_light">#ff33b5e5</color>
-    <color name="author_activated_color">#ffffff</color>
-    <color name="holo_red_light">#ffff4444</color>
-    <color name="author_list_item_text">#58585b</color>
-    <color name="orange_active">#ff9c00</color>
-    <color name="pressed_si">#CC33B5E5</color>
-    <color name="bright_blue">#33B5E5</color>
-    <color name="semitransgray">#99333333</color>
+
+    <color name="body_text_1">#de000000</color>
+    <color name="body_text_2">#8a000000</color>
+    <color name="body_text_3">#60000000</color>
+    <color name="body_text_disabled">#44000000</color>
+
+    <color name="body_text_1_inverse">#deffffff</color>
+    <color name="body_text_2_inverse">#8affffff</color>
+
+    <color name="light_color_hint">#eeeeee</color>
+    <color name="ignored_pub_overlay">#8affffff</color>
+    <color name="white">#ffffff</color>
+
+
+    <color name="theme_primary">#e8552c</color>
+    <color name="theme_primary_dark">#bf360c</color>
+    <color name="theme_primary_light">#ffab91</color>
+
+    <color name="theme_accent_1">#ff33b5e5</color>
+    <color name="theme_accent_1_light">#8ad4fa</color>
+    <color name="theme_accent_2">#00e5ff</color>
+
+    <color name="search_back_positive">#375a1f</color>
+    <color name="search_back_default">#015888</color>
+
+    <color name="gray_background">#e5e5e5</color>
+
     <!-- Use Gingerbread-orange -->
     <color name="fp_selection_background_color">#FEBB20</color>
 </resources>

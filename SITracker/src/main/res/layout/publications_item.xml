@@ -1,11 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   Copyright 2014 Gleb Godonoga.
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
 
-     http://www.apache.org/licenses/LICENSE-2.0
+      http://www.apache.org/licenses/LICENSE-2.0
 
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,150 +15,145 @@
   limitations under the License.
   -->
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:showDividers="middle"
-                android:orientation="vertical"
-                tools:context=".ui.SimpleSinglePaneActivity">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:background="?attr/selectableItemBackground"
+             tools:context=".ui.SimpleSinglePaneActivity">
 
     <RelativeLayout
         android:id="@+id/backgroundPane"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="@dimen/default_grid_margin"
-        android:paddingBottom="@dimen/default_grid_margin">
+        android:layout_height="@dimen/publication_item_height"
+        android:paddingTop="8dp">
 
         <RelativeLayout
             android:id="@+id/pub_img_container"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true">
+            android:layout_height="wrap_content">
 
             <ImageView
                 android:id="@+id/publication_image"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/publication_pixel_size"
+                android:layout_width="@dimen/keyline_2_minus_16dp"
+                android:layout_height="@dimen/keyline_2"
+                android:layout_centerHorizontal="true"
+                android:contentDescription="@null"
+                android:paddingLeft="@dimen/keyline_1"
                 android:scaleType="centerInside"
                 android:src="@drawable/blank_book"
-                android:visibility="visible"
-                android:layout_centerInParent="true"
-                android:paddingRight="@dimen/default_grid_margin"/>
+                android:visibility="visible"/>
         </RelativeLayout>
-
 
         <TextView
             android:id="@+id/item_title"
+            style="@style/Publication.Title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:layout_toRightOf="@+id/pub_img_container"
+            android:layout_marginBottom="@dimen/text_vertical_spacing"
             android:layout_toLeftOf="@+id/actions_view"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="?android:attr/textColorPrimary"
-            android:fontFamily="sans-serif-condensed"
-            android:text="@string/designtime_placeholder_short"
-            android:lines="1"
-            android:scrollHorizontally="true"
-            android:ellipsize="end"
-            android:layout_marginBottom="@dimen/text_vertical_spacing"/>
+            android:layout_toRightOf="@+id/pub_img_container"
+            android:paddingLeft="@dimen/keyline_1"
+            android:text="@string/designtime_placeholder_short"/>
 
         <com.andrada.sitracker.ui.widget.EllipsizedTextView
+            android:id="@+id/item_description"
+            style="@style/Publication.Subtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/item_description"
-            android:layout_toRightOf="@+id/pub_img_container"
-            android:layout_toLeftOf="@+id/actions_view"
             android:layout_below="@+id/item_title"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="?android:attr/textColorSecondary"
-            android:layout_gravity="left|center_vertical"
-            android:text="@string/designtime_placeholder_long"
-            android:singleLine="false"
-            android:maxLines="3"
-            android:ellipsize="end"/>
+            android:layout_toLeftOf="@+id/actions_view"
+            android:layout_toRightOf="@+id/pub_img_container"
+            android:paddingLeft="@dimen/keyline_1"
+            android:text="@string/designtime_placeholder_long"/>
 
         <LinearLayout
             android:id="@+id/actions_view"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
-            android:layout_marginLeft="@dimen/default_grid_margin">
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="@dimen/default_grid_margin"
+            android:orientation="vertical"
+            android:paddingRight="@dimen/keyline_1">
 
             <TextView
                 android:id="@+id/item_update_date"
+                style="@style/Widget.UpdateDate.Text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="12sp"
-                android:text="@string/designtime_placeholder_date"
-                android:textAlignment="viewEnd"
-                android:layout_gravity="right"
-                android:layout_marginBottom="@dimen/text_vertical_spacing"/>
+                android:layout_marginBottom="@dimen/text_vertical_spacing"
+                android:text="@string/designtime_placeholder_date"/>
 
             <TextView
                 android:id="@+id/itemSize"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_marginBottom="@dimen/text_vertical_spacing"
                 android:text="@string/designtime_placeholder_size"
                 android:textAlignment="viewEnd"
-                android:layout_marginBottom="@dimen/text_vertical_spacing"
-                android:layout_gravity="right"/>
+                android:textSize="@dimen/text_size_medium"/>
 
             <ImageButton
                 android:id="@+id/item_updated"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
-                android:layout_weight="1"
                 android:layout_gravity="right"
+                android:layout_weight="1"
                 android:background="@null"
-                android:src="@drawable/star_unselected"
-                android:contentDescription="@string/notification_title"/>
+                android:contentDescription="@string/notification_title"
+                android:src="@drawable/star_unselected"/>
         </LinearLayout>
 
         <View
             android:id="@+id/publication_item_divider"
+            style="@style/Theme.SiTracker.DividerThin"
             android:layout_alignParentBottom="true"
-            android:layout_below="@id/item_description"
-            style="@style/DividerThin"
-            android:layout_marginBottom="6dp"
-            android:layout_marginTop="4dp"/>
+            android:layout_marginTop="8dp"/>
 
     </RelativeLayout>
+
+    <View
+        android:id="@+id/dim_verlay"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/publication_item_height"
+        android:background="@color/ignored_pub_overlay"
+        android:visibility="gone"/>
 
     <RelativeLayout
         android:id="@+id/downloadProgress"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:minHeight="65dp"
+        android:layout_height="@dimen/publication_item_height"
         android:background="#FFFFFFFF"
-        android:visibility="gone"
-        android:layout_alignBottom="@+id/backgroundPane">
+        android:paddingTop="16dp"
+        android:visibility="gone">
 
         <TextView
+            android:id="@+id/text1"
+            style="@style/TextHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="?android:attr/textColorPrimary"
-            android:text="@string/publications_downloading"
             android:layout_marginLeft="15dp"
-            android:layout_centerVertical="true"
-            android:layout_alignParentLeft="true"/>
+            android:text="@string/publications_downloading"/>
 
         <ProgressBar
-            android:indeterminate="true"
-            android:indeterminateOnly="true"
-            android:indeterminateDrawable="@drawable/progress_indeterminate_horizontal_holo"
             android:layout_width="match_parent"
             android:layout_height="10dp"
+            android:layout_below="@+id/text1"
+            android:indeterminate="true"
+            android:indeterminateDrawable="@drawable/progress_indeterminate_horizontal_holo"
+            android:indeterminateOnly="true"
             android:paddingEnd="50dp"
-            android:paddingStart="15dp"
-            android:layout_alignParentEnd="false"
-            android:layout_alignParentRight="false"
-            android:layout_alignParentBottom="true"/>
+            android:paddingLeft="15dp"
+            android:paddingRight="50dp"
+            android:paddingStart="15dp"/>
+
+        <View
+            style="@style/Theme.SiTracker.DividerThin"
+            android:layout_alignParentBottom="true"
+            android:layout_marginTop="8dp"/>
     </RelativeLayout>
 
-</RelativeLayout>
+</FrameLayout>

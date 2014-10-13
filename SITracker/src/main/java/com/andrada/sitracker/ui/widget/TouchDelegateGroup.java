@@ -21,16 +21,21 @@ import android.view.MotionEvent;
 import android.view.TouchDelegate;
 import android.view.View;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 
 public class TouchDelegateGroup extends TouchDelegate {
 
     private static final Rect USELESS_HACKY_RECT = new Rect();
 
+    @Nullable
     private ArrayList<TouchDelegate> mTouchDelegates;
+    @Nullable
     private TouchDelegate mCurrentTouchDelegate;
 
-    public TouchDelegateGroup(View uselessHackyView) {
+    public TouchDelegateGroup(@NotNull View uselessHackyView) {
         // I know this is pretty hacky. Unfortunately there is no other way to
         // create a TouchDelegate containing TouchDelegates since TouchDelegate
         // is not an interface ...
@@ -61,7 +66,7 @@ public class TouchDelegateGroup extends TouchDelegate {
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent event) {
+    public boolean onTouchEvent(@NotNull MotionEvent event) {
 
         TouchDelegate delegate = null;
 

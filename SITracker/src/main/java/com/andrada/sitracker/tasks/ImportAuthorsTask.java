@@ -16,6 +16,7 @@
 
 package com.andrada.sitracker.tasks;
 
+import android.annotation.SuppressLint;
 import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -42,6 +43,8 @@ import com.j256.ormlite.android.apptools.OpenHelperManager;
 
 import org.androidannotations.annotations.EService;
 import org.androidannotations.annotations.SystemService;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -54,6 +57,7 @@ import de.greenrobot.event.EventBus;
 import static com.andrada.sitracker.util.LogUtils.LOGW;
 import static com.andrada.sitracker.util.LogUtils.makeLogTag;
 
+@SuppressLint("Registered")
 @EService
 public class ImportAuthorsTask extends IntentService {
 
@@ -67,7 +71,8 @@ public class ImportAuthorsTask extends IntentService {
     NotificationManager notificationManager;
     private volatile boolean shouldCancel = false;
     private SiDBHelper helper;
-    private List<String> authorsList;
+    @NotNull
+    private List<String> authorsList = new ArrayList<String>();
     private ImportProgress importProgress;
 
     public ImportAuthorsTask() {
@@ -86,13 +91,14 @@ public class ImportAuthorsTask extends IntentService {
         OpenHelperManager.releaseHelper();
     }
 
+    @NotNull
     @Override
     public IBinder onBind(Intent intent) {
         return mBinder;
     }
 
     @Override
-    protected void onHandleIntent(Intent intent) {
+    protected void onHandleIntent(@Nullable Intent intent) {
         if (intent == null) {
             return;
         }
@@ -202,7 +208,7 @@ public class ImportAuthorsTask extends IntentService {
             bm.dataChanged();
 
             AnalyticsHelper.getInstance().sendEvent(
-                    Constants.GA_UI_CATEGORY,
+                    Constants.GA_ADMIN_CATEGORY,
                     Constants.GA_EVENT_AUTHOR_IMPORT,
                     Constants.GA_EVENT_IMPORT_COMPLETE,
                     importProgress.getTotalAuthors());
@@ -225,11 +231,12 @@ public class ImportAuthorsTask extends IntentService {
         return this.importProgress;
     }
 
+    @NotNull
     public List<String> getAuthorsList() {
         return authorsList;
     }
 
-    private void setupExtras(Intent intent) {
+    private void setupExtras(@NotNull Intent intent) {
         Bundle extras = intent.getExtras();
         if (extras != null) {
             if (extras.containsKey(AUTHOR_LIST_EXTRA)) {
@@ -249,7 +256,7 @@ public class ImportAuthorsTask extends IntentService {
             this.totalAuthors = totalAuthors;
         }
 
-        public ImportProgress(ImportProgress copy) {
+        public ImportProgress(@NotNull ImportProgress copy) {
             this.totalAuthors = copy.totalAuthors;
             this.successfullyImported = copy.successfullyImported;
             this.failedImport = copy.failedImport;
@@ -273,6 +280,7 @@ public class ImportAuthorsTask extends IntentService {
             return failedImport;
         }
 
+        @NotNull
         public List<String> getFailedAuthors() {
             return failedAuthors;
         }
@@ -290,6 +298,7 @@ public class ImportAuthorsTask extends IntentService {
     }
 
     public class ImportAuthorsBinder extends Binder {
+        @NotNull
         public ImportAuthorsTask getService() {
             return ImportAuthorsTask.this;
         }

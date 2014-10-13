@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,12 +18,13 @@ package com.andrada.sitracker.ui;
 
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.app.backup.BackupManager;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SlidingPaneLayout;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -32,6 +33,7 @@ import android.view.ViewTreeObserver;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.andrada.sitracker.BuildConfig;
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.SIPrefs_;
@@ -40,17 +42,17 @@ import com.andrada.sitracker.events.AuthorsExported;
 import com.andrada.sitracker.events.ProgressBarToggleEvent;
 import com.andrada.sitracker.events.PublicationMarkedAsReadEvent;
 import com.andrada.sitracker.tasks.ExportAuthorsTask;
-import com.andrada.sitracker.tasks.UpdateAuthorsTask_;
 import com.andrada.sitracker.tasks.filters.UpdateStatusMessageFilter;
 import com.andrada.sitracker.tasks.receivers.UpdateStatusReceiver;
+import com.andrada.sitracker.ui.fragment.AboutDialog;
 import com.andrada.sitracker.ui.fragment.AuthorsFragment;
 import com.andrada.sitracker.ui.fragment.DirectoryChooserFragment;
 import com.andrada.sitracker.ui.fragment.PublicationsFragment;
 import com.andrada.sitracker.util.AnalyticsHelper;
-import com.andrada.sitracker.util.ImageLoader;
 import com.andrada.sitracker.util.UIUtils;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.andrada.sitracker.util.UpdateServiceHelper;
+import com.github.amlcurran.showcaseview.ShowcaseView;
+import com.github.amlcurran.showcaseview.targets.ActionItemTarget;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
@@ -62,6 +64,7 @@ import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.res.StringRes;
 import org.androidannotations.annotations.sharedpreferences.Pref;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -75,12 +78,12 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 @SuppressLint("Registered")
 @EActivity(R.layout.activity_main)
 @OptionsMenu(R.menu.main_menu)
-public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoaderProvider, DirectoryChooserFragment.OnFragmentInteractionListener {
+public class HomeActivity extends BaseActivity implements DirectoryChooserFragment.OnFragmentInteractionListener {
 
     public static final String AUTHORS_PROCESSED_EXTRA = "authors_total_processed";
     public static final String AUTHORS_SUCCESSFULLY_IMPORTED_EXTRA = "authors_successfully_imported";
     private static final long BACK_UP_DELAY = 30000L;
-    private static final long STARTUP_UPDATE_DELAY = 600000L;
+
     /**
      * This global layout listener is used to fire an event after first layout
      * occurs and then it is removed. This gives us a chance to configure parts
@@ -137,6 +140,8 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
             getSupportFragmentManager().beginTransaction().addToBackStack(null).commit();
         }
     };
+    @NotNull
+    private final Timer backUpTimer = new Timer();
     @Extra(AUTHORS_PROCESSED_EXTRA)
     int authorsProcessed = -1;
     @Extra(AUTHORS_SUCCESSFULLY_IMPORTED_EXTRA)
@@ -156,9 +161,7 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
     SIPrefs_ prefs;
     @StringRes(R.string.app_name)
     String mAppName;
-    private Timer backUpTimer = new Timer();
     private TimerTask backUpTask;
-    private ImageLoader mImageLoader;
     private BroadcastReceiver updateStatusReceiver;
 
     @AfterViews
@@ -171,9 +174,15 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
         slidingPane.getViewTreeObserver().addOnGlobalLayoutListener(globalLayoutListener);
         ensureUpdatesAreRunningOnSchedule();
 
-        mImageLoader = new ImageLoader(this, R.drawable.blank_book)
-                .setMaxImageSize(getResources().getDimensionPixelSize(R.dimen.publication_pixel_size))
-                .setFadeInImage(UIUtils.hasHoneycombMR1());
+        ShowcaseView.Builder bldr = new ShowcaseView.Builder(this)
+                .setTarget(new ActionItemTarget(this, R.id.action_search))
+                .setContentTitle(getString(R.string.showcase_getting_started_title))
+                .setContentText(getString(R.string.showcase_getting_started_detail))
+                .setStyle(R.style.ShowcaseView_Base);
+        if (!BuildConfig.DEBUG) {
+            bldr.singleShot(Constants.SHOWCASE_START_SEARCH_SHOT_ID);
+        }
+        bldr.build();
     }
 
     @Override
@@ -184,7 +193,7 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
 
     @SuppressWarnings("deprecation")
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NotNull MenuItem item) {
         /*
          * The action bar up action should open the slider if it is currently
          * closed, as the left pane contains content one level up in the
@@ -224,7 +233,7 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
     }
 
     @Override
-    protected void onNewIntent(Intent intent) {
+    protected void onNewIntent(@NotNull Intent intent) {
         super.onNewIntent(intent);
         Bundle extras = intent.getExtras();
         if (extras != null) {
@@ -240,12 +249,6 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
     @Override
     protected void onResume() {
         super.onResume();
-        //Check for Google Play services
-        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
-        if (resultCode != ConnectionResult.SUCCESS) {
-            GooglePlayServicesUtil.getErrorDialog(resultCode, this, 2982).show();
-        }
-
         if (updateStatusReceiver == null) {
             //AuthorsFragment is the callback here
             updateStatusReceiver = new UpdateStatusReceiver(mAuthorsFragment);
@@ -255,6 +258,12 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
         slidingPane.setPanelSlideListener(slidingPaneListener);
         getSupportFragmentManager().addOnBackStackChangedListener(backStackListener);
 
+        if (UpdateServiceHelper.isServiceCurrentlyRunning(getApplicationContext())) {
+            globalProgress.setVisibility(View.VISIBLE);
+        } else {
+            globalProgress.setVisibility(View.GONE);
+        }
+
         UpdateStatusMessageFilter filter = new UpdateStatusMessageFilter();
         filter.setPriority(1);
         registerReceiver(updateStatusReceiver, filter);
@@ -262,21 +271,13 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
     }
 
     public void ensureUpdatesAreRunningOnSchedule() {
-        Boolean isSyncing = prefs.updatesEnabled().get();
-        Intent intent = UpdateAuthorsTask_.intent(this.getApplicationContext()).get();
-        boolean updateServiceUp = PendingIntent.getService(this.getApplicationContext(), 0, intent, PendingIntent.FLAG_NO_CREATE) != null;
+        boolean isSyncing = prefs.updatesEnabled().get();
+
+        boolean updateServiceUp = UpdateServiceHelper.isServiceScheduled(this);
         if (isSyncing && !updateServiceUp) {
-            //We need to schedule the update
-            PendingIntent pendingInt = PendingIntent.getService(this.getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-            long updateInterval = Long.parseLong(prefs.updateInterval().get());
-            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP,
-                    //Delay update for 10 minutes to allow complete restore of backup if exists
-                    System.currentTimeMillis() + STARTUP_UPDATE_DELAY,
-                    updateInterval,
-                    pendingInt);
+            UpdateServiceHelper.scheduleUpdates(this);
         } else if (!isSyncing && updateServiceUp) {
-            //We need to cancel
-            alarmManager.cancel(PendingIntent.getService(this.getApplicationContext(), 0, intent, PendingIntent.FLAG_NO_CREATE));
+            UpdateServiceHelper.cancelUpdates(this);
         }
     }
 
@@ -294,6 +295,19 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
     void menuExportSelected() {
         AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_EXPORT_DIALOG);
         mDialog.show(getSupportFragmentManager(), null);
+    }
+
+    @OptionsItem(R.id.action_about)
+    void menuAboutSelected() {
+        AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_ABOUT_DIALOG);
+        FragmentManager fm = this.getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        Fragment prev = fm.findFragmentByTag(AboutDialog.FRAGMENT_TAG);
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+        new AboutDialog().show(ft, AboutDialog.FRAGMENT_TAG);
     }
 
     private void attemptToShowImportProgress() {
@@ -315,6 +329,9 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
             mNoNetworkCrouton.setConfiguration(croutonConfiguration);
             mNoNetworkCrouton.show();
 
+            //Remove extras to avoid reinitialization on config change
+            getIntent().removeExtra(AUTHORS_PROCESSED_EXTRA);
+            getIntent().removeExtra(AUTHORS_SUCCESSFULLY_IMPORTED_EXTRA);
             authorsSuccessfullyImported = -1;
             authorsProcessed = -1;
         }
@@ -335,7 +352,7 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
         getSupportActionBar().setTitle(mAppName);
     }
 
-    public void onEventMainThread(ProgressBarToggleEvent event) {
+    public void onEventMainThread(@NotNull ProgressBarToggleEvent event) {
         if (event.showProgress) {
             this.globalProgress.setVisibility(View.VISIBLE);
         } else {
@@ -343,7 +360,7 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
         }
     }
 
-    public void onEvent(AuthorsExported event) {
+    public void onEvent(@NotNull AuthorsExported event) {
         String message = event.getMessage();
 
         Style.Builder alertStyle = new Style.Builder()
@@ -389,11 +406,6 @@ public class HomeActivity extends BaseActivity implements ImageLoader.ImageLoade
 
     public PublicationsFragment getPubFragment() {
         return mPubFragment;
-    }
-
-    @Override
-    public ImageLoader getImageLoaderInstance() {
-        return mImageLoader;
     }
 
     @Override

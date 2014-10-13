@@ -1,11 +1,11 @@
 /*
- * Copyright 2013 Gleb Godonoga.
+ * Copyright 2014 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,10 +21,14 @@ import com.andrada.sitracker.db.beans.Publication;
 import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.support.ConnectionSource;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.sql.SQLException;
 import java.util.List;
 
-public class PublicationDaoImpl extends BaseDaoImpl<Publication, Integer>
+import static com.andrada.sitracker.util.LogUtils.LOGE;
+
+public class PublicationDaoImpl extends BaseDaoImpl<Publication, Long>
         implements PublicationDao {
 
 
@@ -34,15 +38,29 @@ public class PublicationDaoImpl extends BaseDaoImpl<Publication, Integer>
     }
 
     @Override
-    public List<Publication> getPublicationsForAuthor(Author author) throws SQLException {
+    public Publication getPublicationForId(long id) {
+        Publication pub = null;
+        try {
+            pub = this.queryForId(id);
+        } catch (SQLException e) {
+            LOGE("SITracker", "Failed to retrieve publication by url and id");
+        }
+        return pub;
+    }
+
+    @NotNull
+    @Override
+    public List<Publication> getPublicationsForAuthor(@NotNull Author author) throws SQLException {
         return getPublicationsForAuthorId(author.getId());
     }
 
+    @NotNull
     @Override
     public List<Publication> getPublicationsForAuthorId(long authorId) throws SQLException {
         return this.queryBuilder().where().eq("author_id", authorId).query();
     }
 
+    @NotNull
     @Override
     public List<Publication> getNewPublications() throws SQLException {
         return this.queryBuilder()
@@ -51,11 +69,14 @@ public class PublicationDaoImpl extends BaseDaoImpl<Publication, Integer>
                 .eq("isNew", true).query();
     }
 
+
+    @NotNull
     @Override
-    public List<Publication> getNewPublicationsForAuthor(Author author) throws SQLException {
+    public List<Publication> getNewPublicationsForAuthor(@NotNull Author author) throws SQLException {
         return getNewPublicationsForAuthorId(author.getId());
     }
 
+    @NotNull
     @Override
     public List<Publication> getNewPublicationsForAuthorId(long authorId) throws SQLException {
         return this.queryBuilder().where()
@@ -65,7 +86,7 @@ public class PublicationDaoImpl extends BaseDaoImpl<Publication, Integer>
     }
 
     @Override
-    public long getNewPublicationsCountForAuthor(Author author) throws SQLException {
+    public long getNewPublicationsCountForAuthor(@NotNull Author author) throws SQLException {
         return getNewPublicationsCountForAuthorId(author.getId());
     }
 
@@ -77,6 +98,7 @@ public class PublicationDaoImpl extends BaseDaoImpl<Publication, Integer>
                 .eq("isNew", true).countOf();
     }
 
+    @NotNull
     @Override
     public List<Publication> getSortedPublicationsForAuthorId(long authorId) throws SQLException {
         return this.queryBuilder()
@@ -88,7 +110,7 @@ public class PublicationDaoImpl extends BaseDaoImpl<Publication, Integer>
     }
 
     @Override
-    public boolean markPublicationRead(Publication pub) throws SQLException {
+    public boolean markPublicationRead(@NotNull Publication pub) throws SQLException {
         long authId = pub.getAuthor().getId();
         pub.setNew(false);
         pub.setOldSize(0);

@@ -15,19 +15,20 @@
   -->
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:sitracker="http://schemas.android.com/apk/res-auto">
+    xmlns:sitracker="http://schemas.android.com/apk/res-auto">
 
     <item
-            android:id="@+id/action_add"
-            android:orderInCategory="100"
-            sitracker:showAsAction="always"
-            android:icon="@drawable/ic_action_add"
-            android:title="@string/action_add"/>
+        android:id="@+id/action_search"
+        android:icon="@drawable/ic_action_search"
+        android:title="@string/action_search"
+        android:orderInCategory="0"
+        android:actionViewClass="android.widget.SearchView"
+        sitracker:showAsAction="always" />
     <item
-            android:id="@+id/action_refresh"
-            android:orderInCategory="100"
-            sitracker:showAsAction="always"
-            android:icon="@drawable/ic_action_refresh"
-            android:title="@string/action_refresh"/>
+        android:id="@+id/action_refresh"
+        android:orderInCategory="100"
+        sitracker:showAsAction="ifRoom"
+        android:icon="@drawable/ic_action_refresh"
+        android:title="@string/action_refresh" />
 
 </menu>

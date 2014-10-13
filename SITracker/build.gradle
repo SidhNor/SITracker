@@ -13,12 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-
-
-
-import java.util.regex.Pattern
-
 apply plugin: 'com.android.application'
 apply plugin: 'android-apt'
 
@@ -26,21 +20,37 @@ configurations {
     compile
 }
 
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+}
+
 dependencies {
-    compile 'com.android.support:support-v4:20.+'
-    compile 'com.android.support:appcompat-v7:20.+'
+    compile 'org.jetbrains:annotations:13.0'
+    compile 'com.android.support:support-v4:20.0.0'
+    compile 'com.android.support:appcompat-v7:20.0.0'
     compile 'com.google.android.gms:play-services:5.0.89'
-    apt 'org.androidannotations:androidannotations:3.0.1'
-    compile 'org.androidannotations:androidannotations-api:3.0.1'
+    apt 'org.androidannotations:androidannotations:3.1'
+    compile 'org.androidannotations:androidannotations-api:3.1'
     compile 'org.apache.commons:commons-lang3:3.0'
+    compile 'com.nineoldandroids:library:2.4.0'
     compile 'com.j256.ormlite:ormlite-android:4.48'
     compile 'com.github.kevinsawicki:http-request:4.2'
     compile 'de.greenrobot:eventbus:2.2.1'
-    compile 'com.mcxiaoke.volley:library:1.0.6'
-    androidTestCompile 'com.squareup:fest-android:1.0.5'
+    compile(name: 'showcaseView-library-50101', ext: 'aar') {
+        exclude group: 'com.nineoldandroids', module: 'library'
+    }
+    compile('com.github.bumptech.glide:glide:3.3.+') {
+        exclude group: 'com.google.android', module: 'support-v4'
+    }
+    compile('com.viewpagerindicator:library:2.4.1@aar') {
+        exclude group: 'com.google.android', module: 'support-v4'
+    }
     compile('de.keyboardsurfer.android.widget:crouton:1.8.4@aar') {
         exclude group: 'com.google.android', module: 'support-v4'
     }
+    androidTestCompile 'com.squareup:fest-android:1.0.5'
 }
 
 tasks.withType(JavaCompile) {
@@ -48,28 +58,62 @@ tasks.withType(JavaCompile) {
 }
 
 android {
-    signingConfigs {
-    }
     compileSdkVersion 20
     buildToolsVersion '20.0.0'
-    defaultConfig {
-        minSdkVersion 10
-        targetSdkVersion 20
-        applicationId 'com.andrada.sitracker'
-        testInstrumentationRunner 'android.test.InstrumentationTestRunner'
-        testApplicationId 'com.andrada.sitracker.test'
+
+    def versionPropsFile = file('version.properties')
+    if (versionPropsFile.canRead()) {
+        def Properties versionProps = new Properties()
+        versionProps.load(new FileInputStream(versionPropsFile))
+        def value = 0
+        def runTasks = gradle.startParameter.taskNames
+        println('Run tasks:')
+        println(runTasks.toString())
+        if (':SITracker:assembleRelease' in runTasks) {
+            println('Release build detected - incrementing versionCode and patch')
+            value = 1;
+        }
+        def versionMajor = versionProps['VERSION_MAJOR'].toInteger()
+        def versionMinor = versionProps['VERSION_MINOR'].toInteger()
+        def versionPatch = versionProps['VERSION_PATCH'].toInteger() + value
+        def versionBuildLong = Long.parseLong(versionProps['VERSION_BUILD'].toString(), 16) + 1
+        def versionBuild = Long.toHexString(versionBuildLong)
+        def version_Code = versionProps['VERSION_CODE'].toInteger() + value
+
+        versionProps['VERSION_PATCH'] = versionPatch.toString()
+        versionProps['VERSION_BUILD'] = versionBuild
+        versionProps['VERSION_CODE'] = version_Code.toString()
+
+        versionProps.store(versionPropsFile.newWriter(), null)
+
+        defaultConfig {
+            versionCode version_Code
+            versionName "${versionMajor}.${versionMinor}.${versionPatch} (${versionBuild})"
+            minSdkVersion 9
+            targetSdkVersion 20
+            applicationId 'com.andrada.sitracker'
+            testInstrumentationRunner 'android.test.InstrumentationTestRunner'
+            testApplicationId 'com.andrada.sitracker.test'
+        }
+
+    } else {
+        throw new GradleException("Could not read version.properties!")
     }
-    sourceSets {
-        main {
-            java {
-                srcDir 'src/main/java'
-            }
+
+    signingConfigs {
+        debug {
+            storeFile file("../SITracker/debug.keystore")
+            storePassword "android"
+            keyAlias "AndradaDebug"
+            keyPassword "android"
         }
     }
+
     buildTypes {
         debug {
             debuggable true
             runProguard false
+            signingConfig signingConfigs.debug
         }
         release {
             runProguard true
@@ -82,23 +126,5 @@ apt {
     arguments {
         resourcePackageName android.defaultConfig.applicationId
         androidManifestFile variant.processResources.manifestFile
-    }
-}
-
-task('increaseVersionCode') << {
-
-    def manifestFile = file("src/main/AndroidManifest.xml")
-    def pattern = Pattern.compile("versionCode=\"(\\d+)\"")
-    def manifestText = manifestFile.getText()
-    def matcher = pattern.matcher(manifestText)
-    matcher.find()
-    def versionCode = Integer.parseInt(matcher.group(1))
-    def manifestContent = matcher.replaceAll("versionCode=\"" + ++versionCode + "\"")
-    manifestFile.write(manifestContent)
-}
-
-tasks.whenTaskAdded { task ->
-    if (task.name == 'generateReleaseBuildConfig') {
-        task.dependsOn 'increaseVersionCode'
     }
 }

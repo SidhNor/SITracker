@@ -1,11 +1,11 @@
 /*
- * Copyright 2013 Gleb Godonoga.
+ * Copyright 2014 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,18 +20,28 @@ import com.andrada.sitracker.db.beans.Author;
 import com.andrada.sitracker.db.beans.Publication;
 import com.j256.ormlite.dao.Dao;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.sql.SQLException;
 import java.util.List;
 
-public interface PublicationDao extends Dao<Publication, Integer> {
+public interface PublicationDao extends Dao<Publication, Long> {
+
+    Publication getPublicationForId(long id);
+
+    @NotNull
     List<Publication> getPublicationsForAuthor(Author author) throws SQLException;
 
+    @NotNull
     List<Publication> getPublicationsForAuthorId(long authorId) throws SQLException;
 
+    @NotNull
     List<Publication> getSortedPublicationsForAuthorId(long authorId) throws SQLException;
 
+    @NotNull
     List<Publication> getNewPublicationsForAuthor(Author author) throws SQLException;
 
+    @NotNull
     List<Publication> getNewPublicationsForAuthorId(long authorId) throws SQLException;
 
     long getNewPublicationsCountForAuthor(Author author) throws SQLException;
@@ -40,5 +50,6 @@ public interface PublicationDao extends Dao<Publication, Integer> {
 
     boolean markPublicationRead(Publication pub) throws SQLException;
 
+    @NotNull
     List<Publication> getNewPublications() throws SQLException;
 }

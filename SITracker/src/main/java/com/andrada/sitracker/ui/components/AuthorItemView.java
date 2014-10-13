@@ -32,6 +32,7 @@ import com.andrada.sitracker.util.UIUtils;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
+import org.jetbrains.annotations.NotNull;
 
 @EViewGroup(R.layout.authors_list_item)
 public class AuthorItemView extends CheckedRelativeLayout {
@@ -53,7 +54,7 @@ public class AuthorItemView extends CheckedRelativeLayout {
 
     private int currentBackground = REGULAR_BACKGROUND;
 
-    public AuthorItemView(Context context) {
+    public AuthorItemView(@NotNull Context context) {
         super(context);
         this.setBackgroundResource(currentBackground);
         setOldNewBackgrounds();
@@ -71,7 +72,7 @@ public class AuthorItemView extends CheckedRelativeLayout {
     }
 
     @SuppressLint("NewApi")
-    public void bind(Author author, boolean isSelected) {
+    public void bind(@NotNull Author author, boolean isSelected) {
         if (UIUtils.hasHoneycomb()) {
             this.setActivated(isSelected);
         } else {
@@ -87,7 +88,7 @@ public class AuthorItemView extends CheckedRelativeLayout {
     }
 
     @Override
-    protected void onDelegatedTouchViewClicked(View view) {
+    protected void onDelegatedTouchViewClicked(@NotNull View view) {
         if (mListener != null && view.getId() == R.id.author_updated && mIsNew) {
             mIsNew = false;
             setOldNewBackgrounds();

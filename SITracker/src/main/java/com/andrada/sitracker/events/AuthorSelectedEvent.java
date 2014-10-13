@@ -18,8 +18,10 @@ package com.andrada.sitracker.events;
 
 public class AuthorSelectedEvent {
     public final long authorId;
+    public final boolean isDefault;
 
-    public AuthorSelectedEvent(long authorId) {
+    public AuthorSelectedEvent(long authorId, boolean isDefault) {
         this.authorId = authorId;
+        this.isDefault = isDefault;
     }
 }

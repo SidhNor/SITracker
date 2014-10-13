@@ -1,11 +1,11 @@
 /*
- * Copyright 2013 Gleb Godonoga.
+ * Copyright 2014 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,14 +22,18 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.os.Build;
 import android.text.Html;
 import android.text.TextUtils;
-import android.text.method.LinkMovementMethod;
 import android.widget.TextView;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import com.andrada.sitracker.R;
+
+import org.jetbrains.annotations.NotNull;
+
 import java.util.regex.Pattern;
 
 import static com.andrada.sitracker.util.LogUtils.LOGE;
@@ -59,19 +63,27 @@ public class UIUtils {
      * through {@link android.text.Html#fromHtml(String)} when applicable. Also sets
      * {@link android.widget.TextView#setMovementMethod} so inline links are handled.
      */
-    public static void setTextMaybeHtml(TextView view, String text) {
+    public static void setTextMaybeHtml(@NotNull TextView view, @NotNull String text) {
         if (TextUtils.isEmpty(text)) {
             view.setText("");
             return;
         }
         if ((text.contains("<") && text.contains(">")) || REGEX_HTML_ESCAPE.matcher(text).find()) {
+            //Sanitize urls in hrefs:
+            text = text.replace("<a href=\" ", "<a href=\"");
+            text = text.replace("<a href=' ", "<a href='");
             view.setText(Html.fromHtml(text));
-            view.setMovementMethod(LinkMovementMethod.getInstance());
+            //Commented movement method to make the textview focusable.
+            //view.setMovementMethod(LinkMovementMethod.getInstance());
         } else {
             view.setText(text);
         }
     }
 
+    //TODO remove on next release
+    public static boolean hasGingerbreadMR1() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD_MR1;
+    }
 
     public static boolean hasHoneycomb() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
@@ -89,13 +101,13 @@ public class UIUtils {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
     }
 
-    public static boolean isTablet(Context context) {
+    public static boolean isTablet(@NotNull Context context) {
         return (context.getResources().getConfiguration().screenLayout
                 & Configuration.SCREENLAYOUT_SIZE_MASK)
                 >= Configuration.SCREENLAYOUT_SIZE_LARGE;
     }
 
-    public static boolean isHoneycombTablet(Context context) {
+    public static boolean isHoneycombTablet(@NotNull Context context) {
         return hasHoneycomb() && isTablet(context);
     }
 
@@ -110,7 +122,7 @@ public class UIUtils {
      * @param context the current context of the device
      * @see #isHoneycombTablet(android.content.Context)
      */
-    public static void enableDisableActivitiesByFormFactor(Context context) {
+    public static void enableDisableActivitiesByFormFactor(@NotNull Context context) {
         final PackageManager pm = context.getPackageManager();
         boolean isTablet = isHoneycombTablet(context);
 
@@ -149,24 +161,8 @@ public class UIUtils {
         }
     }
 
-
-    /**
-     * A hashing method that changes a string (like a URL) into a hash suitable for using as a
-     * disk filename.
-     */
-    public static String hashKeyForDisk(String key) {
-        String cacheKey;
-        try {
-            final MessageDigest mDigest = MessageDigest.getInstance("MD5");
-            mDigest.update(key.getBytes());
-            cacheKey = bytesToHexString(mDigest.digest());
-        } catch (NoSuchAlgorithmException e) {
-            cacheKey = String.valueOf(key.hashCode());
-        }
-        return cacheKey;
-    }
-
-    private static String bytesToHexString(byte[] bytes) {
+    @NotNull
+    private static String bytesToHexString(@NotNull byte[] bytes) {
         // http://stackoverflow.com/questions/332079
         StringBuilder sb = new StringBuilder();
         for (byte aByte : bytes) {
@@ -179,5 +175,43 @@ public class UIUtils {
         return sb.toString();
     }
 
+    private static final int[] RES_IDS_ACTION_BAR_SIZE = {R.attr.actionBarOverlayTopOffset};
+
+    /**
+     * Calculates the Action Bar height in pixels.
+     */
+    public static int calculateActionBarSize(Context context) {
+        if (context == null) {
+            return 0;
+        }
+
+        Resources.Theme curTheme = context.getTheme();
+        if (curTheme == null) {
+            return 0;
+        }
+
+        TypedArray att = curTheme.obtainStyledAttributes(RES_IDS_ACTION_BAR_SIZE);
+        if (att == null) {
+            return 0;
+        }
+
+        float size = att.getDimension(0, 0);
+        att.recycle();
+        return (int) size;
+    }
+
+    public static float getProgress(int value, int min, int max) {
+        if (min == max) {
+            throw new IllegalArgumentException("Max (" + max + ") cannot equal min (" + min + ")");
+        }
+
+        return (value - min) / (float) (max - min);
+    }
+
+    public static int scaleColor(int color, float factor, boolean scaleAlpha) {
+        return Color.argb(scaleAlpha ? (Math.round(Color.alpha(color) * factor)) : Color.alpha(color),
+                Math.round(Color.red(color) * factor), Math.round(Color.green(color) * factor),
+                Math.round(Color.blue(color) * factor));
+    }
 
 }

@@ -16,20 +16,24 @@
 
 package com.andrada.sitracker.tasks.io;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class AuthorFileImportContext {
 
-    public List<String> getAuthorListFromFile(String fileName) {
+    @NotNull
+    public List<String> getAuthorListFromFile(@NotNull String fileName) {
         String extension = "";
         int i = fileName.lastIndexOf('.');
         if (i > 0) {
-            extension = fileName.substring(i+1);
+            extension = fileName.substring(i + 1);
         }
         AuthorImportStrategy importStrategy = null;
 
         if (extension.equals("txt") ||
-                extension.equals("rtf")||
+                extension.equals("rtf") ||
                 extension.equals("doc") ||
                 extension.equals("")) {
             importStrategy = new PlainTextAuthorImport();
@@ -41,6 +45,6 @@ public class AuthorFileImportContext {
             return importStrategy.extractAuthorsFromFile(fileName);
         }
 
-        return null;
+        return new ArrayList<String>();
     }
 }

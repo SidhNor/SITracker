@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -32,6 +32,10 @@ import com.andrada.sitracker.util.SamlibPageHelper;
 import com.github.kevinsawicki.http.HttpRequest;
 import com.j256.ormlite.dao.ForeignCollection;
 
+import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.SQLException;
@@ -49,7 +53,7 @@ class Samlib implements SiteStrategy {
     }
 
     @Override
-    public int addAuthorForUrl(String url) {
+    public int addAuthorForUrl(@NotNull String url) {
         Author author = null;
         int message = -1;
         try {
@@ -84,6 +88,7 @@ class Samlib implements SiteStrategy {
             }
 
             helper.getPublicationDao().callBatchTasks(new Callable<Object>() {
+                @Nullable
                 @Override
                 public Object call() throws Exception {
                     for (Publication publication : items) {
@@ -131,7 +136,7 @@ class Samlib implements SiteStrategy {
     }
 
     @Override
-    public boolean updateAuthor(Author author) throws SQLException {
+    public boolean updateAuthor(@NotNull Author author) throws SQLException {
         boolean authorUpdated = false;
         HttpRequest request;
         AuthorPageReader reader;
@@ -206,14 +211,27 @@ class Samlib implements SiteStrategy {
             //Find pub in oldItems
             if (oldItemsMap.containsKey(pub.getUrl())) {
                 Publication old = oldItemsMap.get(pub.getUrl());
+                if (old.getUpdatesIgnored()) {
+                    //Do not check anything
+                    continue;
+                }
                 //Check size/name/description
                 if (pub.getSize() != old.getSize() ||
                         !pub.getName().equals(old.getName())) {
                     //if something differs
                     //Store the old size
-                    pub.setOldSize(old.getSize());
+                    if (old.getOldSize() != 0) {
+                        pub.setOldSize(old.getOldSize());
+                    } else {
+                        pub.setOldSize(old.getSize());
+                    }
                     //Swap the ids, do an update in DB
                     pub.setId(old.getId());
+                    //Copy over custom properties that do not relate to samlib
+                    pub.setMyVote(old.getMyVote());
+                    pub.setVoteCookie(old.getVoteCookie());
+                    pub.setVoteDate(old.getVoteDate());
+                    pub.setUpdatesIgnored(old.getUpdatesIgnored());
                     pub.setNew(true);
                     authorUpdated = true;
                     publicationsDao.update(pub);
@@ -221,6 +239,10 @@ class Samlib implements SiteStrategy {
                     author.setUpdateDate(new Date());
                     author.setNew(true);
                     authorDao.update(author);
+                } else if (!StringUtils.equalsIgnoreCase(old.getImagePageUrl(), pub.getImagePageUrl())) {
+                    pub.setId(old.getId());
+                    //Update silently
+                    publicationsDao.update(pub);
                 }
             } else {
                 //Mark author new, update in DB

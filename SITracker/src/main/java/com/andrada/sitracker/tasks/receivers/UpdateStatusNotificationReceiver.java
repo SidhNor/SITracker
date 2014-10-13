@@ -32,6 +32,8 @@ import com.andrada.sitracker.tasks.messages.UpdateSuccessfulIntentMessage;
 import com.andrada.sitracker.ui.HomeActivity_;
 import com.andrada.sitracker.util.AnalyticsHelper;
 
+import org.jetbrains.annotations.NotNull;
+
 
 public class UpdateStatusNotificationReceiver extends BroadcastReceiver {
 
@@ -39,7 +41,7 @@ public class UpdateStatusNotificationReceiver extends BroadcastReceiver {
     private final static int UPDATE_FAIL_NOTIFICATION_ID = 2;
 
     @Override
-    public void onReceive(Context context, Intent intent) {
+    public void onReceive(@NotNull Context context, @NotNull Intent intent) {
         //See if there is something we can notify
         if (intent.getAction().equals(UpdateSuccessfulIntentMessage.SUCCESS_MESSAGE)) {
             int updatedAuthors = intent.getIntExtra(Constants.NUMBER_OF_UPDATED_AUTHORS, 0);
@@ -55,7 +57,7 @@ public class UpdateStatusNotificationReceiver extends BroadcastReceiver {
 
     }
 
-    private void sendNotification(int number, Context context) {
+    private void sendNotification(int number, @NotNull Context context) {
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(context)
                         .setSmallIcon(R.drawable.notification)

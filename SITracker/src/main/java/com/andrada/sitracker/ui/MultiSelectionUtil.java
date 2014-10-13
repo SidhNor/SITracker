@@ -30,6 +30,9 @@ import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.HashSet;
 
 /**
@@ -38,9 +41,23 @@ import java.util.HashSet;
  * backward-compatible action bars.
  */
 public class MultiSelectionUtil {
-    public static Controller attachMultiSelectionController(final ListView listView,
-                                                            final ActionBarActivity activity, final MultiChoiceModeListener listener) {
+    @NotNull
+    public static Controller attachMultiSelectionController(@NotNull final ListView listView,
+                                                            @NotNull final ActionBarActivity activity,
+                                                            @NotNull final MultiChoiceModeListener listener) {
         return Controller.attach(listView, activity, listener);
+    }
+
+    /**
+     * @see android.widget.AbsListView.MultiChoiceModeListener
+     */
+    public static interface MultiChoiceModeListener extends ActionMode.Callback {
+        /**
+         * @see android.widget.AbsListView.MultiChoiceModeListener#onItemCheckedStateChanged(
+         *android.view.ActionMode, int, long, boolean)
+         */
+        public void onItemCheckedStateChanged(ActionMode mode,
+                                              int position, long id, boolean checked);
     }
 
     public static class Controller implements
@@ -48,10 +65,21 @@ public class MultiSelectionUtil {
             AdapterView.OnItemClickListener,
             AdapterView.OnItemLongClickListener {
         private final Handler mHandler = new Handler();
+        private final Runnable mSetChoiceModeNoneRunnable = new Runnable() {
+            @Override
+            public void run() {
+                mListView.setChoiceMode(AbsListView.CHOICE_MODE_NONE);
+            }
+        };
+        @Nullable
         private ActionMode mActionMode;
-        private ListView mListView = null;
-        private ActionBarActivity mActivity = null;
-        private MultiChoiceModeListener mListener = null;
+        @NotNull
+        private ListView mListView;
+        @NotNull
+        private ActionBarActivity mActivity;
+        @NotNull
+        private MultiChoiceModeListener mListener;
+        @Nullable
         private HashSet<Long> mTempIdsToCheckOnRestore;
         private HashSet<Pair<Integer, Long>> mItemsToCheck;
         private AdapterView.OnItemClickListener mOldItemClickListener;
@@ -59,8 +87,9 @@ public class MultiSelectionUtil {
         private Controller() {
         }
 
-        public static Controller attach(ListView listView, ActionBarActivity activity,
-                                        MultiChoiceModeListener listener) {
+        @NotNull
+        public static Controller attach(@NotNull ListView listView, @NotNull ActionBarActivity activity,
+                                        @NotNull MultiChoiceModeListener listener) {
             if (listView.getChoiceMode() == AbsListView.CHOICE_MODE_MULTIPLE ||
                     listView.getChoiceMode() == AbsListView.CHOICE_MODE_MULTIPLE_MODAL) {
                 throw new IllegalArgumentException("ListView CHOICE_MODE_MULTIPLE or CHOICE_MODE_MULTIPLE_MODAL is not allowed. Everything is handled by this class.");
@@ -73,7 +102,7 @@ public class MultiSelectionUtil {
             return controller;
         }
 
-        private void readInstanceState(long[] itemIds) {
+        private void readInstanceState(@Nullable long[] itemIds) {
             mTempIdsToCheckOnRestore = null;
             if (itemIds != null && itemIds.length > 0) {
                 mTempIdsToCheckOnRestore = new HashSet<Long>();
@@ -120,7 +149,7 @@ public class MultiSelectionUtil {
             }
         }
 
-        public boolean saveInstanceState(Bundle outBundle) {
+        public boolean saveInstanceState(@NotNull Bundle outBundle) {
             // TODO: support non-stable IDs by persisting positions instead of IDs
             if (mActionMode != null && mListView.getAdapter().hasStableIds()) {
                 long[] checkedIds = mListView.getCheckedItemIds();
@@ -131,6 +160,7 @@ public class MultiSelectionUtil {
             return false;
         }
 
+        @NotNull
         private String getStateKey() {
             return MultiSelectionUtil.class.getSimpleName() + "_" + mListView.getId();
         }
@@ -184,13 +214,6 @@ public class MultiSelectionUtil {
             mHandler.post(mSetChoiceModeNoneRunnable);
         }
 
-        private final Runnable mSetChoiceModeNoneRunnable = new Runnable() {
-            @Override
-            public void run() {
-                mListView.setChoiceMode(AbsListView.CHOICE_MODE_NONE);
-            }
-        };
-
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
             boolean checked = mListView.isItemChecked(position);
@@ -221,17 +244,5 @@ public class MultiSelectionUtil {
             mActionMode = mActivity.startSupportActionMode(Controller.this);
             return true;
         }
-    }
-
-    /**
-     * @see android.widget.AbsListView.MultiChoiceModeListener
-     */
-    public static interface MultiChoiceModeListener extends ActionMode.Callback {
-        /**
-         * @see android.widget.AbsListView.MultiChoiceModeListener#onItemCheckedStateChanged(
-         *android.view.ActionMode, int, long, boolean)
-         */
-        public void onItemCheckedStateChanged(ActionMode mode,
-                                              int position, long id, boolean checked);
     }
 }

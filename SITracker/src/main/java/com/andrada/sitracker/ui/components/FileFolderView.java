@@ -17,18 +17,18 @@
 package com.andrada.sitracker.ui.components;
 
 import android.content.Context;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.andrada.sitracker.R;
-import com.andrada.sitracker.ui.widget.CheckedRelativeLayout;
 
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
+import org.jetbrains.annotations.NotNull;
 
 @EViewGroup(R.layout.file_folder_list_item)
-public class FileFolderView extends CheckedRelativeLayout {
+public class FileFolderView extends FrameLayout {
 
     @ViewById
     TextView fileNameTextView;
@@ -36,7 +36,7 @@ public class FileFolderView extends CheckedRelativeLayout {
     @ViewById
     ImageView fileFolderIconImageView;
 
-    public FileFolderView(Context context) {
+    public FileFolderView(@NotNull Context context) {
         super(context);
     }
 

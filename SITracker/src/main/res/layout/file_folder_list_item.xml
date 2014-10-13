@@ -17,26 +17,29 @@
   -->
 
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <ImageView
         android:id="@+id/fileFolderIconImageView"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:scaleType="centerInside"
-        android:layout_margin="@dimen/default_grid_margin"
+        android:layout_width="56dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center_vertical"
         android:contentDescription="@string/file_descriptor"
+        android:paddingLeft="@dimen/keyline_1"
+        android:scaleType="centerInside"
         android:src="@drawable/glyph_folder_white" />
 
     <TextView
         android:id="@+id/fileNameTextView"
+        style="@style/TextHeader"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/fileFolderIconImageView"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="?android:attr/textColorPrimary"
-        android:layout_marginLeft="@dimen/text_vertical_spacing"
-        android:layout_centerInParent="true"/>
+        android:layout_gravity="center_vertical"
+        android:paddingBottom="16dp"
+        android:paddingLeft="@dimen/keyline_2"
+        android:paddingRight="@dimen/keyline_1"
+        android:paddingTop="16dp"
+        android:text="@string/designtime_placeholder_short" />
 
 </merge>

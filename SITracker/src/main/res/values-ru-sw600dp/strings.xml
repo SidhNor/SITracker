@@ -2,8 +2,12 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
     <plurals name="authors_selected">
-        <item quantity="one">1 выбранный автор</item>
+        <item quantity="one">%1$d выбранный автор</item>
         <item quantity="few">
+            <xliff:g id="num_authors">%1$d</xliff:g>
+            выбранных автора
+        </item>
+        <item quantity="other">
             <xliff:g id="num_authors">%1$d</xliff:g>
             выбранных автора
         </item>
@@ -12,5 +16,8 @@
             выбранных авторов
         </item>
     </plurals>
+
+    <string name="already_in_library">Уже добавлен</string>
+    <string name="tap_to_add_to_library">Нажмите, чтоб добавить</string>
 
 </resources>

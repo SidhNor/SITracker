@@ -16,13 +16,15 @@
 
 package com.andrada.sitracker.util;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
 public final class DateFormatterUtil {
 
-    public static String getFriendlyDateRelativeToToday(Date date, Locale currentLocale) {
+    public static String getFriendlyDateRelativeToToday(Date date, @NotNull Locale currentLocale) {
 
         Date today = new Date();
 

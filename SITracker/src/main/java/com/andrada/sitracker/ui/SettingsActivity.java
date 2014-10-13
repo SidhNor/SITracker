@@ -42,6 +42,8 @@ import com.google.android.gms.analytics.GoogleAnalytics;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.sharedpreferences.Pref;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import de.greenrobot.event.EventBus;
 
@@ -51,15 +53,35 @@ import de.greenrobot.event.EventBus;
 public class SettingsActivity extends PreferenceActivity implements
         SharedPreferences.OnSharedPreferenceChangeListener {
 
-    public static String PREF_NAME = "SIPrefs";
-
+    @NotNull
+    public static final String PREF_NAME = "SIPrefs";
+    @Nullable
+    private final Preference.OnPreferenceClickListener clickListener = new Preference.OnPreferenceClickListener() {
+        @Override
+        public boolean onPreferenceClick(Preference preference) {
+            Intent updateIntent = new Intent(getApplicationContext(), ClearPublicationCacheTask.class);
+            getApplicationContext().startService(updateIntent);
+            return true;
+        }
+    };
+    private final Preference.OnPreferenceClickListener dirChooserClickListener = new Preference.OnPreferenceClickListener() {
+        @Override
+        public boolean onPreferenceClick(Preference preference) {
+            final Intent chooserIntent = new Intent(getApplicationContext(), DirectoryChooserActivity.class);
+            chooserIntent.putExtra(DirectoryChooserActivity.EXTRA_INITIAL_DIRECTORY, prefs.downloadFolder().get());
+            chooserIntent.putExtra(DirectoryChooserActivity.EXTRA_NEW_DIR_NAME, getResources().getString(R.string.book_folder_name));
+            // REQUEST_DIRECTORY is a constant integer to identify the request, e.g. 0
+            startActivityForResult(chooserIntent, Constants.REQUEST_DIRECTORY);
+            AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_PREFS_DOWNLOAD_DIALOG);
+            return true;
+        }
+    };
     @SystemService
     AlarmManager alarmManager;
-
     @Pref
     SIPrefs_ prefs;
 
-    @SuppressLint("NewApi")
+    @SuppressLint({"NewApi", "AppCompatMethod"})
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,32 +100,16 @@ public class SettingsActivity extends PreferenceActivity implements
         }
     }
 
-    private final Preference.OnPreferenceClickListener clickListener = new Preference.OnPreferenceClickListener() {
-        @Override
-        public boolean onPreferenceClick(Preference preference) {
-            Intent updateIntent = new Intent(getApplicationContext(), ClearPublicationCacheTask.class);
-            getApplicationContext().startService(updateIntent);
-            return true;
-        }
-    };
-
-    private final Preference.OnPreferenceClickListener dirChooserClickListener = new Preference.OnPreferenceClickListener() {
-        @Override
-        public boolean onPreferenceClick(Preference preference) {
-            final Intent chooserIntent = new Intent(getApplicationContext(), DirectoryChooserActivity.class);
-            chooserIntent.putExtra(DirectoryChooserActivity.EXTRA_INITIAL_DIRECTORY, prefs.downloadFolder().get());
-            chooserIntent.putExtra(DirectoryChooserActivity.EXTRA_NEW_DIR_NAME, getResources().getString(R.string.book_folder_name));
-            // REQUEST_DIRECTORY is a constant integer to identify the request, e.g. 0
-            startActivityForResult(chooserIntent, Constants.REQUEST_DIRECTORY);
-            AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_PREFS_DOWNLOAD_DIALOG);
-            return true;
-        }
-    };
-
+    @SuppressLint("InlinedApi")
     @Override
     protected void onResume() {
         super.onResume();
-        getSharedPreferences(Constants.SI_PREF_NAME, MODE_MULTI_PROCESS).registerOnSharedPreferenceChangeListener(this);
+        if (UIUtils.hasHoneycomb()) {
+            getSharedPreferences(Constants.SI_PREF_NAME, MODE_MULTI_PROCESS).registerOnSharedPreferenceChangeListener(this);
+        } else {
+            getSharedPreferences(Constants.SI_PREF_NAME, MODE_PRIVATE).registerOnSharedPreferenceChangeListener(this);
+        }
+
         Preference pref = findPreference(Constants.PREF_CLEAR_SAVED_PUBS_KEY);
         if (pref != null) {
             pref.setOnPreferenceClickListener(clickListener);
@@ -114,10 +120,15 @@ public class SettingsActivity extends PreferenceActivity implements
         }
     }
 
+    @SuppressLint("InlinedApi")
     @Override
     protected void onPause() {
         super.onPause();
-        getSharedPreferences(Constants.SI_PREF_NAME, MODE_MULTI_PROCESS).unregisterOnSharedPreferenceChangeListener(this);
+        if (UIUtils.hasHoneycomb()) {
+            getSharedPreferences(Constants.SI_PREF_NAME, MODE_MULTI_PROCESS).unregisterOnSharedPreferenceChangeListener(this);
+        } else {
+            getSharedPreferences(Constants.SI_PREF_NAME, MODE_PRIVATE).unregisterOnSharedPreferenceChangeListener(this);
+        }
         Preference pref = findPreference(Constants.PREF_CLEAR_SAVED_PUBS_KEY);
         if (pref != null) {
             pref.setOnPreferenceClickListener(null);
@@ -142,7 +153,7 @@ public class SettingsActivity extends PreferenceActivity implements
             alarmManager.setInexactRepeating(AlarmManager.RTC, System.currentTimeMillis(), updateInterval, pi);
             setUpdateIntervalSummary(prefs.updateInterval().get());
             AnalyticsHelper.getInstance().sendEvent(
-                    Constants.GA_UI_CATEGORY,
+                    Constants.GA_ADMIN_CATEGORY,
                     Constants.GA_EVENT_CHANGED_UPDATE_INTERVAL,
                     Constants.GA_EVENT_CHANGED_UPDATE_INTERVAL, updateInterval);
         } else if (Constants.AUTHOR_SORT_TYPE_KEY.equals(key)) {
@@ -165,7 +176,7 @@ public class SettingsActivity extends PreferenceActivity implements
         }
     }
 
-    private void setDownloadFolderSummary(String newValue) {
+    private void setDownloadFolderSummary(@Nullable String newValue) {
         Preference pref = findPreference(Constants.CONTENT_DOWNLOAD_FOLDER_KEY);
         if (newValue == null || newValue.length() == 0) {
             pref.setSummary(getResources().getString(R.string.pref_content_download_summ));
@@ -189,7 +200,7 @@ public class SettingsActivity extends PreferenceActivity implements
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, @NotNull Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == Constants.REQUEST_DIRECTORY) {

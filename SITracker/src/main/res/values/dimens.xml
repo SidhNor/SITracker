@@ -1,11 +1,11 @@
 <!--
-  Copyright 2013 Gleb Godonoga.
+  Copyright 2014 Gleb Godonoga.
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
 
-     http://www.apache.org/licenses/LICENSE-2.0
+      http://www.apache.org/licenses/LICENSE-2.0
 
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,20 +15,60 @@
   -->
 
 <resources>
-    <!-- Default screen margins, per the Android Design guidelines. -->
-    <dimen name="activity_horizontal_margin">8dp</dimen>
+    <dimen name="tablet_horizontal_padding">0dp</dimen>
     <dimen name="activity_vertical_margin">8dp</dimen>
 
     <dimen name="divider_margin_top">4dp</dimen>
     <dimen name="divider_margin_bottom">4dp</dimen>
-    <dimen name="list_left_padding">6dp</dimen>
-    <dimen name="group_heading_margin_top">4dp</dimen>
     <dimen name="crouton_corner_radius">5dp</dimen>
-    <dimen name="publication_pixel_size">50dp</dimen>
+    <dimen name="publication_pixel_size">56dp</dimen>
 
     <dimen name="default_grid_margin">8dp</dimen>
     <dimen name="text_vertical_spacing">4dp</dimen>
+    <dimen name="element_spacing_normal">8dp</dimen>
+    <dimen name="content_padding_normal">16dp</dimen>
     <dimen name="author_fragment_width">300dp</dimen>
+    <dimen name="publication_fragment_width">360dp</dimen>
     <dimen name="import_activity_spacing">0dp</dimen>
+
+    <dimen name="text_size_xsmall">11sp</dimen>
+    <dimen name="text_size_small">12sp</dimen>
+    <dimen name="text_size_medium">14sp</dimen>
+    <dimen name="text_size_large">16sp</dimen>
+    <dimen name="text_size_xlarge">18sp</dimen>
+    <dimen name="text_size_xxlarge">20sp</dimen>
+    <dimen name="library_container_width">65dp</dimen>
+    <dimen name="search_grid_padding">4dp</dimen>
+    <dimen name="half_search_grid_padding">2dp</dimen>
+
+    <!--Keylines-->
+    <dimen name="keyline_1">16dp</dimen>
+    <dimen name="keyline_1_minus_8dp">8dp</dimen>
+    <dimen name="keyline_2">72dp</dimen>
+    <dimen name="keyline_2_minus_16dp">56dp</dimen>
+    <dimen name="default_list_vertical_spacing">8dp</dimen>
+
+    <!--Publications and publication details-->
+    <dimen name="publication_item_height">96dp</dimen>
+    <dimen name="publication_details_floating_width">500dp</dimen>
+    <dimen name="publication_details_floating_height">650dp</dimen>
+    <dimen name="publication_details_extra_space_bottom">48dp</dimen>
+    <dimen name="keyline_2_pub_detail">@dimen/keyline_2</dimen>
+    <dimen name="read_pub_button_height">56dp</dimen>
+    <!-- including padding -->
+    <dimen name="read_pub_button_height_no_padding">40dp</dimen>
+
+    <!-- Action Bar auto-hide-on-scroll behavior parameters -->
+    <dimen name="action_bar_auto_hide_min_y">152dp</dimen>
+    <dimen name="action_bar_auto_hide_sensivity">48dp</dimen>
+
+
+    <!-- Showcase text dimensions -->
+    <dimen name="showcase_title_size">24sp</dimen>
+    <dimen name="showcase_detail_size">18sp</dimen>
+    <dimen name="showcase_title_size_overlay">24sp</dimen>
+    <dimen name="showcase_detail_size_overlay">18sp</dimen>
+    <dimen name="text_padding">16dp</dimen>
+
 </resources>
 

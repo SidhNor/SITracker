@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  Copyright 2014 Gleb Godonoga.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+
+<LinearLayout
+    android:id="@+id/publication_rating_block"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/element_spacing_normal"
+    android:background="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/session_speakers_header"
+        style="@style/PublicationDetail.SectionHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/keyline_2_pub_detail"
+        android:text="@string/publication_ratings"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/keyline_2_pub_detail"
+        android:layout_marginBottom="@dimen/content_padding_normal">
+
+        <TextView
+            android:id="@+id/publication_rating_text"
+            style="@style/PublicationDetail.Rating.Value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginBottom="@dimen/content_padding_normal"
+            android:text="@string/designtime_placeholder_rating_value"/>
+
+        <RatingBar
+            android:id="@+id/publication_rating"
+            style="@style/Publication.Rating.BarSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/publication_rating_text"
+            android:layout_toRightOf="@id/publication_rating_text"
+            android:numStars="10"/>
+
+        <TextView
+            android:id="@+id/publication_rating_count"
+            style="@style/TextBody"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/publication_rating"
+            android:layout_toEndOf="@id/publication_rating_text"
+            android:layout_toRightOf="@id/publication_rating_text"
+            android:text="@string/designtime_placeholder_rating_count"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:layout_below="@id/publication_rating"
+            android:layout_toRightOf="@id/publication_rating_count"
+            android:contentDescription="@string/publication_ratings"
+            android:scaleType="center"
+            android:src="@drawable/rating_user"/>
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/voted_on_field"
+        style="@style/TextBody"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/keyline_2_pub_detail"
+        android:text="@string/designtime_placeholder_rating_date"/>
+
+</LinearLayout>
+

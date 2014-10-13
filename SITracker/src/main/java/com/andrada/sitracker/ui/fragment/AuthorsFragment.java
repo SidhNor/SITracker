@@ -23,6 +23,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
@@ -40,7 +41,6 @@ import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.AuthorUpdateStatusListener;
 import com.andrada.sitracker.db.beans.Author;
-import com.andrada.sitracker.events.AuthorAddedEvent;
 import com.andrada.sitracker.events.AuthorSelectedEvent;
 import com.andrada.sitracker.events.AuthorSortMethodChanged;
 import com.andrada.sitracker.events.BackUpRestoredEvent;
@@ -48,6 +48,7 @@ import com.andrada.sitracker.events.ProgressBarToggleEvent;
 import com.andrada.sitracker.events.PublicationMarkedAsReadEvent;
 import com.andrada.sitracker.tasks.UpdateAuthorsTask_;
 import com.andrada.sitracker.ui.MultiSelectionUtil;
+import com.andrada.sitracker.ui.SearchActivity_;
 import com.andrada.sitracker.ui.fragment.adapters.AuthorsAdapter;
 import com.andrada.sitracker.util.AnalyticsHelper;
 
@@ -62,6 +63,8 @@ import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.apache.commons.lang3.ArrayUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Timer;
@@ -77,30 +80,26 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListener,
         MultiSelectionUtil.MultiChoiceModeListener, View.OnClickListener {
 
+    private final ArrayList<Long> mSelectedAuthors = new ArrayList<Long>();
     @ViewById
     ListView list;
-
     @ViewById
     ViewStub empty;
-
     @Bean
     AuthorsAdapter adapter;
-
     @SystemService
     ConnectivityManager connectivityManager;
-
     @InstanceState
     long currentAuthorIndex = -1;
+    @InstanceState
+    boolean mIsUpdating = false;
 
-    private Crouton mNoNetworkCrouton;
-
-    private boolean mIsUpdating = false;
-
+    @Nullable
     @InstanceState
     long[] checkedItems;
-
-    private final ArrayList<Long> mSelectedAuthors = new ArrayList<Long>();
-
+    @Nullable
+    private Crouton mNoNetworkCrouton;
+    @Nullable
     private MultiSelectionUtil.Controller mMultiSelectionController;
 
     //region Fragment lifecycle overrides
@@ -115,10 +114,13 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
     @Override
     public void onStart() {
         super.onStart();
-        mIsUpdating = false;
         getActivity().supportInvalidateOptionsMenu();
         currentAuthorIndex = currentAuthorIndex == -1 ? adapter.getFirstAuthorId() : currentAuthorIndex;
-        EventBus.getDefault().post(new AuthorSelectedEvent(currentAuthorIndex));
+        setStartupSelected();
+    }
+
+    @UiThread(delay = 100)
+    void setStartupSelected() {
         // Set the item as checked to be highlighted
         adapter.setSelectedItem(currentAuthorIndex);
         adapter.notifyDataSetChanged();
@@ -137,7 +139,7 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
     //endregion
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NotNull Menu menu, MenuInflater inflater) {
         if (mIsUpdating) {
             menu.removeItem(R.id.action_refresh);
         }
@@ -145,12 +147,10 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
     }
 
     //region Menu item tap handlers
-    @OptionsItem(R.id.action_add)
-    void menuAddSelected() {
-        AddAuthorDialog authorDialog = new AddAuthorDialog();
-        authorDialog.show(getActivity().getSupportFragmentManager(),
-                Constants.DIALOG_ADD_AUTHOR);
-        AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_ADD_DIALOG);
+    @OptionsItem(R.id.action_search)
+    void menuSearchSelected() {
+        AnalyticsHelper.getInstance().sendEvent(Constants.GA_EXPLORE_CATEGORY, "launchsearch", "");
+        SearchActivity_.intent(this.getActivity()).start();
     }
 
     @OptionsItem(R.id.action_refresh)
@@ -162,7 +162,7 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
                 updateIntent.putExtra(Constants.UPDATE_IGNORES_NETWORK, true);
                 getActivity().startService(updateIntent);
                 AnalyticsHelper.getInstance().sendEvent(
-                        Constants.GA_UI_CATEGORY,
+                        Constants.GA_READ_CATEGORY,
                         Constants.GA_EVENT_AUTHORS_MANUAL_REFRESH,
                         Constants.GA_EVENT_AUTHORS_MANUAL_REFRESH);
                 toggleUpdatingState();
@@ -175,11 +175,13 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
 
     //endregion
 
-    @Override
     /**
      * Crouton click handler
+     *
+     * @param view being clicked
      */
-    public void onClick(View view) {
+    @Override
+    public void onClick(@NotNull View view) {
         if (view.getId() == R.id.retryUpdateButton) {
             if (this.mNoNetworkCrouton != null) {
                 Crouton.hide(this.mNoNetworkCrouton);
@@ -189,7 +191,15 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
             timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    menuRefreshSelected();
+                    FragmentActivity activity = getActivity();
+                    if (activity != null) {
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                menuRefreshSelected();
+                            }
+                        });
+                    }
                 }
             }, 1500);
         }
@@ -214,7 +224,6 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
     public void listItemClicked(int position) {
         // Notify the parent activity of selected item
         currentAuthorIndex = list.getItemIdAtPosition(position);
-        EventBus.getDefault().post(new AuthorSelectedEvent(currentAuthorIndex));
         // Set the item as checked to be highlighted
         adapter.setSelectedItem(currentAuthorIndex);
         adapter.notifyDataSetChanged();
@@ -277,7 +286,7 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
     //region CABListener
 
     @Override
-    public void onItemCheckedStateChanged(ActionMode mode,
+    public void onItemCheckedStateChanged(@NotNull ActionMode mode,
                                           int position, long id, boolean checked) {
         if (checked) {
             mSelectedAuthors.add(((Author) adapter.getItem(position)).getId());
@@ -292,7 +301,7 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
     }
 
     @Override
-    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+    public boolean onCreateActionMode(@NotNull ActionMode mode, Menu menu) {
         MenuInflater inflater = mode.getMenuInflater();
         inflater.inflate(R.menu.context_authors, menu);
         mSelectedAuthors.clear();
@@ -305,23 +314,24 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
     }
 
     @Override
-    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+    public boolean onActionItemClicked(@NotNull ActionMode mode, @NotNull MenuItem item) {
         mode.finish();
         if (item.getItemId() == R.id.action_remove) {
             AnalyticsHelper.getInstance().sendEvent(
-                    Constants.GA_UI_CATEGORY,
+                    Constants.GA_ADMIN_CATEGORY,
                     Constants.GA_EVENT_AUTHOR_REMOVED,
                     Constants.GA_EVENT_AUTHOR_REMOVED, (long) mSelectedAuthors.size());
+
+            //This stuff is on background thread
             adapter.removeAuthors(mSelectedAuthors);
-            currentAuthorIndex = adapter.getSelectedAuthorId();
-            /*
-            BackupManager bm = new BackupManager(getActivity());
-            bm.dataChanged();
-            */
-            EventBus.getDefault().post(new AuthorSelectedEvent(currentAuthorIndex));
             return true;
         } else if (item.getItemId() == R.id.action_mark_read) {
             adapter.markAuthorsRead(mSelectedAuthors);
+            AnalyticsHelper.getInstance().sendEvent(
+                    Constants.GA_ADMIN_CATEGORY,
+                    Constants.GA_EVENT_AUTHOR_MANUAL_READ,
+                    Constants.GA_EVENT_AUTHOR_MANUAL_READ, (long) mSelectedAuthors.size());
+
             BackupManager bm = new BackupManager(getActivity());
             bm.dataChanged();
             return true;
@@ -345,14 +355,20 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
 
     //endregion
 
-    public void onEvent(PublicationMarkedAsReadEvent event) {
+    public void onEvent(@NotNull PublicationMarkedAsReadEvent event) {
         //ensure we update the new status of the author if he has no new publications
         AnalyticsHelper.getInstance().sendEvent(
-                Constants.GA_UI_CATEGORY,
+                Constants.GA_READ_CATEGORY,
                 Constants.GA_EVENT_AUTHOR_MANUAL_READ,
                 Constants.GA_EVENT_AUTHOR_MANUAL_READ);
         if (event.refreshAuthor) {
             adapter.reloadAuthors();
+        }
+    }
+
+    public void onEvent(AuthorSelectedEvent event) {
+        if (event.isDefault && list != null) {
+            list.smoothScrollToPosition(0);
         }
     }
 
@@ -380,45 +396,6 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
     public void onEvent(AuthorSortMethodChanged event) {
         adapter.reloadAuthors();
     }
-
-    public void onEvent(AuthorAddedEvent event) {
-
-        EventBus.getDefault().post(new ProgressBarToggleEvent(false));
-        String message = event.message;
-
-        AnalyticsHelper.getInstance().sendEvent(
-                Constants.GA_UI_CATEGORY,
-                Constants.GA_EVENT_AUTHOR_ADDED,
-                Constants.GA_EVENT_AUTHOR_ADDED, (long) message.length());
-
-        //Stop progress bar
-
-        Style.Builder alertStyle = new Style.Builder()
-                .setTextAppearance(android.R.attr.textAppearanceLarge)
-                .setPaddingInPixels(25);
-
-        if (message.length() == 0) {
-            //This is success
-            adapter.reloadAuthors();
-            alertStyle.setBackgroundColorValue(Style.holoGreenLight);
-            message = getResources().getString(R.string.author_add_success_crouton_message);
-        } else {
-            alertStyle.setBackgroundColorValue(Style.holoRedLight);
-        }
-        Crouton.makeText(getActivity(), message, alertStyle.build()).show();
-
-        if (currentAuthorIndex == -1) {
-            currentAuthorIndex = adapter.getFirstAuthorId();
-            EventBus.getDefault().post(new AuthorSelectedEvent(currentAuthorIndex));
-            // Set the item as checked to be highlighted
-            adapter.setSelectedItem(currentAuthorIndex);
-            adapter.notifyDataSetChanged();
-        }
-
-        BackupManager bm = new BackupManager(getActivity());
-        bm.dataChanged();
-    }
-
     //endregion
 
 

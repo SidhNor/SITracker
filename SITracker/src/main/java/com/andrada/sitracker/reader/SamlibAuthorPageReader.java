@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,6 +21,9 @@ import com.andrada.sitracker.db.beans.Author;
 import com.andrada.sitracker.db.beans.Publication;
 import com.andrada.sitracker.exceptions.AddAuthorException;
 import com.andrada.sitracker.util.SamlibPageHelper;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -38,8 +41,9 @@ public class SamlibAuthorPageReader implements AuthorPageReader {
         this.pageContent = this.sanitizeHTML(page);
     }
 
+    @NotNull
     @Override
-    public Author getAuthor(String url) throws AddAuthorException {
+    public Author getAuthor(@NotNull String url) throws AddAuthorException {
         Author author = new Author();
         author.setUrl(url);
         String urlId = SamlibPageHelper.getUrlIdFromCompleteUrl(url);
@@ -51,8 +55,9 @@ public class SamlibAuthorPageReader implements AuthorPageReader {
         return author;
     }
 
+    @NotNull
     @Override
-    public List<Publication> getPublications(Author author) {
+    public List<Publication> getPublications(@NotNull Author author) {
         ArrayList<Publication> publicationList = new ArrayList<Publication>();
         Pattern pattern = Pattern.compile(Constants.PUBLICATIONS_REGEX, Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(pageContent);
@@ -95,11 +100,14 @@ public class SamlibAuthorPageReader implements AuthorPageReader {
             String itemDescription = matcher.group(13) == null ? "" : matcher.group(13);
             item.setDescription(itemDescription.trim());
             item.setImageUrl(extractImage(itemDescription.trim()));
+            String imagesPageUrl = matcher.group(14) == null ? null : matcher.group(14);
+            item.setImagePageUrl(imagesPageUrl);
             publicationList.add(item);
         }
         return publicationList;
     }
 
+    @Nullable
     @Override
     public String getAuthorImageUrl(String authorUrl) {
         authorUrl = authorUrl.replace(Constants.AUTHOR_PAGE_URL_ENDING_WO_SLASH, "");
@@ -114,6 +122,7 @@ public class SamlibAuthorPageReader implements AuthorPageReader {
         return imageUrl;
     }
 
+    @Nullable
     @Override
     public String getAuthorDescription() {
         Pattern pattern = Pattern.compile(Constants.AUTHOR_DESCRIPTION_TEXT_REGEX, Pattern.MULTILINE);
@@ -159,7 +168,8 @@ public class SamlibAuthorPageReader implements AuthorPageReader {
         return value;
     }
 
-    private static String extractImage(String itemDescription) {
+    @Nullable
+    private static String extractImage(@NotNull String itemDescription) {
         String imgUrl = null;
 
         Pattern pattern = Pattern.compile("(<a[^>]*>)?\\s*?<img src=[\"'](.*?)[\"'][^>]*>\\s?(</a>)?");
@@ -173,6 +183,7 @@ public class SamlibAuthorPageReader implements AuthorPageReader {
         return imgUrl;
     }
 
+    @NotNull
     private String getAuthorName() throws AddAuthorException {
         int index = pageContent.indexOf('.', pageContent.indexOf("<title>")) + 1;
         if (index == -1) {

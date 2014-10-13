@@ -20,39 +20,42 @@
                 android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/category_title"
-        android:layout_width="match_parent"
+        android:id="@+id/category_item_count"
+        style="@style/Publication.Category.Title"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/group_heading_margin_top"
-        android:layout_marginBottom="@dimen/group_heading_margin_top"
-        android:paddingStart="@dimen/list_left_padding"
-        android:paddingLeft="@dimen/list_left_padding"
-        android:textAppearance="@android:style/TextAppearance.Large"
-        android:textColor="@color/holo_blue_light"
-        android:fontFamily="sans-serif-light"
-        android:text="@string/designtime_placeholder_short"
-        android:textIsSelectable="false"
-        android:textStyle="bold"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:layout_marginStart="25dp"
-        android:layout_marginLeft="25dp"/>
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:paddingBottom="@dimen/default_list_vertical_spacing"
+        android:paddingRight="@dimen/keyline_1"
+        android:paddingTop="@dimen/default_list_vertical_spacing"
+        android:text="@string/designtime_placeholder_item_num"/>
 
     <TextView
-        android:id="@+id/category_item_count"
+        android:id="@+id/category_title"
+        style="@style/Publication.Category.Title"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:layout_marginStart="30dp"
+        android:layout_toLeftOf="@id/category_item_count"
+        android:paddingBottom="@dimen/default_list_vertical_spacing"
+        android:paddingTop="@dimen/default_list_vertical_spacing"
+        android:text="@string/designtime_placeholder_medium"/>
+
+    <!-- "Is new" indicator -->
+    <ImageView android:id="@+id/indicatorHasNew"
+        android:layout_gravity="top|end"
         android:layout_width="wrap_content"
-        android:textColor="@color/holo_blue_light"
-        android:fontFamily="sans-serif-light"
-        android:textAppearance="@android:style/TextAppearance.Large"
+        android:layout_height="wrap_content"
+        android:src="@drawable/indicator_category_new"
+        android:visibility="gone"
+        android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="@dimen/group_heading_margin_top"/>
+        android:contentDescription="@null" />
 
     <View
-        style="@style/DividerThick"
-        android:layout_below="@+id/category_title"
-        android:layout_marginBottom="@dimen/divider_margin_bottom"
-        android:layout_marginTop="@dimen/divider_margin_top"/>
+        style="@style/Theme.SiTracker.DividerThick"
+        android:layout_below="@+id/category_title"/>
 
 </RelativeLayout>

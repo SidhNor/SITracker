@@ -33,4 +33,9 @@
         android:orderInCategory="102"
         sitracker:showAsAction="never"
         android:title="@string/action_export"/>
+    <item
+        android:id="@+id/action_about"
+        android:orderInCategory="103"
+        sitracker:showAsAction="never"
+        android:title="@string/action_about"/>
 </menu>

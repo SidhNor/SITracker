@@ -19,25 +19,14 @@ package com.andrada.sitracker.tasks;
 import android.content.Context;
 import android.os.AsyncTask;
 
-import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
-import com.andrada.sitracker.db.beans.Author;
-import com.andrada.sitracker.db.beans.Publication;
 import com.andrada.sitracker.db.manager.SiDBHelper;
 import com.andrada.sitracker.events.AuthorAddedEvent;
-import com.andrada.sitracker.exceptions.AddAuthorException;
-import com.andrada.sitracker.reader.AuthorPageReader;
-import com.andrada.sitracker.reader.SamlibAuthorPageReader;
 import com.andrada.sitracker.reader.SiteDetector;
 import com.andrada.sitracker.reader.SiteStrategy;
-import com.github.kevinsawicki.http.HttpRequest;
-import com.github.kevinsawicki.http.HttpRequest.HttpRequestException;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.sql.SQLException;
-import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
 import de.greenrobot.event.EventBus;
 
@@ -45,6 +34,7 @@ public class AddAuthorTask extends AsyncTask<String, Integer, String> {
 
     private final Context context;
     private SiDBHelper helper;
+    private String authUrl;
 
 
     public AddAuthorTask(Context context) {
@@ -52,9 +42,10 @@ public class AddAuthorTask extends AsyncTask<String, Integer, String> {
     }
 
     @Override
-    protected String doInBackground(String... args) {
+    protected String doInBackground(@NotNull String... args) {
         String message = "";
         for (String url : args) {
+            authUrl = url;
             SiteStrategy strategy = SiteDetector.chooseStrategy(url, helper);
             if (strategy == null) {
                 message = context.getResources().getString(R.string.supported_urls);
@@ -76,6 +67,6 @@ public class AddAuthorTask extends AsyncTask<String, Integer, String> {
     @Override
     protected void onPostExecute(String result) {
         OpenHelperManager.releaseHelper();
-        EventBus.getDefault().post(new AuthorAddedEvent(result));
+        EventBus.getDefault().post(new AuthorAddedEvent(result, authUrl));
     }
 }

@@ -25,14 +25,16 @@ import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.StandardExceptionParser;
 import com.google.android.gms.analytics.Tracker;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.HashMap;
 import java.util.Map;
 
 public class AnalyticsHelper {
 
     private static AnalyticsHelper instance;
-    private Map<TrackerName, Tracker> mTrackers = new HashMap<TrackerName, Tracker>();
-    private Context defaultContext;
+    private final Map<TrackerName, Tracker> mTrackers = new HashMap<TrackerName, Tracker>();
+    private final Context defaultContext;
 
     private AnalyticsHelper(Context context) {
         this.defaultContext = context;
@@ -109,7 +111,7 @@ public class AnalyticsHelper {
         );
     }
 
-    public void sendException(String message) {
+    public void sendException(@Nullable String message) {
         if (message == null) {
             message = "";
         }

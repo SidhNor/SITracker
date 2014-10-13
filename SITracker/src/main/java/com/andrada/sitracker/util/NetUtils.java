@@ -21,15 +21,20 @@ import android.content.pm.PackageManager;
 
 import com.andrada.sitracker.Constants;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import static com.andrada.sitracker.util.LogUtils.LOGD;
 import static com.andrada.sitracker.util.LogUtils.LOGE;
 import static com.andrada.sitracker.util.LogUtils.makeLogTag;
 
 public class NetUtils {
     private static final String TAG = makeLogTag(NetUtils.class);
+    @Nullable
     private static String mUserAgent = null;
 
-    public static String getUserAgent(Context mContext) {
+    @Nullable
+    public static String getUserAgent(@NotNull Context mContext) {
         if (mUserAgent == null) {
             mUserAgent = Constants.APP_TAG;
             try {

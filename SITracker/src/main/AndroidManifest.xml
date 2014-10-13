@@ -1,11 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   Copyright 2014 Gleb Godonoga.
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
 
-     http://www.apache.org/licenses/LICENSE-2.0
+      http://www.apache.org/licenses/LICENSE-2.0
 
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,31 +14,31 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.andrada.sitracker"
-          android:installLocation="auto"
-          android:versionCode="30"
-          android:versionName="1.2.1">
+<manifest
+    package="com.andrada.sitracker"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:installLocation="auto">
 
     <supports-screens
-        android:normalScreens="true"
         android:anyDensity="true"
         android:largeScreens="true"
+        android:normalScreens="true"
         android:xlargeScreens="true"/>
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
     <application
+        android:name=".SITrackerApp"
         android:allowBackup="true"
+        android:backupAgent=".util.SiBackupAgent"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:name="com.andrada.sitracker.SITrackerApp"
-        android:theme="@style/AppTheme"
         android:restoreAnyVersion="true"
-        android:backupAgent=".util.SiBackupAgent">
+        android:supportsRtl="false"
+        android:theme="@style/Theme.SiTracker">
 
         <!-- Google Analytics Version v4 needs this value for easy tracking -->
         <meta-data
@@ -52,18 +53,39 @@
 
         <!-- Activities for both phones and tablets -->
         <activity
-            android:name="com.andrada.sitracker.ui.HomeActivity_"
-            android:launchMode="singleTask"
-            android:label="@string/app_name">
+            android:name=".ui.HomeActivity_"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.SiTracker.Home"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".ui.SearchActivity_"
+            android:label="@string/title_search"
+            android:theme="@style/Theme.SiTracker.Search"
+            android:parentActivityName=".ui.HomeActivity_">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable"/>
+            <!-- Parent activity meta-data to support API level 7+ -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.andrada.sitracker.ui.HomeActivity_"/>
+        </activity>
+
         <activity
             android:name=".ui.SettingsActivity_"
             android:label="@string/title_settings"
-            android:parentActivityName="com.andrada.sitracker.ui.HomeActivity_">
+            android:theme="@style/Theme.SiTracker.WithElevatedHeader"
+            android:parentActivityName=".ui.HomeActivity_">
             <!-- Parent activity meta-data to support API level 7+ -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -72,34 +94,33 @@
         <activity
             android:name=".ui.ImportAuthorsActivity_"
             android:label="@string/title_import"
-            android:parentActivityName="com.andrada.sitracker.ui.HomeActivity_">
+            android:theme="@style/Theme.SiTracker.WithElevatedHeader"
+            android:parentActivityName=".ui.HomeActivity_">
             <!-- Parent activity meta-data to support API level 7+ -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.andrada.sitracker.ui.HomeActivity_"/>
         </activity>
-        <activity android:name="com.andrada.sitracker.ui.DirectoryChooserActivity"/>
+        <activity android:name=".ui.DirectoryChooserActivity"/>
 
-        <!-- Phone-only activities -->
         <activity
-            android:name=".ui.phone.PublicationsActivity_"
-            android:label="@string/title_publications"
-            android:configChanges="orientation|keyboardHidden"
+            android:name=".ui.PublicationDetailsActivity"
+            android:label="@string/title_publications_details"
+            android:theme="@style/Theme.SiTracker.PublicationDetails"
             android:parentActivityName=".ui.HomeActivity_">
+            <!-- PARENT_ACTIVITY alone is insufficient for Up navigation for this activity -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.HomeActivity_"/>
-            <meta-data
-                android:name="com.andrada.sitracker.meta.TARGET_FORM_FACTOR"
-                android:value="handset"/>
         </activity>
 
+        <!-- Phone-only activities -->
+        <!-- Example of phone only activity
         <activity
             android:name=".ui.phone.PublicationDetailsActivity_"
-            android:label="@string/title_publications_details"
             android:configChanges="orientation|keyboardHidden"
-            android:parentActivityName=".ui.phone.PublicationsActivity_">
-            <!-- PARENT_ACTIVITY alone is insufficient for Up navigation for this activity -->
+            android:label="@string/title_publications_details"
+            android:parentActivityName=".ui.HomeActivity_">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.phone.PublicationsActivity_"/>
@@ -107,42 +128,16 @@
                 android:name="com.andrada.sitracker.meta.TARGET_FORM_FACTOR"
                 android:value="handset"/>
         </activity>
-
-        <activity
-            android:name=".ui.phone.CommentStreamActivity_"
-            android:label="@string/title_comment_stream"
-            android:configChanges="orientation|keyboardHidden"
-            android:parentActivityName=".ui.phone.PublicationDetailsActivity_">
-            <!-- PARENT_ACTIVITY alone is insufficient for Up navigation for this activity -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.phone.PublicationDetailsActivity_"/>
-            <meta-data
-                android:name="com.andrada.sitracker.meta.TARGET_FORM_FACTOR"
-                android:value="handset"/>
-        </activity>
+        -->
 
         <!-- Tablet-only activities -->
 
-        <activity
-            android:name=".ui.tablet.PublicationsMultiPaneActivity_"
-            android:label="@string/title_publications"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:parentActivityName=".ui.HomeActivity_">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.HomeActivity_"/>
-            <meta-data
-                android:name="com.andrada.sitracker.meta.TARGET_FORM_FACTOR"
-                android:value="tablet"/>
-        </activity>
-
+        <!-- Example of table only activity
         <activity
             android:name=".ui.tablet.CommentsMultiPaneActivity_"
-            android:label="@string/title_comment_stream"
             android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_comment_stream"
             android:parentActivityName=".ui.HomeActivity_">
-            <!-- PARENT_ACTIVITY alone is insufficient for Up navigation for this activity -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.HomeActivity_"/>
@@ -150,9 +145,10 @@
                 android:name="com.andrada.sitracker.meta.TARGET_FORM_FACTOR"
                 android:value="tablet"/>
         </activity>
-
+        -->
 
         <service android:name=".tasks.ClearPublicationCacheTask"/>
+
         <!-- Authors update components -->
         <service android:name=".tasks.UpdateAuthorsTask_"/>
         <service android:name=".tasks.ImportAuthorsTask_"/>
@@ -165,7 +161,24 @@
                 <action android:name="com.andrada.sitracker.UPDATE_FAILED_ACTION"/>
             </intent-filter>
         </receiver>
+        <receiver
+            android:name=".tasks.receivers.BootReceiver"
+            android:permission="android.permission.RECEIVE_BOOT_COMPLETED"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.EXTERNAL_APPLICATIONS_AVAILABLE"/>
+            </intent-filter>
+        </receiver>
+
+        <!-- Other manifest items -->
+
+        <meta-data
+            android:name="android.app.default_searchable"
+            android:value=".ui.SearchActivity_"/>
+
+
     </application>
 
 </manifest>
-

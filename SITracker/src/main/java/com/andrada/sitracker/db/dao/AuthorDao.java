@@ -19,21 +19,29 @@ package com.andrada.sitracker.db.dao;
 import com.andrada.sitracker.db.beans.Author;
 import com.j256.ormlite.dao.Dao;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.sql.SQLException;
 import java.util.List;
 
 public interface AuthorDao extends Dao<Author, Integer> {
 
+    @NotNull
     List<String> getAuthorsUrls() throws SQLException;
 
+    @NotNull
     List<String> getAuthorsUrlIds() throws SQLException;
+
+    boolean hasAuthor(String authorUrlId) throws SQLException;
 
     int getNewAuthorsCount() throws SQLException;
 
     void markAsRead(Author author) throws SQLException;
 
+    @NotNull
     List<Author> getAllAuthorsSortedNew() throws SQLException;
 
+    @NotNull
     List<Author> getAllAuthorsSortedAZ() throws SQLException;
 
     void removeAuthor(long id) throws SQLException;

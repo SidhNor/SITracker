@@ -1,42 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android">
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+       xmlns:tools="http://schemas.android.com/tools"
+       tools:context=".ui.widget.CheckedRelativeLayout">
 
     <TextView
-            android:id="@+id/author_title"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:gravity="center_vertical"
-            android:layout_alignParentTop="true"
-            android:layout_toLeftOf="@+id/author_update_date"
-            android:layout_toStartOf="@+id/author_update_date"
-            android:textColor="@color/author_list_item_text"
-            android:minHeight="?android:attr/listPreferredItemHeight"
-            android:ellipsize="end"
-            android:maxLines="2"
-            android:text="@string/designtime_placeholder_short"/>
+        android:id="@+id/author_title"
+        style="@style/Authors.Title"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/author_update_date"
+        android:layout_toStartOf="@+id/author_update_date"
+        android:minHeight="?android:attr/listPreferredItemHeight"
+        android:paddingLeft="@dimen/keyline_1"
+        android:text="@string/designtime_placeholder_medium"/>
 
     <TextView
-            android:id="@+id/author_update_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:textSize="12sp"
-            android:text="@string/designtime_placeholder_date"
-            android:textAlignment="viewEnd"/>
+        android:id="@+id/author_update_date"
+        style="@style/Widget.UpdateDate.Text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:paddingRight="@dimen/keyline_1"
+        android:text="@string/designtime_placeholder_date"/>
 
     <ImageButton
-            android:id="@+id/author_updated"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:background="@null"
-            android:src="@drawable/star_unselected"
-            android:contentDescription="@string/notification_title"/>
+        android:id="@+id/author_updated"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:background="@null"
+        android:contentDescription="@string/notification_title"
+        android:paddingRight="@dimen/keyline_1"
+        android:src="@drawable/star_unselected"/>
 </merge>
 
 

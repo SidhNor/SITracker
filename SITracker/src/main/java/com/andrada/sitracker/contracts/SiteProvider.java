@@ -19,6 +19,8 @@ package com.andrada.sitracker.contracts;
 import com.andrada.sitracker.db.beans.Author;
 import com.andrada.sitracker.db.beans.Publication;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 public interface SiteProvider {
@@ -28,6 +30,7 @@ public interface SiteProvider {
      *
      * @return base link for particular site provider implementation
      */
+    @NotNull
     String baseSiteLink();
 
     /**
@@ -37,6 +40,7 @@ public interface SiteProvider {
      * @param page raw source of author page
      * @return an instance of {@link com.andrada.sitracker.db.beans.Author} with populated data either null
      */
+    @NotNull
     Author getAuthor(String page);
 
     /**
@@ -47,6 +51,7 @@ public interface SiteProvider {
      * @param author instance of {@link com.andrada.sitracker.db.beans.Author} that will be associated with all parsed publications
      * @return a list of {@link com.andrada.sitracker.db.beans.Publication} that are associated with the specified author
      */
+    @NotNull
     List<Publication> getPublications(String page, Author author);
 
 }

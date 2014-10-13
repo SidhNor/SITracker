@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -27,6 +27,7 @@ import com.andrada.sitracker.db.beans.Author;
 import com.andrada.sitracker.db.dao.AuthorDao;
 import com.andrada.sitracker.db.manager.SiDBHelper;
 import com.andrada.sitracker.events.AuthorMarkedAsReadEvent;
+import com.andrada.sitracker.events.AuthorSelectedEvent;
 import com.andrada.sitracker.ui.components.AuthorItemView;
 import com.andrada.sitracker.ui.components.AuthorItemView_;
 import com.andrada.sitracker.util.AnalyticsHelper;
@@ -38,6 +39,8 @@ import org.androidannotations.annotations.OrmLiteDao;
 import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.sharedpreferences.Pref;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -52,7 +55,7 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
     List<Author> authors = new ArrayList<Author>();
     long mNewAuthors;
 
-    @OrmLiteDao(helper = SiDBHelper.class, model = Author.class)
+    @OrmLiteDao(helper = SiDBHelper.class)
     AuthorDao authorDao;
 
     @Pref
@@ -76,21 +79,24 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
     public void reloadAuthors() {
         try {
             int sortType = Integer.parseInt(prefs.authorsSortType().get());
+            List<Author> newList;
             if (sortType == 0) {
-                authors = authorDao.getAllAuthorsSortedAZ();
+                newList = authorDao.getAllAuthorsSortedAZ();
             } else {
-                authors = authorDao.getAllAuthorsSortedNew();
+                newList = authorDao.getAllAuthorsSortedNew();
             }
             mNewAuthors = authorDao.getNewAuthorsCount();
             setSelectedItem(mSelectedAuthorId);
-            postDataSetChanged();
+            postDataSetChanged(newList);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     @UiThread
-    protected void postDataSetChanged() {
+    protected void postDataSetChanged(List<Author> newAuthors) {
+        authors.clear();
+        authors.addAll(newAuthors);
         notifyDataSetChanged();
     }
 
@@ -110,8 +116,9 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
         return authors.get(position).getId();
     }
 
+    @Nullable
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, @Nullable View convertView, ViewGroup parent) {
         AuthorItemView authorsItemView;
         if (convertView == null) {
             authorsItemView = AuthorItemView_.build(context);
@@ -127,13 +134,13 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
 
     @Override
     @Background
-    public void onIsNewItemTapped(View starButton) {
+    public void onIsNewItemTapped(@NotNull View starButton) {
         Author auth = (Author) starButton.getTag();
         dismissAuthor(auth);
     }
 
     @Background
-    public void markAuthorsRead(List<Long> authorsToMarkAsRead) {
+    public void markAuthorsRead(@NotNull List<Long> authorsToMarkAsRead) {
         for (long authId : authorsToMarkAsRead) {
             dismissAuthor(this.getAuthorById(authId));
         }
@@ -144,7 +151,7 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
      *
      * @param auth Author to mark as read
      */
-    private void dismissAuthor(Author auth) {
+    private void dismissAuthor(@Nullable Author auth) {
         if (auth != null) {
             auth.markRead();
             try {
@@ -157,9 +164,10 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
     }
 
     @Background
-    public void removeAuthors(final List<Long> authorsToRemove) {
+    public void removeAuthors(@NotNull final List<Long> authorsToRemove) {
         try {
             authorDao.callBatchTasks(new Callable<Object>() {
+                @Nullable
                 @Override
                 public Object call() throws Exception {
                     for (Long anAuthorsToRemove : authorsToRemove) {
@@ -173,11 +181,12 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
         }
 
         boolean removingCurrentlySelected = false;
+        List<Author> authorCopy = new ArrayList<Author>(authors);
         for (Long anAuthorToRemove : authorsToRemove) {
             if (anAuthorToRemove == mSelectedAuthorId) {
                 removingCurrentlySelected = true;
             }
-            authors.remove(getAuthorById(anAuthorToRemove));
+            authorCopy.remove(getAuthorById(anAuthorToRemove));
         }
         if (removingCurrentlySelected) {
             //Try select the first one
@@ -185,7 +194,7 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
         } else {
             setSelectedItem(mSelectedAuthorId);
         }
-        postDataSetChanged();
+        postDataSetChanged(authorCopy);
     }
 
     public long getFirstAuthorId() {
@@ -203,6 +212,7 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
             potentialAuthorId = getFirstAuthorId();
         }
         this.mSelectedAuthorId = potentialAuthorId;
+        EventBus.getDefault().post(new AuthorSelectedEvent(mSelectedAuthorId, potentialSelectedItem == 0));
         this.mSelectedItem = potentialSelectedItem;
     }
 
@@ -210,12 +220,14 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
         return this.mSelectedAuthorId;
     }
 
+    @Nullable
     public Author getCurrentlySelectedAuthor() {
         if (mSelectedItem < authors.size() && mSelectedItem >= 0)
             return authors.get(mSelectedItem);
         return null;
     }
 
+    @Nullable
     private Author getAuthorById(long authorId) {
         for (Author author : authors) {
             if (author.getId() == authorId) {

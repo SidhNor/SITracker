@@ -1,11 +1,11 @@
 /*
- * Copyright 2013 Gleb Godonoga.
+ * Copyright 2014 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -28,16 +28,16 @@ import android.widget.TextView;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.IsNewItemTappedListener;
 import com.andrada.sitracker.db.beans.Publication;
-import com.andrada.sitracker.ui.widget.EllipsizedTextView;
 import com.andrada.sitracker.ui.widget.TouchDelegateRelativeLayout;
 import com.andrada.sitracker.util.DateFormatterUtil;
-import com.andrada.sitracker.util.ImageLoader;
 import com.andrada.sitracker.util.SamlibPageHelper;
 import com.andrada.sitracker.util.UIUtils;
+import com.bumptech.glide.Glide;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
+import org.jetbrains.annotations.NotNull;
 
 @EViewGroup(R.layout.publications_item)
 public class PublicationItemView extends TouchDelegateRelativeLayout {
@@ -55,10 +55,13 @@ public class PublicationItemView extends TouchDelegateRelativeLayout {
     ViewGroup downloadProgress;
 
     @ViewById
-    EllipsizedTextView item_description;
+    TextView item_description;
 
     @ViewById
     ImageView publication_image;
+
+    @ViewById(R.id.dim_verlay)
+    View dimOverlay;
 
     @ViewById
     TextView itemSize;
@@ -73,7 +76,7 @@ public class PublicationItemView extends TouchDelegateRelativeLayout {
 
     private IsNewItemTappedListener mListener;
 
-    public PublicationItemView(Context context) {
+    public PublicationItemView(@NotNull Context context) {
         super(context);
 
     }
@@ -85,6 +88,20 @@ public class PublicationItemView extends TouchDelegateRelativeLayout {
                 item_updated);
         item_description.setMaxLines(3);
         scaleFadeOutAnim = AnimationUtils.loadAnimation(getContext(), R.anim.item_fade_scale_down);
+        scaleFadeOutAnim.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                backgroundPane.setVisibility(GONE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+        });
         fadeInAnim = AnimationUtils.loadAnimation(getContext(), R.anim.item_fade_in);
     }
 
@@ -92,7 +109,7 @@ public class PublicationItemView extends TouchDelegateRelativeLayout {
         mListener = listener;
     }
 
-    public void bind(Publication publication, ImageLoader loader) {
+    public void bind(@NotNull Publication publication, boolean loadImages) {
         mIsNew = publication.getNew();
         item_title.setText(publication.getName());
         item_updated.setImageResource(mIsNew ? R.drawable.star_selected : R.drawable.star_unselected);
@@ -100,11 +117,25 @@ public class PublicationItemView extends TouchDelegateRelativeLayout {
         item_update_date.setText(
                 DateFormatterUtil.getFriendlyDateRelativeToToday(publication.getUpdateDate(),
                         getResources().getConfiguration().locale));
-        if (loader != null && publication.getImageUrl() != null) {
+
+        if (this.getContext() != null && loadImages && publication.getImageUrl() != null &&
+                //TODO Remove gingerbread check on next release
+                UIUtils.hasGingerbreadMR1()) {
             publication_image.setVisibility(VISIBLE);
-            loader.get(publication.getImageUrl(), publication_image);
+            Glide.with(this.getContext())
+                    .load(publication.getImageUrl())
+                    .fitCenter()
+                    .placeholder(R.drawable.blank_book)
+                    .crossFade()
+                    .into(publication_image);
         } else {
             publication_image.setVisibility(GONE);
+        }
+
+        if (publication.getUpdatesIgnored()) {
+            dimOverlay.setVisibility(VISIBLE);
+        } else {
+            dimOverlay.setVisibility(GONE);
         }
 
         UIUtils.setTextMaybeHtml(item_description,
@@ -136,12 +167,13 @@ public class PublicationItemView extends TouchDelegateRelativeLayout {
             downloadProgress.clearAnimation();
             backgroundPane.clearAnimation();
             downloadProgress.setVisibility(GONE);
+            backgroundPane.setVisibility(VISIBLE);
         }
 
     }
 
     @Override
-    protected void onDelegatedTouchViewClicked(View view) {
+    protected void onDelegatedTouchViewClicked(@NotNull View view) {
         if (mListener != null && view.getId() == R.id.item_updated) {
             mIsNew = false;
             item_updated.setImageResource(R.drawable.star_unselected);
@@ -150,17 +182,17 @@ public class PublicationItemView extends TouchDelegateRelativeLayout {
     }
 
     @Override
-    protected void onDelegatedTouchViewDown(View view) {
+    protected void onDelegatedTouchViewDown(@NotNull View view) {
         if (mIsNew && view.getId() == R.id.item_updated) {
             item_updated.setImageResource(R.drawable.star_selected_focused);
         }
     }
 
     @Override
-    protected void onDelegatedTouchViewCancel(View view) {
+    protected void onDelegatedTouchViewCancel(@NotNull View view) {
         //If we are not new, just ignore everything
         if (mIsNew && view.getId() == R.id.item_updated) {
-            item_updated.setImageResource(mIsNew ? R.drawable.star_selected : R.drawable.star_unselected);
+            item_updated.setImageResource(R.drawable.star_selected);
         }
     }
 }

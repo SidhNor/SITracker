@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Gleb Godonoga.
+ * Copyright 2014 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package com.andrada.sitracker.ui.components;
 
 import android.content.Context;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -34,12 +35,16 @@ public class PublicationCategoryItemView extends LinearLayout {
     @ViewById
     TextView category_item_count;
 
+    @ViewById
+    ImageView indicatorHasNew;
+
     public PublicationCategoryItemView(Context context) {
         super(context);
     }
 
-    public void bind(String category, Integer itemsCount) {
+    public void bind(String category, Integer itemsCount, int newCount) {
         category_title.setText(category);
         category_item_count.setText("(" + itemsCount + ")");
+        indicatorHasNew.setVisibility(newCount > 0 ? VISIBLE : GONE);
     }
 }
