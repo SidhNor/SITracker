@@ -1,11 +1,11 @@
 <!--
-  Copyright 2013 Gleb Godonoga.
+  Copyright 2014 Gleb Godonoga.
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
 
-     http://www.apache.org/licenses/LICENSE-2.0
+      http://www.apache.org/licenses/LICENSE-2.0
 
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,14 +15,14 @@
   -->
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
     <android.support.v4.widget.SlidingPaneLayout xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/fragment_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:baselineAligned="false">
+                                                 android:id="@+id/fragment_container"
+                                                 android:layout_width="match_parent"
+                                                 android:layout_height="match_parent"
+                                                 android:baselineAligned="false">
 
         <fragment
             android:name="com.andrada.sitracker.ui.fragment.AuthorsFragment_"
@@ -30,7 +30,7 @@
             android:layout_weight="1"
             android:layout_width="@dimen/author_fragment_width"
             android:layout_height="match_parent"
-            tools:layout="@layout/fragment_listview_with_empty" />
+            tools:layout="@layout/fragment_listview_with_empty"/>
 
         <fragment
             android:name="com.andrada.sitracker.ui.fragment.PublicationsFragment_"
@@ -38,16 +38,16 @@
             android:layout_weight="2"
             android:layout_width="@dimen/publication_fragment_width"
             android:layout_height="match_parent"
-            tools:layout="@layout/fragment_publications" />
+            tools:layout="@layout/fragment_publications"/>
     </android.support.v4.widget.SlidingPaneLayout>
 
     <ProgressBar
+        style="?android:attr/progressBarStyleHorizontal"
         android:id="@+id/globalProgress"
         android:indeterminate="true"
         android:indeterminateOnly="true"
         android:visibility="gone"
-        android:indeterminateDrawable="@drawable/progress_indeterminate_horizontal_holo"
         android:layout_width="match_parent"
         android:layout_marginTop="-8dp"
-        android:layout_height="10dp" />
+        android:layout_height="10dp"/>
 </RelativeLayout>

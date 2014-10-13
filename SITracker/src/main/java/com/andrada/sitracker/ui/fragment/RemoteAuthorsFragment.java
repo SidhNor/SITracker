@@ -18,13 +18,13 @@ package com.andrada.sitracker.ui.fragment;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Fragment;
+import android.app.LoaderManager;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.Loader;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.BaseAdapter;
@@ -44,7 +44,6 @@ import com.andrada.sitracker.ui.BaseActivity;
 import com.andrada.sitracker.ui.components.CollectionView;
 import com.andrada.sitracker.ui.fragment.adapters.SearchResultsAdapter;
 import com.andrada.sitracker.util.AnalyticsHelper;
-import com.andrada.sitracker.util.UIUtils;
 
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
@@ -83,26 +82,6 @@ public class RemoteAuthorsFragment extends Fragment implements
     private Bundle mArguments;
     private Uri mCurrentUri;
 
-    @Override
-    public void onAuthorSelected(SearchedAuthor author) {
-        final SearchedAuthor authorToAdd = author;
-        if (author.isAdded()) {
-            return;
-        }
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage(getString(R.string.add_author_confirmation))
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        //TODO make sure to run this in UI thread
-                        loading.setVisibility(View.VISIBLE);
-                        new AddAuthorTask(getActivity()).execute(authorToAdd.getAuthorUrl());
-                    }
-                })
-                .setNegativeButton(android.R.string.cancel, null);
-        builder.create().show();
-    }
-
     public void onEvent(@NotNull AuthorAddedEvent event) {
         //Cancel any further delivery
         EventBus.getDefault().cancelEventDelivery(event);
@@ -131,26 +110,24 @@ public class RemoteAuthorsFragment extends Fragment implements
         }
     }
 
-
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        EventBus.getDefault().register(this);
-        setRetainInstance(true);
-        adapter.setCallbacks(this);
-        //noinspection VariableNotUsedInsideIf
-        if (mCurrentUri != null) {
-            // Only if this is a config change should we initLoader(), to reconnect with an
-            // existing loader. Otherwise, the loader will be init'd when reloadFromArguments
-            // is called.
-            getLoaderManager().initLoader(SamlibSearchLoader.SEARCH_TOKEN, null, RemoteAuthorsFragment.this);
+    public void onAuthorSelected(SearchedAuthor author) {
+        final SearchedAuthor authorToAdd = author;
+        if (author.isAdded()) {
+            return;
         }
-    }
-
-    @Override
-    public void onDestroy() {
-        EventBus.getDefault().unregister(this);
-        super.onDestroy();
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage(getString(R.string.add_author_confirmation))
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        //TODO make sure to run this in UI thread
+                        loading.setVisibility(View.VISIBLE);
+                        new AddAuthorTask(getActivity()).execute(authorToAdd.getAuthorUrl());
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, null);
+        builder.create().show();
     }
 
     @UiThread(delay = 100)
@@ -213,7 +190,7 @@ public class RemoteAuthorsFragment extends Fragment implements
             inv = prepareInventory();
         }
         list.setCollectionAdapter(adapter);
-        list.updateInventory(inv, UIUtils.hasHoneycombMR1());
+        list.updateInventory(inv, true);
 
     }
 
@@ -234,12 +211,6 @@ public class RemoteAuthorsFragment extends Fragment implements
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
-        adapter.setCallbacks(sDummyCallbacks);
-    }
-
-    @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         if (adapter != null) {
@@ -248,6 +219,33 @@ public class RemoteAuthorsFragment extends Fragment implements
                 requestUpdateCollectionView(adapter.getData());
             }
         }
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
+        setRetainInstance(true);
+        adapter.setCallbacks(this);
+        //noinspection VariableNotUsedInsideIf
+        if (mCurrentUri != null) {
+            // Only if this is a config change should we initLoader(), to reconnect with an
+            // existing loader. Otherwise, the loader will be init'd when reloadFromArguments
+            // is called.
+            getLoaderManager().initLoader(SamlibSearchLoader.SEARCH_TOKEN, null, RemoteAuthorsFragment.this);
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        EventBus.getDefault().unregister(this);
+        super.onDestroy();
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        adapter.setCallbacks(sDummyCallbacks);
     }
 
     private void hideEmptyView() {
@@ -330,4 +328,6 @@ public class RemoteAuthorsFragment extends Fragment implements
     public void onLoaderReset(Loader<AsyncTaskResult<List<SearchedAuthor>>> listLoader) {
 
     }
+
+
 }

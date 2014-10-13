@@ -20,7 +20,6 @@ import android.app.Application;
 
 import com.andrada.sitracker.util.AnalyticsExceptionParser;
 import com.andrada.sitracker.util.AnalyticsHelper;
-import com.andrada.sitracker.util.UIUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.GlideBuilder;
 import com.bumptech.glide.load.engine.cache.DiskLruCacheWrapper;
@@ -62,13 +61,10 @@ public class SITrackerApp extends Application {
         myReporter.setExceptionParser(new AnalyticsExceptionParser());
         Thread.setDefaultUncaughtExceptionHandler(myReporter);
 
-        //TODO remove Gingerbread check on next release
-        if (UIUtils.hasGingerbreadMR1()) {
-            if (!Glide.isSetup()) {
-                Glide.setup(new GlideBuilder(this)
-                                .setDiskCache(DiskLruCacheWrapper.get(Glide.getPhotoCacheDir(this), 250 * 1024 * 1024))
-                );
-            }
+        if (!Glide.isSetup()) {
+            Glide.setup(new GlideBuilder(this)
+                            .setDiskCache(DiskLruCacheWrapper.get(Glide.getPhotoCacheDir(this), 250 * 1024 * 1024))
+            );
         }
 
     }

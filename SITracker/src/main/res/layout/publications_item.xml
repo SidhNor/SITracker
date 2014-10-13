@@ -19,7 +19,7 @@
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="wrap_content"
-             android:background="?attr/selectableItemBackground"
+             android:background="?android:selectableItemBackground"
              tools:context=".ui.SimpleSinglePaneActivity">
 
     <RelativeLayout
@@ -139,11 +139,11 @@
             android:text="@string/publications_downloading"/>
 
         <ProgressBar
+            style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="10dp"
             android:layout_below="@+id/text1"
             android:indeterminate="true"
-            android:indeterminateDrawable="@drawable/progress_indeterminate_horizontal_holo"
             android:indeterminateOnly="true"
             android:paddingEnd="50dp"
             android:paddingLeft="15dp"

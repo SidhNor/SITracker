@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,12 +18,12 @@ package com.andrada.sitracker.ui;
 
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.AbsListView;
@@ -45,7 +45,7 @@ import static com.andrada.sitracker.util.LogUtils.makeLogTag;
 /**
  * A base activity that handles common functionality in the app.
  */
-public abstract class BaseActivity extends ActionBarActivity {
+public abstract class BaseActivity extends Activity {
 
     private static final String TAG = makeLogTag(BaseActivity.class);
     private static final int HEADER_HIDE_ANIM_DURATION = 300;
@@ -106,12 +106,8 @@ public abstract class BaseActivity extends ActionBarActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        if (!BuildConfig.DEBUG) {
-            // Verifies the proper version of Google Play Services exists on the device.
-            PlayServicesUtils.checkGooglePlaySevices(this);
-        }
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -121,8 +117,12 @@ public abstract class BaseActivity extends ActionBarActivity {
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void onResume() {
+        super.onResume();
+        if (!BuildConfig.DEBUG) {
+            // Verifies the proper version of Google Play Services exists on the device.
+            PlayServicesUtils.checkGooglePlaySevices(this);
+        }
     }
 
     @Override
@@ -136,7 +136,7 @@ public abstract class BaseActivity extends ActionBarActivity {
                 && getResources().getConfiguration().orientation
                 != Configuration.ORIENTATION_LANDSCAPE) {
             // Only show the tab bar's shadow
-            getSupportActionBar().setBackgroundDrawable(getResources().getDrawable(
+            getActionBar().setBackgroundDrawable(getResources().getDrawable(
                     R.drawable.actionbar_background_noshadow));
         }
     }
@@ -205,25 +205,23 @@ public abstract class BaseActivity extends ActionBarActivity {
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
     protected void onActionBarAutoShowOrHide(boolean shown) {
         if (shown) {
-            getSupportActionBar().show();
+            getActionBar().show();
         } else {
-            getSupportActionBar().hide();
+            getActionBar().hide();
         }
-        if (UIUtils.hasHoneycombMR1()) {
-            for (View view : mHideableHeaderViews) {
-                if (shown) {
-                    view.animate()
-                            .translationY(0)
-                            .alpha(1)
-                            .setDuration(HEADER_HIDE_ANIM_DURATION)
-                            .setInterpolator(new DecelerateInterpolator());
-                } else {
-                    view.animate()
-                            .translationY(-view.getBottom())
-                            .alpha(0)
-                            .setDuration(HEADER_HIDE_ANIM_DURATION)
-                            .setInterpolator(new DecelerateInterpolator());
-                }
+        for (View view : mHideableHeaderViews) {
+            if (shown) {
+                view.animate()
+                        .translationY(0)
+                        .alpha(1)
+                        .setDuration(HEADER_HIDE_ANIM_DURATION)
+                        .setInterpolator(new DecelerateInterpolator());
+            } else {
+                view.animate()
+                        .translationY(-view.getBottom())
+                        .alpha(0)
+                        .setDuration(HEADER_HIDE_ANIM_DURATION)
+                        .setInterpolator(new DecelerateInterpolator());
             }
         }
     }

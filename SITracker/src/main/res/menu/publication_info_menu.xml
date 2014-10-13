@@ -16,31 +16,30 @@
   limitations under the License.
   -->
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:sitracker="http://schemas.android.com/apk/res-auto">
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
         android:id="@+id/action_force_download"
         android:icon="@drawable/ic_action_download"
         android:orderInCategory="98"
-        android:title="@string/action_force_download"
-        sitracker:showAsAction="ifRoom"/>
+        android:showAsAction="ifRoom"
+        android:title="@string/action_force_download"/>
     <item
         android:id="@+id/action_mark_read"
         android:icon="@drawable/ic_action_read"
         android:orderInCategory="99"
-        android:title="@string/action_markread"
-        sitracker:showAsAction="ifRoom"/>
+        android:showAsAction="ifRoom"
+        android:title="@string/action_markread"/>
     <item
         android:id="@+id/action_open_pub_in_browser"
         android:icon="@drawable/ic_action_open_outside"
         android:orderInCategory="100"
-        android:title="@string/action_open_pub_in_browser"
-        sitracker:showAsAction="ifRoom"/>
+        android:showAsAction="ifRoom"
+        android:title="@string/action_open_pub_in_browser"/>
 
     <item
         android:id="@+id/action_ignore_updates"
         android:orderInCategory="101"
-        android:title="@string/action_ignore_updates"
-        sitracker:showAsAction="never"/>
+        android:showAsAction="never"
+        android:title="@string/action_ignore_updates"/>
 </menu>

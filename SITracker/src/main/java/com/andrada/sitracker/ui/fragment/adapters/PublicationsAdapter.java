@@ -25,7 +25,6 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
 
-import com.andrada.sitracker.BuildConfig;
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.IsNewItemTappedListener;
@@ -125,15 +124,13 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
     @UiThread(delay = 300)
     void createAndShowShowcaseView(View view) {
         if (context instanceof Activity) {
-            ShowcaseView.Builder bldr = new ShowcaseView.Builder((Activity) context)
+            new ShowcaseView.Builder((Activity) context)
                     .setTarget(new ViewTarget(view))
                     .setContentTitle(context.getString(R.string.showcase_pub_quick_title))
                     .setContentText(context.getString(R.string.showcase_pub_quick_detail))
-                    .setStyle(R.style.ShowcaseView_Base);
-            if (!BuildConfig.DEBUG) {
-                bldr.singleShot(Constants.SHOWCASE_PUBLICATION_QUICK_ACCESS_SHOT_ID);
-            }
-            bldr.build();
+                    .setStyle(R.style.ShowcaseView_Base)
+                    .singleShot(Constants.SHOWCASE_PUBLICATION_QUICK_ACCESS_SHOT_ID)
+                    .build();
         }
     }
 

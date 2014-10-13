@@ -5,7 +5,7 @@
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
 
-     http://www.apache.org/licenses/LICENSE-2.0
+      http://www.apache.org/licenses/LICENSE-2.0
 
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
@@ -43,7 +43,6 @@
 
     <color name="gray_background">#e5e5e5</color>
 
-    <!-- Use Gingerbread-orange -->
-    <color name="fp_selection_background_color">#FEBB20</color>
+    <color name="fp_selection_background_color">#286E8A</color>
 </resources>
 

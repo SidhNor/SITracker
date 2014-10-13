@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <!--
-  Copyright 2013 Gleb Godonoga.
+  Copyright 2014 Gleb Godonoga.
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
 
-     http://www.apache.org/licenses/LICENSE-2.0
+      http://www.apache.org/licenses/LICENSE-2.0
 
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,24 +16,23 @@
   limitations under the License.
   -->
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:sitracker="http://schemas.android.com/apk/res-auto">
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/action_mark_read"
-        android:orderInCategory="99"
-        sitracker:showAsAction="ifRoom"
         android:icon="@drawable/ic_action_read"
-        android:title="@string/action_markread" />
+        android:orderInCategory="99"
+        android:showAsAction="ifRoom"
+        android:title="@string/action_markread"/>
     <item
         android:id="@+id/action_open_authors_browser"
-        sitracker:showAsAction="ifRoom"
-        android:orderInCategory="100"
         android:icon="@drawable/ic_action_open_outside"
-        android:title="@string/action_open_in_browser" />
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom"
+        android:title="@string/action_open_in_browser"/>
     <item
         android:id="@+id/action_remove"
-        android:orderInCategory="101"
-        sitracker:showAsAction="always"
         android:icon="@drawable/ic_action_discard"
-        android:title="@string/action_delete" />
+        android:orderInCategory="101"
+        android:showAsAction="always"
+        android:title="@string/action_delete"/>
 </menu>

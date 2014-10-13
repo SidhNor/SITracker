@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,17 +16,16 @@
 
 package com.andrada.sitracker.ui.fragment;
 
+import android.app.ActionBar;
+import android.app.Activity;
+import android.app.Fragment;
 import android.app.backup.BackupManager;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.view.ActionMode;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -114,7 +113,7 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
     @Override
     public void onStart() {
         super.onStart();
-        getActivity().supportInvalidateOptionsMenu();
+        getActivity().invalidateOptionsMenu();
         currentAuthorIndex = currentAuthorIndex == -1 ? adapter.getFirstAuthorId() : currentAuthorIndex;
         setStartupSelected();
     }
@@ -191,7 +190,7 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
             timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    FragmentActivity activity = getActivity();
+                    Activity activity = getActivity();
                     if (activity != null) {
                         activity.runOnUiThread(new Runnable() {
                             @Override
@@ -211,7 +210,7 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
         list.setAdapter(adapter);
         mMultiSelectionController = MultiSelectionUtil.attachMultiSelectionController(
                 list,
-                (ActionBarActivity) getActivity(),
+                (Activity) getActivity(),
                 this);
         //ActionMode.setMultiChoiceMode(list, getActivity(), this);
         list.setBackgroundResource(R.drawable.authors_list_background);
@@ -231,7 +230,7 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
 
     private void toggleUpdatingState() {
         mIsUpdating = !mIsUpdating;
-        ActionBar bar = ((ActionBarActivity) getActivity()).getSupportActionBar();
+        ActionBar bar = getActivity().getActionBar();
         bar.setDisplayShowHomeEnabled(!mIsUpdating);
         bar.setDisplayShowTitleEnabled(!mIsUpdating);
         bar.setDisplayShowCustomEnabled(mIsUpdating);
@@ -245,7 +244,7 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
             mLogoView.clearAnimation();
             mLogoView.startAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.ab_custom_view_anim));
         }
-        getActivity().supportInvalidateOptionsMenu();
+        getActivity().invalidateOptionsMenu();
     }
 
 
@@ -400,7 +399,7 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
 
 
     private void showNoNetworkCroutonMessage() {
-        View view = getLayoutInflater(null).inflate(R.layout.crouton_no_network, null);
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.crouton_no_network, null);
         view.findViewById(R.id.retryUpdateButton).setOnClickListener(this);
         Configuration croutonConfiguration = new Configuration.Builder()
                 .setDuration(Configuration.DURATION_LONG).build();

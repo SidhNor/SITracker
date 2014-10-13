@@ -84,7 +84,7 @@
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable"/>
-            <!-- Parent activity meta-data to support API level 7+ -->
+            <!-- Parent activity meta-data to support API level pre 16 -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.andrada.sitracker.ui.HomeActivity_"/>
@@ -95,7 +95,7 @@
             android:label="@string/title_settings"
             android:theme="@style/Theme.SiTracker.WithElevatedHeader"
             android:parentActivityName=".ui.HomeActivity_">
-            <!-- Parent activity meta-data to support API level 7+ -->
+            <!-- Parent activity meta-data to support API level pre 16 -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.andrada.sitracker.ui.HomeActivity_"/>
@@ -105,7 +105,7 @@
             android:label="@string/title_import"
             android:theme="@style/Theme.SiTracker.WithElevatedHeader"
             android:parentActivityName=".ui.HomeActivity_">
-            <!-- Parent activity meta-data to support API level 7+ -->
+            <!-- Parent activity meta-data to support API level pre 16 -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.andrada.sitracker.ui.HomeActivity_"/>

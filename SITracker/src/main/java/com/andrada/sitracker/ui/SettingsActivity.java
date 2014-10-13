@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -36,7 +36,6 @@ import com.andrada.sitracker.tasks.ClearPublicationCacheTask;
 import com.andrada.sitracker.tasks.UpdateAuthorsTask_;
 import com.andrada.sitracker.util.AnalyticsHelper;
 import com.andrada.sitracker.util.ShareHelper;
-import com.andrada.sitracker.util.UIUtils;
 import com.google.android.gms.analytics.GoogleAnalytics;
 
 import org.androidannotations.annotations.EActivity;
@@ -95,8 +94,21 @@ public class SettingsActivity extends PreferenceActivity implements
         setUpdateIntervalSummary(prefs.updateInterval().get());
         setAuthorSortSummary(prefs.authorsSortType().get());
         setDownloadFolderSummary(prefs.downloadFolder().get());
-        if (UIUtils.hasHoneycomb()) {
-            getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @NotNull Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == Constants.REQUEST_DIRECTORY) {
+            if (resultCode == DirectoryChooserActivity.RESULT_CODE_DIR_SELECTED) {
+                String absoluteDir = data.getStringExtra(DirectoryChooserActivity.RESULT_SELECTED_DIR);
+                SharedPreferences.Editor editor = getPreferenceManager().getSharedPreferences().edit();
+                editor.putString(Constants.CONTENT_DOWNLOAD_FOLDER_KEY, absoluteDir);
+                editor.apply();
+                setDownloadFolderSummary(absoluteDir);
+            }
         }
     }
 
@@ -104,11 +116,7 @@ public class SettingsActivity extends PreferenceActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-        if (UIUtils.hasHoneycomb()) {
-            getSharedPreferences(Constants.SI_PREF_NAME, MODE_MULTI_PROCESS).registerOnSharedPreferenceChangeListener(this);
-        } else {
-            getSharedPreferences(Constants.SI_PREF_NAME, MODE_PRIVATE).registerOnSharedPreferenceChangeListener(this);
-        }
+        getSharedPreferences(Constants.SI_PREF_NAME, MODE_MULTI_PROCESS).registerOnSharedPreferenceChangeListener(this);
 
         Preference pref = findPreference(Constants.PREF_CLEAR_SAVED_PUBS_KEY);
         if (pref != null) {
@@ -124,17 +132,12 @@ public class SettingsActivity extends PreferenceActivity implements
     @Override
     protected void onPause() {
         super.onPause();
-        if (UIUtils.hasHoneycomb()) {
-            getSharedPreferences(Constants.SI_PREF_NAME, MODE_MULTI_PROCESS).unregisterOnSharedPreferenceChangeListener(this);
-        } else {
-            getSharedPreferences(Constants.SI_PREF_NAME, MODE_PRIVATE).unregisterOnSharedPreferenceChangeListener(this);
-        }
+        getSharedPreferences(Constants.SI_PREF_NAME, MODE_MULTI_PROCESS).unregisterOnSharedPreferenceChangeListener(this);
         Preference pref = findPreference(Constants.PREF_CLEAR_SAVED_PUBS_KEY);
         if (pref != null) {
             pref.setOnPreferenceClickListener(null);
         }
     }
-
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences preference, String key) {
@@ -197,20 +200,5 @@ public class SettingsActivity extends PreferenceActivity implements
         ListPreference authorsSortType = (ListPreference) findPreference(Constants.AUTHOR_SORT_TYPE_KEY);
         int sortType = Integer.parseInt(newValue);
         authorsSortType.setSummary(authorsSortType.getEntries()[sortType]);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @NotNull Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == Constants.REQUEST_DIRECTORY) {
-            if (resultCode == DirectoryChooserActivity.RESULT_CODE_DIR_SELECTED) {
-                String absoluteDir = data.getStringExtra(DirectoryChooserActivity.RESULT_SELECTED_DIR);
-                SharedPreferences.Editor editor = getPreferenceManager().getSharedPreferences().edit();
-                editor.putString(Constants.CONTENT_DOWNLOAD_FOLDER_KEY, absoluteDir);
-                editor.apply();
-                setDownloadFolderSummary(absoluteDir);
-            }
-        }
     }
 }

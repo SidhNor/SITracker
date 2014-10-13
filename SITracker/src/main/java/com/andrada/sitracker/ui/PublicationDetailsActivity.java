@@ -17,10 +17,10 @@
 package com.andrada.sitracker.ui;
 
 import android.annotation.SuppressLint;
+import android.app.Fragment;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.Window;
@@ -29,7 +29,6 @@ import android.view.WindowManager;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.ui.fragment.PublicationInfoFragment_;
 import com.andrada.sitracker.util.BeamUtils;
-import com.andrada.sitracker.util.UIUtils;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 
@@ -40,9 +39,7 @@ public class PublicationDetailsActivity extends SimpleSinglePaneActivity {
     protected void onCreate(Bundle savedInstanceState) {
         //UIUtils.tryTranslateHttpIntent(this);
         BeamUtils.tryUpdateIntentFromBeam(this);
-        if (UIUtils.hasHoneycomb()) {
-            requestWindowFeature(Window.FEATURE_ACTION_BAR);
-        }
+        requestWindowFeature(Window.FEATURE_ACTION_BAR);
 
         if (shouldBeFloatingWindow()) {
             setupFloatingWindow();

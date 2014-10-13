@@ -80,23 +80,6 @@ public class UIUtils {
         }
     }
 
-    //TODO remove on next release
-    public static boolean hasGingerbreadMR1() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD_MR1;
-    }
-
-    public static boolean hasHoneycomb() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
-    }
-
-    public static boolean hasHoneycombMR1() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1;
-    }
-
-    public static boolean hasICS() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH;
-    }
-
     public static boolean hasJellyBean() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
     }
@@ -107,11 +90,6 @@ public class UIUtils {
                 >= Configuration.SCREENLAYOUT_SIZE_LARGE;
     }
 
-    public static boolean isHoneycombTablet(@NotNull Context context) {
-        return hasHoneycomb() && isTablet(context);
-    }
-
-
     /**
      * Enables and disables {@linkplain android.app.Activity activities} based on their
      * {@link #TARGET_FORM_FACTOR_ACTIVITY_METADATA}" meta-data and the current device.
@@ -120,11 +98,11 @@ public class UIUtils {
      * <a href="http://stackoverflow.com/questions/13202805">Original code</a> by Dandre Allison.
      *
      * @param context the current context of the device
-     * @see #isHoneycombTablet(android.content.Context)
+     * @see #isTablet(android.content.Context)
      */
     public static void enableDisableActivitiesByFormFactor(@NotNull Context context) {
         final PackageManager pm = context.getPackageManager();
-        boolean isTablet = isHoneycombTablet(context);
+        boolean isTablet = isTablet(context);
 
         try {
             PackageInfo pi = pm.getPackageInfo(context.getPackageName(),

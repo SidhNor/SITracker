@@ -18,19 +18,17 @@ package com.andrada.sitracker.ui;
 
 
 import android.annotation.SuppressLint;
+import android.app.FragmentManager;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
+import android.widget.SearchView;
 
-import com.andrada.sitracker.BuildConfig;
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.AppUriContract;
@@ -71,7 +69,7 @@ public class SearchActivity extends BaseActivity {
         }
         mQuery = query;
 
-        FragmentManager fm = getSupportFragmentManager();
+        FragmentManager fm = getFragmentManager();
         mAuthorsFragment = (RemoteAuthorsFragment) fm.findFragmentById(R.id.fragment_container);
 
         if (mAuthorsFragment == null) {
@@ -125,11 +123,11 @@ public class SearchActivity extends BaseActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
         final MenuItem searchItem = menu.findItem(R.id.action_search);
         if (searchItem != null) {
             SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-            final SearchView view = (SearchView) MenuItemCompat.getActionView(searchItem);
+            final SearchView view = (SearchView) searchItem.getActionView();
             mSearchView = view;
             if (view == null) {
                 LOGW(TAG, "Could not set up search view, view is null.");
@@ -160,15 +158,12 @@ public class SearchActivity extends BaseActivity {
                     }
                 });
 
-                ShowcaseView.Builder bldr = new ShowcaseView.Builder(this)
+                new ShowcaseView.Builder(this)
                         .setTarget(new ViewTarget(mSearchView))
                         .setContentTitle(getString(R.string.showcase_search_title))
                         .setContentText(getString(R.string.showcase_search_detail))
-                        .setStyle(R.style.ShowcaseView_Base);
-                if (!BuildConfig.DEBUG) {
-                    bldr.singleShot(Constants.SHOWCASE_ADD_AUTHORS_SEARCH_SHOT_ID);
-                }
-                bldr.build();
+                        .setStyle(R.style.ShowcaseView_Base)
+                        .singleShot(Constants.SHOWCASE_ADD_AUTHORS_SEARCH_SHOT_ID).build();
 
                 if (!TextUtils.isEmpty(mQuery)) {
                     view.setQuery(mQuery, false);

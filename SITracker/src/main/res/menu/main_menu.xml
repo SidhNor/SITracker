@@ -7,7 +7,7 @@
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
 
-     http://www.apache.org/licenses/LICENSE-2.0
+      http://www.apache.org/licenses/LICENSE-2.0
 
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,26 +16,25 @@
   limitations under the License.
   -->
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:sitracker="http://schemas.android.com/apk/res-auto">
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
-        sitracker:showAsAction="never"
+        android:showAsAction="never"
         android:title="@string/action_settings"/>
     <item
         android:id="@+id/action_import"
         android:orderInCategory="101"
-        sitracker:showAsAction="never"
+        android:showAsAction="never"
         android:title="@string/action_import"/>
     <item
         android:id="@+id/action_export"
         android:orderInCategory="102"
-        sitracker:showAsAction="never"
+        android:showAsAction="never"
         android:title="@string/action_export"/>
     <item
         android:id="@+id/action_about"
         android:orderInCategory="103"
-        sitracker:showAsAction="never"
+        android:showAsAction="never"
         android:title="@string/action_about"/>
 </menu>

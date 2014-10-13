@@ -1,11 +1,11 @@
 /*
- * Copyright 2013 Gleb Godonoga.
+ * Copyright 2014 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -27,7 +27,6 @@ import com.andrada.sitracker.contracts.IsNewItemTappedListener;
 import com.andrada.sitracker.db.beans.Author;
 import com.andrada.sitracker.ui.widget.CheckedRelativeLayout;
 import com.andrada.sitracker.util.DateFormatterUtil;
-import com.andrada.sitracker.util.UIUtils;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EViewGroup;
@@ -37,22 +36,16 @@ import org.jetbrains.annotations.NotNull;
 @EViewGroup(R.layout.authors_list_item)
 public class AuthorItemView extends CheckedRelativeLayout {
 
+    private final int REGULAR_BACKGROUND = R.drawable.authors_list_item_selector_normal;
+    private int currentBackground = REGULAR_BACKGROUND;
     @ViewById
     TextView author_title;
-
     @ViewById
     TextView author_update_date;
-
     @ViewById
     ImageButton author_updated;
-
     private boolean mIsNew = false;
-
     private IsNewItemTappedListener mListener;
-
-    private final int REGULAR_BACKGROUND = R.drawable.authors_list_item_selector_normal;
-
-    private int currentBackground = REGULAR_BACKGROUND;
 
     public AuthorItemView(@NotNull Context context) {
         super(context);
@@ -73,11 +66,8 @@ public class AuthorItemView extends CheckedRelativeLayout {
 
     @SuppressLint("NewApi")
     public void bind(@NotNull Author author, boolean isSelected) {
-        if (UIUtils.hasHoneycomb()) {
-            this.setActivated(isSelected);
-        } else {
-            this.setChecked(isSelected);
-        }
+        this.setActivated(isSelected);
+
         mIsNew = author.getNew();
         author_updated.setTag(author);
         author_title.setText(author.getName());

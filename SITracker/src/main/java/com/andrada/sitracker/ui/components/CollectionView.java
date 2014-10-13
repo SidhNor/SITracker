@@ -1,11 +1,11 @@
 /*
- * Copyright 2014 Google Inc. All rights reserved.
+ * Copyright 2014 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -33,7 +33,6 @@ import android.widget.ListView;
 
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.util.Lists;
-import com.andrada.sitracker.util.UIUtils;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -86,7 +85,7 @@ public class CollectionView extends ListView {
 
     @SuppressLint("NewApi")
     public void updateInventory(final Inventory inv, boolean animate) {
-        if (animate && UIUtils.hasHoneycombMR1()) {
+        if (animate) {
             LOGD(TAG, "CollectionView updating inventory with animation.");
             setAlpha(0);
             updateInventoryImmediate(inv, true);
@@ -100,7 +99,7 @@ public class CollectionView extends ListView {
     private void updateInventoryImmediate(Inventory inv, boolean animate) {
         mInventory = new Inventory(inv);
         notifyAdapterDataSetChanged();
-        if (animate && UIUtils.hasHoneycombMR1()) {
+        if (animate) {
             startLayoutAnimation();
         }
     }
