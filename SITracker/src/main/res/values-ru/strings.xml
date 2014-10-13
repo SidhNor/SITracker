@@ -101,29 +101,29 @@
     <!-- Settings activity -->
     <string name="title_settings">Настройки</string>
     <string name="action_clear_saved_pubs">Удалить кэшированные</string>
-        <!--Authors-->
-        <string name="pref_authors_category_title">Авторы</string>
-        <string name="pref_authors_sort">Сортировка авторов</string>
-        <!--Content-->
-        <string name="pref_content_title">Соделжание</string>
-        <string name="pref_content_download_title">Папка для скачиваний</string>
-        <string name="pref_content_download_summ">Вы можете указать папку куда будут сохраняться произведения. Если поле пустое, произведения храняться в папке приложения.</string>
-        <string name="pref_content_download_summ_short">Произведения храняться в:</string>
-        <string name="pref_content_clear_saved_title">Очистить сохраненные произведения</string>
-        <string name="pref_content_clear_saved_summ">Очищает только папку приложения. Если вы сохраняли произведения в другом месте, они остануться нетронутыми.</string>
-        <string name="pref_content_img_display">Показывать обложки произведений</string>
-        <string name="pref_content_img_display_summ">Скачивать и показывать обложки произведений если таковые доступны</string>
-        <!--Updates-->
-        <string name="pref_update_category_title">Обновления</string>
-        <string name="pref_updates_check">Автоматическое обновление</string>
-        <string name="pref_updates_check_summ">Автоматическое обновление авторов с заданным интервалом</string>
-        <string name="pref_update_wifi_only">Обновления только по Wi-Fi</string>
-        <string name="pref_update_wifi_only_summ">Не обновлять через мобильные интернет соединения дабы уменьшить потребление траффика</string>
-        <string name="pref_update_interval">Интервал обновлений</string>
-        <!--Statistics-->
-        <string name="pref_usage_category_title">Статистика использования</string>
-        <string name="pref_opt_out_statistics_title">Отказаться</string>
-        <string name="pref_opt_out_statistics_summ">Не отправлять статистику изпользования автору.</string>
+    <!--Authors-->
+    <string name="pref_authors_category_title">Авторы</string>
+    <string name="pref_authors_sort">Сортировка авторов</string>
+    <!--Content-->
+    <string name="pref_content_title">Соделжание</string>
+    <string name="pref_content_download_title">Папка для скачиваний</string>
+    <string name="pref_content_download_summ">Вы можете указать папку куда будут сохраняться произведения. Если поле пустое, произведения храняться в папке приложения.</string>
+    <string name="pref_content_download_summ_short">Произведения храняться в:</string>
+    <string name="pref_content_clear_saved_title">Очистить сохраненные произведения</string>
+    <string name="pref_content_clear_saved_summ">Очищает только папку приложения. Если вы сохраняли произведения в другом месте, они остануться нетронутыми.</string>
+    <string name="pref_content_img_display">Показывать обложки произведений</string>
+    <string name="pref_content_img_display_summ">Скачивать и показывать обложки произведений если таковые доступны</string>
+    <!--Updates-->
+    <string name="pref_update_category_title">Обновления</string>
+    <string name="pref_updates_check">Автоматическое обновление</string>
+    <string name="pref_updates_check_summ">Автоматическое обновление авторов с заданным интервалом</string>
+    <string name="pref_update_wifi_only">Обновления только по Wi-Fi</string>
+    <string name="pref_update_wifi_only_summ">Не обновлять через мобильные интернет соединения дабы уменьшить потребление траффика</string>
+    <string name="pref_update_interval">Интервал обновлений</string>
+    <!--Statistics-->
+    <string name="pref_usage_category_title">Статистика использования</string>
+    <string name="pref_opt_out_statistics_title">Отказаться</string>
+    <string name="pref_opt_out_statistics_summ">Не отправлять статистику изпользования автору.</string>
 
 
     <!-- Import Export authors activity -->
@@ -215,6 +215,15 @@
 
 
     <string name="change_log"><![CDATA[
+
+        <section>
+            <header><h2>Версия 1.3.1</h2></header>
+            <p>Мелкий релиз баг-фиксов.</p>
+            <ul>
+                <li>Исправлена ошибка при скачивании произведения и выхода из приложения до того как скачивание закончится.</li>
+            </ul>
+        </section>
+
         <section>
             <header><h2>Версия 1.3.0</h2></header>
             <ul>
