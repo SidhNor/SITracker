@@ -216,6 +216,7 @@
             <p>Small bugfix release.</p>
             <ul>
                 <li>Fixed crash when starting downloading a publication and existing the app before download finished.</li>
+                <li>Fixed a rare crash when publication was marked as read and then an author was quickly switched.</li>
             </ul>
         </section>
 
