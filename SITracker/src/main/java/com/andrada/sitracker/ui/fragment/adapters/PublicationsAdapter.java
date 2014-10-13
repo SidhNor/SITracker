@@ -257,7 +257,10 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
     protected void updateStatusOfPublication(@NotNull Publication pub) {
         if (pub.getNew()) {
             try {
-                mCategories.get(mCategories.indexOf(new CategoryValue(pub.getCategory()))).decrementNewCount();
+                int index = mCategories.indexOf(new CategoryValue(pub.getCategory()));
+                if (index >= 0 && index < mCategories.size()) {
+                    mCategories.get(index).decrementNewCount();
+                }
                 boolean authorNewChanged = publicationsDao.markPublicationRead(pub);
                 EventBus.getDefault().post(new PublicationMarkedAsReadEvent(authorNewChanged));
             } catch (SQLException e) {
