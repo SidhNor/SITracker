@@ -17,9 +17,9 @@
 package com.andrada.sitracker.ui;
 
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -28,6 +28,7 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.AbsListView;
 import android.widget.ImageView;
@@ -188,16 +189,6 @@ public abstract class BaseActivity extends Activity {
         GoogleAnalytics.getInstance(this).reportActivityStart(this);
     }
 
-    protected void setHasTabs() {
-        if (!UIUtils.isTablet(this)
-                && getResources().getConfiguration().orientation
-                != Configuration.ORIENTATION_LANDSCAPE) {
-            // Only show the tab bar's shadow
-            getActionBar().setBackgroundDrawable(getResources().getDrawable(
-                    R.drawable.actionbar_background_noshadow));
-        }
-    }
-
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
@@ -269,7 +260,8 @@ public abstract class BaseActivity extends Activity {
             return;
         }
 
-        getActionBar().setIcon(R.drawable.ic_drawer);
+        ActionBar actionBar = getActionBar();
+        actionBar.setIcon(R.drawable.ic_drawer);
 
         mDrawerLayout.setDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
@@ -304,8 +296,12 @@ public abstract class BaseActivity extends Activity {
         });
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, Gravity.START);
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
+
+        actionBar.setDisplayHomeAsUpEnabled(false);
+        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setDisplayShowCustomEnabled(true);
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setCustomView(R.layout.ab_title);
 
         // populate the nav drawer with the correct items
         populateNavDrawer();
@@ -543,16 +539,31 @@ public abstract class BaseActivity extends Activity {
         if (show == mActionBarShown) {
             return;
         }
-
         mActionBarShown = show;
         onActionBarAutoShowOrHide(show);
     }
 
+    private View getActionBarView() {
+        Window window = getWindow();
+        View v = window.getDecorView();
+        int resId = getResources().getIdentifier("action_bar_container", "id", "android");
+        return v.findViewById(resId);
+    }
+
     protected void onActionBarAutoShowOrHide(boolean shown) {
         if (shown) {
-            getActionBar().show();
+            getActionBarView().animate()
+                    .translationY(0)
+                    .alpha(1)
+                    .setDuration(HEADER_HIDE_ANIM_DURATION)
+                    .setInterpolator(new DecelerateInterpolator());
         } else {
-            getActionBar().hide();
+            View view = getActionBarView();
+            view.animate()
+                    .translationY(-view.getBottom())
+                    .alpha(0)
+                    .setDuration(HEADER_HIDE_ANIM_DURATION)
+                    .setInterpolator(new DecelerateInterpolator());
         }
         for (View view : mHideableHeaderViews) {
             if (shown) {

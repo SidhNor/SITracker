@@ -73,7 +73,8 @@
         <item name="android:listPopupWindowStyle">@style/Widget.SiTracker.PopupMenu</item>
         <item name="android:dropDownListViewStyle">@style/Widget.SiTracker.ListView.DropDown</item>
         <item name="android:actionDropDownStyle">@style/Widget.SiTracker.ListView.DropDown</item>
-        <item name="android:textAppearanceLargePopupMenu">@style/TextAppearance.LargePopupMenu</item>
+        <item name="android:textAppearanceLargePopupMenu">@style/TextAppearance.LargePopupMenu
+        </item>
     </style>
 
 
@@ -81,7 +82,8 @@
         <item name="android:popupMenuStyle">@style/Widget.SiTracker.PopupMenu</item>
         <item name="android:listPopupWindowStyle">@style/Widget.SiTracker.PopupMenu</item>
         <item name="android:dropDownListViewStyle">@style/Widget.SiTracker.ListView.DropDown</item>
-        <item name="android:textAppearanceLargePopupMenu">@style/TextAppearance.LargePopupMenu</item>
+        <item name="android:textAppearanceLargePopupMenu">@style/TextAppearance.LargePopupMenu
+        </item>
     </style>
 
     <style name="ActionButton.Overflow" parent="FrameworkRoot.Widget.ActionButton.Overflow">
@@ -90,6 +92,10 @@
 
     <style name="Theme.SiTracker.Home" parent="Theme.SiTracker">
         <item name="android:windowActionBarOverlay">false</item>
+    </style>
+
+    <style name="Theme.SiTracker.MyAuthors" parent="Theme.SiTracker">
+        <item name="android:windowActionBarOverlay">true</item>
     </style>
 
     <style name="Theme.SiTracker.Search" parent="Theme.SiTracker">
@@ -345,15 +351,21 @@
     </style>
 
     <style name="ShowcaseView.Base">
-        <item name="sv_titleTextAppearance">@style/SITracker.TextAppearance.ShowcaseView.Title</item>
-        <item name="sv_detailTextAppearance">@style/SITracker.TextAppearance.ShowcaseView.Detail</item>
+        <item name="sv_titleTextAppearance">@style/SITracker.TextAppearance.ShowcaseView.Title
+        </item>
+        <item name="sv_detailTextAppearance">@style/SITracker.TextAppearance.ShowcaseView.Detail
+        </item>
         <item name="sv_backgroundColor">#b433b5e5</item>
         <item name="sv_buttonText">@android:string/ok</item>
     </style>
 
     <style name="ShowcaseView.Base.Overlayed" parent="ShowcaseView.Base">
-        <item name="sv_titleTextAppearance">@style/SITracker.TextAppearance.ShowcaseView.Title.Overlay</item>
-        <item name="sv_detailTextAppearance">@style/SITracker.TextAppearance.ShowcaseView.Detail.Overlay</item>
+        <item name="sv_titleTextAppearance">
+            @style/SITracker.TextAppearance.ShowcaseView.Title.Overlay
+        </item>
+        <item name="sv_detailTextAppearance">
+            @style/SITracker.TextAppearance.ShowcaseView.Detail.Overlay
+        </item>
     </style>
 
     <style name="ShowcaseButton">

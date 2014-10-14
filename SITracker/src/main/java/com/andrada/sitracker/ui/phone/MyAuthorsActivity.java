@@ -1,10 +1,11 @@
 package com.andrada.sitracker.ui.phone;
 
-import android.app.ActionBar;
 import android.os.Bundle;
+import android.widget.TextView;
 
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.ui.BaseActivity;
+import com.andrada.sitracker.ui.fragment.AuthorsFragment;
 import com.andrada.sitracker.ui.widget.DrawShadowFrameLayout;
 
 public class MyAuthorsActivity extends BaseActivity {
@@ -27,11 +28,13 @@ public class MyAuthorsActivity extends BaseActivity {
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        ActionBar ab = getActionBar();
-        // unless Nav Drawer opens
-        ab.setTitle("Authors");
-        ab.setHomeButtonEnabled(true);
-        ab.setDisplayHomeAsUpEnabled(false);
+        TextView title = (TextView) findViewById(android.R.id.text1);
+        title.setText("Authors");
+
+        AuthorsFragment frag = (AuthorsFragment) getFragmentManager().findFragmentById(
+                R.id.fragment_authors);
+
+        enableActionBarAutoHide(frag.getListView());
     }
 
     @Override

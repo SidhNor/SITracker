@@ -43,14 +43,12 @@ import static com.andrada.sitracker.util.LogUtils.makeLogTag;
 
 public class UIUtils {
 
-    private static final String TAG = makeLogTag(UIUtils.class);
-
     public static final String TARGET_FORM_FACTOR_ACTIVITY_METADATA =
             "com.andrada.sitracker.meta.TARGET_FORM_FACTOR";
-
     public static final String TARGET_FORM_FACTOR_HANDSET = "handset";
     public static final String TARGET_FORM_FACTOR_TABLET = "tablet";
-
+    public static final int ANIMATION_FADE_IN_TIME = 250;
+    private static final String TAG = makeLogTag(UIUtils.class);
     /**
      * Regex to search for HTML escape sequences.
      * <p/>
@@ -58,7 +56,7 @@ public class UIUtils {
      * semicolon. (Example: &amp;amp;)
      */
     private static final Pattern REGEX_HTML_ESCAPE = Pattern.compile(".*&\\S;.*");
-    public static final int ANIMATION_FADE_IN_TIME = 250;
+    private static final int[] RES_IDS_ACTION_BAR_SIZE = {R.attr.actionBarOverlayTopOffset};
 
     /**
      * Populate the given {@link android.widget.TextView} with the requested text, formatting
@@ -154,20 +152,6 @@ public class UIUtils {
         }
         return sb.toString();
     }
-
-    @NotNull
-    private static String bytesToHexString(@NotNull byte[] bytes) {
-        // http://stackoverflow.com/questions/332079
-        StringBuilder sb = new StringBuilder();
-        for (byte aByte : bytes) {
-            String hex = Integer.toHexString(0xFF & aByte);
-            if (hex.length() == 1) {
-                sb.append('0');
-            }
-            sb.append(hex);
-        }
-        return sb.toString();
-    }    private static final int[] RES_IDS_ACTION_BAR_SIZE = {R.attr.actionBarOverlayTopOffset};
 
     /**
      * Calculates the Action Bar height in pixels.
