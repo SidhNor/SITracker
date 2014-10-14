@@ -23,6 +23,11 @@
     <string name="backup_restored_crouton_message">Backup restored</string>
     <string name="crouton_image_desc">info</string>
 
+    <string name="navdrawer_item_my_authors">My Authors</string>
+    <string name="navdrawer_item_explore">Explore</string>
+    <string name="navdrawer_item_new_pubs">New publications</string>
+    <string name="navdrawer_item_settings">Settings</string>
+
     <!-- Home AB actions -->
     <string name="action_search">Search</string>
     <string name="action_settings">Settings</string>

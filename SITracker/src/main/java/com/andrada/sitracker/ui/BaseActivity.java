@@ -24,7 +24,11 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v4.widget.DrawerLayout;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.AbsListView;
 import android.widget.ListView;
@@ -40,6 +44,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 
+import static com.andrada.sitracker.util.LogUtils.LOGW;
 import static com.andrada.sitracker.util.LogUtils.makeLogTag;
 
 /**
@@ -47,20 +52,58 @@ import static com.andrada.sitracker.util.LogUtils.makeLogTag;
  */
 public abstract class BaseActivity extends Activity {
 
+    // symbols for navdrawer items (indices must correspond to array below). This is
+    // not a list of items that are necessarily *present* in the Nav Drawer; rather,
+    // it's a list of all possible items.
+    protected static final int NAVDRAWER_ITEM_MY_AUTHORS = 0;
+    protected static final int NAVDRAWER_ITEM_EXPLORE = 1;
+    protected static final int NAVDRAWER_ITEM_NEW_PUBS = 2;
+    protected static final int NAVDRAWER_ITEM_SETTINGS = 3;
+    protected static final int NAVDRAWER_ITEM_INVALID = -1;
+    protected static final int NAVDRAWER_ITEM_SEPARATOR = -2;
+    protected static final int NAVDRAWER_ITEM_SEPARATOR_SPECIAL = -3;
     private static final String TAG = makeLogTag(BaseActivity.class);
     private static final int HEADER_HIDE_ANIM_DURATION = 300;
-
+    // titles for navdrawer items (indices must correspond to the above)
+    private static final int[] NAVDRAWER_TITLE_RES_ID = new int[]{
+            R.string.navdrawer_item_my_authors,
+            R.string.navdrawer_item_explore,
+            R.string.navdrawer_item_new_pubs,
+            R.string.navdrawer_item_settings
+    };
+    // icons for navdrawer items (indices must correspond to above array)
+    private static final int[] NAVDRAWER_ICON_RES_ID = new int[]{
+            R.drawable.ic_drawer_my_authors,  // My Authors
+            R.drawable.ic_drawer_explore,  // Explore
+            R.drawable.ic_drawer_new_pubs, // Map
+            R.drawable.ic_drawer_settings
+    };
+    // delay to launch nav drawer item, to allow close animation to play
+    private static final int NAVDRAWER_LAUNCH_DELAY = 250;
+    // fade in and fade out durations for the main content when switching between
+    // different Activities of the app through the Nav Drawer
+    private static final int MAIN_CONTENT_FADEOUT_DURATION = 150;
+    private static final int MAIN_CONTENT_FADEIN_DURATION = 250;
+    private Handler mHandler;
     // When set, these components will be shown/hidden in sync with the action bar
     // to implement the "quick recall" effect (the Action Bar and the header views disappear
     // when you scroll down a list, and reappear quickly when you scroll up).
     private ArrayList<View> mHideableHeaderViews = new ArrayList<View>();
-
     // variables that control the Action Bar auto hide behavior (aka "quick recall")
     private boolean mActionBarAutoHideEnabled = false;
     private int mActionBarAutoHideSensivity = 0;
     private int mActionBarAutoHideMinY = 0;
     private int mActionBarAutoHideSignal = 0;
     private boolean mActionBarShown = true;
+    // list of navdrawer items that were actually added to the navdrawer, in order
+    private ArrayList<Integer> mNavDrawerItems = new ArrayList<Integer>();
+
+    // views that correspond to each navdrawer item, null if not yet created
+    private View[] mNavDrawerItemViews = null;
+
+    // Navigation drawer:
+    private DrawerLayout mDrawerLayout;
+
 
     /**
      * Converts an intent into a {@link Bundle} suitable for use as fragment arguments.
@@ -108,6 +151,15 @@ public abstract class BaseActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mHandler = new Handler();
+
+        // Enable or disable each Activity depending on the form factor. This is necessary
+        // because this app uses many implicit intents where we don't name the exact Activity
+        // in the Intent, so there should only be one enabled Activity that handles each
+        // Intent in the app.
+        UIUtils.enableDisableActivitiesByFormFactor(this);
+
     }
 
     @Override
@@ -141,6 +193,23 @@ public abstract class BaseActivity extends Activity {
         }
     }
 
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        setupNavDrawer();
+
+        //trySetupSwipeRefresh();
+        //updateSwipeRefreshProgressBarTop();
+
+        View mainContent = findViewById(R.id.fragment_container);
+        if (mainContent != null) {
+            mainContent.setAlpha(0);
+            mainContent.animate().alpha(1).setDuration(MAIN_CONTENT_FADEIN_DURATION);
+        } else {
+            LOGW(TAG, "No view with ID main_content to fade in.");
+        }
+    }
+
 
     protected void registerHideableHeaderView(View hideableHeaderView) {
         if (!mHideableHeaderViews.contains(hideableHeaderView)) {
@@ -152,6 +221,87 @@ public abstract class BaseActivity extends Activity {
         if (mHideableHeaderViews.contains(hideableHeaderView)) {
             mHideableHeaderViews.remove(hideableHeaderView);
         }
+    }
+    /**
+     * Returns the navigation drawer item that corresponds to this Activity. Subclasses
+     * of BaseActivity override this to indicate what nav drawer item corresponds to them
+     * Return NAVDRAWER_ITEM_INVALID to mean that this Activity should not have a Nav Drawer.
+     */
+    protected int getSelfNavDrawerItem() {
+        return NAVDRAWER_ITEM_INVALID;
+    }
+
+    private void setupNavDrawer() {
+        // What nav drawer item should be selected?
+        int selfItem = getSelfNavDrawerItem();
+
+        /*mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (mDrawerLayout == null) {
+            return;
+        }
+        if (selfItem == NAVDRAWER_ITEM_INVALID) {
+            // do not show a nav drawer
+            View navDrawer = mDrawerLayout.findViewById(R.id.navdrawer);
+            if (navDrawer != null) {
+                ((ViewGroup) navDrawer.getParent()).removeView(navDrawer);
+            }
+            mDrawerLayout = null;
+            return;
+        }
+
+        mDrawerToggle = mLPreviewUtils.setupDrawerToggle(mDrawerLayout, new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                // run deferred action, if we have one
+                if (mDeferredOnDrawerClosedRunnable != null) {
+                    mDeferredOnDrawerClosedRunnable.run();
+                    mDeferredOnDrawerClosedRunnable = null;
+                }
+                if (mAccountBoxExpanded) {
+                    mAccountBoxExpanded = false;
+                    setupAccountBoxToggle();
+                }
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+                updateStatusBarForNavDrawerSlide(0f);
+                onNavDrawerStateChanged(false, false);
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+                updateStatusBarForNavDrawerSlide(1f);
+                onNavDrawerStateChanged(true, false);
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+                invalidateOptionsMenu();
+                onNavDrawerStateChanged(isNavDrawerOpen(), newState != DrawerLayout.STATE_IDLE);
+            }
+
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+                updateStatusBarForNavDrawerSlide(slideOffset);
+                onNavDrawerSlide(slideOffset);
+            }
+        });
+        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, Gravity.START);
+
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setHomeButtonEnabled(true);
+
+        // populate the nav drawer with the correct items
+        populateNavDrawer();
+
+        mDrawerToggle.syncState();
+
+        // When the user runs the app for the first time, we want to land them with the
+        // navigation drawer open. But just the first time.
+        if (!PrefUtils.isWelcomeDone(this)) {
+            // first run of the app starts with the nav drawer open
+            PrefUtils.markWelcomeDone(this);
+            mDrawerLayout.openDrawer(Gravity.START);
+        }*/
     }
 
     /**
@@ -202,7 +352,6 @@ public abstract class BaseActivity extends Activity {
         onActionBarAutoShowOrHide(show);
     }
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
     protected void onActionBarAutoShowOrHide(boolean shown) {
         if (shown) {
             getActionBar().show();

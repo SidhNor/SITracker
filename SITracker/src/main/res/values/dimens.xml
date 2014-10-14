@@ -69,6 +69,7 @@
     <dimen name="showcase_title_size_overlay">24sp</dimen>
     <dimen name="showcase_detail_size_overlay">18sp</dimen>
     <dimen name="text_padding">16dp</dimen>
+    <dimen name="navdrawer_width">260dp</dimen>
 
 </resources>
 
