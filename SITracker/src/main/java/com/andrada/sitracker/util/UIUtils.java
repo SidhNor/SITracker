@@ -31,6 +31,8 @@ import android.text.TextUtils;
 import android.widget.TextView;
 
 import com.andrada.sitracker.R;
+import com.andrada.sitracker.ui.phone.MyAuthorsActivity;
+import com.andrada.sitracker.ui.tablet.MyAuthorsMultipaneActivity;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -153,7 +155,19 @@ public class UIUtils {
         return sb.toString();
     }
 
-    private static final int[] RES_IDS_ACTION_BAR_SIZE = {R.attr.actionBarOverlayTopOffset};
+    @NotNull
+    private static String bytesToHexString(@NotNull byte[] bytes) {
+        // http://stackoverflow.com/questions/332079
+        StringBuilder sb = new StringBuilder();
+        for (byte aByte : bytes) {
+            String hex = Integer.toHexString(0xFF & aByte);
+            if (hex.length() == 1) {
+                sb.append('0');
+            }
+            sb.append(hex);
+        }
+        return sb.toString();
+    }    private static final int[] RES_IDS_ACTION_BAR_SIZE = {R.attr.actionBarOverlayTopOffset};
 
     /**
      * Calculates the Action Bar height in pixels.
@@ -192,4 +206,11 @@ public class UIUtils {
                 Math.round(Color.blue(color) * factor));
     }
 
+    public static Class getMyAuthorsActivityClass(Context context) {
+        if (UIUtils.isTablet(context)) {
+            return MyAuthorsMultipaneActivity.class;
+        }
+
+        return MyAuthorsActivity.class;
+    }
 }

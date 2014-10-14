@@ -1,8 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:id="@+id/drawer_layout"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
+<android.support.v4.widget.DrawerLayout
+    android:id="@+id/drawer_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.andrada.sitracker.ui.widget.DrawShadowFrameLayout
+        android:id="@+id/main_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipChildren="false"
+        app:shadowDrawable="@drawable/header_shadow">
+
+        <android.support.v4.widget.SlidingPaneLayout
+            android:id="@+id/fragment_container"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:baselineAligned="false">
+
+            <fragment
+                android:id="@+id/fragment_authors"
+                android:name="com.andrada.sitracker.ui.fragment.AuthorsFragment_"
+                android:layout_width="@dimen/author_fragment_width"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                tools:layout="@layout/fragment_listview_with_empty"/>
+
+            <fragment
+                android:id="@+id/fragment_publications"
+                android:name="com.andrada.sitracker.ui.fragment.PublicationsFragment_"
+                android:layout_width="@dimen/publication_fragment_width"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                tools:layout="@layout/fragment_publications"/>
+        </android.support.v4.widget.SlidingPaneLayout>
+
+    </com.andrada.sitracker.ui.widget.DrawShadowFrameLayout>
     <!-- Nav drawer -->
-    <include layout="@layout/navdrawer" />
-</DrawerLayout>
+    <include layout="@layout/navdrawer"/>
+</android.support.v4.widget.DrawerLayout>
