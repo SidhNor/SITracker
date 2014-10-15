@@ -214,6 +214,17 @@
     <string name="change_log"><![CDATA[
         <section>
             <header><h2>Version 1.3.1</h2></header>
+            <p>Small feature/bugfix release.</p>
+            <ul>
+                <li>Fixed typos in russian translation.</li>
+                <li>Restore author add confirmation message.</li>
+                <li>Changed the style of notifications. Now, for version &ge; 4.1 a list of update authors will show up directly in the notification view.</li>
+                <li>Fixed a crash when opening large publications on low memory devices.</li>
+            </ul>
+        </section>
+
+        <section>
+            <header><h2>Version 1.3.1</h2></header>
             <p>Small bugfix release.</p>
             <ul>
                 <li>Fixed crash when starting downloading a publication and existing the app before download finished.</li>

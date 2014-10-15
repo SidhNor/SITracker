@@ -251,6 +251,7 @@ public final class ShareHelper {
             while ((line = reader.readLine()) != null) {
                 if (!headerReplaced && line.contains("<head>")) {
                     headerReplaced = true;
+                    charSet = "UTF-8";
                     line = line.replace("<head>",
                             "<head><meta http-equiv=\"Content-Type\" content=\"text/html;charset=UTF-8\">");
                 }
