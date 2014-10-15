@@ -122,13 +122,15 @@ public class RemoteAuthorsFragment extends Fragment implements
                 Constants.GA_EVENT_AUTHOR_ADDED,
                 Constants.GA_EVENT_AUTHOR_ADDED);
 
+        Style.Builder alertStyle = new Style.Builder()
+                .setTextAppearance(android.R.attr.textAppearanceLarge);
         if (message.length() != 0) {
-            Style.Builder alertStyle = new Style.Builder()
-                    .setTextAppearance(android.R.attr.textAppearanceLarge)
-                    .setPaddingInPixels(25)
-                    .setBackgroundColorValue(Style.holoRedLight);
-            Crouton.makeText(getActivity(), message, alertStyle.build()).show();
+            alertStyle.setBackgroundColorValue(Style.holoRedLight);
+        } else {
+            message = getString(R.string.author_add_success_crouton_message);
+            alertStyle.setBackgroundColorValue(Style.holoGreenLight);
         }
+        Crouton.makeText(getActivity(), message, alertStyle.build()).show();
     }
 
 
