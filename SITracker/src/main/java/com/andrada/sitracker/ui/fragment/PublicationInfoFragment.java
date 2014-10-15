@@ -74,6 +74,7 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.targets.PointTarget;
+import com.github.amlcurran.showcaseview.targets.ViewTarget;
 import com.github.kevinsawicki.http.HttpRequest;
 import com.google.android.gms.plus.PlusOneButton;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
@@ -193,6 +194,10 @@ public class PublicationInfoFragment extends Fragment implements
         }
     };
 
+    private boolean delayedScrollCheck;
+    private boolean rateShowcaseShown;
+    private boolean mRatingVisible;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -271,6 +276,7 @@ public class PublicationInfoFragment extends Fragment implements
 
     @Background
     void loadData() {
+        //rateShowcaseShown = prefs.ratingShowcaseShotDone().get();
         currentRecord = publicationsDao.getPublicationForId(mPublicationId);
         bindData();
     }
@@ -376,6 +382,7 @@ public class PublicationInfoFragment extends Fragment implements
             //Add image view to pager.
         } else {
             mHasPhoto = false;
+            delayedScrollCheck = true;
             recomputePhotoAndScrollingMetrics();
         }
 
@@ -430,9 +437,11 @@ public class PublicationInfoFragment extends Fragment implements
                 mRatingBar.setRating(rating);
                 mVotedOnField.setVisibility(View.GONE);
             }
+            mRatingVisible = true;
 
         } else {
             mRatingContainer.setVisibility(View.GONE);
+            mRatingVisible = false;
         }
     }
 
@@ -538,6 +547,23 @@ public class PublicationInfoFragment extends Fragment implements
                     .setStyle(R.style.ShowcaseView_Base_Overlayed);
             if (!BuildConfig.DEBUG) {
                 bldr.singleShot(Constants.SHOWCASE_PUBLICATION_DETAIL_IMAGES_SHOT_ID);
+            }
+            bldr.build();
+        }
+    }
+
+    @UiThread(delay = 500)
+    void attemptToShowShowcaseForRatings() {
+        if (!rateShowcaseShown && mRatingVisible) {
+            rateShowcaseShown = true;
+            prefs.ratingShowcaseShotDone().put(true);
+            ShowcaseView.Builder bldr = new ShowcaseView.Builder(getActivity())
+                    .setTarget(new ViewTarget(mRatingBar))
+                    .setContentTitle(getString(R.string.showcase_pub_detail_image_title))
+                    .setContentText(getString(R.string.showcase_pub_detail_image_detail))
+                    .setStyle(R.style.ShowcaseView_Base_Overlayed);
+            if (!BuildConfig.DEBUG) {
+                bldr.singleShot(Constants.SHOWCASE_PUBLICATION_DETAIL_RATING_SHOT_ID);
             }
             bldr.build();
         }
@@ -722,6 +748,17 @@ public class PublicationInfoFragment extends Fragment implements
         // Reposition the header bar -- it's normally anchored to the top of the content,
         // but locks to the top of the screen on scroll
         int scrollY = mScrollView.getScrollY();
+
+
+        if (!rateShowcaseShown && mRatingVisible && delayedScrollCheck) {
+            //Check for bottom scroll
+            //Showcase if bottom
+            View view = mScrollView.getChildAt(mScrollView.getChildCount() - 1);
+            int diff = (view.getBottom() - (mScrollView.getHeight() + mScrollView.getScrollY()));
+            if (diff <= 0) {
+                attemptToShowShowcaseForRatings();
+            }
+        }
 
         newTop = Math.max(mPhotoHeightPixels, scrollY + mHeaderTopClearance);
 

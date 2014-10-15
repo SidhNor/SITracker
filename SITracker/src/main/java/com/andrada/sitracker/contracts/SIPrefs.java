@@ -48,4 +48,7 @@ public interface SIPrefs {
     @DefaultBoolean(false)
     boolean optOutUsageStatistics();
 
+    @DefaultBoolean(false)
+    boolean ratingShowcaseShotDone();
+
 }
