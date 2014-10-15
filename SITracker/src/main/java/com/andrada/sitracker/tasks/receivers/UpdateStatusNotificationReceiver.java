@@ -34,20 +34,23 @@ import com.andrada.sitracker.util.AnalyticsHelper;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 
 public class UpdateStatusNotificationReceiver extends BroadcastReceiver {
 
-    private final static int UPDATE_SUCCESS_NOTIFICATION_ID = 1;
+    private final static int UPDATE_SUCCESS_NOTIFICATION_ID = 11987;
     private final static int UPDATE_FAIL_NOTIFICATION_ID = 2;
 
     @Override
     public void onReceive(@NotNull Context context, @NotNull Intent intent) {
         //See if there is something we can notify
         if (intent.getAction().equals(UpdateSuccessfulIntentMessage.SUCCESS_MESSAGE)) {
-            int updatedAuthors = intent.getIntExtra(Constants.NUMBER_OF_UPDATED_AUTHORS, 0);
-            if (updatedAuthors > 0) {
+            int updatedAuthorsCount = intent.getIntExtra(Constants.NUMBER_OF_UPDATED_AUTHORS, 0);
+            List<String> updatedAuthorNames = intent.getStringArrayListExtra(Constants.AUTHOR_NAMES_UPDATED_IN_SESSION);
+            if (updatedAuthorsCount > 0) {
                 //Notify that update successful
-                sendNotification(updatedAuthors, context);
+                sendNotification(updatedAuthorsCount, updatedAuthorNames, context);
             }
 
         } else if (intent.getAction().equals(UpdateFailedIntentMessage.FAILED_MESSAGE)) {
@@ -57,7 +60,15 @@ public class UpdateStatusNotificationReceiver extends BroadcastReceiver {
 
     }
 
-    private void sendNotification(int number, @NotNull Context context) {
+    private void sendNotification(int number, List<String> updatedAuthorNames, @NotNull Context context) {
+
+        NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
+        for (String updateAuthorName : updatedAuthorNames) {
+            inboxStyle.addLine(updateAuthorName);
+        }
+        if (updatedAuthorNames.size() > 4) {
+            inboxStyle.setSummaryText(context.getString(R.string.notification_more_summary, updatedAuthorNames.size() - 4));
+        }
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(context)
                         .setSmallIcon(R.drawable.notification)
@@ -66,7 +77,10 @@ public class UpdateStatusNotificationReceiver extends BroadcastReceiver {
                         .setAutoCancel(true)
                         .setOnlyAlertOnce(true)
                         .setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND)
-                        .setNumber(number);
+                        .setNumber(number)
+                        .setStyle(inboxStyle);
+
+
         // Creates an explicit intent for an Activity in your app
         Intent resultIntent = new Intent(context, HomeActivity_.class);
         // The stack builder object will contain an artificial back stack for the

@@ -178,10 +178,11 @@
 
 
     <!-- Notifications -->
-    <string name="notification_title">SITracker Updates</string>
+    <string name="notification_title">Authors updated</string>
     <string name="notification_import_title">SITracker - Importing authors</string>
     <string name="notification_import_progress">Importing %1$d out of %2$d</string>
     <string name="notification_import_complete">Importing complete.</string>
+    <string name="notification_more_summary">+%1$d more</string>
     <plurals name="authors_updated">
         <item quantity="one">Author updated</item>
         <item quantity="few">

@@ -60,6 +60,7 @@ public class Constants {
     public final static String AUTHOR_SORT_TYPE_KEY = "authorsSortType";
 
     public static final String NUMBER_OF_UPDATED_AUTHORS = "number_of_updated_authors";
+    public static final String AUTHOR_NAMES_UPDATED_IN_SESSION = "author_names_update_in_session";
 
     //Showcase one-shot view id's
     public static final int SHOWCASE_START_SEARCH_SHOT_ID = 101;

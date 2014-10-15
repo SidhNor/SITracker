@@ -32,6 +32,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -90,8 +91,8 @@ public final class ShareHelper {
                 URL publicaitonUrl = new URL(pubUrl);
                 HttpRequest request = HttpRequest.get(publicaitonUrl);
                 if (request.code() == 200) {
-                    String content = request.body();
-                    boolean result = ShareHelper.saveHtmlPageToFile(file, content, request.charset());
+                    BufferedReader reader = request.bufferedReader();
+                    boolean result = ShareHelper.saveHtmlPageToFile(file, reader, request.charset());
                     if (!result) {
                         throw new SharePublicationException(
                                 SharePublicationException.SharePublicationErrors.COULD_NOT_PERSIST);
@@ -230,25 +231,31 @@ public final class ShareHelper {
      * If the page does not contain a meta Content-Type header, it is added and the files is saved as UTF-8
      *
      * @param file    The file to save to
-     * @param content String content to save
+     * @param reader Buffered reader of content to save
      * @param charSet Character set to use during save
      * @return true if save was successful, false otherwise
      */
-    public static boolean saveHtmlPageToFile(@NotNull File file, @NotNull String content, String charSet) {
+    public static boolean saveHtmlPageToFile(@NotNull File file, @NotNull BufferedReader reader, String charSet) {
         boolean result = true;
-        if (!content.contains("<meta http-equiv=\"Content-Type\"")) {
-            //Use UTF-8
-            charSet = "UTF-8";
-            content = content.replace("<head>",
-                    "<head><meta http-equiv=\"Content-Type\" content=\"text/html;charset=UTF-8\">");
-        }
+
         BufferedOutputStream bs = null;
         FileOutputStream fs = null;
 
         try {
             fs = new FileOutputStream(file);
             bs = new BufferedOutputStream(fs);
-            bs.write(content.getBytes(charSet));
+
+            String line;
+            boolean headerReplaced = false;
+
+            while ((line = reader.readLine()) != null) {
+                if (!headerReplaced && line.contains("<head>")) {
+                    headerReplaced = true;
+                    line = line.replace("<head>",
+                            "<head><meta http-equiv=\"Content-Type\" content=\"text/html;charset=UTF-8\">");
+                }
+                bs.write(line.getBytes(charSet));
+            }
             bs.close();
 
         } catch (IOException e) {
