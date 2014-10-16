@@ -98,6 +98,8 @@ public class SearchActivity extends BaseActivity {
         if (collectionView != null) {
             enableActionBarAutoHide(collectionView);
         }
+
+        registerHideableHeaderView(findViewById(R.id.headerbar));
     }
 
     @Override
