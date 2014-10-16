@@ -1,9 +1,26 @@
+/*
+ * Copyright 2014 Gleb Godonoga.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.andrada.sitracker.loader;
 
 import android.content.Context;
 import android.net.Uri;
 import android.support.v4.content.AsyncTaskLoader;
 
+import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.contracts.AppUriContract;
 import com.andrada.sitracker.db.beans.SearchedAuthor;
 import com.andrada.sitracker.exceptions.SearchException;
@@ -37,7 +54,6 @@ public class SamlibSearchLoader extends AsyncTaskLoader<AsyncTaskResult<List<Sea
     public static final int SEARCH_TOKEN = 0x3;
     private static final String TAG = "SamlibSearchLoader";
     private static final String SEARCH_URL = "http://samlib.ru/cgi-bin/seek?DIR=%s&FIND=%s&PLACE=index&JANR=%d&TYPE=%d&PAGE=%d";
-    private static final String DEFAULT_SAMLIB_ENCODING = "windows-1251";
     private static final String DEFAULT_DIR = "";
     private static final int DEFAULT_GENRE = 0;
     private static final int DEFAULT_TYPE = 0;
@@ -172,7 +188,7 @@ public class SamlibSearchLoader extends AsyncTaskLoader<AsyncTaskResult<List<Sea
     public AsyncTaskResult<List<SearchedAuthor>> loadInBackground() {
         String searchString = AppUriContract.getSanitizedSearchQuer(mQuery);
         try {
-            searchString = URLEncoder.encode(searchString, DEFAULT_SAMLIB_ENCODING);
+            searchString = URLEncoder.encode(searchString, Constants.DEFAULT_SAMLIB_ENCODING);
         } catch (UnsupportedEncodingException ignored) {
             //Try to just search without encoding the query
         }

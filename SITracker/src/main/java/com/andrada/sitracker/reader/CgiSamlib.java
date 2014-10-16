@@ -73,7 +73,7 @@ public class CgiSamlib implements SiteStrategy {
             if (request.code() == 404) {
                 throw new MalformedURLException();
             }
-            AuthorPageReader reader = new CgiSamlibAuthorPageReader(request.body("windows-1251"));
+            AuthorPageReader reader = new CgiSamlibAuthorPageReader(request.body(Constants.DEFAULT_SAMLIB_ENCODING));
             author = reader.getAuthor(url);
             helper.getAuthorDao().create(author);
             final List<Publication> items = reader.getPublications(author);

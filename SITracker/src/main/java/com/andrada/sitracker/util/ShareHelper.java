@@ -88,11 +88,12 @@ public final class ShareHelper {
                 !file.exists() ||
                 file.lastModified() < pub.getUpdateDate().getTime()) {
             try {
-                URL publicaitonUrl = new URL(pubUrl);
+                String cgiPubUrl = Constants.SAMLIB_CGI_PUBLICAITON_URL + SamlibPageHelper.getReducedUrlFromCompletePublicationUrl(pubUrl);
+                URL publicaitonUrl = new URL(cgiPubUrl);
                 HttpRequest request = HttpRequest.get(publicaitonUrl);
                 if (request.code() == 200) {
-                    BufferedReader reader = request.bufferedReader();
-                    boolean result = ShareHelper.saveHtmlPageToFile(file, reader, request.charset());
+                    BufferedReader reader = request.bufferedReader(Constants.DEFAULT_SAMLIB_ENCODING);
+                    boolean result = ShareHelper.saveHtmlPageToFile(file, reader);
                     if (!result) {
                         throw new SharePublicationException(
                                 SharePublicationException.SharePublicationErrors.COULD_NOT_PERSIST);
@@ -232,10 +233,9 @@ public final class ShareHelper {
      *
      * @param file    The file to save to
      * @param reader Buffered reader of content to save
-     * @param charSet Character set to use during save
      * @return true if save was successful, false otherwise
      */
-    public static boolean saveHtmlPageToFile(@NotNull File file, @NotNull BufferedReader reader, String charSet) {
+    public static boolean saveHtmlPageToFile(@NotNull File file, @NotNull BufferedReader reader) {
         boolean result = true;
 
         BufferedOutputStream bs = null;
@@ -246,17 +246,20 @@ public final class ShareHelper {
             bs = new BufferedOutputStream(fs);
 
             String line;
-            boolean headerReplaced = false;
+            String charSet = "UTF-8";
+
+            line = reader.readLine();
+            String[] str = line.split("\\|");
+            bs.write("<html><head><meta http-equiv=\"Content-Type\" content=\"text/html;charset=UTF-8\">".getBytes(charSet));
+            bs.write(("<title>" + str[1] + "</title></head><body>").getBytes(charSet));
+            bs.write(("<center><h3>" + str[0] + "</h3></center><br>").getBytes(charSet));
+            bs.write(("<center><h1>" + str[1] + "</h1></center>").getBytes(charSet));
 
             while ((line = reader.readLine()) != null) {
-                if (!headerReplaced && line.contains("<head>")) {
-                    headerReplaced = true;
-                    charSet = "UTF-8";
-                    line = line.replace("<head>",
-                            "<head><meta http-equiv=\"Content-Type\" content=\"text/html;charset=UTF-8\">");
-                }
                 bs.write(line.getBytes(charSet));
             }
+            bs.write("</body></html>".getBytes(charSet));
+            bs.flush();
             bs.close();
 
         } catch (IOException e) {

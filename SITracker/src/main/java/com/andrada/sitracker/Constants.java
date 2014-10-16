@@ -42,6 +42,9 @@ public class Constants {
 
     public final static String DIALOG_ADD_AUTHOR = "DIALOG_ADD_AUTHOR";
 
+    public static final String DEFAULT_SAMLIB_ENCODING = "windows-1251";
+
+    public final static String SAMLIB_CGI_PUBLICAITON_URL = "http://samlib.ru/cgi-bin/areader?q=book&object=";
     public final static String AUTHOR_PAGE_URL_ENDING_WO_SLASH = "indextitle.shtml";
     public static final String AUTHOR_PAGE_ALT_URL_ENDING_WO_SLASH = "indexdate.shtml";
     public final static String AUTHOR_PAGE_URL_ENDING_WI_SLASH = "/indextitle.shtml";
