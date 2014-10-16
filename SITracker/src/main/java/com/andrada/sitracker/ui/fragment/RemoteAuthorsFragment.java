@@ -55,6 +55,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
+import de.keyboardsurfer.android.widget.crouton.Configuration;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
@@ -122,15 +123,26 @@ public class RemoteAuthorsFragment extends Fragment implements
                 Constants.GA_EVENT_AUTHOR_ADDED,
                 Constants.GA_EVENT_AUTHOR_ADDED);
 
-        Style.Builder alertStyle = new Style.Builder()
-                .setTextAppearance(android.R.attr.textAppearanceLarge);
-        if (message.length() != 0) {
-            alertStyle.setBackgroundColorValue(Style.holoRedLight);
-        } else {
-            message = getString(R.string.author_add_success_crouton_message);
-            alertStyle.setBackgroundColorValue(Style.holoGreenLight);
+        if (getActivity() == null) {
+            return;
         }
-        Crouton.makeText(getActivity(), message, alertStyle.build()).show();
+        View view = getLayoutInflater(null).inflate(R.layout.crouton_custom_pos_textview, null);
+        if (message.length() == 0) {
+            message = getString(R.string.author_add_success_crouton_message);
+            view.findViewById(android.R.id.background).setBackgroundColor(Style.holoGreenLight);
+        } else {
+            view.findViewById(android.R.id.background).setBackgroundColor(Style.holoRedLight);
+        }
+
+        int topPadding = UIUtils.calculateActionBarSize(getActivity());
+        view.setPadding(view.getPaddingLeft(), topPadding,
+                view.getPaddingRight(), view.getPaddingBottom());
+        TextView tv = (TextView) view.findViewById(android.R.id.text1);
+        tv.setText(message);
+        Crouton cr = Crouton.make(getActivity(), view);
+        cr.setConfiguration(new Configuration.Builder()
+                .setDuration(Configuration.DURATION_LONG).build());
+        cr.show();
     }
 
 
