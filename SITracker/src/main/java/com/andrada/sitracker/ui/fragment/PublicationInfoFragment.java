@@ -209,6 +209,7 @@ public class PublicationInfoFragment extends Fragment implements
         }
         mPublicationId = AppUriContract.getPublicationId(mPublicationUri);
         mHandler = new Handler();
+        rateShowcaseShown = prefs.ratingShowcaseShotDone().get();
     }
 
     @Override
@@ -276,7 +277,6 @@ public class PublicationInfoFragment extends Fragment implements
 
     @Background
     void loadData() {
-        //rateShowcaseShown = prefs.ratingShowcaseShotDone().get();
         currentRecord = publicationsDao.getPublicationForId(mPublicationId);
         bindData();
     }
@@ -559,8 +559,8 @@ public class PublicationInfoFragment extends Fragment implements
             prefs.ratingShowcaseShotDone().put(true);
             ShowcaseView.Builder bldr = new ShowcaseView.Builder(getActivity())
                     .setTarget(new ViewTarget(mRatingBar))
-                    .setContentTitle(getString(R.string.showcase_pub_detail_image_title))
-                    .setContentText(getString(R.string.showcase_pub_detail_image_detail))
+                    .setContentTitle(getString(R.string.showcase_pub_detail_ratings_title))
+                    .setContentText(getString(R.string.showcase_pub_detail_ratings_detail))
                     .setStyle(R.style.ShowcaseView_Base_Overlayed);
             if (!BuildConfig.DEBUG) {
                 bldr.singleShot(Constants.SHOWCASE_PUBLICATION_DETAIL_RATING_SHOT_ID);
