@@ -78,6 +78,8 @@
     <string name="author_add_success_crouton_message">Автор добавлен</string>
     <string name="already_in_library">Уже есть</string>
     <string name="tap_to_add_to_library">Добавить?</string>
+    <string name="search_type_name">По имени автора</string>
+    <string name="search_type_keyword">По ключевому слову</string>
 
     <string name="cannot_search_busy">Ошибка при поиске. Samlib сейчас перегружен.</string>
     <string name="cannot_search_network">Ошибка при поиске. Проверьте Ваше соединение.</string>

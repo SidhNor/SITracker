@@ -74,6 +74,8 @@
     <string name="author_add_success_crouton_message">Author added</string>
     <string name="already_in_library">Already in library</string>
     <string name="tap_to_add_to_library">Tap to add</string>
+    <string name="search_type_name">By author name</string>
+    <string name="search_type_keyword">By keyword</string>
 
     <string name="cannot_search_busy">Could not perform search. Samlib is busy.</string>
     <string name="cannot_search_network">Could not perform search. Check your internet connection.</string>

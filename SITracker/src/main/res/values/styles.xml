@@ -50,6 +50,7 @@
     <!-- Root styles that vary by API level -->
     <style name="FrameworkRoot.Theme" parent="FrameworkRoot.Base">
         <item name="actionBarSize">@dimen/abc_action_bar_default_height</item>
+        <item name="spinnerBarInsetStart">@dimen/abc_action_bar_default_height</item>
         <item name="homeAsUpIndicator">@drawable/ic_up</item>
         <item name="actionOverflowButtonStyle">@style/ActionButton.Overflow</item>
         <!-- API 11+ (compatibility) -->
@@ -109,7 +110,6 @@
 
     <style name="Theme.SiTracker.Search" parent="Theme.SiTracker">
         <item name="windowActionBarOverlay">true</item>
-        <item name="android:windowBackground">@color/gray_background</item>
     </style>
 
     <style name="Theme.SiTracker.PublicationDetails.Base" parent="Theme.SiTracker">
@@ -365,15 +365,21 @@
     </style>
 
     <style name="ShowcaseView.Base">
-        <item name="sv_titleTextAppearance">@style/SITracker.TextAppearance.ShowcaseView.Title</item>
-        <item name="sv_detailTextAppearance">@style/SITracker.TextAppearance.ShowcaseView.Detail</item>
+        <item name="sv_titleTextAppearance">@style/SITracker.TextAppearance.ShowcaseView.Title
+        </item>
+        <item name="sv_detailTextAppearance">@style/SITracker.TextAppearance.ShowcaseView.Detail
+        </item>
         <item name="sv_backgroundColor">#b433b5e5</item>
         <item name="sv_buttonText">@android:string/ok</item>
     </style>
 
     <style name="ShowcaseView.Base.Overlayed" parent="ShowcaseView.Base">
-        <item name="sv_titleTextAppearance">@style/SITracker.TextAppearance.ShowcaseView.Title.Overlay</item>
-        <item name="sv_detailTextAppearance">@style/SITracker.TextAppearance.ShowcaseView.Detail.Overlay</item>
+        <item name="sv_titleTextAppearance">
+            @style/SITracker.TextAppearance.ShowcaseView.Title.Overlay
+        </item>
+        <item name="sv_detailTextAppearance">
+            @style/SITracker.TextAppearance.ShowcaseView.Detail.Overlay
+        </item>
     </style>
 
     <style name="ShowcaseButton">

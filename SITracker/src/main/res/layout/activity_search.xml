@@ -35,7 +35,7 @@
         <!-- Fragment showing the grid of searched authors -->
         <fragment
             android:id="@+id/remote_authors_fragment"
-            android:name="com.andrada.sitracker.ui.fragment.RemoteAuthorsFragment"
+            android:name="com.andrada.sitracker.ui.fragment.RemoteAuthorsFragment_"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:layout="@layout/fragment_search"/>
@@ -58,11 +58,11 @@
                 android:paddingLeft="?spinnerBarInsetStart">
 
                 <Spinner
-                    android:id="@+id/video_filter_spinner_year"
+                    android:id="@+id/search_option_spinner"
                     style="@style/Widget.SiTracker.HeaderBar.Spinner"
                     android:layout_width="@dimen/filter_spinner_width"
-                    android:layout_weight="@integer/filter_spinner_weight"
-                    android:layout_height="match_parent"/>
+                    android:layout_height="match_parent"
+                    android:layout_weight="@integer/filter_spinner_weight"/>
             </LinearLayout>
         </LinearLayout>
 

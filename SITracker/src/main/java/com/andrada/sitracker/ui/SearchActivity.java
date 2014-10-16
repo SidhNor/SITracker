@@ -22,28 +22,35 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Spinner;
 
 import com.andrada.sitracker.BuildConfig;
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.AppUriContract;
 import com.andrada.sitracker.ui.fragment.RemoteAuthorsFragment;
-import com.andrada.sitracker.ui.fragment.RemoteAuthorsFragment_;
+import com.andrada.sitracker.ui.widget.DrawShadowFrameLayout;
 import com.andrada.sitracker.util.UIUtils;
 import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.FragmentById;
 import org.androidannotations.annotations.InstanceState;
 import org.androidannotations.annotations.OptionsMenu;
+import org.androidannotations.annotations.ViewById;
+
+import java.util.ArrayList;
 
 import static com.andrada.sitracker.util.LogUtils.LOGD;
 import static com.andrada.sitracker.util.LogUtils.LOGW;
@@ -56,12 +63,18 @@ public class SearchActivity extends BaseActivity {
 
     private static final String TAG = makeLogTag(SearchActivity.class);
 
+    @FragmentById(R.id.remote_authors_fragment)
     RemoteAuthorsFragment mAuthorsFragment;
+
+    @ViewById(R.id.main_content)
+    DrawShadowFrameLayout mDrawShadowFrameLayout;
 
     SearchView mSearchView = null;
 
     @InstanceState
     String mQuery = "";
+
+    private ArrayList<String> mSearchTypes = new ArrayList<String>();
 
     @AfterViews
     void afterViews() {
@@ -71,23 +84,9 @@ public class SearchActivity extends BaseActivity {
         }
         mQuery = query;
 
-        FragmentManager fm = getSupportFragmentManager();
-        mAuthorsFragment = (RemoteAuthorsFragment) fm.findFragmentById(R.id.fragment_container);
-
-        if (mAuthorsFragment == null) {
-            mAuthorsFragment = RemoteAuthorsFragment_.builder().build();
-            /*
-            Bundle args = intentToFragmentArguments(
-                    new Intent(Intent.ACTION_VIEW, ScheduleContract.Sessions.buildSearchUri(query)));
-            mAuthorsFragment.setArguments(args);*/
-            fm.beginTransaction().add(R.id.fragment_container, mAuthorsFragment).commit();
-        }
-
         if (mSearchView != null) {
             mSearchView.setQuery(query, false);
         }
-
-        overridePendingTransition(0, 0);
     }
 
 
@@ -98,7 +97,7 @@ public class SearchActivity extends BaseActivity {
         if (collectionView != null) {
             enableActionBarAutoHide(collectionView);
         }
-
+        populateSearchVariants();
         registerHideableHeaderView(findViewById(R.id.headerbar));
     }
 
@@ -106,9 +105,11 @@ public class SearchActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         if (mAuthorsFragment != null) {
-            int actionBarClearance = UIUtils.calculateActionBarSize(this);
-            int gridPadding = getResources().getDimensionPixelSize(R.dimen.search_grid_padding);
-            mAuthorsFragment.setContentTopClearance(actionBarClearance + gridPadding);
+            int actionBarSize = UIUtils.calculateActionBarSize(this);
+            int filterBarSize = getResources().getDimensionPixelSize(R.dimen.filterbar_height);
+            mDrawShadowFrameLayout.setShadowTopOffset(actionBarSize + filterBarSize);
+            mAuthorsFragment.setContentTopClearance(actionBarSize + filterBarSize
+                    + getResources().getDimensionPixelSize(R.dimen.search_grid_padding));
         }
     }
 
@@ -178,5 +179,40 @@ public class SearchActivity extends BaseActivity {
             }
         }
         return true;
+    }
+
+    @Override
+    protected void onActionBarAutoShowOrHide(boolean shown) {
+        super.onActionBarAutoShowOrHide(shown);
+        mDrawShadowFrameLayout.setShadowVisible(shown, shown);
+    }
+
+    private void populateSearchVariants() {
+        Spinner searchOptionSpinner = (Spinner) findViewById(R.id.search_option_spinner);
+        if (searchOptionSpinner != null) {
+            mSearchTypes.clear();
+            mSearchTypes.add(getString(R.string.search_type_name));
+            mSearchTypes.add(getString(R.string.search_type_keyword));
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.search_spinner_item,
+                    mSearchTypes);
+            // Specify the layout to use when the list of choices appears
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            searchOptionSpinner.setAdapter(adapter);
+            searchOptionSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
+                    if (position >= 0 && position < mSearchTypes.size()) {
+                        onSearchTypeSelected(position);
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {}
+            });
+        }
+    }
+
+    private void onSearchTypeSelected(int position) {
+
     }
 }
