@@ -52,6 +52,7 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.andrada.sitracker.BuildConfig;
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.AppUriContract;

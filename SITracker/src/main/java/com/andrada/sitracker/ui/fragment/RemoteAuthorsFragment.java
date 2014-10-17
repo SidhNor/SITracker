@@ -26,6 +26,7 @@ import android.content.Loader;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.BaseAdapter;
 import android.widget.ProgressBar;
@@ -44,6 +45,7 @@ import com.andrada.sitracker.ui.BaseActivity;
 import com.andrada.sitracker.ui.components.CollectionView;
 import com.andrada.sitracker.ui.fragment.adapters.SearchResultsAdapter;
 import com.andrada.sitracker.util.AnalyticsHelper;
+import com.andrada.sitracker.util.UIUtils;
 
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
@@ -105,7 +107,7 @@ public class RemoteAuthorsFragment extends Fragment implements
         if (getActivity() == null) {
             return;
         }
-        View view = getLayoutInflater(null).inflate(R.layout.crouton_custom_pos_textview, null);
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.crouton_custom_pos_textview, null);
         if (message.length() == 0) {
             message = getString(R.string.author_add_success_crouton_message);
             view.findViewById(android.R.id.background).setBackgroundColor(Style.holoGreenLight);

@@ -48,7 +48,6 @@ import java.util.ArrayList;
 
 import static com.andrada.sitracker.util.LogUtils.LOGW;
 import static com.andrada.sitracker.util.LogUtils.makeLogTag;
-import static com.nineoldandroids.view.ViewPropertyAnimator.animate;
 
 /**
  * A base activity that handles common functionality in the app.
@@ -315,7 +314,8 @@ public abstract class BaseActivity extends Activity {
         }
     }
 
-    protected void onNavDrawerSlide(float offset) {}
+    protected void onNavDrawerSlide(float offset) {
+    }
 
     protected boolean isNavDrawerOpen() {
         return mDrawerLayout != null && mDrawerLayout.isDrawerOpen(Gravity.START);

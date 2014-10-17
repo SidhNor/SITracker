@@ -31,14 +31,15 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.SearchView;
 
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.AppUriContract;
 import com.andrada.sitracker.ui.fragment.RemoteAuthorsFragment;
+import com.andrada.sitracker.ui.fragment.RemoteAuthorsFragment_;
 import com.andrada.sitracker.ui.widget.DrawShadowFrameLayout;
 import com.andrada.sitracker.util.AnalyticsHelper;
 import com.andrada.sitracker.util.UIUtils;

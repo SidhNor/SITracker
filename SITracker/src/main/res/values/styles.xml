@@ -36,9 +36,9 @@
     <style name="FrameworkRoot.Widget" parent="android:Theme.Holo"/>
 
     <style name="FrameworkRoot.Widget.ActionButton.Overflow" parent="android:Widget.Holo.ActionButton.Overflow"/>
-    
-    <style name="FrameworkRoot.Widget.Spinner" parent="android:Widget.Holo.Light.Spinner.DropDown.ActionBar"/>
-    
+
+    <style name="FrameworkRoot.Widget.Spinner" parent="android:Widget.Holo.Light.Spinner"/>
+
     <style name="FrameworkRoot.Widget.PopupMenu" parent="android:Widget.Holo.Light.PopupMenu"/>
 
     <style name="FrameworkRoot.Widget.ListView.DropDown" parent="android:Widget.Holo.Light.ListView.DropDown"/>
@@ -178,8 +178,8 @@
     </style>
 
     <style name="Widget.SiTracker.HeaderBar.Spinner.Base" parent="FrameworkRoot.Widget.Spinner">
-        <item name="android:background">?attr/selectableItemBackground</item>
-        <item name="android:dropDownSelector">?attr/selectableItemBackground</item>
+        <item name="android:background">?android:selectableItemBackground</item>
+        <item name="android:dropDownSelector">?android:selectableItemBackground</item>
         <item name="android:divider">@null</item>
         <item name="android:dividerHeight">0dp</item>
     </style>
