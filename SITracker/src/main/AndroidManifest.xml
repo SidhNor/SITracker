@@ -57,7 +57,7 @@
         <!-- Activities for both phones and tablets -->
 
         <activity
-            android:name=".ui.phone.MyAuthorsActivity"
+            android:name=".ui.phone.MyAuthorsActivity_"
             android:label="@string/app_name"
             android:launchMode="singleTop"
             android:theme="@style/Theme.SiTracker.MyAuthors">

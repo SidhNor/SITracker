@@ -18,7 +18,6 @@ package com.andrada.sitracker.ui;
 
 
 import android.annotation.SuppressLint;
-import android.app.FragmentManager;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -39,7 +38,6 @@ import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.AppUriContract;
 import com.andrada.sitracker.ui.fragment.RemoteAuthorsFragment;
-import com.andrada.sitracker.ui.fragment.RemoteAuthorsFragment_;
 import com.andrada.sitracker.ui.widget.DrawShadowFrameLayout;
 import com.andrada.sitracker.util.AnalyticsHelper;
 import com.andrada.sitracker.util.UIUtils;
@@ -87,18 +85,6 @@ public class SearchActivity extends BaseActivity {
             query = mQuery;
         }
         mQuery = query;
-
-        FragmentManager fm = getFragmentManager();
-        mAuthorsFragment = (RemoteAuthorsFragment) fm.findFragmentById(R.id.fragment_container);
-
-        if (mAuthorsFragment == null) {
-            mAuthorsFragment = RemoteAuthorsFragment_.builder().build();
-            /*
-            Bundle args = intentToFragmentArguments(
-                    new Intent(Intent.ACTION_VIEW, ScheduleContract.Sessions.buildSearchUri(query)));
-            mAuthorsFragment.setArguments(args);*/
-            fm.beginTransaction().add(R.id.fragment_container, mAuthorsFragment).commit();
-        }
 
         if (mSearchView != null) {
             mSearchView.setQuery(query, false);
