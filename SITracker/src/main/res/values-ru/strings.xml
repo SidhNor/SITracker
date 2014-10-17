@@ -22,7 +22,7 @@
     <string name="app_name">СИ Трекер</string>
     <string name="no_network_error">Нет соединения</string>
     <string name="no_network_retry">ЕЩЕ РАЗ</string>
-    <string name="backup_restored_crouton_message">Бэк-ап данных востановлен</string>
+    <string name="backup_restored_crouton_message">Бэк-ап данных восстановлен</string>
     <string name="crouton_image_desc">информация</string>
 
 
@@ -39,7 +39,7 @@
     <!-- Authors fragment -->
     <string name="action_open_in_browser">Открыть выбранных в браузере</string>
     <string name="action_delete">Удалить автора</string>
-    <string name="action_markread">Отметить как прочитаное</string>
+    <string name="action_markread">Отметить как просчитанное</string>
 
     <string name="update_failed_crouton_message">Не удалось обновить авторов.</string>
     <string name="no_authors">Вы пока не добавили никаких авторов</string>
@@ -78,6 +78,8 @@
     <string name="author_add_success_crouton_message">Автор добавлен</string>
     <string name="already_in_library">Уже есть</string>
     <string name="tap_to_add_to_library">Добавить?</string>
+    <string name="search_type_name">По имени автора</string>
+    <string name="search_type_keyword">По ключевому слову</string>
 
     <string name="cannot_search_busy">Ошибка при поиске. Samlib сейчас перегружен.</string>
     <string name="cannot_search_network">Ошибка при поиске. Проверьте Ваше соединение.</string>
@@ -105,12 +107,12 @@
     <string name="pref_authors_category_title">Авторы</string>
     <string name="pref_authors_sort">Сортировка авторов</string>
     <!--Content-->
-    <string name="pref_content_title">Соделжание</string>
+    <string name="pref_content_title">Содержание</string>
     <string name="pref_content_download_title">Папка для скачиваний</string>
-    <string name="pref_content_download_summ">Вы можете указать папку куда будут сохраняться произведения. Если поле пустое, произведения храняться в папке приложения.</string>
-    <string name="pref_content_download_summ_short">Произведения храняться в:</string>
+    <string name="pref_content_download_summ">Вы можете указать папку куда будут сохраняться произведения. Если поле пустое, произведения хранятся в папке приложения.</string>
+    <string name="pref_content_download_summ_short">Произведения хранятся в:</string>
     <string name="pref_content_clear_saved_title">Очистить сохраненные произведения</string>
-    <string name="pref_content_clear_saved_summ">Очищает только папку приложения. Если вы сохраняли произведения в другом месте, они остануться нетронутыми.</string>
+    <string name="pref_content_clear_saved_summ">Очищает только папку приложения. Если вы сохраняли произведения в другом месте, они останутся нетронутыми.</string>
     <string name="pref_content_img_display">Показывать обложки произведений</string>
     <string name="pref_content_img_display_summ">Скачивать и показывать обложки произведений если таковые доступны</string>
     <!--Updates-->
@@ -123,7 +125,7 @@
     <!--Statistics-->
     <string name="pref_usage_category_title">Статистика использования</string>
     <string name="pref_opt_out_statistics_title">Отказаться</string>
-    <string name="pref_opt_out_statistics_summ">Не отправлять статистику изпользования автору.</string>
+    <string name="pref_opt_out_statistics_summ">Не отправлять статистику использования автору.</string>
 
 
     <!-- Import Export authors activity -->
@@ -138,9 +140,9 @@
     <string name="author_import_success_crouton_message">Авторы импортированы</string>
     <string name="author_import_total_crouton_message">Всего: %1$d</string>
     <string name="author_import_processed_crouton_message">Добавлены: %1$d</string>
-    <string name="author_import_failed_crouton_message">Ошибки или дупликаты: %1$d</string>
+    <string name="author_import_failed_crouton_message">Ошибки или дубликаты: %1$d</string>
     <string name="fp_cancel_label">Отменить</string>
-    <string name="fp_confirm_label">Потвердить</string>
+    <string name="fp_confirm_label">Подтвердить</string>
     <string name="fp_selected_folder_label">Выбранная папка:</string>
     <string name="fp_selected_file_label">Выбранный файл:</string>
     <string name="fp_create_folder_label">Создать папку</string>
@@ -168,7 +170,7 @@
 
 
     <!--Rating Dialog-->
-    <string name="publication_ratings">Рэйтинг</string>
+    <string name="publication_ratings">Рейтинг</string>
     <string name="publication_submit_rating_link">ГОЛОСОВАТЬ</string>
     <string name="publication_rating_submit_success">Ваша оценка зачтена.</string>
     <string name="publication_rating_submit_error">Не удалось сохранить оценку. Попробуйте позже.</string>
@@ -185,7 +187,8 @@
     <string name="notification_title">Прода</string>
     <string name="notification_import_title">СИ Трекер - Импорт авторов</string>
     <string name="notification_import_progress">Импортируем %1$d из %2$d</string>
-    <string name="notification_import_complete">Импортирование завершено.</string>
+    <string name="notification_import_complete">Импорт завершён.</string>
+    <string name="notification_more_summary">Еще +%1$d</string>
     <plurals name="authors_updated">
         <item quantity="one" tools:ignore="ImpliedQuantity">Автор обновился</item>
         <item quantity="few">
@@ -205,16 +208,30 @@
 
     <!-- Showcase texts -->
     <string name="showcase_getting_started_title">Для начала</string>
-    <string name="showcase_getting_started_detail">Если у Вас нет добавленных авторов, стоит начать с их посика.</string>
+    <string name="showcase_getting_started_detail">Если у Вас нет добавленных авторов, стоит начать с их поиска.</string>
     <string name="showcase_search_title">Добавление авторов</string>
     <string name="showcase_search_detail">Вы можете использовать поиск авторов по имени. Также вы можете вставить полный линк автора и он автоматически добавится без поиска.</string>
     <string name="showcase_pub_quick_title">Быстрый доступ к произведениям</string>
     <string name="showcase_pub_quick_detail">Нажмите и удерживайте чтобы скачать/отрыть произведение. Нажмите чтобы открыть детали.</string>
     <string name="showcase_pub_detail_image_title">Отключение картинок</string>
     <string name="showcase_pub_detail_image_detail">Так как авторы заведуют картинками, они могут быть очень большими. Если вы хотите сохранить трафик при просмотре произведений, вы можете отключить отображение картинок в настройках.</string>
-
+    <string name="showcase_pub_detail_ratings_title">Поблагодарите автора</string>
+    <string name="showcase_pub_detail_ratings_detail">Вы можете оценить произведение и результат отобразится на samlib. Вы так же можете обновить свою оценку просто проголосовав заново.</string>
 
     <string name="change_log"><![CDATA[
+
+        <section>
+            <header><h2>Версия 1.3.2</h2></header>
+            <p>Мелкий релиз.</p>
+            <ul>
+                <li>Поиск разделен на 2 категории: по имени автора и по ключевому слову. Ключевое слово может быть в имени, названии произведения, аннотации, или в любом другом месте на странице автора.</li>
+                <li>Исправлены орфографические ошибки в русском переводе.</li>
+                <li>Восстановлено подтверждение при добавления автора.</li>
+                <li>Изменен стиль оповещений. Теперь в версиях &ge; 4.1 показывается список обновленных авторов.</li>
+                <li>Исправлена ошибка при открытии большого произведения на устройствах с ограниченной памятью.</li>
+                <li>Добавлена одноразовая всплывающая подсказка про рейтинг авторов чтобы привлечь внимание к возможности оставлять оценки.</li>
+            </ul>
+        </section>
 
         <section>
             <header><h2>Версия 1.3.1</h2></header>
@@ -253,8 +270,8 @@
             <header><h2>Версия 1.2.0</h2></header>
             <ul>
                 <li>Добавлена поддержка импорта и экспорта авторов. Поддерживаются txt формат и authorts.xml от SIInformer-а</li>
-                <li>Добавлена синхронизация между вашими аккаунтами а также автоматический бэкап. Должно быть включено "автовосстановление" и "резервное копирование" в настройках.</li>
-                <li>Теперь можно добавлять аторов и с budclub.ru</li>
+                <li>Добавлена синхронизация между вашими аккаунтами а также автоматический бэкап. Должно быть включено "авто-восстановление" и "резервное копирование" в настройках.</li>
+                <li>Теперь можно добавлять авторов и с budclub.ru</li>
                 <li>Выбор папки сохранения в настройках теперь интерактивный.</li>
                 <li>Исправлено удаление авторов. Теперь произведения удаляются как надо.</li>
             </ul>
@@ -265,7 +282,7 @@
             <p>Мелкий релиз баг-фиксов.</p>
             <ul>
                 <li>Исправлены ошибки на нескольких марках Motorola и Asus Transformer а также ошибка
-                    свойственая только GT-I8150.
+                    свойственная только GT-I8150.
                 </li>
             </ul>
         </section>
@@ -295,7 +312,7 @@
                 <li>При долгом нажатии на произведение, оно сохраняется на устройство с возможностью чтения
                     в приложениях как CoolReader или AIReader (даже в оффлайне). Произведение сохраняется
                     заново только если оно обновлено. Функционал запуска в браузере пока удален. Будет
-                    добавлен после мелкого редезайна.
+                    добавлен после мелкого ре-дизайна.
                 </li>
                 <li>Аннотации сохраняются в html формате с рабочими ссылками</li>
                 <li>Улучшена производительность</li>

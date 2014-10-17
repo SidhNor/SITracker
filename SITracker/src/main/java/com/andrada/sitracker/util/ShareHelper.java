@@ -32,6 +32,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -87,11 +88,12 @@ public final class ShareHelper {
                 !file.exists() ||
                 file.lastModified() < pub.getUpdateDate().getTime()) {
             try {
-                URL publicaitonUrl = new URL(pubUrl);
+                String cgiPubUrl = Constants.SAMLIB_CGI_PUBLICAITON_URL + SamlibPageHelper.getReducedUrlFromCompletePublicationUrl(pubUrl);
+                URL publicaitonUrl = new URL(cgiPubUrl);
                 HttpRequest request = HttpRequest.get(publicaitonUrl);
                 if (request.code() == 200) {
-                    String content = request.body();
-                    boolean result = ShareHelper.saveHtmlPageToFile(file, content, request.charset());
+                    BufferedReader reader = request.bufferedReader(Constants.DEFAULT_SAMLIB_ENCODING);
+                    boolean result = ShareHelper.saveHtmlPageToFile(file, reader);
                     if (!result) {
                         throw new SharePublicationException(
                                 SharePublicationException.SharePublicationErrors.COULD_NOT_PERSIST);
@@ -230,25 +232,34 @@ public final class ShareHelper {
      * If the page does not contain a meta Content-Type header, it is added and the files is saved as UTF-8
      *
      * @param file    The file to save to
-     * @param content String content to save
-     * @param charSet Character set to use during save
+     * @param reader Buffered reader of content to save
      * @return true if save was successful, false otherwise
      */
-    public static boolean saveHtmlPageToFile(@NotNull File file, @NotNull String content, String charSet) {
+    public static boolean saveHtmlPageToFile(@NotNull File file, @NotNull BufferedReader reader) {
         boolean result = true;
-        if (!content.contains("<meta http-equiv=\"Content-Type\"")) {
-            //Use UTF-8
-            charSet = "UTF-8";
-            content = content.replace("<head>",
-                    "<head><meta http-equiv=\"Content-Type\" content=\"text/html;charset=UTF-8\">");
-        }
+
         BufferedOutputStream bs = null;
         FileOutputStream fs = null;
 
         try {
             fs = new FileOutputStream(file);
             bs = new BufferedOutputStream(fs);
-            bs.write(content.getBytes(charSet));
+
+            String line;
+            String charSet = "UTF-8";
+
+            line = reader.readLine();
+            String[] str = line.split("\\|");
+            bs.write("<html><head><meta http-equiv=\"Content-Type\" content=\"text/html;charset=UTF-8\">".getBytes(charSet));
+            bs.write(("<title>" + str[1] + "</title></head><body>").getBytes(charSet));
+            bs.write(("<center><h3>" + str[0] + "</h3></center><br>").getBytes(charSet));
+            bs.write(("<center><h1>" + str[1] + "</h1></center>").getBytes(charSet));
+
+            while ((line = reader.readLine()) != null) {
+                bs.write(line.getBytes(charSet));
+            }
+            bs.write("</body></html>".getBytes(charSet));
+            bs.flush();
             bs.close();
 
         } catch (IOException e) {

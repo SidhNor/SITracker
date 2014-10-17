@@ -42,6 +42,9 @@ public class Constants {
 
     public final static String DIALOG_ADD_AUTHOR = "DIALOG_ADD_AUTHOR";
 
+    public static final String DEFAULT_SAMLIB_ENCODING = "windows-1251";
+
+    public final static String SAMLIB_CGI_PUBLICAITON_URL = "http://samlib.ru/cgi-bin/areader?q=book&object=";
     public final static String AUTHOR_PAGE_URL_ENDING_WO_SLASH = "indextitle.shtml";
     public static final String AUTHOR_PAGE_ALT_URL_ENDING_WO_SLASH = "indexdate.shtml";
     public final static String AUTHOR_PAGE_URL_ENDING_WI_SLASH = "/indextitle.shtml";
@@ -60,6 +63,7 @@ public class Constants {
     public final static String AUTHOR_SORT_TYPE_KEY = "authorsSortType";
 
     public static final String NUMBER_OF_UPDATED_AUTHORS = "number_of_updated_authors";
+    public static final String AUTHOR_NAMES_UPDATED_IN_SESSION = "author_names_update_in_session";
 
     //Showcase one-shot view id's
     public static final int SHOWCASE_START_SEARCH_SHOT_ID = 101;
@@ -88,6 +92,7 @@ public class Constants {
     public static final String GA_EVENT_AUTHOR_UPDATE = "author_update";
     public static final String GA_EVENT_AUTHORS_MANUAL_REFRESH = "author_manual_refresh";
     public static final String GA_EVENT_PUB_MANUAL_REFRESH = "pub_manual_refresh";
+    public static final String GA_EVENT_SEARCH_TYPE_CHANGED = "search_type_changed";
     public static final String GA_EVENT_PUB_RATED = "pub_rated";
     public static final String GA_EVENT_PUB_IGNORED = "pub_updates_ignored";
     public static final String GA_EVENT_ENABLE_UPDATES_BACK = "pub_updates_reenabled";

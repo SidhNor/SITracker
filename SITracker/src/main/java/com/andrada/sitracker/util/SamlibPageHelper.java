@@ -1,11 +1,11 @@
 /*
- * Copyright 2013 Gleb Godonoga.
+ * Copyright 2014 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -41,5 +41,24 @@ public class SamlibPageHelper {
             result = result.substring(0, result.length() - 1);
         }
         return result;
+    }
+
+    @NotNull
+    public static String getReducedUrlFromCompleteUrl(@NotNull String completeUrl) {
+        return completeUrl.toLowerCase()
+                .replace("http://samlib.ru/", "")
+                .replace("http://budclub.ru/", "")
+                .replace("/indexdate.shtml", "")
+                .replace("/indextitle.shtml", "")
+                .trim();
+    }
+
+    @NotNull
+    public static String getReducedUrlFromCompletePublicationUrl(@NotNull String completeUrl) {
+        return completeUrl.toLowerCase()
+                .replace("http://samlib.ru/", "")
+                .replace("http://budclub.ru/", "")
+                .replace(".shtml", "")
+                .trim();
     }
 }

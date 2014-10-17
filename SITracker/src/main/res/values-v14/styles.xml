@@ -22,16 +22,21 @@
         <item name="android:buttonBarButtonStyle">?android:buttonBarButtonStyle</item>
         <item name="android:indeterminateProgressStyle">?android:indeterminateProgressStyle</item>
         <!-- API 14+ -->
-        <item name="android:listPreferredItemPaddingLeft">?android:listPreferredItemPaddingLeft</item>
-        <item name="android:listPreferredItemPaddingRight">?android:listPreferredItemPaddingRight</item>
-        <item name="android:listPreferredItemHeightSmall">?android:listPreferredItemHeightSmall</item>
+        <item name="android:listPreferredItemPaddingLeft">?android:listPreferredItemPaddingLeft
+        </item>
+        <item name="android:listPreferredItemPaddingRight">?android:listPreferredItemPaddingRight
+        </item>
+        <item name="android:listPreferredItemHeightSmall">?android:listPreferredItemHeightSmall
+        </item>
         <item name="android:homeAsUpIndicator">@drawable/ic_up</item>
         <item name="android:actionOverflowButtonStyle">@style/ActionButton.Overflow</item>
         <item name="android:editTextBackground">@drawable/edit_text</item>
         <item name="vpiCirclePageIndicatorStyle">@style/CustomCirclePageIndicator</item>
+        <item name="spinnerBarInsetStart">?android:actionBarSize</item>
     </style>
 
     <style name="Theme.SiTracker" parent="FrameworkRoot.Theme">
+        <item name="android:windowContentOverlay">@null</item>
         <item name="android:actionBarTabStyle">@style/ActionBar.TabView</item>
         <item name="android:actionBarStyle">@style/ActionBar</item>
         <item name="android:actionModeBackground">@drawable/cab_background_top_si</item>
@@ -50,6 +55,13 @@
         <item name="android:displayOptions">showHome|showTitle</item>
         <item name="android:backgroundSplit">@drawable/ab_solid</item>
         <item name="android:titleTextStyle">@style/ActionBar.TitleText</item>
+    </style>
+
+    <style name="Widget.SiTracker.HeaderBar.Spinner.Base" parent="FrameworkRoot.Widget.Spinner">
+        <item name="android:background">?android:selectableItemBackground</item>
+        <item name="android:dropDownSelector">?android:selectableItemBackground</item>
+        <item name="android:divider">@null</item>
+        <item name="android:dividerHeight">0dp</item>
     </style>
 
     <style name="MessageCard.Button" parent="">

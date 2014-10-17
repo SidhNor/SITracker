@@ -37,6 +37,8 @@
 
     <style name="FrameworkRoot.Widget.ActionButton.Overflow" parent="@style/Widget.AppCompat.ActionButton.Overflow"/>
 
+    <style name="FrameworkRoot.Widget.Spinner" parent="@style/Widget.AppCompat.Light.Spinner.DropDown.ActionBar"/>
+
     <style name="FrameworkRoot.Widget.PopupMenu" parent="@style/Widget.AppCompat.Light.PopupMenu"/>
 
     <style name="FrameworkRoot.Widget.ListView.DropDown" parent="@style/Widget.AppCompat.Light.ListView.DropDown"/>
@@ -48,6 +50,7 @@
     <!-- Root styles that vary by API level -->
     <style name="FrameworkRoot.Theme" parent="FrameworkRoot.Base">
         <item name="actionBarSize">@dimen/abc_action_bar_default_height</item>
+        <item name="spinnerBarInsetStart">@dimen/abc_action_bar_default_height</item>
         <item name="homeAsUpIndicator">@drawable/ic_up</item>
         <item name="actionOverflowButtonStyle">@style/ActionButton.Overflow</item>
         <!-- API 11+ (compatibility) -->
@@ -103,11 +106,11 @@
 
     <style name="Theme.SiTracker.Home" parent="Theme.SiTracker">
         <item name="windowActionBarOverlay">false</item>
+        <item name="android:windowContentOverlay">@drawable/header_shadow</item>
     </style>
 
     <style name="Theme.SiTracker.Search" parent="Theme.SiTracker">
         <item name="windowActionBarOverlay">true</item>
-        <item name="android:windowBackground">@color/gray_background</item>
     </style>
 
     <style name="Theme.SiTracker.PublicationDetails.Base" parent="Theme.SiTracker">
@@ -180,6 +183,15 @@
     <style name="Widget.SiTracker.EditText" parent="android:Widget.EditText">
         <item name="android:background">@drawable/edit_text</item>
     </style>
+
+    <style name="Widget.SiTracker.HeaderBar.Spinner.Base" parent="FrameworkRoot.Widget.Spinner">
+        <item name="android:background">?attr/selectableItemBackground</item>
+        <item name="android:dropDownSelector">?attr/selectableItemBackground</item>
+        <item name="android:divider">@null</item>
+        <item name="android:dividerHeight">0dp</item>
+    </style>
+
+    <style name="Widget.SiTracker.HeaderBar.Spinner" parent="Widget.SiTracker.HeaderBar.Spinner.Base"/>
 
     <style name="TextHeader">
         <item name="android:textSize">@dimen/text_size_large</item>
@@ -354,15 +366,21 @@
     </style>
 
     <style name="ShowcaseView.Base">
-        <item name="sv_titleTextAppearance">@style/SITracker.TextAppearance.ShowcaseView.Title</item>
-        <item name="sv_detailTextAppearance">@style/SITracker.TextAppearance.ShowcaseView.Detail</item>
+        <item name="sv_titleTextAppearance">@style/SITracker.TextAppearance.ShowcaseView.Title
+        </item>
+        <item name="sv_detailTextAppearance">@style/SITracker.TextAppearance.ShowcaseView.Detail
+        </item>
         <item name="sv_backgroundColor">#b433b5e5</item>
         <item name="sv_buttonText">@android:string/ok</item>
     </style>
 
     <style name="ShowcaseView.Base.Overlayed" parent="ShowcaseView.Base">
-        <item name="sv_titleTextAppearance">@style/SITracker.TextAppearance.ShowcaseView.Title.Overlay</item>
-        <item name="sv_detailTextAppearance">@style/SITracker.TextAppearance.ShowcaseView.Detail.Overlay</item>
+        <item name="sv_titleTextAppearance">
+            @style/SITracker.TextAppearance.ShowcaseView.Title.Overlay
+        </item>
+        <item name="sv_detailTextAppearance">
+            @style/SITracker.TextAppearance.ShowcaseView.Detail.Overlay
+        </item>
     </style>
 
     <style name="ShowcaseButton">

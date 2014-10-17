@@ -74,6 +74,8 @@
     <string name="author_add_success_crouton_message">Author added</string>
     <string name="already_in_library">Already in library</string>
     <string name="tap_to_add_to_library">Tap to add</string>
+    <string name="search_type_name">By author name</string>
+    <string name="search_type_keyword">By keyword</string>
 
     <string name="cannot_search_busy">Could not perform search. Samlib is busy.</string>
     <string name="cannot_search_network">Could not perform search. Check your internet connection.</string>
@@ -178,10 +180,11 @@
 
 
     <!-- Notifications -->
-    <string name="notification_title">SITracker Updates</string>
+    <string name="notification_title">Authors updated</string>
     <string name="notification_import_title">SITracker - Importing authors</string>
     <string name="notification_import_progress">Importing %1$d out of %2$d</string>
     <string name="notification_import_complete">Importing complete.</string>
+    <string name="notification_more_summary">+%1$d more</string>
     <plurals name="authors_updated">
         <item quantity="one">Author updated</item>
         <item quantity="few">
@@ -208,9 +211,23 @@
     <string name="showcase_pub_quick_detail">Tap once to go to publication details. Tap\'n\'Hold for downloading/opening the publication directly.</string>
     <string name="showcase_pub_detail_image_title">Disabling images</string>
     <string name="showcase_pub_detail_image_detail">As publication images are managed by authors, they can have large size. If you want to save traffic while browsing through publications, you can disable publication image download in settings.</string>
-
+    <string name="showcase_pub_detail_ratings_title">Reward the author</string>
+    <string name="showcase_pub_detail_ratings_detail">You can rate the publication and the result will be submitted to samlib. Later on, you will be able to update your mark.</string>
 
     <string name="change_log"><![CDATA[
+        <section>
+            <header><h2>Version 1.3.2</h2></header>
+            <p>Small feature/bugfix release.</p>
+            <ul>
+                <li>Search is now divided in 2 categories: by author name and by keyword. Keyword search looks at author name, publicaiton name, annotations, or any other entity on author page.</li>
+                <li>Fixed typos in russian translation.</li>
+                <li>Restore author add confirmation message.</li>
+                <li>Changed the style of notifications. Now, for version &ge; 4.1 a list of update authors will show up directly in the notification view.</li>
+                <li>Fixed a crash when opening large publications on low memory devices.</li>
+                <li>Added one time showcase view for publication ratings.</li>
+            </ul>
+        </section>
+
         <section>
             <header><h2>Version 1.3.1</h2></header>
             <p>Small bugfix release.</p>

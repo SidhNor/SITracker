@@ -70,5 +70,12 @@
     <dimen name="showcase_detail_size_overlay">18sp</dimen>
     <dimen name="text_padding">16dp</dimen>
 
+
+    <dimen name="filterbar_height">48dp</dimen>
+    <dimen name="filter_spinner_width">0dp</dimen>
+    <dimen name="search_spinner_width">200dp</dimen>
+    <dimen name="spinner_left_padding">4dp</dimen>
+    <dimen name="search_dropdown_item_height">48dp</dimen>
+
 </resources>
 

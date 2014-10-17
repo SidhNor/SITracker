@@ -20,6 +20,7 @@
     <declare-styleable name="BaseTheme">
         <attr name="actionBarOverlayTopOffset" format="dimension"/>
         <attr name="actionBarInsetStart" format="dimension"/>
+        <attr name="spinnerBarInsetStart" format="dimension"/>
         <attr name="selectableItemBackgroundBorderless" format="dimension"/>
         <attr name="photoItemForeground" format="dimension"/>
         <attr name="popupItemBackground" format="dimension"/>
@@ -30,17 +31,21 @@
         <attr name="contentTopClearance" format="dimension"/>
     </declare-styleable>
 
+    <declare-styleable name="DrawShadowFrameLayout">
+        <attr name="shadowDrawable" format="reference"/>
+        <attr name="shadowVisible" format="boolean"/>
+    </declare-styleable>
 
     <declare-styleable name="MessageCard">
-        <attr name="messageTitle" format="string" />
-        <attr name="messageText" format="string" />
-        <attr name="button1text" format="string" />
-        <attr name="button1tag" format="string" />
-        <attr name="button1emphasis" format="boolean" />
-        <attr name="button2text" format="string" />
-        <attr name="button2tag" format="string" />
-        <attr name="button2emphasis" format="boolean" />
-        <attr name="emphasisColor" format="color" />
+        <attr name="messageTitle" format="string"/>
+        <attr name="messageText" format="string"/>
+        <attr name="button1text" format="string"/>
+        <attr name="button1tag" format="string"/>
+        <attr name="button1emphasis" format="boolean"/>
+        <attr name="button2text" format="string"/>
+        <attr name="button2tag" format="string"/>
+        <attr name="button2emphasis" format="boolean"/>
+        <attr name="emphasisColor" format="color"/>
     </declare-styleable>
 
     <declare-styleable name="ThemeSITracker">

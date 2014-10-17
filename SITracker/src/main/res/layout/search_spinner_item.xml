@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="@dimen/search_spinner_width"
+              android:layout_height="wrap_content"
+              android:orientation="vertical">
+
+    <TextView
+        android:id="@android:id/text1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawablePadding="6dp"
+        android:drawableRight="@drawable/spinner_triangle_sub"
+        android:paddingLeft="@dimen/spinner_left_padding"
+        android:paddingRight="4dp"
+        android:textColor="@color/body_text_2_inverse"
+        android:textSize="16sp"/>
+</LinearLayout>
