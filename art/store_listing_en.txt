@@ -12,18 +12,12 @@ If you encounter any issue, please feel free to report it.
 
 What's new:
 
-• Small redesign
-• Enable updates when device starts/storage mounts
-• Added author search
-• Added publicaiton info screen with images
-• Ability to rate publicaitons and +1
-• Added indicator to group header if it contains a new publication
-• Added "ignore update" feature for marking a publication as ignored
-• Added tutorial showcase views to highlight less understandable in-app scenarios
-• A lot of bug fixes and cosmetic improvements.
-
-
-
+• Search is now divided in 2 categories: by author name and by keyword. Keyword search looks at author name, publicaiton name, annotations, or anything else.
+• Fixed typos in russian translation.
+• Restore author add confirmation message.
+• Changed the style of notifications. Now, for version >= 4.1 a list of update authors will show up directly in the notification view.
+• Fixed a crash when opening large publications on low memory devices.
+• Added one time showcase view for publication ratings.
 
 
 
