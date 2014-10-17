@@ -219,10 +219,12 @@
             <header><h2>Version 1.3.2</h2></header>
             <p>Small feature/bugfix release.</p>
             <ul>
+                <li>Search is now divided in 2 categories: by author name and by keyword. Keyword search looks at author name, publicaiton name, annotations, or any other entity on author page.</li>
                 <li>Fixed typos in russian translation.</li>
                 <li>Restore author add confirmation message.</li>
                 <li>Changed the style of notifications. Now, for version &ge; 4.1 a list of update authors will show up directly in the notification view.</li>
                 <li>Fixed a crash when opening large publications on low memory devices.</li>
+                <li>Added one time showcase view for publication ratings.</li>
             </ul>
         </section>
 

@@ -172,7 +172,7 @@ public class RemoteAuthorsFragment extends Fragment implements
         updateCollectionView(data);
     }
 
-    public void requestQueryUpdate(String query) {
+    public void requestQueryUpdate(String query, int searchType) {
         //Test query for URL
         if (query.matches(Constants.SIMPLE_URL_REGEX) && query.startsWith(Constants.HTTP_PROTOCOL)) {
             //This looks like an url
@@ -180,7 +180,7 @@ public class RemoteAuthorsFragment extends Fragment implements
             new AddAuthorTask(getActivity()).execute(query);
         } else {
             reloadFromArguments(BaseActivity.intentToFragmentArguments(
-                    new Intent(Intent.ACTION_SEARCH, AppUriContract.buildSamlibSearchUri(query))));
+                    new Intent(Intent.ACTION_SEARCH, AppUriContract.buildSamlibSearchUri(query, searchType))));
         }
     }
 
@@ -295,11 +295,11 @@ public class RemoteAuthorsFragment extends Fragment implements
     public Loader<AsyncTaskResult<List<SearchedAuthor>>> onCreateLoader(int id, Bundle data) {
         LOGD(TAG, "onCreateLoader, id=" + id + ", data=" + data);
         final Intent intent = BaseActivity.fragmentArgumentsToIntent(data);
-        Uri sessionsUri = intent.getData();
+        Uri searchUri = intent.getData();
         Loader<AsyncTaskResult<List<SearchedAuthor>>> loader = null;
         if (id == SamlibSearchLoader.SEARCH_TOKEN) {
-            LOGD(TAG, "Creating search loader for " + sessionsUri);
-            loader = new SamlibSearchLoader(getActivity(), sessionsUri);
+            LOGD(TAG, "Creating search loader for " + searchUri);
+            loader = new SamlibSearchLoader(getActivity(), searchUri);
         }
         return loader;
     }

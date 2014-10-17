@@ -20,31 +20,19 @@ import android.content.Context;
 import android.net.Uri;
 import android.support.v4.content.AsyncTaskLoader;
 
-import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.contracts.AppUriContract;
 import com.andrada.sitracker.db.beans.SearchedAuthor;
 import com.andrada.sitracker.exceptions.SearchException;
-import com.andrada.sitracker.reader.SamlibAuthorSearchReader;
+import com.andrada.sitracker.reader.SamlibCgiSearchStrategyImpl;
+import com.andrada.sitracker.reader.SamlibSeekSearchStrategyImpl;
+import com.andrada.sitracker.reader.SearchStrategy;
 import com.github.kevinsawicki.http.HttpRequest;
 
-import org.androidannotations.api.BackgroundExecutor;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.nio.CharBuffer;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static com.andrada.sitracker.util.LogUtils.LOGD;
 import static com.andrada.sitracker.util.LogUtils.LOGE;
@@ -53,46 +41,14 @@ public class SamlibSearchLoader extends AsyncTaskLoader<AsyncTaskResult<List<Sea
 
     public static final int SEARCH_TOKEN = 0x3;
     private static final String TAG = "SamlibSearchLoader";
-    private static final String SEARCH_URL = "http://samlib.ru/cgi-bin/seek?DIR=%s&FIND=%s&PLACE=index&JANR=%d&TYPE=%d&PAGE=%d";
-    private static final String DEFAULT_DIR = "";
-    private static final int DEFAULT_GENRE = 0;
-    private static final int DEFAULT_TYPE = 0;
 
-    private static final String BUFF_READER_ID = "bufferedReader";
-    /**
-     * Use search cache for 1 day only
-     */
-    private static final long MAX_STALE_CACHE = 60 * 60 * 24 * 1;
-
-    volatile boolean finishedLoading = false;
-
+    private SearchStrategy mSearchStrategy;
     private List<SearchedAuthor> mAuthors = new ArrayList<SearchedAuthor>();
     private Uri mQuery;
 
     public SamlibSearchLoader(Context context, Uri query) {
         super(context);
         mQuery = query;
-    }
-
-    private void readData(BufferedReader reader, StringBuffer appendable) throws IOException {
-        try {
-            final CharBuffer buffer = CharBuffer.allocate(8192);
-            int read;
-            while ((read = reader.read(buffer)) != -1) {
-                buffer.rewind();
-                appendable.append(buffer, 0, read);
-                buffer.rewind();
-            }
-        } catch (IOException e) {
-            LOGE(TAG, "Could not read data", e);
-        } finally {
-            try {
-                reader.close();
-            } catch (IOException ignored) {
-
-            }
-            finishedLoading = true;
-        }
     }
 
     /**
@@ -150,9 +106,10 @@ public class SamlibSearchLoader extends AsyncTaskLoader<AsyncTaskResult<List<Sea
     protected void onStopLoading() {
         // Force cancel the current load task.
         LOGD(TAG, "Force stopping task");
-        BackgroundExecutor.cancelAll(BUFF_READER_ID, true);
         //Sanity
-        finishedLoading = true;
+        if (mSearchStrategy != null) {
+            mSearchStrategy.cancelAnyRunningTasks();
+        }
         cancelLoad();
     }
 
@@ -179,81 +136,26 @@ public class SamlibSearchLoader extends AsyncTaskLoader<AsyncTaskResult<List<Sea
     @Override
     public void onCanceled(AsyncTaskResult<List<SearchedAuthor>> result) {
         super.onCanceled(result);
-        BackgroundExecutor.cancelAll(BUFF_READER_ID, true);
+        if (mSearchStrategy != null) {
+            mSearchStrategy.cancelAnyRunningTasks();
+        }
         // if needed.
         onReleaseResources(result.getResult());
     }
 
     @Override
     public AsyncTaskResult<List<SearchedAuthor>> loadInBackground() {
-        String searchString = AppUriContract.getSanitizedSearchQuer(mQuery);
-        try {
-            searchString = URLEncoder.encode(searchString, Constants.DEFAULT_SAMLIB_ENCODING);
-        } catch (UnsupportedEncodingException ignored) {
-            //Try to just search without encoding the query
-        }
-        String url = String.format(SEARCH_URL, DEFAULT_DIR, searchString, DEFAULT_GENRE, DEFAULT_TYPE, 1);
-        Map<String, SearchedAuthor> hashAuthors = new HashMap<String, SearchedAuthor>();
+        int searchType = AppUriContract.getSearchTypeParam(mQuery);
+
         Exception possibleException = null;
         try {
-            long requestStart = new Date().getTime();
-            final HttpRequest request = HttpRequest.get(new URL(url));
-            //Tolerate 1 day
-            request.getConnection().addRequestProperty("Cache-Control", "max-stale=" + MAX_STALE_CACHE);
-            if (request.code() == 404) {
-                throw new MalformedURLException();
+
+            if (searchType == 0) {
+                mSearchStrategy = new SamlibCgiSearchStrategyImpl();
+            } else {
+                mSearchStrategy = new SamlibSeekSearchStrategyImpl();
             }
-
-            if (request.code() == 500) {
-                throw new SearchException(SearchException.SearchErrors.SAMLIB_BUSY);
-            }
-
-            final StringBuffer buffer = new StringBuffer();
-            final BufferedReader reader = request.bufferedReader();
-            finishedLoading = false;
-            LOGD(TAG, "Starting search: " + requestStart);
-            BackgroundExecutor.execute(new BackgroundExecutor.Task(BUFF_READER_ID, 0, "") {
-                @Override
-                public void execute() {
-                    try {
-                        readData(reader, buffer);
-                    } catch (Throwable e) {
-                        Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e);
-                    }
-                }
-            });
-            Thread.sleep(500);
-            long currentMils;
-            boolean authNumberCriteriaSatisfied;
-            boolean timeCriteriaSatisfied;
-            do {
-                currentMils = new Date().getTime();
-                Collection<SearchedAuthor> authors = new SamlibAuthorSearchReader().getUniqueAuthorsFromPage(buffer.toString());
-                for (SearchedAuthor auth : authors) {
-                    if (!hashAuthors.containsKey(auth.getAuthorUrl())) {
-                        hashAuthors.put(auth.getAuthorUrl(), auth);
-                    }
-                }
-                LOGD(TAG, "Check for result availability. Mils passed: " + (currentMils - requestStart) + ". Unique authors got: " + hashAuthors.size());
-                authNumberCriteriaSatisfied = hashAuthors.size() > 10;
-                timeCriteriaSatisfied = (currentMils - requestStart) > 30000 && hashAuthors.size() != 0;
-                Thread.sleep(500);
-            } while (!finishedLoading && !authNumberCriteriaSatisfied && !timeCriteriaSatisfied);
-
-            if (!finishedLoading) {
-                LOGD(TAG, "Search conditions satisfied. Force stopping current request with " + hashAuthors.size() + " authors");
-                finishedLoading = true;
-                BackgroundExecutor.cancelAll(BUFF_READER_ID, true);
-            }
-            mAuthors.addAll(hashAuthors.values());
-            final String unencodedQuery = AppUriContract.getSanitizedSearchQuer(mQuery).toLowerCase();
-            Collections.sort(mAuthors, new Comparator<SearchedAuthor>() {
-                @Override
-                public int compare(SearchedAuthor searchedAuthor, SearchedAuthor searchedAuthor2) {
-                    return searchedAuthor.weightedCompare(searchedAuthor2, unencodedQuery);
-                }
-            });
-
+            mAuthors.addAll(mSearchStrategy.searchForQuery(mQuery));
         } catch (MalformedURLException e) {
             possibleException = new SearchException(SearchException.SearchErrors.ERROR_UNKNOWN);
             LOGE(TAG, "Got 404", e);

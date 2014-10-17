@@ -106,6 +106,7 @@
 
     <style name="Theme.SiTracker.Home" parent="Theme.SiTracker">
         <item name="windowActionBarOverlay">false</item>
+        <item name="android:windowContentOverlay">@drawable/header_shadow</item>
     </style>
 
     <style name="Theme.SiTracker.Search" parent="Theme.SiTracker">

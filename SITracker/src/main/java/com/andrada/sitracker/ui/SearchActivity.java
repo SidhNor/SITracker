@@ -41,6 +41,7 @@ import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.AppUriContract;
 import com.andrada.sitracker.ui.fragment.RemoteAuthorsFragment;
 import com.andrada.sitracker.ui.widget.DrawShadowFrameLayout;
+import com.andrada.sitracker.util.AnalyticsHelper;
 import com.andrada.sitracker.util.UIUtils;
 import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
@@ -75,6 +76,9 @@ public class SearchActivity extends BaseActivity {
 
     @InstanceState
     String mQuery = "";
+
+    @InstanceState
+    int mCurrentSearchType = 0;
 
     @AfterViews
     void afterViews() {
@@ -120,7 +124,7 @@ public class SearchActivity extends BaseActivity {
                     public boolean onQueryTextSubmit(String s) {
                         view.clearFocus();
                         if (mAuthorsFragment != null) {
-                            mAuthorsFragment.requestQueryUpdate(s);
+                            mAuthorsFragment.requestQueryUpdate(s, mCurrentSearchType);
                         }
                         return true;
                     }
@@ -181,7 +185,7 @@ public class SearchActivity extends BaseActivity {
         setIntent(intent);
         String query = intent.getStringExtra(SearchManager.QUERY);
         Bundle args = intentToFragmentArguments(
-                new Intent(Intent.ACTION_VIEW, AppUriContract.buildSamlibSearchUri(query)));
+                new Intent(Intent.ACTION_VIEW, AppUriContract.buildSamlibSearchUri(query, 0)));
         if (mAuthorsFragment != null) {
             mAuthorsFragment.reloadFromArguments(args);
         }
@@ -194,6 +198,7 @@ public class SearchActivity extends BaseActivity {
             adapter.addItem(getString(R.string.search_type_name));
             adapter.addItem(getString(R.string.search_type_keyword));
             searchOptionSpinner.setAdapter(adapter);
+            searchOptionSpinner.setSelection(mCurrentSearchType);
             searchOptionSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
@@ -210,7 +215,20 @@ public class SearchActivity extends BaseActivity {
     }
 
     private void onSearchTypeSelected(int position) {
-
+        if (mCurrentSearchType == position) {
+            return;
+        }
+        mCurrentSearchType = position;
+        AnalyticsHelper.getInstance().sendEvent(
+                Constants.GA_EXPLORE_CATEGORY,
+                Constants.GA_EVENT_SEARCH_TYPE_CHANGED,
+                Constants.GA_EVENT_SEARCH_TYPE_CHANGED);
+        if (mAuthorsFragment != null && !TextUtils.isEmpty(mQuery)) {
+            if (mSearchView != null) {
+                mSearchView.clearFocus();
+            }
+            mAuthorsFragment.requestQueryUpdate(mQuery, mCurrentSearchType);
+        }
     }
 
     private class SearchSpinnerAdapter extends BaseAdapter {
