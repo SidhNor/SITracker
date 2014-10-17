@@ -42,4 +42,6 @@
     <dimen name="showcase_title_size_overlay">24sp</dimen>
     <dimen name="showcase_detail_size_overlay">18sp</dimen>
 
+    <dimen name="filter_spinner_width">200dp</dimen>
+
 </resources>

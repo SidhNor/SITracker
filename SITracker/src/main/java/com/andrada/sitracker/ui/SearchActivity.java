@@ -26,22 +26,33 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.ListView;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.SearchView;
 
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.AppUriContract;
 import com.andrada.sitracker.ui.fragment.RemoteAuthorsFragment;
-import com.andrada.sitracker.ui.fragment.RemoteAuthorsFragment_;
+import com.andrada.sitracker.ui.widget.DrawShadowFrameLayout;
+import com.andrada.sitracker.util.AnalyticsHelper;
 import com.andrada.sitracker.util.UIUtils;
 import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.FragmentById;
 import org.androidannotations.annotations.InstanceState;
 import org.androidannotations.annotations.OptionsMenu;
+import org.androidannotations.annotations.ViewById;
+
+import java.util.ArrayList;
 
 import static com.andrada.sitracker.util.LogUtils.LOGD;
 import static com.andrada.sitracker.util.LogUtils.LOGW;
@@ -54,12 +65,19 @@ public class SearchActivity extends BaseActivity {
 
     private static final String TAG = makeLogTag(SearchActivity.class);
 
+    @FragmentById(R.id.remote_authors_fragment)
     RemoteAuthorsFragment mAuthorsFragment;
+
+    @ViewById(R.id.main_content)
+    DrawShadowFrameLayout mDrawShadowFrameLayout;
 
     SearchView mSearchView = null;
 
     @InstanceState
     String mQuery = "";
+
+    @InstanceState
+    int mCurrentSearchType = 0;
 
     @AfterViews
     void afterViews() {
@@ -84,8 +102,6 @@ public class SearchActivity extends BaseActivity {
         if (mSearchView != null) {
             mSearchView.setQuery(query, false);
         }
-
-        overridePendingTransition(0, 0);
     }
 
 
@@ -96,28 +112,8 @@ public class SearchActivity extends BaseActivity {
         if (collectionView != null) {
             enableActionBarAutoHide(collectionView);
         }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (mAuthorsFragment != null) {
-            int actionBarClearance = UIUtils.calculateActionBarSize(this);
-            int gridPadding = getResources().getDimensionPixelSize(R.dimen.search_grid_padding);
-            mAuthorsFragment.setContentTopClearance(actionBarClearance + gridPadding);
-        }
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        LOGD(TAG, "SearchActivity.onNewIntent: " + intent);
-        setIntent(intent);
-        String query = intent.getStringExtra(SearchManager.QUERY);
-        Bundle args = intentToFragmentArguments(
-                new Intent(Intent.ACTION_VIEW, AppUriContract.buildSamlibSearchUri(query)));
-        if (mAuthorsFragment != null) {
-            mAuthorsFragment.reloadFromArguments(args);
-        }
+        populateSearchVariants();
+        registerHideableHeaderView(findViewById(R.id.headerbar));
     }
 
     @Override
@@ -139,7 +135,7 @@ public class SearchActivity extends BaseActivity {
                     public boolean onQueryTextSubmit(String s) {
                         view.clearFocus();
                         if (mAuthorsFragment != null) {
-                            mAuthorsFragment.requestQueryUpdate(s);
+                            mAuthorsFragment.requestQueryUpdate(s, mCurrentSearchType);
                         }
                         return true;
                     }
@@ -171,5 +167,137 @@ public class SearchActivity extends BaseActivity {
             }
         }
         return true;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mAuthorsFragment != null) {
+            int actionBarSize = UIUtils.calculateActionBarSize(this);
+            int filterBarSize = getResources().getDimensionPixelSize(R.dimen.filterbar_height);
+            mDrawShadowFrameLayout.setShadowTopOffset(actionBarSize + filterBarSize);
+            mAuthorsFragment.setContentTopClearance(actionBarSize + filterBarSize
+                    + getResources().getDimensionPixelSize(R.dimen.search_grid_padding));
+        }
+    }
+
+    @Override
+    protected void onActionBarAutoShowOrHide(boolean shown) {
+        super.onActionBarAutoShowOrHide(shown);
+        mDrawShadowFrameLayout.setShadowVisible(shown, shown);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        LOGD(TAG, "SearchActivity.onNewIntent: " + intent);
+        setIntent(intent);
+        String query = intent.getStringExtra(SearchManager.QUERY);
+        Bundle args = intentToFragmentArguments(
+                new Intent(Intent.ACTION_VIEW, AppUriContract.buildSamlibSearchUri(query, 0)));
+        if (mAuthorsFragment != null) {
+            mAuthorsFragment.reloadFromArguments(args);
+        }
+    }
+
+    private void populateSearchVariants() {
+        Spinner searchOptionSpinner = (Spinner) findViewById(R.id.search_option_spinner);
+        if (searchOptionSpinner != null) {
+            final SearchSpinnerAdapter adapter = new SearchSpinnerAdapter();
+            adapter.addItem(getString(R.string.search_type_name));
+            adapter.addItem(getString(R.string.search_type_keyword));
+            searchOptionSpinner.setAdapter(adapter);
+            searchOptionSpinner.setSelection(mCurrentSearchType);
+            searchOptionSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
+                    if (position >= 0 && position < adapter.getCount()) {
+                        onSearchTypeSelected(position);
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
+                }
+            });
+        }
+    }
+
+    private void onSearchTypeSelected(int position) {
+        if (mCurrentSearchType == position) {
+            return;
+        }
+        mCurrentSearchType = position;
+        AnalyticsHelper.getInstance().sendEvent(
+                Constants.GA_EXPLORE_CATEGORY,
+                Constants.GA_EVENT_SEARCH_TYPE_CHANGED,
+                Constants.GA_EVENT_SEARCH_TYPE_CHANGED);
+        if (mAuthorsFragment != null && !TextUtils.isEmpty(mQuery)) {
+            if (mSearchView != null) {
+                mSearchView.clearFocus();
+            }
+            mAuthorsFragment.requestQueryUpdate(mQuery, mCurrentSearchType);
+        }
+    }
+
+    private class SearchSpinnerAdapter extends BaseAdapter {
+        private ArrayList<String> mItems = new ArrayList<String>();
+
+        public void clear() {
+            mItems.clear();
+        }
+
+        public void addItem(String item) {
+            mItems.add(item);
+        }
+
+        @Override
+        public int getCount() {
+            return mItems.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return mItems.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getDropDownView(int position, View view, ViewGroup parent) {
+            if (view == null || !view.getTag().toString().equals("DROPDOWN")) {
+                view = getLayoutInflater().inflate(R.layout.search_spinner_item_dropdown,
+                        parent, false);
+                view.setTag("DROPDOWN");
+            }
+            TextView normalTextView = (TextView) view.findViewById(R.id.normal_text);
+
+            normalTextView.setVisibility(View.VISIBLE);
+
+            setUpNormalDropdownView(position, normalTextView);
+            return view;
+        }
+
+        @Override
+        public View getView(int position, View view, ViewGroup parent) {
+            if (view == null || !view.getTag().toString().equals("NON_DROPDOWN")) {
+                view = getLayoutInflater().inflate(R.layout.search_spinner_item,
+                        parent, false);
+                view.setTag("NON_DROPDOWN");
+            }
+            TextView textView = (TextView) view.findViewById(android.R.id.text1);
+            textView.setText(getTitle(position));
+            return view;
+        }
+
+        private String getTitle(int position) {
+            return position >= 0 && position < mItems.size() ? mItems.get(position) : "";
+        }
+
+        private void setUpNormalDropdownView(int position, TextView textView) {
+            textView.setText(getTitle(position));
+        }
     }
 }

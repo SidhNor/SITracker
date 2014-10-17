@@ -36,7 +36,9 @@
     <style name="FrameworkRoot.Widget" parent="android:Theme.Holo"/>
 
     <style name="FrameworkRoot.Widget.ActionButton.Overflow" parent="android:Widget.Holo.ActionButton.Overflow"/>
-
+    
+    <style name="FrameworkRoot.Widget.Spinner" parent="android:Widget.Holo.Light.Spinner.DropDown.ActionBar"/>
+    
     <style name="FrameworkRoot.Widget.PopupMenu" parent="android:Widget.Holo.Light.PopupMenu"/>
 
     <style name="FrameworkRoot.Widget.ListView.DropDown" parent="android:Widget.Holo.Light.ListView.DropDown"/>
@@ -50,6 +52,7 @@
         <item name="android:actionOverflowButtonStyle">@style/ActionButton.Overflow</item>
         <item name="android:editTextBackground">@drawable/edit_text</item>
         <item name="android:editTextStyle">@style/Widget.SiTracker.EditText</item>
+        <item name="spinnerBarInsetStart">?android:actionBarSize</item>
         <item name="vpiCirclePageIndicatorStyle">@style/CustomCirclePageIndicator</item>
     </style>
 
@@ -92,6 +95,7 @@
 
     <style name="Theme.SiTracker.Home" parent="Theme.SiTracker">
         <item name="android:windowActionBarOverlay">false</item>
+        <item name="android:windowContentOverlay">@drawable/header_shadow</item>
     </style>
 
     <style name="Theme.SiTracker.MyAuthors" parent="Theme.SiTracker">
@@ -172,6 +176,15 @@
     <style name="Widget.SiTracker.EditText" parent="FrameworkRoot.EditText">
         <item name="android:background">@drawable/edit_text</item>
     </style>
+
+    <style name="Widget.SiTracker.HeaderBar.Spinner.Base" parent="FrameworkRoot.Widget.Spinner">
+        <item name="android:background">?attr/selectableItemBackground</item>
+        <item name="android:dropDownSelector">?attr/selectableItemBackground</item>
+        <item name="android:divider">@null</item>
+        <item name="android:dividerHeight">0dp</item>
+    </style>
+
+    <style name="Widget.SiTracker.HeaderBar.Spinner" parent="Widget.SiTracker.HeaderBar.Spinner.Base"/>
 
     <style name="TextHeader">
         <item name="android:textSize">@dimen/text_size_large</item>

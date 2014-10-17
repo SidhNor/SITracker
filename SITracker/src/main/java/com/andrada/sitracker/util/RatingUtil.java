@@ -112,7 +112,7 @@ public class RatingUtil {
             if (code != HttpURLConnection.HTTP_OK) {
                 throw new RatingException("Rating submission: error submitting first part of rating, not ok");
             }
-            String pageContent = request.body("windows-1251");
+            String pageContent = request.body(Constants.DEFAULT_SAMLIB_ENCODING);
             result.put("cookieHeader", cookieHeader);
             result.put("pageContent", pageContent);
 

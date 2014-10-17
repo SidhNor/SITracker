@@ -40,6 +40,7 @@ import org.androidannotations.annotations.sharedpreferences.Pref;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 @SuppressLint("Registered")
@@ -81,6 +82,7 @@ public class UpdateAuthorsTask extends IntentService {
 
         //Check for updates
         this.updatedAuthors = 0;
+        ArrayList<String> authorsUpdatedInThisSession = new ArrayList<String>();
         try {
             List<Author> authors = siDBHelper.getAuthorDao().queryForAll();
             for (Author author : authors) {
@@ -91,20 +93,19 @@ public class UpdateAuthorsTask extends IntentService {
                     SiteStrategy strategy = SiteDetector.chooseStrategy(author.getUrl(), siDBHelper);
                     if (strategy != null && strategy.updateAuthor(author)) {
                         this.updatedAuthors++;
+                        authorsUpdatedInThisSession.add(author.getName());
+                        //Do a broadcast for each update author - notification will update itself
+                        broadCastResult(true, authorsUpdatedInThisSession);
                     }
                 }
                 //Sleep for 5 seconds to avoid ban
                 Thread.sleep(5000);
             }
 
-            //Success
-            //Do a broadcast
-            broadCastResult(true);
-
         } catch (SQLException e) {
             //Error
             //Do a broadcast
-            broadCastResult(false);
+            broadCastResult(false, null);
             trackException(e.getMessage());
         } catch (InterruptedException e) {
             //Ignore
@@ -112,11 +113,12 @@ public class UpdateAuthorsTask extends IntentService {
         }
     }
 
-    private void broadCastResult(boolean success) {
+    private void broadCastResult(boolean success, ArrayList<String> updateAuthorsInThisSession) {
         Intent broadcastIntent = new Intent();
         if (success) {
             broadcastIntent.setAction(UpdateSuccessfulIntentMessage.SUCCESS_MESSAGE);
             broadcastIntent.putExtra(Constants.NUMBER_OF_UPDATED_AUTHORS, this.updatedAuthors);
+            broadcastIntent.putStringArrayListExtra(Constants.AUTHOR_NAMES_UPDATED_IN_SESSION, updateAuthorsInThisSession);
             BackupManager bm = new BackupManager(this.getApplicationContext());
             bm.dataChanged();
         } else {

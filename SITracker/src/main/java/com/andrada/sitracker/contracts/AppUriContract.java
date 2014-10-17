@@ -49,14 +49,15 @@ public class AppUriContract {
     public static final Uri PUBLICATION_CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_PUBLICATIONS).build();
 
 
-    public static Uri buildSamlibSearchUri(String query) {
+    public static Uri buildSamlibSearchUri(String query, int searchType) {
         if (query == null) {
             query = "";
         }
         // convert "lorem ipsum dolor sit" to "lorem* ipsum* dolor* sit*"
         query = query.replaceAll(" +", " *") + "*";
         return AUTHOR_CONTENT_URI.buildUpon()
-                .appendPath(PATH_SEARCH_SAMLIB).appendPath(query).build();
+                .appendPath(PATH_SEARCH_SAMLIB).appendPath(query)
+                .appendQueryParameter("type", String.valueOf(searchType)).build();
     }
 
     public static Uri buildPublicationUri(long publicationId) {
@@ -75,7 +76,11 @@ public class AppUriContract {
         return null;
     }
 
-    public static String getSanitizedSearchQuer(Uri uri) {
+    public static int getSearchTypeParam(Uri uri) {
+        return Integer.valueOf(uri.getQueryParameter("type"));
+    }
+
+    public static String getSanitizedSearchQuery(Uri uri) {
         String query = getSearchQuery(uri);
         if (query != null) {
             query = query.replaceAll("\\*", "");

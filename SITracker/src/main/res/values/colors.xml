@@ -46,6 +46,8 @@
 
     <color name="search_back_positive">#375a1f</color>
     <color name="search_back_default">#015888</color>
+    <color name="list_dropdown_foreground_normal">#ff333333</color>
+    <color name="list_dropdown_divider_color">#92a3a3a3</color>
 
     <color name="gray_background">#e5e5e5</color>
 

@@ -54,6 +54,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
+import de.keyboardsurfer.android.widget.crouton.Configuration;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
@@ -101,13 +102,26 @@ public class RemoteAuthorsFragment extends Fragment implements
                 Constants.GA_EVENT_AUTHOR_ADDED,
                 Constants.GA_EVENT_AUTHOR_ADDED);
 
-        if (message.length() != 0) {
-            Style.Builder alertStyle = new Style.Builder()
-                    .setTextAppearance(android.R.attr.textAppearanceLarge)
-                    .setPaddingInPixels(25)
-                    .setBackgroundColorValue(Style.holoRedLight);
-            Crouton.makeText(getActivity(), message, alertStyle.build()).show();
+        if (getActivity() == null) {
+            return;
         }
+        View view = getLayoutInflater(null).inflate(R.layout.crouton_custom_pos_textview, null);
+        if (message.length() == 0) {
+            message = getString(R.string.author_add_success_crouton_message);
+            view.findViewById(android.R.id.background).setBackgroundColor(Style.holoGreenLight);
+        } else {
+            view.findViewById(android.R.id.background).setBackgroundColor(Style.holoRedLight);
+        }
+
+        int topPadding = UIUtils.calculateActionBarSize(getActivity());
+        view.setPadding(view.getPaddingLeft(), topPadding,
+                view.getPaddingRight(), view.getPaddingBottom());
+        TextView tv = (TextView) view.findViewById(android.R.id.text1);
+        tv.setText(message);
+        Crouton cr = Crouton.make(getActivity(), view);
+        cr.setConfiguration(new Configuration.Builder()
+                .setDuration(Configuration.DURATION_LONG).build());
+        cr.show();
     }
 
     @Override
@@ -135,7 +149,7 @@ public class RemoteAuthorsFragment extends Fragment implements
         updateCollectionView(data);
     }
 
-    public void requestQueryUpdate(String query) {
+    public void requestQueryUpdate(String query, int searchType) {
         //Test query for URL
         if (query.matches(Constants.SIMPLE_URL_REGEX) && query.startsWith(Constants.HTTP_PROTOCOL)) {
             //This looks like an url
@@ -143,7 +157,7 @@ public class RemoteAuthorsFragment extends Fragment implements
             new AddAuthorTask(getActivity()).execute(query);
         } else {
             reloadFromArguments(BaseActivity.intentToFragmentArguments(
-                    new Intent(Intent.ACTION_SEARCH, AppUriContract.buildSamlibSearchUri(query))));
+                    new Intent(Intent.ACTION_SEARCH, AppUriContract.buildSamlibSearchUri(query, searchType))));
         }
     }
 
@@ -279,11 +293,11 @@ public class RemoteAuthorsFragment extends Fragment implements
     public Loader<AsyncTaskResult<List<SearchedAuthor>>> onCreateLoader(int id, Bundle data) {
         LOGD(TAG, "onCreateLoader, id=" + id + ", data=" + data);
         final Intent intent = BaseActivity.fragmentArgumentsToIntent(data);
-        Uri sessionsUri = intent.getData();
+        Uri searchUri = intent.getData();
         Loader<AsyncTaskResult<List<SearchedAuthor>>> loader = null;
         if (id == SamlibSearchLoader.SEARCH_TOKEN) {
-            LOGD(TAG, "Creating search loader for " + sessionsUri);
-            loader = new SamlibSearchLoader(getActivity(), sessionsUri);
+            LOGD(TAG, "Creating search loader for " + searchUri);
+            loader = new SamlibSearchLoader(getActivity(), searchUri);
         }
         return loader;
     }
