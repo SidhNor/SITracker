@@ -22,6 +22,9 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -30,7 +33,6 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.AbsListView;
 import android.widget.ImageView;
@@ -38,7 +40,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.andrada.sitracker.BuildConfig;
+import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
+import com.andrada.sitracker.ui.fragment.AboutDialog;
+import com.andrada.sitracker.util.AnalyticsHelper;
 import com.andrada.sitracker.util.PlayServicesUtils;
 import com.andrada.sitracker.util.UIUtils;
 import com.google.android.gms.analytics.GoogleAnalytics;
@@ -215,6 +220,20 @@ public abstract class BaseActivity extends ActionBarActivity {
         int id = item.getItemId();
         if (mDrawerToggle != null && mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
+        }
+
+        switch (id) {
+            case R.id.action_about:
+                AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_ABOUT_DIALOG);
+                FragmentManager fm = this.getSupportFragmentManager();
+                FragmentTransaction ft = fm.beginTransaction();
+                Fragment prev = fm.findFragmentByTag(AboutDialog.FRAGMENT_TAG);
+                if (prev != null) {
+                    ft.remove(prev);
+                }
+                ft.addToBackStack(null);
+                new AboutDialog().show(ft, AboutDialog.FRAGMENT_TAG);
+                return true;
         }
         //Handle default options
         return super.onOptionsItemSelected(item);

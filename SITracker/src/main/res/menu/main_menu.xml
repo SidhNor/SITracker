@@ -16,25 +16,21 @@
   limitations under the License.
   -->
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="@string/action_settings"/>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/action_import"
         android:orderInCategory="101"
-        android:showAsAction="never"
-        android:title="@string/action_import"/>
+        android:title="@string/action_import"
+        app:showAsAction="never"/>
     <item
         android:id="@+id/action_export"
         android:orderInCategory="102"
-        android:showAsAction="never"
-        android:title="@string/action_export"/>
+        android:title="@string/action_export"
+        app:showAsAction="never"/>
     <item
         android:id="@+id/action_about"
         android:orderInCategory="103"
-        android:showAsAction="never"
-        android:title="@string/action_about"/>
+        android:title="@string/action_about"
+        app:showAsAction="never"/>
 </menu>

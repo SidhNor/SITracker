@@ -22,6 +22,7 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -113,7 +114,7 @@ public class SearchActivity extends BaseActivity {
         final MenuItem searchItem = menu.findItem(R.id.action_search);
         if (searchItem != null) {
             SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-            final SearchView view = (SearchView) searchItem.getActionView();
+            final SearchView view = (SearchView) MenuItemCompat.getActionView(searchItem);
             mSearchView = view;
             if (view == null) {
                 LOGW(TAG, "Could not set up search view, view is null.");
@@ -230,6 +231,7 @@ public class SearchActivity extends BaseActivity {
     }
 
     private class SearchSpinnerAdapter extends BaseAdapter {
+
         private ArrayList<String> mItems = new ArrayList<String>();
 
         public void clear() {

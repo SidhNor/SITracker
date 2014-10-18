@@ -16,23 +16,24 @@
   limitations under the License.
   -->
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/action_mark_read"
         android:icon="@drawable/ic_action_read"
         android:orderInCategory="99"
-        android:showAsAction="ifRoom"
-        android:title="@string/action_markread"/>
+        android:title="@string/action_markread"
+        app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/action_open_authors_browser"
         android:icon="@drawable/ic_action_open_outside"
         android:orderInCategory="100"
-        android:showAsAction="ifRoom"
-        android:title="@string/action_open_in_browser"/>
+        android:title="@string/action_open_in_browser"
+        app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/action_remove"
         android:icon="@drawable/ic_action_discard"
         android:orderInCategory="101"
-        android:showAsAction="always"
-        android:title="@string/action_delete"/>
+        android:title="@string/action_delete"
+        app:showAsAction="always"/>
 </menu>

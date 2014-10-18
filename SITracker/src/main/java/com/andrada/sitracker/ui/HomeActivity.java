@@ -278,11 +278,6 @@ public class HomeActivity extends BaseActivity implements DirectoryChooserFragme
         }
     }
 
-    @OptionsItem(R.id.action_settings)
-    void menuSettingsSelected() {
-        startActivity(com.andrada.sitracker.ui.SettingsActivity_.intent(this).get());
-    }
-
     @OptionsItem(R.id.action_import)
     void menuImportSelected() {
         startActivity(com.andrada.sitracker.ui.ImportAuthorsActivity_.intent(this).get());

@@ -21,7 +21,7 @@
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
     -->
-    <style name="FrameworkRoot.Base" parent="@style/Theme.AppCompat.NoActionBar"/>
+    <style name="FrameworkRoot.Base" parent="@style/Theme.AppCompat.Light.NoActionBar"/>
 
     <style name="FrameworkRoot.ActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse"/>
 
@@ -53,40 +53,40 @@
         <item name="actionOverflowButtonStyle">@style/ActionButton.Overflow</item>
         <item name="android:editTextBackground">@drawable/edit_text</item>
         <item name="android:editTextStyle">@style/Widget.SiTracker.EditText</item>
-        <item name="spinnerBarInsetStart">?attr/actionBarSize</item>
+        <item name="actionBarOverlayTopOffset">?attr/actionBarSize</item>
+        <item name="actionBarInsetStart">@dimen/keyline_2</item>
+        <item name="spinnerBarInsetStart">@dimen/keyline_2_minus_16dp</item>
         <item name="vpiCirclePageIndicatorStyle">@style/CustomCirclePageIndicator</item>
     </style>
 
     <!-- Application theme. -->
 
     <style name="Theme.SiTracker" parent="FrameworkRoot.Theme">
-        <item name="actionBarOverlayTopOffset">?attr/actionBarSize</item>
-        <item name="actionBarInsetStart">?attr/actionBarSize</item>
         <item name="photoItemForeground">?android:selectableItemBackground</item>
         <item name="popupItemBackground">?android:selectableItemBackground</item>
-
+        <item name="searchViewStyle">@style/Widget.SiTracker.SearchViewStyle</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowBackground">@android:color/white</item>
         <item name="actionBarTabStyle">@style/ActionBar.TabView</item>
         <item name="actionBarStyle">@style/ActionBar</item>
-        <item name="android:actionModeBackground">@drawable/cab_background_top_si</item>
-        <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode</item>
+        <item name="actionModeBackground">@drawable/cab_background_top_si</item>
+        <item name="actionModeCloseButtonStyle">@style/ActionButton.CloseMode</item>
         <item name="android:homeAsUpIndicator">@drawable/ic_up</item>
 
-        <item name="android:popupMenuStyle">@style/Widget.SiTracker.PopupMenu</item>
-        <item name="android:listPopupWindowStyle">@style/Widget.SiTracker.PopupMenu</item>
-        <item name="android:dropDownListViewStyle">@style/Widget.SiTracker.ListView.DropDown</item>
-        <item name="android:actionDropDownStyle">@style/Widget.SiTracker.ListView.DropDown</item>
-        <item name="android:textAppearanceLargePopupMenu">@style/TextAppearance.LargePopupMenu
+        <item name="popupMenuStyle">@style/Widget.SiTracker.PopupMenu</item>
+        <item name="listPopupWindowStyle">@style/Widget.SiTracker.PopupMenu</item>
+        <item name="dropDownListViewStyle">@style/Widget.SiTracker.ListView.DropDown</item>
+        <item name="actionDropDownStyle">@style/Widget.SiTracker.ListView.DropDown</item>
+        <item name="textAppearanceLargePopupMenu">@style/TextAppearance.LargePopupMenu
         </item>
     </style>
 
 
     <style name="Theme.SiTracker.Widget" parent="FrameworkRoot.Widget">
-        <item name="android:popupMenuStyle">@style/Widget.SiTracker.PopupMenu</item>
-        <item name="android:listPopupWindowStyle">@style/Widget.SiTracker.PopupMenu</item>
-        <item name="android:dropDownListViewStyle">@style/Widget.SiTracker.ListView.DropDown</item>
-        <item name="android:textAppearanceLargePopupMenu">@style/TextAppearance.LargePopupMenu
+        <item name="popupMenuStyle">@style/Widget.SiTracker.PopupMenu</item>
+        <item name="listPopupWindowStyle">@style/Widget.SiTracker.PopupMenu</item>
+        <item name="dropDownListViewStyle">@style/Widget.SiTracker.ListView.DropDown</item>
+        <item name="textAppearanceLargePopupMenu">@style/TextAppearance.LargePopupMenu
         </item>
     </style>
 
@@ -123,11 +123,11 @@
     </style>
 
     <style name="ActionBar" parent="FrameworkRoot.ActionBar">
-        <item name="android:background">@drawable/ab_solid</item>
-        <item name="android:backgroundStacked">@drawable/ab_solid</item>
-        <item name="android:displayOptions">showHome|showTitle</item>
-        <item name="android:backgroundSplit">@drawable/ab_solid</item>
-        <item name="android:titleTextStyle">@style/ActionBar.TitleText</item>
+        <item name="background">@drawable/ab_solid</item>
+        <item name="backgroundStacked">@drawable/ab_solid</item>
+        <item name="displayOptions">showHome|showTitle</item>
+        <item name="backgroundSplit">@drawable/ab_solid</item>
+        <item name="titleTextStyle">@style/ActionBar.TitleText</item>
     </style>
 
     <style name="ActionBar.TitleText" parent="FrameworkRoot.ActionBar.TitleText">
@@ -137,6 +137,7 @@
 
     <!-- Transparent Action Bar -->
     <style name="TransparentActionBar" parent="ActionBar">
+        <item name="background">@null</item>
         <item name="android:background">@null</item>
     </style>
 
@@ -146,6 +147,10 @@
 
     <style name="ActionButton.CloseMode" parent="FrameworkRoot.ActionButton.CloseMode">
         <item name="android:background">@drawable/btn_cab_done_si</item>
+    </style>
+
+    <style name="Widget.SiTracker.SearchViewStyle" parent="Widget.AppCompat.SearchView">
+        <item name="searchIcon">@drawable/ic_action_search</item>
     </style>
 
     <style name="Widget.SiTracker.PopupMenu" parent="FrameworkRoot.Widget.PopupMenu">
@@ -179,8 +184,8 @@
     </style>
 
     <style name="Widget.SiTracker.HeaderBar.Spinner.Base" parent="FrameworkRoot.Widget.Spinner">
-        <item name="android:background">?android:selectableItemBackground</item>
-        <item name="android:dropDownSelector">?android:selectableItemBackground</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+        <item name="android:dropDownSelector">?attr/selectableItemBackground</item>
         <item name="android:divider">@null</item>
         <item name="android:dividerHeight">0dp</item>
     </style>

@@ -16,11 +16,12 @@
   limitations under the License.
   -->
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
         android:id="@+id/new_folder_item"
-        android:showAsAction="ifRoom|withText"
-        android:title="@string/fp_create_folder_label"/>
+        android:title="@string/fp_create_folder_label"
+        app:showAsAction="ifRoom|withText"/>
 
 </menu>
