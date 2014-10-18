@@ -18,16 +18,22 @@
 <resources>
 
     <declare-styleable name="BaseTheme">
+        <attr name="actionBarIconColor" format="color"/>
         <attr name="actionBarOverlayTopOffset" format="dimension"/>
         <attr name="actionBarInsetStart" format="dimension"/>
         <attr name="spinnerBarInsetStart" format="dimension"/>
         <attr name="photoItemForeground" format="dimension"/>
         <attr name="popupItemBackground" format="dimension"/>
+        <attr name="photoItemForegroundBorderless" format="dimension"/>
     </declare-styleable>
 
     <declare-styleable name="CollectionView">
         <attr name="internalPadding" format="dimension"/>
         <attr name="contentTopClearance" format="dimension"/>
+    </declare-styleable>
+
+    <declare-styleable name="ScrimInsetsView">
+        <attr name="insetForeground" format="reference|color"/>
     </declare-styleable>
 
     <declare-styleable name="DrawShadowFrameLayout">

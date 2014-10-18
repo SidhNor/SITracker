@@ -24,7 +24,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
 import android.view.LayoutInflater;
@@ -32,9 +31,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewStub;
-import android.view.animation.AnimationUtils;
 import android.widget.ListView;
 
 import com.andrada.sitracker.Constants;
@@ -44,7 +41,6 @@ import com.andrada.sitracker.db.beans.Author;
 import com.andrada.sitracker.events.AuthorSelectedEvent;
 import com.andrada.sitracker.events.AuthorSortMethodChanged;
 import com.andrada.sitracker.events.BackUpRestoredEvent;
-import com.andrada.sitracker.events.ProgressBarToggleEvent;
 import com.andrada.sitracker.events.PublicationMarkedAsReadEvent;
 import com.andrada.sitracker.tasks.UpdateAuthorsTask_;
 import com.andrada.sitracker.ui.MultiSelectionUtil;
@@ -211,7 +207,7 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
         list.setAdapter(adapter);
         mMultiSelectionController = MultiSelectionUtil.attachMultiSelectionController(
                 list,
-                (ActionBarActivity)getActivity(),
+                (ActionBarActivity) getActivity(),
                 this);
         //ActionMode.setMultiChoiceMode(list, getActivity(), this);
         list.setBackgroundResource(R.drawable.authors_list_background);
@@ -419,6 +415,14 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
 
     public ListView getListView() {
         return list;
+    }
+
+    public void setContentTopClearance(int clearance) {
+        if (list != null) {
+            list.setPadding(list.getPaddingLeft(), clearance,
+                    list.getPaddingRight(), list.getPaddingBottom());
+            adapter.notifyDataSetChanged();
+        }
     }
 
 }

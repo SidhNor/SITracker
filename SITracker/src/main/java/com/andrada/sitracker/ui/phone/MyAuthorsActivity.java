@@ -17,8 +17,7 @@
 package com.andrada.sitracker.ui.phone;
 
 import android.os.Bundle;
-import android.widget.ListView;
-import android.widget.TextView;
+import android.support.v4.app.Fragment;
 
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.ui.BaseActivity;
@@ -46,14 +45,9 @@ public class MyAuthorsActivity extends BaseActivity {
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        getSupportActionBar().setTitle("My authors");
 
         AuthorsFragment frag = (AuthorsFragment) getSupportFragmentManager().findFragmentById(
                 R.id.fragment_authors);
-
-        ListView lv = frag.getListView();
-        int actionBarClearance = UIUtils.calculateActionBarSize(this);
-        lv.setPadding(lv.getPaddingLeft(), actionBarClearance, lv.getPaddingRight(), lv.getPaddingBottom());
         enableActionBarAutoHide(frag.getListView());
     }
 
@@ -67,5 +61,20 @@ public class MyAuthorsActivity extends BaseActivity {
     protected int getSelfNavDrawerItem() {
         // we only have a nav drawer if we are in top-level Explore mode.
         return NAVDRAWER_ITEM_MY_AUTHORS;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        invalidateOptionsMenu();
+
+        Fragment frag = getSupportFragmentManager().findFragmentById(R.id.fragment_authors);
+        if (frag != null) {
+            // configure video fragment's top clearance to take our overlaid controls (Action Bar
+            // and spinner box) into account.
+            int actionBarSize = UIUtils.calculateActionBarSize(this);
+            mDrawShadowFrameLayout.setShadowTopOffset(actionBarSize);
+            ((AuthorsFragment) frag).setContentTopClearance(actionBarSize);
+        }
     }
 }

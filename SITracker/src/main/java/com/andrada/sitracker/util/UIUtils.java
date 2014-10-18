@@ -56,7 +56,7 @@ public class UIUtils {
      * semicolon. (Example: &amp;amp;)
      */
     private static final Pattern REGEX_HTML_ESCAPE = Pattern.compile(".*&\\S;.*");
-    private static final int[] RES_IDS_ACTION_BAR_SIZE = {R.attr.actionBarOverlayTopOffset};
+    private static final int[] RES_IDS_ACTION_BAR_SIZE = {R.attr.actionBarSize};
 
     /**
      * Populate the given {@link android.widget.TextView} with the requested text, formatting

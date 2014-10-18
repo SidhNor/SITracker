@@ -107,8 +107,7 @@ public class SearchActivity extends BaseActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        //TODO replace with toolbar
-        //getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
         final MenuItem searchItem = menu.findItem(R.id.action_search);

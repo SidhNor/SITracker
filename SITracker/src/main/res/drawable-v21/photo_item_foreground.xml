@@ -14,16 +14,9 @@
   limitations under the License.
   -->
 
-
-<android.support.v7.widget.Toolbar
-    android:id="@+id/toolbar_actionbar"
-    style="@style/HeaderBar"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="?actionBarSize"
-    app:contentInsetStart="?actionBarInsetStart"
-    app:popupTheme="@style/ActionBarPopupThemeOverlay"
-    app:theme="@style/ActionBarThemeOverlay"
-    app:titleTextAppearance="@style/ActionBar.TitleText"/>
-
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+        android:color="#2fff">
+    <item android:id="@android:id/mask">
+        <color android:color="#fff"/>
+    </item>
+</ripple>

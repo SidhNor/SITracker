@@ -17,17 +17,23 @@
 package com.andrada.sitracker.ui;
 
 
+import android.animation.ArgbEvaluator;
+import android.animation.ObjectAnimator;
+import android.animation.TypeEvaluator;
+import android.animation.ValueAnimator;
 import android.content.Intent;
-import android.content.res.Configuration;
+import android.graphics.Color;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.MenuItem;
@@ -43,7 +49,9 @@ import com.andrada.sitracker.BuildConfig;
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.ui.fragment.AboutDialog;
+import com.andrada.sitracker.ui.widget.ScrimInsetsScrollView;
 import com.andrada.sitracker.util.AnalyticsHelper;
+import com.andrada.sitracker.util.LUtils;
 import com.andrada.sitracker.util.PlayServicesUtils;
 import com.andrada.sitracker.util.UIUtils;
 import com.google.android.gms.analytics.GoogleAnalytics;
@@ -93,11 +101,15 @@ public abstract class BaseActivity extends ActionBarActivity {
     // different Activities of the app through the Nav Drawer
     private static final int MAIN_CONTENT_FADEOUT_DURATION = 150;
     private static final int MAIN_CONTENT_FADEIN_DURATION = 250;
+    private static final TypeEvaluator ARGB_EVALUATOR = new ArgbEvaluator();
+    // Helper methods for L APIs
+    private LUtils mLUtils;
     private Handler mHandler;
     // When set, these components will be shown/hidden in sync with the action bar
     // to implement the "quick recall" effect (the Action Bar and the header views disappear
     // when you scroll down a list, and reappear quickly when you scroll up).
     private ArrayList<View> mHideableHeaderViews = new ArrayList<View>();
+    private ObjectAnimator mStatusBarColorAnimator;
     // variables that control the Action Bar auto hide behavior (aka "quick recall")
     private boolean mActionBarAutoHideEnabled = false;
     private int mActionBarAutoHideSensivity = 0;
@@ -106,19 +118,18 @@ public abstract class BaseActivity extends ActionBarActivity {
     private boolean mActionBarShown = true;
     // list of navdrawer items that were actually added to the navdrawer, in order
     private ArrayList<Integer> mNavDrawerItems = new ArrayList<Integer>();
-    private ActionBarDrawerToggle mDrawerToggle;
-
     // views that correspond to each navdrawer item, null if not yet created
     private View[] mNavDrawerItemViews = null;
-
     // Navigation drawer:
     private DrawerLayout mDrawerLayout;
     private ViewGroup mDrawerItemsListContainer;
-
-    private Toolbar mToolbar;
+    // Primary toolbar and drawer toggle
+    private Toolbar mActionBarToolbar;
     // A Runnable that we should execute when the navigation drawer finishes its closing animation
     private Runnable mDeferredOnDrawerClosedRunnable;
-
+    private int mThemedStatusBarColor;
+    private int mNormalStatusBarColor;
+    private int mProgressBarTopWhenActionBarShown;
 
     /**
      * Converts an intent into a {@link Bundle} suitable for use as fragment arguments.
@@ -175,6 +186,16 @@ public abstract class BaseActivity extends ActionBarActivity {
         // Intent in the app.
         UIUtils.enableDisableActivitiesByFormFactor(this);
 
+
+        ActionBar ab = getSupportActionBar();
+        if (ab != null) {
+            ab.setDisplayHomeAsUpEnabled(true);
+        }
+
+        mLUtils = LUtils.getInstance(this);
+        mThemedStatusBarColor = getResources().getColor(R.color.theme_primary_dark);
+        mNormalStatusBarColor = mThemedStatusBarColor;
+
     }
 
     @Override
@@ -218,9 +239,6 @@ public abstract class BaseActivity extends ActionBarActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (mDrawerToggle != null && mDrawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
 
         switch (id) {
             case R.id.action_about:
@@ -265,16 +283,15 @@ public abstract class BaseActivity extends ActionBarActivity {
         int selfItem = getSelfNavDrawerItem();
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mToolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
-        if (mToolbar != null) {
-            setSupportActionBar(mToolbar);
-        }
         if (mDrawerLayout == null) {
             return;
         }
+        mDrawerLayout.setStatusBarBackgroundColor(
+                getResources().getColor(R.color.theme_primary_dark));
+        ScrimInsetsScrollView navDrawer = (ScrimInsetsScrollView)
+                mDrawerLayout.findViewById(R.id.navdrawer);
         if (selfItem == NAVDRAWER_ITEM_INVALID) {
             // do not show a nav drawer
-            View navDrawer = mDrawerLayout.findViewById(R.id.navdrawer);
             if (navDrawer != null) {
                 ((ViewGroup) navDrawer.getParent()).removeView(navDrawer);
             }
@@ -282,54 +299,70 @@ public abstract class BaseActivity extends ActionBarActivity {
             return;
         }
 
-        mDrawerToggle = new ActionBarDrawerToggle(
-                this,
-                mDrawerLayout,
-                mToolbar,
-                R.string.drawer_open, R.string.drawer_close) {
+        if (navDrawer != null) {
+            navDrawer.setOnInsetsCallback(new ScrimInsetsScrollView.OnInsetsCallback() {
+                @Override
+                public void onInsetsChanged(Rect insets) {
+
+                }
+            });
+        }
+
+        if (mActionBarToolbar != null) {
+            mActionBarToolbar.setNavigationIcon(R.drawable.ic_drawer);
+            mActionBarToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mDrawerLayout.openDrawer(Gravity.START);
+                }
+            });
+        }
+
+        mDrawerLayout.setDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
             public void onDrawerClosed(View drawerView) {
-                super.onDrawerClosed(drawerView);
                 // run deferred action, if we have one
                 if (mDeferredOnDrawerClosedRunnable != null) {
                     mDeferredOnDrawerClosedRunnable.run();
                     mDeferredOnDrawerClosedRunnable = null;
                 }
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
                 onNavDrawerStateChanged(false, false);
             }
 
             @Override
             public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
                 onNavDrawerStateChanged(true, false);
             }
 
             @Override
             public void onDrawerStateChanged(int newState) {
-                super.onDrawerStateChanged(newState);
-                invalidateOptionsMenu();
                 onNavDrawerStateChanged(isNavDrawerOpen(), newState != DrawerLayout.STATE_IDLE);
             }
 
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
-                super.onDrawerSlide(drawerView, slideOffset);
                 onNavDrawerSlide(slideOffset);
             }
-        };
+        });
+
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, Gravity.START);
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
+
         // populate the nav drawer with the correct items
         populateNavDrawer();
+/*
+        // When the user runs the app for the first time, we want to land them with the
+        // navigation drawer open. But just the first time.
+        if (!PrefUtils.isWelcomeDone(this)) {
+            // first run of the app starts with the nav drawer open
+            PrefUtils.markWelcomeDone(this);
+            mDrawerLayout.openDrawer(Gravity.START);
+        }*/
+    }
 
-        mDrawerLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                mDrawerToggle.syncState();
-            }
-        });
+    @Override
+    public void setContentView(int layoutResID) {
+        super.setContentView(layoutResID);
+        getActionBarToolbar();
     }
 
     // Subclasses can override this for custom behavior
@@ -440,14 +473,6 @@ public abstract class BaseActivity extends ActionBarActivity {
         });
 
         return view;
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        if (mDrawerToggle != null) {
-            mDrawerToggle.onConfigurationChanged(newConfig);
-        }
     }
 
     private void onNavDrawerItemClicked(final int itemId) {
@@ -569,6 +594,17 @@ public abstract class BaseActivity extends ActionBarActivity {
         autoShowOrHideActionBar(shouldShow);
     }
 
+
+    protected Toolbar getActionBarToolbar() {
+        if (mActionBarToolbar == null) {
+            mActionBarToolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
+            if (mActionBarToolbar != null) {
+                setSupportActionBar(mActionBarToolbar);
+            }
+        }
+        return mActionBarToolbar;
+    }
+
     protected void autoShowOrHideActionBar(boolean show) {
         if (show == mActionBarShown) {
             return;
@@ -576,39 +612,6 @@ public abstract class BaseActivity extends ActionBarActivity {
         mActionBarShown = show;
         onActionBarAutoShowOrHide(show);
     }
-
-    protected void onActionBarAutoShowOrHide(boolean shown) {
-        if (shown) {
-            mToolbar.animate()
-                    .translationY(0)
-                    .alpha(1)
-                    .setDuration(HEADER_HIDE_ANIM_DURATION)
-                    .setInterpolator(new DecelerateInterpolator());
-        } else {
-            View view = mToolbar;
-            view.animate()
-                    .translationY(-view.getBottom())
-                    .alpha(0)
-                    .setDuration(HEADER_HIDE_ANIM_DURATION)
-                    .setInterpolator(new DecelerateInterpolator());
-        }
-        for (View view : mHideableHeaderViews) {
-            if (shown) {
-                view.animate()
-                        .translationY(0)
-                        .alpha(1)
-                        .setDuration(HEADER_HIDE_ANIM_DURATION)
-                        .setInterpolator(new DecelerateInterpolator());
-            } else {
-                view.animate()
-                        .translationY(-view.getBottom())
-                        .alpha(0)
-                        .setDuration(HEADER_HIDE_ANIM_DURATION)
-                        .setInterpolator(new DecelerateInterpolator());
-            }
-        }
-    }
-
 
     protected void enableActionBarAutoHide(final ListView listView) {
         initActionBarAutoHide();
@@ -630,4 +633,60 @@ public abstract class BaseActivity extends ActionBarActivity {
             }
         });
     }
+
+    public LUtils getLUtils() {
+        return mLUtils;
+    }
+
+    public int getThemedStatusBarColor() {
+        return mThemedStatusBarColor;
+    }
+
+    public void setNormalStatusBarColor(int color) {
+        mNormalStatusBarColor = color;
+        if (mDrawerLayout != null) {
+            mDrawerLayout.setStatusBarBackgroundColor(mNormalStatusBarColor);
+        }
+    }
+
+    protected void onActionBarAutoShowOrHide(boolean shown) {
+        if (mStatusBarColorAnimator != null) {
+            mStatusBarColorAnimator.cancel();
+        }
+        mStatusBarColorAnimator = ObjectAnimator.ofInt(
+                (mDrawerLayout != null) ? mDrawerLayout : mLUtils,
+                (mDrawerLayout != null) ? "statusBarBackgroundColor" : "statusBarColor",
+                shown ? Color.BLACK : mNormalStatusBarColor,
+                shown ? mNormalStatusBarColor : Color.BLACK)
+                .setDuration(250);
+        if (mDrawerLayout != null) {
+            mStatusBarColorAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                    ViewCompat.postInvalidateOnAnimation(mDrawerLayout);
+                }
+            });
+        }
+        mStatusBarColorAnimator.setEvaluator(ARGB_EVALUATOR);
+        mStatusBarColorAnimator.start();
+
+        //updateSwipeRefreshProgressBarTop();
+
+        for (View view : mHideableHeaderViews) {
+            if (shown) {
+                view.animate()
+                        .translationY(0)
+                        .alpha(1)
+                        .setDuration(HEADER_HIDE_ANIM_DURATION)
+                        .setInterpolator(new DecelerateInterpolator());
+            } else {
+                view.animate()
+                        .translationY(-view.getBottom())
+                        .alpha(0)
+                        .setDuration(HEADER_HIDE_ANIM_DURATION)
+                        .setInterpolator(new DecelerateInterpolator());
+            }
+        }
+    }
+
 }

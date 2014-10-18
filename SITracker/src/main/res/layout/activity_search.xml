@@ -52,6 +52,7 @@
             <!-- Spinners for additional filters -->
             <LinearLayout
                 android:id="@+id/filters_box"
+                style="@style/HeaderBar"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/filterbar_height"
                 android:background="@color/theme_primary"

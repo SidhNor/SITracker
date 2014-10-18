@@ -101,8 +101,7 @@
         <activity
             android:name=".ui.SettingsActivity_"
             android:label="@string/title_settings"
-            android:parentActivityName=".ui.HomeActivity_"
-            android:theme="@style/Theme.SiTracker.WithElevatedHeader">
+            android:parentActivityName=".ui.HomeActivity_">
             <!-- Parent activity meta-data to support API level pre 16 -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -112,7 +111,7 @@
             android:name=".ui.ImportAuthorsActivity_"
             android:label="@string/title_import"
             android:parentActivityName=".ui.HomeActivity_"
-            android:theme="@style/Theme.SiTracker.WithElevatedHeader">
+            android:theme="@style/Theme.SiTracker.ImportAuthors">
             <!-- Parent activity meta-data to support API level pre 16 -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
