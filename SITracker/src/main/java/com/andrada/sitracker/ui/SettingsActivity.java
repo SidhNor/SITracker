@@ -94,7 +94,9 @@ public class SettingsActivity extends PreferenceActivity implements
         setUpdateIntervalSummary(prefs.updateInterval().get());
         setAuthorSortSummary(prefs.authorsSortType().get());
         setDownloadFolderSummary(prefs.downloadFolder().get());
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+
+        //TODO manage this
+        //getActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override

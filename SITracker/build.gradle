@@ -28,9 +28,9 @@ repositories {
 
 dependencies {
     compile 'org.jetbrains:annotations:13.0'
-    compile 'com.android.support:support-v13:20.+'
-    compile 'com.android.support:support-v4:20.0.0'
-    compile 'com.google.android.gms:play-services:5.0.89'
+    compile 'com.android.support:support-v4:21.0.0'
+    compile 'com.android.support:appcompat-v7:21.0.0'
+    compile 'com.google.android.gms:play-services:6.1.11'
     apt 'org.androidannotations:androidannotations:3.1'
     compile 'org.androidannotations:androidannotations-api:3.1'
     compile 'org.apache.commons:commons-lang3:3.0'
@@ -55,8 +55,8 @@ tasks.withType(JavaCompile) {
 }
 
 android {
-    compileSdkVersion 20
-    buildToolsVersion '20.0.0'
+    compileSdkVersion 21
+    buildToolsVersion '21.0.1'
 
     def versionPropsFile = file('version.properties')
     if (versionPropsFile.canRead()) {
@@ -87,7 +87,7 @@ android {
             versionCode version_Code
             versionName "${versionMajor}.${versionMinor}.${versionPatch} (${versionBuild})"
             minSdkVersion 15
-            targetSdkVersion 20
+            targetSdkVersion 21
             applicationId 'com.andrada.sitracker'
             testInstrumentationRunner 'android.test.InstrumentationTestRunner'
             testApplicationId 'com.andrada.sitracker.test'

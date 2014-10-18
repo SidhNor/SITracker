@@ -78,5 +78,7 @@
     <dimen name="spinner_left_padding">4dp</dimen>
     <dimen name="search_dropdown_item_height">48dp</dimen>
 
+    <dimen name="headerbar_elevation">2dp</dimen>
+
 </resources>
 

@@ -16,16 +16,17 @@
 
 package com.andrada.sitracker.ui.fragment;
 
-import android.app.ActionBar;
-import android.app.Activity;
-import android.app.Fragment;
 import android.app.backup.BackupManager;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.ActionMode;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -190,7 +191,7 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
             timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    Activity activity = getActivity();
+                    FragmentActivity activity = getActivity();
                     if (activity != null) {
                         activity.runOnUiThread(new Runnable() {
                             @Override
@@ -210,7 +211,7 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
         list.setAdapter(adapter);
         mMultiSelectionController = MultiSelectionUtil.attachMultiSelectionController(
                 list,
-                (Activity) getActivity(),
+                (ActionBarActivity)getActivity(),
                 this);
         //ActionMode.setMultiChoiceMode(list, getActivity(), this);
         list.setBackgroundResource(R.drawable.authors_list_background);
@@ -230,6 +231,9 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
 
     private void toggleUpdatingState() {
         mIsUpdating = !mIsUpdating;
+
+        //TODO switch to toolbar usage
+        /*
         ActionBar bar = getActivity().getActionBar();
         bar.setDisplayShowHomeEnabled(!mIsUpdating);
         bar.setDisplayShowTitleEnabled(!mIsUpdating);
@@ -244,6 +248,7 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
             mLogoView.clearAnimation();
             mLogoView.startAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.ab_custom_view_anim));
         }
+        */
         getActivity().invalidateOptionsMenu();
     }
 

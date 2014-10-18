@@ -16,12 +16,12 @@
 
 package com.andrada.sitracker.ui;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.view.ActionMode;
 import android.util.Pair;
 import android.util.SparseBooleanArray;
-import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -37,13 +37,13 @@ import java.util.HashSet;
 
 /**
  * Utilities for handling multiple selection in list views. Contains functionality similar to
- * {@link AbsListView#CHOICE_MODE_MULTIPLE_MODAL} but that works with {@link Activity} and
+ * {@link AbsListView#CHOICE_MODE_MULTIPLE_MODAL} but that works with {@link ActionBarActivity} and
  * backward-compatible action bars.
  */
 public class MultiSelectionUtil {
     @NotNull
     public static Controller attachMultiSelectionController(@NotNull final ListView listView,
-                                                            @NotNull final Activity activity,
+                                                            @NotNull final ActionBarActivity activity,
                                                             @NotNull final MultiChoiceModeListener listener) {
         return Controller.attach(listView, activity, listener);
     }
@@ -76,7 +76,7 @@ public class MultiSelectionUtil {
         @NotNull
         private ListView mListView;
         @NotNull
-        private Activity mActivity;
+        private ActionBarActivity mActivity;
         @NotNull
         private MultiChoiceModeListener mListener;
         @Nullable
@@ -88,7 +88,7 @@ public class MultiSelectionUtil {
         }
 
         @NotNull
-        public static Controller attach(@NotNull ListView listView, @NotNull Activity activity,
+        public static Controller attach(@NotNull ListView listView, @NotNull ActionBarActivity activity,
                                         @NotNull MultiChoiceModeListener listener) {
             if (listView.getChoiceMode() == AbsListView.CHOICE_MODE_MULTIPLE ||
                     listView.getChoiceMode() == AbsListView.CHOICE_MODE_MULTIPLE_MODAL) {
@@ -145,7 +145,7 @@ public class MultiSelectionUtil {
                 // We found some IDs that were checked. Let's now restore the multi-selection
                 // state.
                 mTempIdsToCheckOnRestore = null; // clear out this temp field
-                mActionMode = mActivity.startActionMode(Controller.this);
+                mActionMode = mActivity.startSupportActionMode(Controller.this);
             }
         }
 
@@ -241,7 +241,7 @@ public class MultiSelectionUtil {
 
             mItemsToCheck = new HashSet<Pair<Integer, Long>>();
             mItemsToCheck.add(new Pair<Integer, Long>(position, id));
-            mActionMode = mActivity.startActionMode(Controller.this);
+            mActionMode = mActivity.startSupportActionMode(Controller.this);
             return true;
         }
     }

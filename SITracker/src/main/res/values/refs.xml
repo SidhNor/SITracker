@@ -15,7 +15,5 @@
   -->
 
 <resources>
-    <item name="toolbar_actionbar_with_headerbar" type="layout">@layout/toolbar_actionbar</item>
-    <item name="toolbar_actionbar_with_translucent_background" type="layout">@layout/toolbar_actionbar</item>
     <item name="header_shadow" type="drawable">@drawable/bottom_shadow</item>
 </resources>

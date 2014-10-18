@@ -21,9 +21,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
@@ -34,6 +31,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
@@ -630,7 +630,7 @@ public class PublicationInfoFragment extends Fragment implements
     void voteForPubClicked() {
         if (currentRecord != null && getActivity() != null) {
             AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_RATING_DIALOG);
-            FragmentManager fm = this.getActivity().getFragmentManager();
+            FragmentManager fm = this.getActivity().getSupportFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
             Fragment prev = fm.findFragmentByTag(RatePublicationDialog.FRAGMENT_TAG);
             if (prev != null) {

@@ -16,17 +16,17 @@
 
 package com.andrada.sitracker.ui.fragment;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.DialogFragment;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.style.ClickableSpan;
@@ -93,8 +93,8 @@ public class AboutDialog extends DialogFragment {
                 ).create();
     }
 
-    public static void showWhatsNew(Activity activity) {
-        FragmentManager fm = activity.getFragmentManager();
+    public static void showWhatsNew(FragmentActivity activity) {
+        FragmentManager fm = activity.getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         Fragment prev = fm.findFragmentByTag(WhatsNewDialog.FRAGMENT_TAG);
         if (prev != null) {
@@ -105,8 +105,8 @@ public class AboutDialog extends DialogFragment {
         new WhatsNewDialog().show(ft, WhatsNewDialog.FRAGMENT_TAG);
     }
 
-    public static void showOpenSourceLicenses(Activity activity) {
-        FragmentManager fm = activity.getFragmentManager();
+    public static void showOpenSourceLicenses(FragmentActivity activity) {
+        FragmentManager fm = activity.getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         Fragment prev = fm.findFragmentByTag(OpenSourceLicensesDialog.FRAGMENT_TAG);
         if (prev != null) {

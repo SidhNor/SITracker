@@ -28,6 +28,11 @@
     <string name="navdrawer_item_new_pubs">New publications</string>
     <string name="navdrawer_item_settings">Settings</string>
 
+    <!-- Accessibility description saying that the app's navigation drawer has been closed -->
+    <string name="drawer_close">Close navigation drawer</string>
+    <!-- Accessibility description saying that the app's navigation drawer has been opened -->
+    <string name="drawer_open">Open navigation drawer</string>
+
     <!-- Home AB actions -->
     <string name="action_search">Search</string>
     <string name="action_settings">Settings</string>

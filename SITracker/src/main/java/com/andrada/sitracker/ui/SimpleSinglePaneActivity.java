@@ -16,9 +16,9 @@
 
 package com.andrada.sitracker.ui;
 
-import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 
 import com.andrada.sitracker.R;
 
@@ -48,11 +48,11 @@ public abstract class SimpleSinglePaneActivity extends BaseActivity {
         if (savedInstanceState == null) {
             mFragment = onCreatePane();
             mFragment.setArguments(intentToFragmentArguments(getIntent()));
-            getFragmentManager().beginTransaction()
+            getSupportFragmentManager().beginTransaction()
                     .add(R.id.root_container, mFragment, "single_pane")
                     .commit();
         } else {
-            mFragment = getFragmentManager().findFragmentByTag("single_pane");
+            mFragment = getSupportFragmentManager().findFragmentByTag("single_pane");
         }
     }
 

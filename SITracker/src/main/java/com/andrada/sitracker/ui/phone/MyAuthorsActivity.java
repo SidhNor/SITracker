@@ -28,27 +28,27 @@ import com.andrada.sitracker.util.UIUtils;
 
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.OptionsMenu;
+import org.androidannotations.annotations.ViewById;
 
 @EActivity(R.layout.activity_authors_narrow)
 @OptionsMenu(R.menu.main_menu)
 public class MyAuthorsActivity extends BaseActivity {
 
-    private DrawShadowFrameLayout mDrawShadowFrameLayout;
+    @ViewById(R.id.main_content)
+    DrawShadowFrameLayout mDrawShadowFrameLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         overridePendingTransition(0, 0);
-        mDrawShadowFrameLayout = (DrawShadowFrameLayout) findViewById(R.id.main_content);
     }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        TextView title = (TextView) findViewById(android.R.id.text1);
-        title.setText("Authors");
+        getSupportActionBar().setTitle("My authors");
 
-        AuthorsFragment frag = (AuthorsFragment) getFragmentManager().findFragmentById(
+        AuthorsFragment frag = (AuthorsFragment) getSupportFragmentManager().findFragmentById(
                 R.id.fragment_authors);
 
         ListView lv = frag.getListView();

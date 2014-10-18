@@ -21,53 +21,54 @@
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
     -->
-    <style name="FrameworkRoot.Base" parent="android:Theme.Holo.Light.DarkActionBar"/>
+    <style name="FrameworkRoot.Base" parent="@style/Theme.AppCompat.NoActionBar"/>
 
-    <style name="FrameworkRoot.ActionBar" parent="android:Widget.Holo.Light.ActionBar.Solid.Inverse"/>
+    <style name="FrameworkRoot.ActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse"/>
 
-    <style name="FrameworkRoot.ActionBar.TitleText" parent="android:TextAppearance.Holo.Widget.ActionBar.Title"/>
+    <style name="FrameworkRoot.ActionBar.TitleText" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"/>
 
-    <style name="FrameworkRoot.ActionBar.TabBar" parent="android:Widget.ActionBar.TabBar"/>
-
-    <style name="FrameworkRoot.ActionBar.TabView" parent="android:Widget.ActionBar.TabView"/>
+    <style name="FrameworkRoot.ActionBar.TabView" parent="@style/Widget.AppCompat.ActionBar.TabView"/>
 
     <style name="FrameworkRoot.EditText" parent="android:Widget.Holo.Light.EditText"/>
 
-    <style name="FrameworkRoot.Widget" parent="android:Theme.Holo"/>
+    <style name="FrameworkRoot.Widget" parent="@style/Theme.AppCompat"/>
 
-    <style name="FrameworkRoot.Widget.ActionButton.Overflow" parent="android:Widget.Holo.ActionButton.Overflow"/>
+    <style name="FrameworkRoot.Widget.ActionButton.Overflow" parent="@style/Widget.AppCompat.ActionButton.Overflow"/>
 
-    <style name="FrameworkRoot.Widget.Spinner" parent="android:Widget.Holo.Light.Spinner"/>
+    <style name="FrameworkRoot.Widget.Spinner" parent="@style/Widget.AppCompat.Light.Spinner.DropDown.ActionBar"/>
 
-    <style name="FrameworkRoot.Widget.PopupMenu" parent="android:Widget.Holo.Light.PopupMenu"/>
+    <style name="FrameworkRoot.Widget.PopupMenu" parent="@style/Widget.AppCompat.Light.PopupMenu"/>
 
-    <style name="FrameworkRoot.Widget.ListView.DropDown" parent="android:Widget.Holo.Light.ListView.DropDown"/>
+    <style name="FrameworkRoot.Widget.ListView.DropDown" parent="@style/Widget.AppCompat.Light.ListView.DropDown"/>
 
-    <style name="FrameworkRoot.ActionButton.CloseMode" parent="@android:style/Widget.Holo.ActionButton.CloseMode"/>
+    <style name="FrameworkRoot.ActionButton.CloseMode" parent="@style/Widget.AppCompat.Light.ActionButton.CloseMode"/>
 
-    <style name="FrameworkRoot.TextAppearance.Widget.PopupMenu.Large" parent="android:TextAppearance.Holo.Widget.PopupMenu.Large"/>
+    <style name="FrameworkRoot.TextAppearance.Widget.PopupMenu.Large" parent="@style/TextAppearance.AppCompat.Light.Widget.PopupMenu.Large"/>
 
     <style name="FrameworkRoot.Theme" parent="FrameworkRoot.Base">
-        <item name="android:actionBarWidgetTheme">@style/Theme.SiTracker.Widget</item>
-        <item name="android:actionOverflowButtonStyle">@style/ActionButton.Overflow</item>
+        <item name="colorPrimary">@color/theme_primary</item>
+        <item name="colorPrimaryDark">@color/theme_primary_dark</item>
+        <item name="colorAccent">@color/theme_accent_1</item>
+        <item name="actionBarWidgetTheme">@style/Theme.SiTracker.Widget</item>
+        <item name="actionOverflowButtonStyle">@style/ActionButton.Overflow</item>
         <item name="android:editTextBackground">@drawable/edit_text</item>
         <item name="android:editTextStyle">@style/Widget.SiTracker.EditText</item>
-        <item name="spinnerBarInsetStart">?android:actionBarSize</item>
+        <item name="spinnerBarInsetStart">?attr/actionBarSize</item>
         <item name="vpiCirclePageIndicatorStyle">@style/CustomCirclePageIndicator</item>
     </style>
 
     <!-- Application theme. -->
 
     <style name="Theme.SiTracker" parent="FrameworkRoot.Theme">
-        <item name="actionBarOverlayTopOffset">?android:actionBarSize</item>
-        <item name="actionBarInsetStart">?android:actionBarSize</item>
+        <item name="actionBarOverlayTopOffset">?attr/actionBarSize</item>
+        <item name="actionBarInsetStart">?attr/actionBarSize</item>
         <item name="photoItemForeground">?android:selectableItemBackground</item>
         <item name="popupItemBackground">?android:selectableItemBackground</item>
 
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowBackground">@android:color/white</item>
-        <item name="android:actionBarTabStyle">@style/ActionBar.TabView</item>
-        <item name="android:actionBarStyle">@style/ActionBar</item>
+        <item name="actionBarTabStyle">@style/ActionBar.TabView</item>
+        <item name="actionBarStyle">@style/ActionBar</item>
         <item name="android:actionModeBackground">@drawable/cab_background_top_si</item>
         <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode</item>
         <item name="android:homeAsUpIndicator">@drawable/ic_up</item>
@@ -94,16 +95,16 @@
     </style>
 
     <style name="Theme.SiTracker.Home" parent="Theme.SiTracker">
-        <item name="android:windowActionBarOverlay">false</item>
+        <item name="windowActionBarOverlay">false</item>
         <item name="android:windowContentOverlay">@drawable/header_shadow</item>
     </style>
 
     <style name="Theme.SiTracker.MyAuthors" parent="Theme.SiTracker">
-        <item name="android:windowActionBarOverlay">true</item>
+        <item name="windowActionBarOverlay">true</item>
     </style>
 
     <style name="Theme.SiTracker.Search" parent="Theme.SiTracker">
-        <item name="android:windowActionBarOverlay">true</item>
+        <item name="windowActionBarOverlay">true</item>
         <item name="android:windowBackground">@color/gray_background</item>
     </style>
 
@@ -112,9 +113,9 @@
     </style>
 
     <style name="Theme.SiTracker.PublicationDetails" parent="Theme.SiTracker.PublicationDetails.Base">
-        <item name="android:actionBarStyle">@style/TransparentActionBar</item>
+        <item name="actionBarStyle">@style/TransparentActionBar</item>
         <item name="android:windowContentOverlay">@null</item>
-        <item name="android:windowActionBarOverlay">true</item>
+        <item name="windowActionBarOverlay">true</item>
     </style>
 
     <style name="Theme.SiTracker.WithElevatedHeader" parent="Theme.SiTracker">
@@ -422,6 +423,17 @@
     <style name="SITracker.TextAppearance.ShowcaseView.Detail.Overlay" parent="SITracker.TextAppearance.ShowcaseView.Detail">
         <item name="android:textColor">@color/white</item>
         <item name="android:textSize">@dimen/showcase_detail_size_overlay</item>
+    </style>
+
+    <style name="HeaderBar">
+        <item name="elevation">@dimen/headerbar_elevation</item>
+        <item name="android:background">?attr/colorPrimary</item>
+    </style>
+
+    <style name="ActionBarThemeOverlay" parent="">
+        <item name="android:textColorPrimary">#fff</item>
+        <item name="colorControlNormal">#fff</item>
+        <item name="colorControlHighlight">#3fff</item>
     </style>
 
 </resources>

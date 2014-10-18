@@ -17,13 +17,15 @@
 package com.andrada.sitracker.ui;
 
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -52,7 +54,7 @@ import static com.andrada.sitracker.util.LogUtils.makeLogTag;
 /**
  * A base activity that handles common functionality in the app.
  */
-public abstract class BaseActivity extends Activity {
+public abstract class BaseActivity extends ActionBarActivity {
 
     // symbols for navdrawer items (indices must correspond to array below). This is
     // not a list of items that are necessarily *present* in the Nav Drawer; rather,
@@ -99,6 +101,7 @@ public abstract class BaseActivity extends Activity {
     private boolean mActionBarShown = true;
     // list of navdrawer items that were actually added to the navdrawer, in order
     private ArrayList<Integer> mNavDrawerItems = new ArrayList<Integer>();
+    private ActionBarDrawerToggle mDrawerToggle;
 
     // views that correspond to each navdrawer item, null if not yet created
     private View[] mNavDrawerItemViews = null;
@@ -107,6 +110,7 @@ public abstract class BaseActivity extends Activity {
     private DrawerLayout mDrawerLayout;
     private ViewGroup mDrawerItemsListContainer;
 
+    private Toolbar mToolbar;
     // A Runnable that we should execute when the navigation drawer finishes its closing animation
     private Runnable mDeferredOnDrawerClosedRunnable;
 
@@ -209,15 +213,10 @@ public abstract class BaseActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-
-        if (mDrawerLayout != null && id == android.R.id.home) {
-            if (isNavDrawerOpen()) {
-                mDrawerLayout.closeDrawer(Gravity.START);
-            } else {
-                mDrawerLayout.openDrawer(Gravity.START);
-            }
+        if (mDrawerToggle != null && mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
+        //Handle default options
         return super.onOptionsItemSelected(item);
     }
 
@@ -247,6 +246,10 @@ public abstract class BaseActivity extends Activity {
         int selfItem = getSelfNavDrawerItem();
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
+        if (mToolbar != null) {
+            setSupportActionBar(mToolbar);
+        }
         if (mDrawerLayout == null) {
             return;
         }
@@ -260,51 +263,54 @@ public abstract class BaseActivity extends Activity {
             return;
         }
 
-        ActionBar actionBar = getActionBar();
-        actionBar.setIcon(R.drawable.ic_drawer);
-
-        mDrawerLayout.setDrawerListener(new DrawerLayout.DrawerListener() {
+        mDrawerToggle = new ActionBarDrawerToggle(
+                this,
+                mDrawerLayout,
+                mToolbar,
+                R.string.drawer_open, R.string.drawer_close) {
             @Override
             public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
                 // run deferred action, if we have one
                 if (mDeferredOnDrawerClosedRunnable != null) {
                     mDeferredOnDrawerClosedRunnable.run();
                     mDeferredOnDrawerClosedRunnable = null;
                 }
-                getActionBar().setIcon(R.drawable.ic_drawer);
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
                 onNavDrawerStateChanged(false, false);
             }
 
             @Override
             public void onDrawerOpened(View drawerView) {
-                getActionBar().setIcon(R.drawable.ic_back);
+                super.onDrawerOpened(drawerView);
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
                 onNavDrawerStateChanged(true, false);
             }
 
             @Override
             public void onDrawerStateChanged(int newState) {
+                super.onDrawerStateChanged(newState);
                 invalidateOptionsMenu();
                 onNavDrawerStateChanged(isNavDrawerOpen(), newState != DrawerLayout.STATE_IDLE);
             }
 
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
+                super.onDrawerSlide(drawerView, slideOffset);
                 onNavDrawerSlide(slideOffset);
             }
-        });
+        };
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, Gravity.START);
-
-
-        actionBar.setDisplayHomeAsUpEnabled(false);
-        actionBar.setDisplayShowTitleEnabled(false);
-        actionBar.setDisplayShowCustomEnabled(true);
-        actionBar.setHomeButtonEnabled(true);
-        actionBar.setCustomView(R.layout.ab_title);
-
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
         // populate the nav drawer with the correct items
         populateNavDrawer();
+
+        mDrawerLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                mDrawerToggle.syncState();
+            }
+        });
     }
 
     // Subclasses can override this for custom behavior
@@ -415,6 +421,14 @@ public abstract class BaseActivity extends Activity {
         });
 
         return view;
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if (mDrawerToggle != null) {
+            mDrawerToggle.onConfigurationChanged(newConfig);
+        }
     }
 
     private void onNavDrawerItemClicked(final int itemId) {
@@ -544,22 +558,15 @@ public abstract class BaseActivity extends Activity {
         onActionBarAutoShowOrHide(show);
     }
 
-    private View getActionBarView() {
-        Window window = getWindow();
-        View v = window.getDecorView();
-        int resId = getResources().getIdentifier("action_bar_container", "id", "android");
-        return v.findViewById(resId);
-    }
-
     protected void onActionBarAutoShowOrHide(boolean shown) {
         if (shown) {
-            getActionBarView().animate()
+            mToolbar.animate()
                     .translationY(0)
                     .alpha(1)
                     .setDuration(HEADER_HIDE_ANIM_DURATION)
                     .setInterpolator(new DecelerateInterpolator());
         } else {
-            View view = getActionBarView();
+            View view = mToolbar;
             view.animate()
                     .translationY(-view.getBottom())
                     .alpha(0)

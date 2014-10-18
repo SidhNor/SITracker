@@ -16,9 +16,9 @@
 
 package com.andrada.sitracker.loader;
 
-import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.net.Uri;
+import android.support.v4.content.AsyncTaskLoader;
 
 import com.andrada.sitracker.contracts.AppUriContract;
 import com.andrada.sitracker.db.beans.SearchedAuthor;

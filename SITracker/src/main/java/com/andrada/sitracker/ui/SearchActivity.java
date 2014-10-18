@@ -106,7 +106,10 @@ public class SearchActivity extends BaseActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        //TODO replace with toolbar
+        //getActionBar().setDisplayHomeAsUpEnabled(true);
+
+
         final MenuItem searchItem = menu.findItem(R.id.action_search);
         if (searchItem != null) {
             SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);

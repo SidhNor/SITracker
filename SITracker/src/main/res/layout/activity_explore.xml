@@ -13,6 +13,17 @@
         android:clipChildren="false"
         app:shadowDrawable="@drawable/header_shadow">
 
+        <LinearLayout
+            android:id="@+id/headerbar"
+            style="@style/HeaderBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:orientation="vertical">
+
+            <include layout="@layout/toolbar_actionbar"/>
+        </LinearLayout>
+
     </com.andrada.sitracker.ui.widget.DrawShadowFrameLayout>
     <!-- Nav drawer -->
     <include layout="@layout/navdrawer"/>

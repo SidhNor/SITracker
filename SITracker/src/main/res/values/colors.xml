@@ -49,6 +49,7 @@
     <color name="list_dropdown_foreground_normal">#ff333333</color>
     <color name="list_dropdown_divider_color">#92a3a3a3</color>
 
+    <color name="translucent_actionbar_background">#cce8552c</color>
     <color name="gray_background">#e5e5e5</color>
 
     <color name="fp_selection_background_color">#286E8A</color>
