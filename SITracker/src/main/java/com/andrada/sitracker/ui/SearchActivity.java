@@ -19,10 +19,13 @@ package com.andrada.sitracker.ui;
 
 import android.annotation.SuppressLint;
 import android.app.SearchManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.IntentCompat;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -39,6 +42,7 @@ import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.AppUriContract;
 import com.andrada.sitracker.ui.fragment.RemoteAuthorsFragment;
+import com.andrada.sitracker.ui.phone.MyAuthorsActivity_;
 import com.andrada.sitracker.ui.widget.DrawShadowFrameLayout;
 import com.andrada.sitracker.util.AnalyticsHelper;
 import com.andrada.sitracker.util.UIUtils;
@@ -81,6 +85,18 @@ public class SearchActivity extends BaseActivity {
 
     @AfterViews
     void afterViews() {
+        Toolbar toolbar = getActionBarToolbar();
+        toolbar.setTitle(R.string.title_search);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                navigateUpToFromChild(SearchActivity.this,
+                        IntentCompat.makeMainActivity(new ComponentName(SearchActivity.this,
+                                MyAuthorsActivity_.class)));
+            }
+        });
+
+
         String query = getIntent().getStringExtra(SearchManager.QUERY);
         if (query == null && mQuery != null) {
             query = mQuery;
