@@ -511,12 +511,12 @@ public abstract class BaseActivity extends ActionBarActivity {
                 finish();
                 break;
             case NAVDRAWER_ITEM_EXPLORE:
-                intent = new Intent(this, ExploreAuthorsActivity.class);
+                intent = new Intent(this, ExploreAuthorsActivity_.class);
                 startActivity(intent);
                 finish();
                 break;
             case NAVDRAWER_ITEM_NEW_PUBS:
-                intent = new Intent(this, NewPublicationsActivity.class);
+                intent = new Intent(this, NewPublicationsActivity_.class);
                 startActivity(intent);
                 finish();
                 break;

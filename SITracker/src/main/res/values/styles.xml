@@ -142,6 +142,14 @@
         <item name="windowActionBarOverlay">true</item>
     </style>
 
+    <style name="Theme.SiTracker.Explore" parent="Theme.SiTracker.WithNavDrawer">
+        <item name="windowActionBarOverlay">true</item>
+    </style>
+
+    <style name="Theme.SiTracker.NewPubs" parent="Theme.SiTracker.WithNavDrawer">
+        <item name="windowActionBarOverlay">true</item>
+    </style>
+
     <style name="Theme.SiTracker.Search" parent="Theme.SiTracker">
         <item name="android:windowBackground">@color/gray_background</item>
         <item name="android:autoCompleteTextViewStyle">

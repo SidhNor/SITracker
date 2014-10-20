@@ -32,7 +32,9 @@ import android.widget.TextView;
 
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.ui.phone.MyAuthorsActivity;
+import com.andrada.sitracker.ui.phone.MyAuthorsActivity_;
 import com.andrada.sitracker.ui.tablet.MyAuthorsMultipaneActivity;
+import com.andrada.sitracker.ui.tablet.MyAuthorsMultipaneActivity_;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -192,9 +194,9 @@ public class UIUtils {
 
     public static Class getMyAuthorsActivityClass(Context context) {
         if (UIUtils.isTablet(context)) {
-            return MyAuthorsMultipaneActivity.class;
+            return MyAuthorsMultipaneActivity_.class;
         }
 
-        return MyAuthorsActivity.class;
+        return MyAuthorsActivity_.class;
     }
 }

@@ -68,6 +68,18 @@
         </activity>
 
         <activity
+            android:name=".ui.ExploreAuthorsActivity_"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.SiTracker.Explore">
+        </activity>
+
+        <activity
+            android:name=".ui.NewPublicationsActivity_"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.SiTracker.NewPubs">
+        </activity>
+
+        <activity
             android:name=".ui.HomeActivity_"
             android:label="@string/app_name"
             android:launchMode="singleTask"
@@ -107,6 +119,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.andrada.sitracker.ui.HomeActivity_"/>
         </activity>
+
         <activity
             android:name=".ui.ImportAuthorsActivity_"
             android:label="@string/title_import"
@@ -117,6 +130,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.andrada.sitracker.ui.HomeActivity_"/>
         </activity>
+
         <activity android:name=".ui.DirectoryChooserActivity"/>
 
         <activity
