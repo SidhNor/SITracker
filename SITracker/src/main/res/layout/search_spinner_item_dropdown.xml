@@ -15,19 +15,20 @@
   limitations under the License.
   -->
 
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:orientation="vertical">
+              android:layout_height="wrap_content">
 
     <TextView
-        android:id="@+id/normal_text"
-        android:layout_width="match_parent"
+        android:id="@android:id/text1"
         android:layout_height="@dimen/search_dropdown_item_height"
-        android:drawablePadding="8dp"
-        android:gravity="center_vertical|start"
+        android:layout_width="match_parent"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
-        android:textColor="@color/list_dropdown_foreground_color"
-        android:textSize="16sp"/>
+        android:drawablePadding="8dp"
+        android:gravity="center_vertical|start"
+        android:textSize="16sp"
+        android:textColor="@color/list_dropdown_foreground_color"/>
 </LinearLayout>

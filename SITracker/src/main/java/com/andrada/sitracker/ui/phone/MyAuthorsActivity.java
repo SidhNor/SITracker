@@ -46,7 +46,6 @@ public class MyAuthorsActivity extends BaseActivity {
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
 
-
         AuthorsFragment frag = (AuthorsFragment) getSupportFragmentManager().findFragmentById(
                 R.id.fragment_authors);
         enableActionBarAutoHide(frag.getListView());

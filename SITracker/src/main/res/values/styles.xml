@@ -38,8 +38,12 @@
         <item name="actionBarInsetStart">@dimen/keyline_2</item>
         <item name="homeAsUpIndicator">@drawable/ic_up</item>
         <item name="spinnerBarInsetStart">@dimen/keyline_2_minus_16dp</item>
+        <item name="popupItemBackground">?android:selectableItemBackground</item>
         <item name="photoItemForeground">?android:selectableItemBackground</item>
         <item name="photoItemForegroundBorderless">?android:selectableItemBackground</item>
+
+        <item name="actionModeBackground">@drawable/cab_background_top_si</item>
+        <item name="windowActionModeOverlay">true</item>
 
         <item name="colorPrimary">@color/theme_primary</item>
         <item name="colorPrimaryDark">@color/theme_primary_dark</item>
@@ -70,8 +74,7 @@
         <item name="android:popupMenuStyle">@style/Widget.SiTracker.PopupMenu</item>
         <item name="android:listPopupWindowStyle">@style/Widget.SiTracker.PopupMenu</item>
         <item name="android:dropDownListViewStyle">@style/Widget.SiTracker.ListView.DropDown</item>
-        <item name="android:textAppearanceLargePopupMenu">@style/TextAppearance.LargePopupMenu
-        </item>
+        <item name="android:textAppearanceLargePopupMenu">@style/TextAppearance.LargePopupMenu</item>
     </style>
 
 

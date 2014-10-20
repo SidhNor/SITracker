@@ -34,6 +34,7 @@ import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.MenuItem;
@@ -286,8 +287,7 @@ public abstract class BaseActivity extends ActionBarActivity {
         if (mDrawerLayout == null) {
             return;
         }
-        mDrawerLayout.setStatusBarBackgroundColor(
-                getResources().getColor(R.color.theme_primary_dark));
+        mDrawerLayout.setStatusBarBackground(R.color.theme_primary_dark);
         ScrimInsetsScrollView navDrawer = (ScrimInsetsScrollView)
                 mDrawerLayout.findViewById(R.id.navdrawer);
         if (selfItem == NAVDRAWER_ITEM_INVALID) {
@@ -308,19 +308,11 @@ public abstract class BaseActivity extends ActionBarActivity {
             });
         }
 
-        if (mActionBarToolbar != null) {
-            mActionBarToolbar.setNavigationIcon(R.drawable.ic_drawer);
-            mActionBarToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    mDrawerLayout.openDrawer(Gravity.START);
-                }
-            });
-        }
-
-        mDrawerLayout.setDrawerListener(new DrawerLayout.DrawerListener() {
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawerLayout,
+                mActionBarToolbar, R.string.drawer_open, R.string.drawer_close) {
             @Override
             public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
                 // run deferred action, if we have one
                 if (mDeferredOnDrawerClosedRunnable != null) {
                     mDeferredOnDrawerClosedRunnable.run();
@@ -331,25 +323,31 @@ public abstract class BaseActivity extends ActionBarActivity {
 
             @Override
             public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
                 onNavDrawerStateChanged(true, false);
             }
 
             @Override
             public void onDrawerStateChanged(int newState) {
+                super.onDrawerStateChanged(newState);
                 onNavDrawerStateChanged(isNavDrawerOpen(), newState != DrawerLayout.STATE_IDLE);
             }
 
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
+                super.onDrawerSlide(drawerView, slideOffset);
                 onNavDrawerSlide(slideOffset);
             }
-        });
+        };
+
+        mDrawerLayout.setDrawerListener(toggle);
+        toggle.syncState();
 
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, Gravity.START);
 
         // populate the nav drawer with the correct items
         populateNavDrawer();
-/*
+        /*
         // When the user runs the app for the first time, we want to land them with the
         // navigation drawer open. But just the first time.
         if (!PrefUtils.isWelcomeDone(this)) {

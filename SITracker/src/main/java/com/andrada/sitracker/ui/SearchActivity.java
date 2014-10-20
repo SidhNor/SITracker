@@ -30,13 +30,11 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Spinner;
-import android.widget.TextView;
 
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
@@ -57,6 +55,7 @@ import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.andrada.sitracker.util.LogUtils.LOGD;
 import static com.andrada.sitracker.util.LogUtils.LOGW;
@@ -116,8 +115,8 @@ public class SearchActivity extends BaseActivity {
         if (collectionView != null) {
             enableActionBarAutoHide(collectionView);
         }
-        populateSearchVariants();
         registerHideableHeaderView(findViewById(R.id.headerbar));
+        populateSearchVariants();
     }
 
     @Override
@@ -208,15 +207,17 @@ public class SearchActivity extends BaseActivity {
     private void populateSearchVariants() {
         Spinner searchOptionSpinner = (Spinner) findViewById(R.id.search_option_spinner);
         if (searchOptionSpinner != null) {
-            final SearchSpinnerAdapter adapter = new SearchSpinnerAdapter();
-            adapter.addItem(getString(R.string.search_type_name));
-            adapter.addItem(getString(R.string.search_type_keyword));
+            List<String> items = new ArrayList<String>();
+            items.add(getString(R.string.search_type_name));
+            items.add(getString(R.string.search_type_keyword));
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.search_spinner_item,
+                    android.R.id.text1, items);
+            adapter.setDropDownViewResource(R.layout.search_spinner_item_dropdown);
             searchOptionSpinner.setAdapter(adapter);
-            searchOptionSpinner.setSelection(mCurrentSearchType);
             searchOptionSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-                    if (position >= 0 && position < adapter.getCount()) {
+                    if (position >= 0 && position < 2) {
                         onSearchTypeSelected(position);
                     }
                 }
@@ -225,6 +226,10 @@ public class SearchActivity extends BaseActivity {
                 public void onNothingSelected(AdapterView<?> adapterView) {
                 }
             });
+
+            if (mCurrentSearchType > 0) {
+                searchOptionSpinner.setSelection(mCurrentSearchType);
+            }
         }
     }
 
@@ -242,69 +247,6 @@ public class SearchActivity extends BaseActivity {
                 mSearchView.clearFocus();
             }
             mAuthorsFragment.requestQueryUpdate(mQuery, mCurrentSearchType);
-        }
-    }
-
-    private class SearchSpinnerAdapter extends BaseAdapter {
-
-        private ArrayList<String> mItems = new ArrayList<String>();
-
-        public void clear() {
-            mItems.clear();
-        }
-
-        public void addItem(String item) {
-            mItems.add(item);
-        }
-
-        @Override
-        public int getCount() {
-            return mItems.size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return mItems.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getDropDownView(int position, View view, ViewGroup parent) {
-            if (view == null || !view.getTag().toString().equals("DROPDOWN")) {
-                view = getLayoutInflater().inflate(R.layout.search_spinner_item_dropdown,
-                        parent, false);
-                view.setTag("DROPDOWN");
-            }
-            TextView normalTextView = (TextView) view.findViewById(R.id.normal_text);
-
-            normalTextView.setVisibility(View.VISIBLE);
-
-            setUpNormalDropdownView(position, normalTextView);
-            return view;
-        }
-
-        @Override
-        public View getView(int position, View view, ViewGroup parent) {
-            if (view == null || !view.getTag().toString().equals("NON_DROPDOWN")) {
-                view = getLayoutInflater().inflate(R.layout.search_spinner_item,
-                        parent, false);
-                view.setTag("NON_DROPDOWN");
-            }
-            TextView textView = (TextView) view.findViewById(android.R.id.text1);
-            textView.setText(getTitle(position));
-            return view;
-        }
-
-        private String getTitle(int position) {
-            return position >= 0 && position < mItems.size() ? mItems.get(position) : "";
-        }
-
-        private void setUpNormalDropdownView(int position, TextView textView) {
-            textView.setText(getTitle(position));
         }
     }
 }

@@ -55,7 +55,6 @@
                 android:id="@+id/filters_box"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/filterbar_height"
-                android:background="@color/theme_primary"
                 android:orientation="horizontal"
                 android:paddingLeft="?spinnerBarInsetStart">
 

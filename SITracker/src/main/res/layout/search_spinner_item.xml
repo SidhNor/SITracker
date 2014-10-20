@@ -30,5 +30,5 @@
         android:paddingLeft="@dimen/spinner_left_padding"
         android:paddingRight="4dp"
         android:textColor="@color/body_text_2_inverse"
-        android:textSize="16sp"/>
+        android:textSize="@dimen/text_size_large"/>
 </LinearLayout>
