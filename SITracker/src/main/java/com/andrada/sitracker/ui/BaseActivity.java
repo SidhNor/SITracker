@@ -37,6 +37,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,6 +50,7 @@ import android.widget.TextView;
 import com.andrada.sitracker.BuildConfig;
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
+import com.andrada.sitracker.ui.debug.DebugActionRunnerActivity;
 import com.andrada.sitracker.ui.fragment.AboutDialog;
 import com.andrada.sitracker.ui.widget.ScrimInsetsScrollView;
 import com.andrada.sitracker.util.AnalyticsHelper;
@@ -253,9 +255,24 @@ public abstract class BaseActivity extends ActionBarActivity {
                 ft.addToBackStack(null);
                 new AboutDialog().show(ft, AboutDialog.FRAGMENT_TAG);
                 return true;
+            case R.id.menu_debug:
+                if (BuildConfig.DEBUG) {
+                    startActivity(new Intent(this, DebugActionRunnerActivity.class));
+                }
+                return true;
         }
         //Handle default options
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        boolean result = super.onCreateOptionsMenu(menu);
+        MenuItem debugItem = menu.findItem(R.id.menu_debug);
+        if (debugItem != null) {
+            debugItem.setVisible(BuildConfig.DEBUG);
+        }
+        return result;
     }
 
     protected void registerHideableHeaderView(View hideableHeaderView) {

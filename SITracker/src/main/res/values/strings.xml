@@ -22,6 +22,8 @@
     <string name="no_network_retry">RETRY</string>
     <string name="backup_restored_crouton_message">Backup restored</string>
     <string name="crouton_image_desc">info</string>
+    <string name="description_debug" translatable="false">Debug and tests</string>
+    <string name="title_activity_debug_test_runner" translatable="false">Debug Test Runner</string>
 
     <string name="navdrawer_item_my_authors">My Authors</string>
     <string name="navdrawer_item_explore">Explore</string>
