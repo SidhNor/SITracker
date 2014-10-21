@@ -153,6 +153,7 @@ class Samlib implements SiteStrategy {
                 //Skip
                 return false;
             }
+            //TODO OutOfMemory thrown here
             reader = new SamlibAuthorPageReader(request.body());
             //We go a blank response but no exception, skip author
             if (reader.isPageBlank()) {
