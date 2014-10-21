@@ -322,6 +322,7 @@
     </style>
 
     <style name="Widget.UpdateDate.Text" parent="">
+        <item name="android:textColor">@color/body_text_1</item>
         <item name="android:textSize">@dimen/text_size_small</item>
         <item name="android:textAlignment" tools:ignore="NewApi">viewEnd</item>
         <item name="android:layout_gravity">right</item>
