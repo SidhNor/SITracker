@@ -142,6 +142,10 @@
         <item name="windowActionBarOverlay">true</item>
     </style>
 
+    <style name="Theme.SiTracker.MyAuthors.Wide" parent="Theme.SiTracker.WithNavDrawer">
+        <item name="windowActionBarOverlay">false</item>
+    </style>
+
     <style name="Theme.SiTracker.Explore" parent="Theme.SiTracker.WithNavDrawer">
         <item name="windowActionBarOverlay">true</item>
     </style>

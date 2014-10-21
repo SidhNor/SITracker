@@ -60,7 +60,7 @@
         <activity
             android:name=".ui.HomeActivitySelector"
             android:theme="@android:style/Theme.NoDisplay">
-        <intent-filter>
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
@@ -85,7 +85,7 @@
             android:name=".ui.tablet.MyAuthorsMultipaneActivity_"
             android:label="@string/app_name"
             android:launchMode="singleTop"
-            android:theme="@style/Theme.SiTracker.MyAuthors">
+            android:theme="@style/Theme.SiTracker.MyAuthors.Wide">
             <meta-data
                 android:name="com.andrada.sitracker.meta.TARGET_FORM_FACTOR"
                 android:value="tablet"/>

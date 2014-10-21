@@ -71,8 +71,7 @@ public class MyAuthorsActivity extends BaseActivity {
 
         Fragment frag = getSupportFragmentManager().findFragmentById(R.id.fragment_authors);
         if (frag != null) {
-            // configure video fragment's top clearance to take our overlaid controls (Action Bar
-            // and spinner box) into account.
+            // configure fragment's top clearance to take our overlaid controls (Action Bar) into account.
             int actionBarSize = UIUtils.calculateActionBarSize(this);
             mDrawShadowFrameLayout.setShadowTopOffset(actionBarSize);
             ((AuthorsFragment) frag).setContentTopClearance(actionBarSize);
