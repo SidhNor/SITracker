@@ -63,8 +63,12 @@ public class UpdateStatusNotificationReceiver extends BroadcastReceiver {
     private void sendNotification(int number, List<String> updatedAuthorNames, @NotNull Context context) {
 
         NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
-        for (String updateAuthorName : updatedAuthorNames) {
-            inboxStyle.addLine(updateAuthorName);
+        int maxLines = 4;
+        if (updatedAuthorNames.size() < maxLines) {
+            maxLines = updatedAuthorNames.size();
+        }
+        for (int i = 0; i < maxLines; i++) {
+            inboxStyle.addLine(updatedAuthorNames.get(i));
         }
         if (updatedAuthorNames.size() > 4) {
             inboxStyle.setSummaryText(context.getString(R.string.notification_more_summary, updatedAuthorNames.size() - 4));
