@@ -465,7 +465,7 @@ public class PublicationInfoFragment extends Fragment implements
             List<Pair<String, String>> results = new SamlibPublicationPageReader().readPublicationImageUrlsAndDescriptions(data);
             addImagesToList(results);
         } catch (HttpRequest.HttpRequestException e) {
-            AnalyticsHelper.getInstance().sendException("Could not load publication image list", e);
+            AnalyticsHelper.getInstance().sendException("Could not load publication image mRecyclerView", e);
             addImagesToList(new ArrayList<Pair<String, String>>());
         }
     }

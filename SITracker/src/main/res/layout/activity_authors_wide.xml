@@ -43,7 +43,7 @@
                 android:layout_width="@dimen/author_fragment_width"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                tools:layout="@layout/fragment_listview_with_empty"/>
+                tools:layout="@layout/fragment_myauthors"/>
 
             <fragment
                 android:id="@+id/fragment_publications"

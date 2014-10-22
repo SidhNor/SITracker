@@ -26,13 +26,14 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewStub;
-import android.widget.ListView;
 
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
@@ -46,6 +47,7 @@ import com.andrada.sitracker.tasks.UpdateAuthorsTask_;
 import com.andrada.sitracker.ui.MultiSelectionUtil;
 import com.andrada.sitracker.ui.SearchActivity_;
 import com.andrada.sitracker.ui.fragment.adapters.AuthorsAdapter;
+import com.andrada.sitracker.ui.widget.DividerItemDecoration;
 import com.andrada.sitracker.util.AnalyticsHelper;
 
 import org.androidannotations.annotations.AfterViews;
@@ -62,7 +64,8 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -71,14 +74,13 @@ import de.keyboardsurfer.android.widget.crouton.Configuration;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
-@EFragment(R.layout.fragment_listview_with_empty)
+@EFragment(R.layout.fragment_myauthors)
 @OptionsMenu(R.menu.authors_menu)
 public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListener,
         MultiSelectionUtil.MultiChoiceModeListener, View.OnClickListener {
 
-    private final ArrayList<Long> mSelectedAuthors = new ArrayList<Long>();
-    @ViewById
-    ListView list;
+    @ViewById(R.id.authors_list)
+    RecyclerView mRecyclerView;
     @ViewById
     ViewStub empty;
     @Bean
@@ -90,6 +92,9 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
     @InstanceState
     boolean mIsUpdating = false;
 
+    /**
+     * Saved instance state for adapter multiselected authors
+     */
     @Nullable
     @InstanceState
     long[] checkedItems;
@@ -115,13 +120,6 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
         setStartupSelected();
     }
 
-    @UiThread(delay = 100)
-    void setStartupSelected() {
-        // Set the item as checked to be highlighted
-        adapter.setSelectedItem(currentAuthorIndex);
-        adapter.notifyDataSetChanged();
-    }
-
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -132,14 +130,21 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
         mMultiSelectionController = null;
     }
 
-    //endregion
-
     @Override
     public void onCreateOptionsMenu(@NotNull Menu menu, MenuInflater inflater) {
         if (mIsUpdating) {
             menu.removeItem(R.id.action_refresh);
         }
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    //endregion
+
+    @UiThread(delay = 100)
+    void setStartupSelected() {
+        // Set the item as checked to be highlighted
+        adapter.setSelectedItem(currentAuthorIndex);
+        adapter.notifyDataSetChanged();
     }
 
     //region Menu item tap handlers
@@ -151,7 +156,7 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
 
     @OptionsItem(R.id.action_refresh)
     void menuRefreshSelected() {
-        if (!mIsUpdating && adapter.getCount() > 0) {
+        if (!mIsUpdating && adapter.getItemCount() > 0) {
             final NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
             if (activeNetwork != null && activeNetwork.isConnected()) {
                 Intent updateIntent = new Intent(getActivity(), UpdateAuthorsTask_.class);
@@ -204,22 +209,26 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
 
     @AfterViews
     void bindAdapter() {
-        list.setAdapter(adapter);
+        mRecyclerView.setAdapter(adapter);
+        RecyclerView.ItemDecoration itemDecoration =
+                new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST);
+        mRecyclerView.addItemDecoration(itemDecoration);
+
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        //mRecyclerView.setHasFixedSize(true);
         mMultiSelectionController = MultiSelectionUtil.attachMultiSelectionController(
-                list,
+                mRecyclerView,
                 (ActionBarActivity) getActivity(),
                 this);
-        //ActionMode.setMultiChoiceMode(list, getActivity(), this);
-        list.setBackgroundResource(R.drawable.authors_list_background);
-        empty.setLayoutResource(R.layout.empty_authors);
-        list.setEmptyView(empty);
+        mRecyclerView.setBackgroundResource(R.drawable.authors_list_background);
+        //empty.setLayoutResource(R.layout.empty_authors);
         mMultiSelectionController.tryRestoreInstanceState(checkedItems);
     }
 
     @ItemClick
     public void listItemClicked(int position) {
         // Notify the parent activity of selected item
-        currentAuthorIndex = list.getItemIdAtPosition(position);
+        currentAuthorIndex = mRecyclerView.getAdapter().getItemId(position);
         // Set the item as checked to be highlighted
         adapter.setSelectedItem(currentAuthorIndex);
         adapter.notifyDataSetChanged();
@@ -288,23 +297,17 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
     @Override
     public void onItemCheckedStateChanged(@NotNull ActionMode mode,
                                           int position, long id, boolean checked) {
-        if (checked) {
-            mSelectedAuthors.add(((Author) adapter.getItem(position)).getId());
-        } else {
-            mSelectedAuthors.remove(((Author) adapter.getItem(position)).getId());
-        }
-        int numSelectedAuthors = mSelectedAuthors.size();
+        int numSelectedAuthors = adapter.getSelectedItemCount();
         mode.setTitle(getResources().getQuantityString(
                 R.plurals.authors_selected,
                 numSelectedAuthors, numSelectedAuthors));
-        checkedItems = ArrayUtils.toPrimitive(mSelectedAuthors.toArray(new Long[mSelectedAuthors.size()]));
+        checkedItems = adapter.getSelectedItemsIds();
     }
 
     @Override
     public boolean onCreateActionMode(@NotNull ActionMode mode, Menu menu) {
         MenuInflater inflater = mode.getMenuInflater();
         inflater.inflate(R.menu.context_authors, menu);
-        mSelectedAuthors.clear();
         return true;
     }
 
@@ -316,6 +319,7 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
     @Override
     public boolean onActionItemClicked(@NotNull ActionMode mode, @NotNull MenuItem item) {
         mode.finish();
+        List<Long> mSelectedAuthors = Arrays.asList(ArrayUtils.toObject(adapter.getSelectedItemsIds()));
         if (item.getItemId() == R.id.action_remove) {
             AnalyticsHelper.getInstance().sendEvent(
                     Constants.GA_ADMIN_CATEGORY,
@@ -336,7 +340,7 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
             bm.dataChanged();
             return true;
         } else if (item.getItemId() == R.id.action_open_authors_browser) {
-            for (int i = 0; i < adapter.getCount(); i++) {
+            for (int i = 0; i < adapter.getItemCount(); i++) {
                 if (mSelectedAuthors.contains(adapter.getItemId(i))) {
                     Intent intent = new Intent(Intent.ACTION_VIEW);
                     intent.setData(Uri.parse(((Author) adapter.getItem(i)).getUrl()));
@@ -367,8 +371,8 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
     }
 
     public void onEvent(AuthorSelectedEvent event) {
-        if (event.isDefault && list != null) {
-            list.smoothScrollToPosition(0);
+        if (event.isDefault && mRecyclerView != null) {
+            mRecyclerView.smoothScrollToPosition(0);
         }
     }
 
@@ -413,14 +417,14 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
         return adapter;
     }
 
-    public ListView getListView() {
-        return list;
+    public RecyclerView getListView() {
+        return mRecyclerView;
     }
 
     public void setContentTopClearance(int clearance) {
-        if (list != null) {
-            list.setPadding(list.getPaddingLeft(), clearance,
-                    list.getPaddingRight(), list.getPaddingBottom());
+        if (mRecyclerView != null) {
+            mRecyclerView.setPadding(mRecyclerView.getPaddingLeft(), clearance,
+                    mRecyclerView.getPaddingRight(), mRecyclerView.getPaddingBottom());
             adapter.notifyDataSetChanged();
         }
     }

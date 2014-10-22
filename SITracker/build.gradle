@@ -30,6 +30,8 @@ dependencies {
     compile 'org.jetbrains:annotations:13.0'
     compile 'com.android.support:support-v4:21.0.0'
     compile 'com.android.support:appcompat-v7:21.0.0'
+    compile 'com.android.support:cardview-v7:21.0.0'
+    compile 'com.android.support:recyclerview-v7:21.0.0'
     compile 'com.google.android.gms:play-services:6.1.11'
     apt 'org.androidannotations:androidannotations:3.1'
     compile 'org.androidannotations:androidannotations-api:3.1'
@@ -73,19 +75,18 @@ android {
         def versionMajor = versionProps['VERSION_MAJOR'].toInteger()
         def versionMinor = versionProps['VERSION_MINOR'].toInteger()
         def versionPatch = versionProps['VERSION_PATCH'].toInteger() + value
-        def versionBuildLong = Long.parseLong(versionProps['VERSION_BUILD'].toString(), 16) + 1
-        def versionBuild = Long.toHexString(versionBuildLong)
+        def versionBuild = versionProps['VERSION_BUILD'].toLong() + 1
         def version_Code = versionProps['VERSION_CODE'].toInteger() + value
 
         versionProps['VERSION_PATCH'] = versionPatch.toString()
-        versionProps['VERSION_BUILD'] = versionBuild
+        versionProps['VERSION_BUILD'] = versionBuild.toString()
         versionProps['VERSION_CODE'] = version_Code.toString()
 
         versionProps.store(versionPropsFile.newWriter(), null)
 
         defaultConfig {
             versionCode version_Code
-            versionName "${versionMajor}.${versionMinor}.${versionPatch} (${versionBuild})"
+            versionName "${versionMajor}.${versionMinor}.${versionPatch}.${versionBuild}"
             minSdkVersion 15
             targetSdkVersion 21
             applicationId 'com.andrada.sitracker'

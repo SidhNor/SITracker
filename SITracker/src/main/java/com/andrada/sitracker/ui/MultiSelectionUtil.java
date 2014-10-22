@@ -17,18 +17,17 @@
 package com.andrada.sitracker.ui;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
+import android.support.v7.widget.RecyclerView;
 import android.util.Pair;
-import android.util.SparseBooleanArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AbsListView;
-import android.widget.Adapter;
-import android.widget.AdapterView;
-import android.widget.ListView;
+
+import com.andrada.sitracker.ui.fragment.adapters.MultiSelectionRecyclerAdapter;
+import com.andrada.sitracker.ui.widget.RecyclerItemClickListener;
+import com.andrada.sitracker.ui.widget.RecyclerLongTapListener;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -36,13 +35,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashSet;
 
 /**
- * Utilities for handling multiple selection in list views. Contains functionality similar to
- * {@link AbsListView#CHOICE_MODE_MULTIPLE_MODAL} but that works with {@link ActionBarActivity} and
- * backward-compatible action bars.
+ * Utilities for handling multiple selection in Recycler views. Contains functionality similar to
+ * {@link AbsListView#CHOICE_MODE_MULTIPLE_MODAL} but that works with {@link ActionBarActivity}.
  */
 public class MultiSelectionUtil {
     @NotNull
-    public static Controller attachMultiSelectionController(@NotNull final ListView listView,
+    public static Controller attachMultiSelectionController(@NotNull final RecyclerView listView,
                                                             @NotNull final ActionBarActivity activity,
                                                             @NotNull final MultiChoiceModeListener listener) {
         return Controller.attach(listView, activity, listener);
@@ -60,21 +58,14 @@ public class MultiSelectionUtil {
                                               int position, long id, boolean checked);
     }
 
-    public static class Controller implements
-            ActionMode.Callback,
-            AdapterView.OnItemClickListener,
-            AdapterView.OnItemLongClickListener {
-        private final Handler mHandler = new Handler();
-        private final Runnable mSetChoiceModeNoneRunnable = new Runnable() {
-            @Override
-            public void run() {
-                mListView.setChoiceMode(AbsListView.CHOICE_MODE_NONE);
-            }
-        };
+    public static class Controller implements ActionMode.Callback {
+
         @Nullable
         private ActionMode mActionMode;
         @NotNull
-        private ListView mListView;
+        private RecyclerView mRecyclerView;
+        @NotNull
+        private MultiSelectionRecyclerAdapter mAdapter;
         @NotNull
         private ActionBarActivity mActivity;
         @NotNull
@@ -82,24 +73,45 @@ public class MultiSelectionUtil {
         @Nullable
         private HashSet<Long> mTempIdsToCheckOnRestore;
         private HashSet<Pair<Integer, Long>> mItemsToCheck;
-        private AdapterView.OnItemClickListener mOldItemClickListener;
+        private RecyclerLongTapListener mLongTapListener;
+        private RecyclerItemClickListener mMultiselectionTouchListener;
+
 
         private Controller() {
+
         }
 
         @NotNull
-        public static Controller attach(@NotNull ListView listView, @NotNull ActionBarActivity activity,
+        public static Controller attach(@NotNull RecyclerView recyclerView, @NotNull ActionBarActivity activity,
                                         @NotNull MultiChoiceModeListener listener) {
-            if (listView.getChoiceMode() == AbsListView.CHOICE_MODE_MULTIPLE ||
-                    listView.getChoiceMode() == AbsListView.CHOICE_MODE_MULTIPLE_MODAL) {
-                throw new IllegalArgumentException("ListView CHOICE_MODE_MULTIPLE or CHOICE_MODE_MULTIPLE_MODAL is not allowed. Everything is handled by this class.");
-            }
             Controller controller = new Controller();
-            controller.mListView = listView;
+            controller.mRecyclerView = recyclerView;
+            if (!(recyclerView.getAdapter() instanceof MultiSelectionRecyclerAdapter)) {
+                throw new IllegalArgumentException("You can use multiselect only with a MultiSelectionRecyclerAdapter");
+            }
+            controller.mAdapter = (MultiSelectionRecyclerAdapter) recyclerView.getAdapter();
             controller.mActivity = activity;
             controller.mListener = listener;
-            listView.setOnItemLongClickListener(controller);
+            controller.attachDefaultListener();
             return controller;
+        }
+
+        private void attachDefaultListener() {
+            this.mLongTapListener = new RecyclerLongTapListener(mActivity, mRecyclerView, new RecyclerLongTapListener.OnItemLongTapListener() {
+                @Override
+                public void onItemLongTap(View view, int position) {
+                    if (mActionMode != null) {
+                        return;
+                    }
+                    mActionMode = mActivity.startSupportActionMode(Controller.this);
+                    long id = mRecyclerView.getAdapter().getItemId(position);
+                    mItemsToCheck = new HashSet<Pair<Integer, Long>>();
+                    mItemsToCheck.add(new Pair<Integer, Long>(position, id));
+
+                    mAdapter.toggleSelection(position);
+                }
+            });
+            mRecyclerView.addOnItemTouchListener(mLongTapListener);
         }
 
         private void readInstanceState(@Nullable long[] itemIds) {
@@ -121,16 +133,20 @@ public class MultiSelectionUtil {
             if (mActionMode != null) {
                 mActionMode.finish();
             }
+            if (mRecyclerView != null) {
+                mRecyclerView.removeOnItemTouchListener(mLongTapListener);
+                mRecyclerView.removeOnItemTouchListener(mMultiselectionTouchListener);
+            }
         }
 
         public void tryRestoreInstanceState() {
-            if (mTempIdsToCheckOnRestore == null || mListView.getAdapter() == null) {
+            if (mTempIdsToCheckOnRestore == null || mRecyclerView.getAdapter() == null) {
                 return;
             }
 
             boolean idsFound = false;
-            Adapter adapter = mListView.getAdapter();
-            for (int pos = adapter.getCount() - 1; pos >= 0; pos--) {
+            RecyclerView.Adapter adapter = mRecyclerView.getAdapter();
+            for (int pos = adapter.getItemCount() - 1; pos >= 0; pos--) {
                 if (mTempIdsToCheckOnRestore.contains(adapter.getItemId(pos))) {
                     idsFound = true;
                     if (mItemsToCheck == null) {
@@ -150,9 +166,8 @@ public class MultiSelectionUtil {
         }
 
         public boolean saveInstanceState(@NotNull Bundle outBundle) {
-            // TODO: support non-stable IDs by persisting positions instead of IDs
-            if (mActionMode != null && mListView.getAdapter().hasStableIds()) {
-                long[] checkedIds = mListView.getCheckedItemIds();
+            if (mActionMode != null) {
+                long[] checkedIds = mAdapter.getSelectedItemsIds();
                 outBundle.putLongArray(getStateKey(), checkedIds);
                 return true;
             }
@@ -162,21 +177,29 @@ public class MultiSelectionUtil {
 
         @NotNull
         private String getStateKey() {
-            return MultiSelectionUtil.class.getSimpleName() + "_" + mListView.getId();
+            return MultiSelectionUtil.class.getSimpleName() + "_" + mRecyclerView.getId();
         }
 
         @Override
         public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
             if (mListener.onCreateActionMode(actionMode, menu)) {
                 mActionMode = actionMode;
-                mOldItemClickListener = mListView.getOnItemClickListener();
-                mListView.setOnItemClickListener(Controller.this);
-                mListView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
-                mHandler.removeCallbacks(mSetChoiceModeNoneRunnable);
+                mMultiselectionTouchListener = new RecyclerItemClickListener(mActivity, new RecyclerItemClickListener.OnItemClickListener() {
+                    public void onItemClick(View view, int position) {
+                        mAdapter.toggleSelection(position);
+                        mListener.onItemCheckedStateChanged(mActionMode, position,
+                                mRecyclerView.getAdapter().getItemId(position), true);
+
+                        if (mAdapter.getSelectedItemCount() <= 0 && mActionMode != null) {
+                            mActionMode.finish();
+                        }
+                    }
+                });
+                mRecyclerView.addOnItemTouchListener(mMultiselectionTouchListener);
 
                 if (mItemsToCheck != null) {
                     for (Pair<Integer, Long> posAndId : mItemsToCheck) {
-                        mListView.setItemChecked(posAndId.first, true);
+                        mAdapter.toggleSelection(posAndId.first);
                         mListener.onItemCheckedStateChanged(mActionMode, posAndId.first,
                                 posAndId.second, true);
                     }
@@ -203,46 +226,9 @@ public class MultiSelectionUtil {
         @Override
         public void onDestroyActionMode(ActionMode actionMode) {
             mListener.onDestroyActionMode(actionMode);
-            SparseBooleanArray checkedPositions = mListView.getCheckedItemPositions();
-            if (checkedPositions != null) {
-                for (int i = 0; i < checkedPositions.size(); i++) {
-                    mListView.setItemChecked(checkedPositions.keyAt(i), false);
-                }
-            }
-            mListView.setOnItemClickListener(mOldItemClickListener);
+            mAdapter.clearSelections();
+            mRecyclerView.removeOnItemTouchListener(mMultiselectionTouchListener);
             mActionMode = null;
-            mHandler.post(mSetChoiceModeNoneRunnable);
-        }
-
-        @Override
-        public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-            boolean checked = mListView.isItemChecked(position);
-            mListener.onItemCheckedStateChanged(mActionMode, position, id, checked);
-
-            int numChecked = 0;
-            SparseBooleanArray checkedItemPositions = mListView.getCheckedItemPositions();
-            if (checkedItemPositions != null) {
-                for (int i = 0; i < checkedItemPositions.size(); i++) {
-                    numChecked += checkedItemPositions.valueAt(i) ? 1 : 0;
-                }
-            }
-
-            if (numChecked <= 0) {
-                mActionMode.finish();
-            }
-        }
-
-        @Override
-        public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position,
-                                       long id) {
-            if (mActionMode != null) {
-                return false;
-            }
-
-            mItemsToCheck = new HashSet<Pair<Integer, Long>>();
-            mItemsToCheck.add(new Pair<Integer, Long>(position, id));
-            mActionMode = mActivity.startSupportActionMode(Controller.this);
-            return true;
         }
     }
 }

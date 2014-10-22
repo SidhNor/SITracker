@@ -35,7 +35,7 @@
             android:name="com.andrada.sitracker.ui.fragment.AuthorsFragment_"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:layout="@layout/fragment_listview_with_empty"/>
+            tools:layout="@layout/fragment_myauthors"/>
 
         <LinearLayout
             android:id="@+id/headerbar"

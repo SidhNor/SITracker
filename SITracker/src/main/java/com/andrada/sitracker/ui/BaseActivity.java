@@ -21,9 +21,6 @@ import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.animation.TypeEvaluator;
 import android.animation.ValueAnimator;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Rect;
@@ -35,6 +32,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.Menu;
@@ -48,12 +46,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.andrada.sitracker.BuildConfig;
-import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.ui.debug.DebugActionRunnerActivity;
-import com.andrada.sitracker.ui.fragment.AboutDialog;
 import com.andrada.sitracker.ui.widget.ScrimInsetsScrollView;
-import com.andrada.sitracker.util.AnalyticsHelper;
 import com.andrada.sitracker.util.LUtils;
 import com.andrada.sitracker.util.PlayServicesUtils;
 import com.andrada.sitracker.util.UIUtils;
@@ -96,7 +91,7 @@ public abstract class BaseActivity extends ActionBarActivity {
             R.drawable.ic_drawer_my_authors,  // My Authors
             R.drawable.ic_drawer_explore,  // Explore
             R.drawable.ic_drawer_new_pubs, // Map
-            R.drawable.ic_drawer_settings
+            0
     };
     // delay to launch nav drawer item, to allow close animation to play
     private static final int NAVDRAWER_LAUNCH_DELAY = 250;
@@ -244,17 +239,6 @@ public abstract class BaseActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         switch (id) {
-            case R.id.action_about:
-                AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_ABOUT_DIALOG);
-                FragmentManager fm = this.getFragmentManager();
-                FragmentTransaction ft = fm.beginTransaction();
-                Fragment prev = fm.findFragmentByTag(AboutDialog.FRAGMENT_TAG);
-                if (prev != null) {
-                    ft.remove(prev);
-                }
-                ft.addToBackStack(null);
-                new AboutDialog().show(ft, AboutDialog.FRAGMENT_TAG);
-                return true;
             case R.id.menu_debug:
                 if (BuildConfig.DEBUG) {
                     startActivity(new Intent(this, DebugActionRunnerActivity.class));
@@ -645,6 +629,42 @@ public abstract class BaseActivity extends ActionBarActivity {
                                 lastFvi == firstVisibleItem ? 0 : Integer.MAX_VALUE
                 );
                 lastFvi = firstVisibleItem;
+            }
+        });
+    }
+
+    protected void enableActionBarAutoHide(final RecyclerView recyclerView) {
+        initActionBarAutoHide();
+        recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            final static int ITEMS_THRESHOLD = 3;
+            int lastFvi = 0;
+
+            @Override
+            public void onScrollStateChanged(RecyclerView view, int scrollState) {
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int deltaY) {
+                super.onScrolled(recyclerView, dx, deltaY);
+                lastFvi += deltaY;
+
+                if (deltaY > mActionBarAutoHideSensivity) {
+                    deltaY = mActionBarAutoHideSensivity;
+                } else if (deltaY < -mActionBarAutoHideSensivity) {
+                    deltaY = -mActionBarAutoHideSensivity;
+                }
+
+                if (Math.signum(deltaY) * Math.signum(mActionBarAutoHideSignal) < 0) {
+                    // deltaY is a motion opposite to the accumulated signal, so reset signal
+                    mActionBarAutoHideSignal = deltaY;
+                } else {
+                    // add to accumulated signal
+                    mActionBarAutoHideSignal += deltaY;
+                }
+
+                boolean shouldShow = lastFvi <= mActionBarAutoHideMinY ||
+                        (mActionBarAutoHideSignal <= -mActionBarAutoHideSensivity);
+                autoShowOrHideActionBar(shouldShow);
             }
         });
     }

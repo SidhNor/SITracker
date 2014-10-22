@@ -17,9 +17,10 @@
 package com.andrada.sitracker.ui.fragment.adapters;
 
 import android.content.Context;
+import android.support.v7.widget.RecyclerView;
+import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 
 import com.andrada.sitracker.contracts.IsNewItemTappedListener;
 import com.andrada.sitracker.contracts.SIPrefs_;
@@ -50,7 +51,7 @@ import java.util.concurrent.Callable;
 import de.greenrobot.event.EventBus;
 
 @EBean
-public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListener {
+public class AuthorsAdapter extends MultiSelectionRecyclerAdapter<AuthorsAdapter.AuthorViewHolder> implements IsNewItemTappedListener {
 
     List<Author> authors = new ArrayList<Author>();
     long mNewAuthors;
@@ -63,6 +64,9 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
 
     @RootContext
     Context context;
+
+    private final SparseBooleanArray multiSelectedItems = new SparseBooleanArray();
+
     private int mSelectedItem = 0;
 
     private long mSelectedAuthorId = 0;
@@ -102,13 +106,17 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
 
 
     @Override
-    public int getCount() {
-        return authors.size();
+    public AuthorsAdapter.AuthorViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+        AuthorItemView authorsItemView = AuthorItemView_.build(context);
+        authorsItemView.setListener(this);
+        return new AuthorViewHolder(authorsItemView);
     }
 
     @Override
-    public Object getItem(int position) {
-        return authors.get(position);
+    public void onBindViewHolder(AuthorsAdapter.AuthorViewHolder authorItemView, int position) {
+        if (position < authors.size() && authorItemView.item != null) {
+            authorItemView.item.bind(authors.get(position), position == mSelectedItem);
+        }
     }
 
     @Override
@@ -116,20 +124,13 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
         return authors.get(position).getId();
     }
 
-    @Nullable
     @Override
-    public View getView(int position, @Nullable View convertView, ViewGroup parent) {
-        AuthorItemView authorsItemView;
-        if (convertView == null) {
-            authorsItemView = AuthorItemView_.build(context);
-            authorsItemView.setListener(this);
-        } else {
-            authorsItemView = (AuthorItemView) convertView;
-        }
-        if (position < authors.size()) {
-            authorsItemView.bind(authors.get(position), position == mSelectedItem);
-        }
-        return authorsItemView;
+    public int getItemCount() {
+        return authors.size();
+    }
+
+    public Object getItem(int position) {
+        return authors.get(position);
     }
 
     @Override
@@ -144,6 +145,46 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
         for (long authId : authorsToMarkAsRead) {
             dismissAuthor(this.getAuthorById(authId));
         }
+    }
+
+    @Override
+    public void toggleSelection(int pos) {
+        if (multiSelectedItems.get(pos, false)) {
+            multiSelectedItems.delete(pos);
+        } else {
+            multiSelectedItems.put(pos, true);
+        }
+        notifyItemChanged(pos);
+
+    }
+
+    @Override
+    public void clearSelections() {
+        multiSelectedItems.clear();
+        notifyDataSetChanged();
+
+    }
+
+    @Override
+    public int getSelectedItemCount() {
+        return multiSelectedItems.size();
+    }
+
+    @Override
+    public long[] getSelectedItemsIds() {
+        List<Long> items =
+                new ArrayList<Long>(multiSelectedItems.size());
+        for (int i = 0; i < multiSelectedItems.size(); i++) {
+            int position = multiSelectedItems.keyAt(i);
+            if (position >= 0 && position < authors.size()) {
+                items.add(getItemId(position));
+            }
+        }
+        long[] returnIds = new long[items.size()];
+        for (int i = 0; i < items.size(); i++) {
+            returnIds[i] = items.get(i);
+        }
+        return returnIds;
     }
 
     /**
@@ -244,5 +285,14 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
             }
         }
         return -1;
+    }
+
+    public static class AuthorViewHolder extends RecyclerView.ViewHolder {
+        public AuthorItemView item;
+
+        public AuthorViewHolder(AuthorItemView view) {
+            super(view);
+            item = view;
+        }
     }
 }

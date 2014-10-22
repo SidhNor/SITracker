@@ -17,10 +17,8 @@
 package com.andrada.sitracker.ui.components;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.SparseArray;
@@ -104,7 +102,6 @@ public class CollectionView extends ListView {
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
     private void doFadeInAnimation() {
         setAlpha(0);
         animate().setDuration(250).alpha(1);
