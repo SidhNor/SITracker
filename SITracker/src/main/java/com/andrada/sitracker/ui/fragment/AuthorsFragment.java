@@ -215,11 +215,9 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
         mRecyclerView.addItemDecoration(itemDecoration);
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        //mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setHasFixedSize(true);
         mMultiSelectionController = MultiSelectionUtil.attachMultiSelectionController(
-                mRecyclerView,
-                (ActionBarActivity) getActivity(),
-                this);
+                mRecyclerView, (ActionBarActivity) getActivity(), this);
         mRecyclerView.setBackgroundResource(R.drawable.authors_list_background);
         //empty.setLayoutResource(R.layout.empty_authors);
         mMultiSelectionController.tryRestoreInstanceState(checkedItems);

@@ -22,17 +22,16 @@
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/authors_list"
-        android:scrollbars="vertical"
-        android:listSelector="@drawable/authors_list_selector"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/authors_list_background"
-        android:cacheColorHint="@color/light_color_hint"/>
+        android:cacheColorHint="@color/light_color_hint"
+        android:scrollbars="vertical"/>
 
     <ViewStub
         android:id="@+id/empty"
-        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center"/>
+        android:layout_gravity="center"
+        android:visibility="gone"/>
 </FrameLayout>
