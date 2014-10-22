@@ -116,6 +116,7 @@ public class AuthorsAdapter extends MultiSelectionRecyclerAdapter<AuthorsAdapter
     public void onBindViewHolder(AuthorsAdapter.AuthorViewHolder authorItemView, int position) {
         if (position < authors.size() && authorItemView.item != null) {
             authorItemView.item.bind(authors.get(position), position == mSelectedItem);
+            authorItemView.item.setChecked(multiSelectedItems.get(position, false));
         }
     }
 
@@ -155,7 +156,15 @@ public class AuthorsAdapter extends MultiSelectionRecyclerAdapter<AuthorsAdapter
             multiSelectedItems.put(pos, true);
         }
         notifyItemChanged(pos);
+    }
 
+    public void toggleSelection(int pos, boolean value) {
+        if (value) {
+            multiSelectedItems.put(pos, true);
+        } else if (multiSelectedItems.get(pos, false)) {
+            multiSelectedItems.delete(pos);
+        }
+        notifyItemChanged(pos);
     }
 
     @Override

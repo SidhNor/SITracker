@@ -22,6 +22,8 @@ public abstract class MultiSelectionRecyclerAdapter<T extends RecyclerView.ViewH
 
     public abstract void toggleSelection(int pos);
 
+    public abstract void toggleSelection(int pos, boolean value);
+
     public abstract void clearSelections();
 
     public abstract int getSelectedItemCount();

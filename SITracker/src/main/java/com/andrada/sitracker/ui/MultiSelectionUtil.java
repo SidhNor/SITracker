@@ -103,12 +103,10 @@ public class MultiSelectionUtil {
                     if (mActionMode != null) {
                         return;
                     }
-                    mActionMode = mActivity.startSupportActionMode(Controller.this);
                     long id = mRecyclerView.getAdapter().getItemId(position);
                     mItemsToCheck = new HashSet<Pair<Integer, Long>>();
                     mItemsToCheck.add(new Pair<Integer, Long>(position, id));
-
-                    mAdapter.toggleSelection(position);
+                    mActionMode = mActivity.startSupportActionMode(Controller.this);
                 }
             });
             mRecyclerView.addOnItemTouchListener(mLongTapListener);
@@ -199,7 +197,7 @@ public class MultiSelectionUtil {
 
                 if (mItemsToCheck != null) {
                     for (Pair<Integer, Long> posAndId : mItemsToCheck) {
-                        mAdapter.toggleSelection(posAndId.first);
+                        mAdapter.toggleSelection(posAndId.first, true);
                         mListener.onItemCheckedStateChanged(mActionMode, posAndId.first,
                                 posAndId.second, true);
                     }
