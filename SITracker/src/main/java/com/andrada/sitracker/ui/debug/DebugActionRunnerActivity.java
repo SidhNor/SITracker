@@ -16,7 +16,7 @@
 
 package com.andrada.sitracker.ui.debug;
 
-import android.support.v4.app.Fragment;
+import android.app.Fragment;
 
 import com.andrada.sitracker.ui.SimpleSinglePaneActivity;
 

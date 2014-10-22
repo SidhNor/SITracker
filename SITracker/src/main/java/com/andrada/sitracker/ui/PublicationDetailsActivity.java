@@ -17,10 +17,10 @@
 package com.andrada.sitracker.ui;
 
 import android.annotation.SuppressLint;
+import android.app.Fragment;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.Window;

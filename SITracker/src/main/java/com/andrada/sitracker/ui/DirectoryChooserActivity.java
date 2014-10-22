@@ -17,9 +17,9 @@
 package com.andrada.sitracker.ui;
 
 import android.app.ActionBar;
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
 import android.view.MenuItem;
 
 import com.andrada.sitracker.R;
@@ -65,7 +65,7 @@ public class DirectoryChooserActivity extends BaseActivity implements
         }
 
         if (savedInstanceState == null) {
-            final FragmentManager fragmentManager = getSupportFragmentManager();
+            final FragmentManager fragmentManager = getFragmentManager();
             final DirectoryChooserFragment fragment = DirectoryChooserFragment.newInstance(newDirName, initialDir, isDirectoryChooser);
             fragmentManager.beginTransaction().add(R.id.fp_main, fragment)
                     .commit();

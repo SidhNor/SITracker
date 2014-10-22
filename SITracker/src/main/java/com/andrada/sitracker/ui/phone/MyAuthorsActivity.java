@@ -16,8 +16,8 @@
 
 package com.andrada.sitracker.ui.phone;
 
+import android.app.Fragment;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.ui.BaseActivity;
@@ -46,7 +46,7 @@ public class MyAuthorsActivity extends BaseActivity {
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
 
-        AuthorsFragment frag = (AuthorsFragment) getSupportFragmentManager().findFragmentById(
+        AuthorsFragment frag = (AuthorsFragment) getFragmentManager().findFragmentById(
                 R.id.fragment_authors);
         enableActionBarAutoHide(frag.getListView());
         registerHideableHeaderView(findViewById(R.id.headerbar));
@@ -69,7 +69,7 @@ public class MyAuthorsActivity extends BaseActivity {
         super.onResume();
         invalidateOptionsMenu();
 
-        Fragment frag = getSupportFragmentManager().findFragmentById(R.id.fragment_authors);
+        Fragment frag = getFragmentManager().findFragmentById(R.id.fragment_authors);
         if (frag != null) {
             // configure fragment's top clearance to take our overlaid controls (Action Bar) into account.
             int actionBarSize = UIUtils.calculateActionBarSize(this);

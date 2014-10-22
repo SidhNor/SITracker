@@ -18,13 +18,13 @@ package com.andrada.sitracker.ui;
 
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.app.backup.BackupManager;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SlidingPaneLayout;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -226,7 +226,7 @@ public class HomeActivity extends BaseActivity implements DirectoryChooserFragme
         super.onPause();
         slidingPane.setPanelSlideListener(null);
         unregisterReceiver(updateStatusReceiver);
-        getSupportFragmentManager().removeOnBackStackChangedListener(backStackListener);
+        getFragmentManager().removeOnBackStackChangedListener(backStackListener);
     }
 
     @Override
@@ -253,7 +253,7 @@ public class HomeActivity extends BaseActivity implements DirectoryChooserFragme
         }
         mAuthorsFragment.getAdapter().reloadAuthors();
         slidingPane.setPanelSlideListener(slidingPaneListener);
-        getSupportFragmentManager().addOnBackStackChangedListener(backStackListener);
+        getFragmentManager().addOnBackStackChangedListener(backStackListener);
 
         if (UpdateServiceHelper.isServiceCurrentlyRunning(getApplicationContext())) {
             globalProgress.setVisibility(View.VISIBLE);
@@ -286,13 +286,13 @@ public class HomeActivity extends BaseActivity implements DirectoryChooserFragme
     @OptionsItem(R.id.action_export)
     void menuExportSelected() {
         AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_EXPORT_DIALOG);
-        mDialog.show(getSupportFragmentManager(), null);
+        mDialog.show(getFragmentManager(), null);
     }
 
     @OptionsItem(R.id.action_about)
     void menuAboutSelected() {
         AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_ABOUT_DIALOG);
-        FragmentManager fm = this.getSupportFragmentManager();
+        FragmentManager fm = this.getFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         Fragment prev = fm.findFragmentByTag(AboutDialog.FRAGMENT_TAG);
         if (prev != null) {

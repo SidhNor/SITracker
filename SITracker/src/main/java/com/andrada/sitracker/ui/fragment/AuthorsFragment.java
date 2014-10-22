@@ -16,14 +16,14 @@
 
 package com.andrada.sitracker.ui.fragment;
 
+import android.app.Activity;
+import android.app.Fragment;
 import android.app.backup.BackupManager;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
 import android.view.LayoutInflater;
@@ -187,7 +187,7 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
             timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    FragmentActivity activity = getActivity();
+                    Activity activity = getActivity();
                     if (activity != null) {
                         activity.runOnUiThread(new Runnable() {
                             @Override
