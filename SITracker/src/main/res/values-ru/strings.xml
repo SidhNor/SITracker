@@ -64,7 +64,7 @@
     <string name="cannot_download_publication">Не удалось скачать произведение. Проверьте Ваше соединение.</string>
     <string name="publication_error_url">Не удалось скачать произведение. У произведения неправильная ссылка. Единственное что может помочь в этом случае: удаление и повторное добавление автора.</string>
     <string name="publication_error_save">Не удалось сохранить произведение. Проверьте если у вас достаточно свободного места на устройстве.</string>
-    <string name="publication_error_storage">Не удалось сохранить произведение. Ваше устройство хранения данных недоступно.</string>
+    <string name="publication_error_storage">Не удалось сохранить произведение. Ваше устройство хранения данных недоступно. Перепроверьте папку для скачивания в настройках.</string>
     <string name="publication_error_unknown">Не удалось скачать произведение. Непредвиденная ошибка.</string>
     <string name="publications_downloading">Качаем произведение…</string>
 
