@@ -384,7 +384,10 @@ public class PublicationInfoFragment extends Fragment implements
         if (mIsDownloading) {
             showPublicationState(PublicationState.DOWNLOADING, false);
         } else {
-            boolean isRefreshable = ShareHelper.shouldRefreshPublication(getActivity(), currentRecord, prefs.downloadFolder().get());
+            boolean isRefreshable = false;
+            if (getActivity() != null) {
+                isRefreshable = ShareHelper.shouldRefreshPublication(getActivity(), currentRecord, prefs.downloadFolder().get());
+            }
             if (isRefreshable) {
                 showPublicationState(PublicationState.WAITING_REFRESH, false);
             } else {

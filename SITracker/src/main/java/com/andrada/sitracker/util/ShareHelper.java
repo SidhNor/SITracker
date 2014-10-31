@@ -235,7 +235,7 @@ public final class ShareHelper {
      * @param reader Buffered reader of content to save
      * @return true if save was successful, false otherwise
      */
-    public static boolean saveHtmlPageToFile(@NotNull File file, @NotNull BufferedReader reader) {
+    public static boolean saveHtmlPageToFile(@NotNull File file, @NotNull BufferedReader reader) throws SharePublicationException {
         boolean result = true;
 
         BufferedOutputStream bs = null;
@@ -253,7 +253,8 @@ public final class ShareHelper {
 
             if (str.length == 0) {
                 //No information at all. Probably something is wrong - just fail
-                return false;
+                throw new SharePublicationException(
+                        SharePublicationException.SharePublicationErrors.COULD_NOT_LOAD);
             }
             bs.write("<html><head><meta http-equiv=\"Content-Type\" content=\"text/html;charset=UTF-8\">".getBytes(charSet));
             if (str.length > 1) {

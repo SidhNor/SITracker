@@ -228,6 +228,17 @@
 
     <string name="change_log"><![CDATA[
         <section>
+            <header><h2>Version 1.3.3</h2></header>
+            <p>Small bugfix release.</p>
+            <ul>
+                <li>Fixed crash when downloading publication without a title or some other anomalies.</li>
+                <li>Fixed notification display when more then 4 authors were updated in a single session.</li>
+                <li>Fixed some more crashes when opening large publications on low memory devices.</li>
+                <li>Fixed crash when viewing publication info.</li>
+            </ul>
+        </section>
+
+        <section>
             <header><h2>Version 1.3.2</h2></header>
             <p>Small feature/bugfix release.</p>
             <ul>

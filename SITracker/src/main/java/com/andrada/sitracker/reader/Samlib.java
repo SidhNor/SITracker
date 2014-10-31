@@ -189,8 +189,12 @@ class Samlib implements SiteStrategy {
 
         String authImgUrl = reader.getAuthorImageUrl(author.getUrl());
         String authDescription = reader.getAuthorDescription();
-        if (authImgUrl != null) author.setAuthorImageUrl(authImgUrl);
-        if (authDescription != null) author.setAuthorDescription(authDescription);
+        if (authImgUrl != null) {
+            author.setAuthorImageUrl(authImgUrl);
+        }
+        if (authDescription != null) {
+            author.setAuthorDescription(authDescription);
+        }
 
         authorDao.update(author);
 
