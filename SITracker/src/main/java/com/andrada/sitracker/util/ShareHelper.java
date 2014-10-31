@@ -235,7 +235,7 @@ public final class ShareHelper {
      * @param reader Buffered reader of content to save
      * @return true if save was successful, false otherwise
      */
-    public static boolean saveHtmlPageToFile(@NotNull File file, @NotNull BufferedReader reader) {
+    public static boolean saveHtmlPageToFile(@NotNull File file, @NotNull BufferedReader reader) throws SharePublicationException {
         boolean result = true;
 
         BufferedOutputStream bs = null;
@@ -250,10 +250,23 @@ public final class ShareHelper {
 
             line = reader.readLine();
             String[] str = line.split("\\|");
+
+            if (str.length == 0) {
+                //No information at all. Probably something is wrong - just fail
+                throw new SharePublicationException(
+                        SharePublicationException.SharePublicationErrors.COULD_NOT_LOAD);
+            }
             bs.write("<html><head><meta http-equiv=\"Content-Type\" content=\"text/html;charset=UTF-8\">".getBytes(charSet));
-            bs.write(("<title>" + str[1] + "</title></head><body>").getBytes(charSet));
+            if (str.length > 1) {
+                bs.write(("<title>" + str[1] + "</title></head><body>").getBytes(charSet));
+            } else {
+                bs.write(("</head><body>").getBytes(charSet));
+            }
             bs.write(("<center><h3>" + str[0] + "</h3></center><br>").getBytes(charSet));
-            bs.write(("<center><h1>" + str[1] + "</h1></center>").getBytes(charSet));
+            if (str.length > 1) {
+                bs.write(("<center><h1>" + str[1] + "</h1></center>").getBytes(charSet));
+            }
+
 
             while ((line = reader.readLine()) != null) {
                 bs.write(line.getBytes(charSet));

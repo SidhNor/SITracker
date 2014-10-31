@@ -22,6 +22,7 @@ import com.andrada.sitracker.db.beans.Publication;
 import com.andrada.sitracker.exceptions.AddAuthorException;
 import com.andrada.sitracker.util.SamlibPageHelper;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -141,19 +142,16 @@ public class SamlibAuthorPageReader implements AuthorPageReader {
 
 
     private String sanitizeHTML(String value) {
-        value = value.replaceAll("(?i)<br />", "<br>")
-                .replaceAll("(?i)&bull;?", " * ")
-                .replaceAll("(?i)&lsaquo;?", "<")
-                .replaceAll("(?i)&rsaquo;?", ">")
-                .replaceAll("(?i)&trade;?", "(tm)")
-                .replaceAll("(?i)&frasl;?", "/")
-                .replaceAll("(?i)&lt;?", "<")
-                .replaceAll("(?i)&gt;?", ">")
-                .replaceAll("(?i)&copy;?", "(c)")
-                .replaceAll("(?i)&reg;?", "(r)")
-                .replaceAll("(?i)&nbsp;?", " ")
-                .replaceAll("(?si)[\\r\\n\\x85\\f]+", "")
-                .replaceAll("(?i)&quot;?", "\"");
+        String[] tokensToReplace = new String[]{
+                "<br />", "<BR />", "&bull;", "&lsaquo;", "&rsaquo;", "&trade;", "&frasl;", "&lt;",
+                "&LT;", "&gt;", "&GT;", "&copy;", "&COPY;", "&nbsp;", "&NBSP;", "&quot;", "\r", "\n", "\f"
+        };
+        String[] replacements = new String[]{
+                "<br>", "<br>", " * ", "<", ">", "(tm)", "/", "<", "<", ">", ">", "(c)", "(c)",
+                " ", " ", "\"", "", "", ""
+        };
+
+        value = StringUtils.replaceEachRepeatedly(value, tokensToReplace, replacements);
         return value;
     }
 
