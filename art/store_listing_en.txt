@@ -12,19 +12,8 @@ If you encounter any issue, please feel free to report it.
 
 What's new:
 
-• Search is now divided in 2 categories: by author name and by keyword. Keyword search looks at author name, publicaiton name, annotations, or anything else.
-• Fixed typos in russian translation.
-• Restore author add confirmation message.
-• Changed the style of notifications. Now, for version >= 4.1 a list of update authors will show up directly in the notification view.
-• Fixed a crash when opening large publications on low memory devices.
-• Added one time showcase view for publication ratings.
-
-
-
-
-
-
-
-
-
+• Fixed crash when downloading publication without a title or some other anomalies.
+• Fixed notification display when more then 4 authors were updated in a single session.
+• Fixed some more crashes when opening large publications on low memory devices.
+• Fixed crash when viewing publication info.
 
