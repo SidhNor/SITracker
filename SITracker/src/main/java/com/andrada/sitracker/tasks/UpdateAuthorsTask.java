@@ -26,6 +26,7 @@ import android.net.NetworkInfo;
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.contracts.SIPrefs_;
 import com.andrada.sitracker.db.beans.Author;
+import com.andrada.sitracker.db.dao.AuthorDao;
 import com.andrada.sitracker.db.manager.SiDBHelper;
 import com.andrada.sitracker.reader.SiteDetector;
 import com.andrada.sitracker.reader.SiteStrategy;
@@ -84,7 +85,13 @@ public class UpdateAuthorsTask extends IntentService {
         this.updatedAuthors = 0;
         ArrayList<String> authorsUpdatedInThisSession = new ArrayList<String>();
         try {
-            List<Author> authors = siDBHelper.getAuthorDao().queryForAll();
+            AuthorDao dao = siDBHelper.getAuthorDao();
+            if (dao == null) {
+                //Something went wrong.
+                broadCastResult(false, null);
+                return;
+            }
+            List<Author> authors = dao.queryForAll();
             for (Author author : authors) {
                 boolean useWiFiOnly = prefs.updateOnlyWiFi().get();
                 if (this.isConnected() &&
