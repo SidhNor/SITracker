@@ -19,19 +19,27 @@ package com.andrada.sitracker.ui.phone;
 import android.app.Fragment;
 import android.os.Bundle;
 
+import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
+import com.andrada.sitracker.tasks.ExportAuthorsTask;
 import com.andrada.sitracker.ui.BaseActivity;
 import com.andrada.sitracker.ui.fragment.AuthorsFragment;
+import com.andrada.sitracker.ui.fragment.DirectoryChooserFragment;
 import com.andrada.sitracker.ui.widget.DrawShadowFrameLayout;
+import com.andrada.sitracker.util.AnalyticsHelper;
 import com.andrada.sitracker.util.UIUtils;
 
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
 
 @EActivity(R.layout.activity_authors_narrow)
 @OptionsMenu(R.menu.main_menu)
-public class MyAuthorsActivity extends BaseActivity {
+public class MyAuthorsActivity extends BaseActivity implements
+        DirectoryChooserFragment.OnFragmentInteractionListener {
+
+    DirectoryChooserFragment mDialog;
 
     @ViewById(R.id.main_content)
     DrawShadowFrameLayout mDrawShadowFrameLayout;
@@ -39,6 +47,7 @@ public class MyAuthorsActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mDialog = DirectoryChooserFragment.newInstance(getResources().getString(R.string.export_folder_name), null, true);
         overridePendingTransition(0, 0);
     }
 
@@ -62,6 +71,30 @@ public class MyAuthorsActivity extends BaseActivity {
     protected int getSelfNavDrawerItem() {
         // we only have a nav drawer if we are in top-level Explore mode.
         return NAVDRAWER_ITEM_MY_AUTHORS;
+    }
+
+    @OptionsItem(R.id.action_import)
+    void menuImportSelected() {
+        startActivity(com.andrada.sitracker.ui.ImportAuthorsActivity_.intent(this).get());
+    }
+
+    @OptionsItem(R.id.action_export)
+    void menuExportSelected() {
+        AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_EXPORT_DIALOG);
+        mDialog.show(getFragmentManager(), null);
+    }
+
+
+    @Override
+    public void onSelectDirectory(String path) {
+        ExportAuthorsTask task = new ExportAuthorsTask(getApplicationContext());
+        task.execute(path);
+        mDialog.dismiss();
+    }
+
+    @Override
+    public void onCancelChooser() {
+        mDialog.dismiss();
     }
 
     @Override

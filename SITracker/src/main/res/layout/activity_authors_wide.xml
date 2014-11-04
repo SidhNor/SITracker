@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   Copyright 2014 Gleb Godonoga.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,63 +14,57 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<android.support.v4.widget.DrawerLayout
+    android:id="@+id/drawer_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
-        android:id="@+id/headerbar"
+    <com.andrada.sitracker.ui.widget.DrawShadowFrameLayout
+        android:id="@+id/main_content"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:clipChildren="false"
+        app:shadowDrawable="@drawable/header_shadow">
 
-        <include layout="@layout/toolbar_actionbar_with_headerbar" />
-    </LinearLayout>
-
-    <android.support.v4.widget.DrawerLayout
-        android:id="@+id/drawer_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <com.andrada.sitracker.ui.widget.DrawShadowFrameLayout
-            android:id="@+id/main_content"
+        <android.support.v4.widget.SlidingPaneLayout
+            android:id="@+id/fragment_container"
+            xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:clipChildren="false"
-            app:shadowDrawable="@drawable/header_shadow">
+            android:layout_marginTop="?attr/actionBarSize"
+            android:baselineAligned="false">
 
-            <android.support.v4.widget.SlidingPaneLayout
-                android:id="@+id/fragment_container"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
+            <fragment
+                android:id="@+id/fragment_authors"
+                android:name="com.andrada.sitracker.ui.fragment.AuthorsFragment_"
+                android:layout_width="@dimen/author_fragment_width"
                 android:layout_height="match_parent"
-                android:layout_marginTop="?attr/actionBarSize"
-                android:baselineAligned="false">
+                android:layout_weight="1"
+                tools:layout="@layout/fragment_myauthors"/>
 
-                <fragment
-                    android:id="@+id/fragment_authors"
-                    android:name="com.andrada.sitracker.ui.fragment.AuthorsFragment_"
-                    android:layout_width="@dimen/author_fragment_width"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    tools:layout="@layout/fragment_myauthors" />
+            <fragment
+                android:id="@+id/fragment_publications"
+                android:name="com.andrada.sitracker.ui.fragment.PublicationsFragment_"
+                android:layout_width="@dimen/publication_fragment_width"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                tools:layout="@layout/fragment_publications"/>
+        </android.support.v4.widget.SlidingPaneLayout>
 
-                <fragment
-                    android:id="@+id/fragment_publications"
-                    android:name="com.andrada.sitracker.ui.fragment.PublicationsFragment_"
-                    android:layout_width="@dimen/publication_fragment_width"
-                    android:layout_height="match_parent"
-                    android:layout_weight="2"
-                    tools:layout="@layout/fragment_publications" />
-            </android.support.v4.widget.SlidingPaneLayout>
+        <LinearLayout
+            android:id="@+id/headerbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:orientation="vertical">
 
+            <include layout="@layout/toolbar_actionbar_with_headerbar"/>
+        </LinearLayout>
 
-        </com.andrada.sitracker.ui.widget.DrawShadowFrameLayout>
-        <!-- Nav drawer -->
-        <include layout="@layout/navdrawer" />
-    </android.support.v4.widget.DrawerLayout>
-
-</LinearLayout>
+    </com.andrada.sitracker.ui.widget.DrawShadowFrameLayout>
+    <!-- Nav drawer -->
+    <include layout="@layout/navdrawer"/>
+</android.support.v4.widget.DrawerLayout>
