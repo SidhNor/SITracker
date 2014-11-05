@@ -16,7 +16,6 @@
 
 package com.andrada.sitracker.ui;
 
-
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.animation.TypeEvaluator;
@@ -29,6 +28,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -129,6 +129,9 @@ public abstract class BaseActivity extends ActionBarActivity {
     private int mNormalStatusBarColor;
     private int mProgressBarTopWhenActionBarShown;
 
+    // SwipeRefreshLayout allows the user to swipe the screen down to trigger a manual refresh
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+
     /**
      * Converts an intent into a {@link Bundle} suitable for use as fragment arguments.
      */
@@ -222,8 +225,8 @@ public abstract class BaseActivity extends ActionBarActivity {
         super.onPostCreate(savedInstanceState);
         setupNavDrawer();
 
-        //trySetupSwipeRefresh();
-        //updateSwipeRefreshProgressBarTop();
+        trySetupSwipeRefresh();
+        updateSwipeRefreshProgressBarTop();
 
         View mainContent = findViewById(R.id.fragment_container);
         if (mainContent != null) {
@@ -278,6 +281,26 @@ public abstract class BaseActivity extends ActionBarActivity {
      */
     protected int getSelfNavDrawerItem() {
         return NAVDRAWER_ITEM_INVALID;
+    }
+
+    private void trySetupSwipeRefresh() {
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
+        if (mSwipeRefreshLayout != null) {
+            mSwipeRefreshLayout.setColorSchemeResources(
+                    R.color.refresh_progress_1,
+                    R.color.refresh_progress_2,
+                    R.color.refresh_progress_3);
+            mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    requestDataRefresh();
+                }
+            });
+        }
+    }
+
+    protected void requestDataRefresh() {
+        //Stub - should be implemented in subclass
     }
 
     private void setupNavDrawer() {
@@ -636,7 +659,6 @@ public abstract class BaseActivity extends ActionBarActivity {
     protected void enableActionBarAutoHide(final RecyclerView recyclerView) {
         initActionBarAutoHide();
         recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
-            final static int ITEMS_THRESHOLD = 3;
             int lastFvi = 0;
 
             @Override
@@ -705,7 +727,7 @@ public abstract class BaseActivity extends ActionBarActivity {
         mStatusBarColorAnimator.setEvaluator(ARGB_EVALUATOR);
         mStatusBarColorAnimator.start();
 
-        //updateSwipeRefreshProgressBarTop();
+        updateSwipeRefreshProgressBarTop();
 
         for (View view : mHideableHeaderViews) {
             if (shown) {
@@ -722,6 +744,25 @@ public abstract class BaseActivity extends ActionBarActivity {
                         .setInterpolator(new DecelerateInterpolator());
             }
         }
+    }
+
+    protected void setProgressBarTopWhenActionBarShown(int progressBarTopWhenActionBarShown) {
+        mProgressBarTopWhenActionBarShown = progressBarTopWhenActionBarShown;
+        updateSwipeRefreshProgressBarTop();
+    }
+
+    protected void updateSwipeRefreshProgressBarTop() {
+        if (mSwipeRefreshLayout == null) {
+            return;
+        }
+
+        int progressBarStartMargin = getResources().getDimensionPixelSize(
+                R.dimen.swipe_refresh_progress_bar_start_margin);
+        int progressBarEndMargin = getResources().getDimensionPixelSize(
+                R.dimen.swipe_refresh_progress_bar_end_margin);
+        int top = mActionBarShown ? mProgressBarTopWhenActionBarShown : 0;
+        mSwipeRefreshLayout.setProgressViewOffset(false,
+                top + progressBarStartMargin, top + progressBarEndMargin);
     }
 
 }

@@ -29,14 +29,17 @@
     <color name="ignored_pub_overlay">#8affffff</color>
     <color name="white">#ffffff</color>
 
-
     <color name="theme_primary">#e8552c</color>
     <color name="theme_primary_dark">#bf360c</color>
     <color name="theme_primary_light">#ffab91</color>
 
     <color name="theme_accent_1">#ff33b5e5</color>
     <color name="theme_accent_1_light">#8ad4fa</color>
-    <color name="theme_accent_2">#00e5ff</color>
+    <color name="theme_accent_2">#e91e63</color>
+
+    <color name="refresh_progress_1">@color/theme_accent_2</color>
+    <color name="refresh_progress_2">@color/theme_accent_1</color>
+    <color name="refresh_progress_3">@color/theme_primary</color>
 
     <color name="navdrawer_background">#ffffffff</color>
     <color name="navdrawer_text_color">@color/body_text_1</color>

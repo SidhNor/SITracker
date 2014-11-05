@@ -24,6 +24,7 @@ import com.andrada.sitracker.R;
 import com.andrada.sitracker.tasks.ExportAuthorsTask;
 import com.andrada.sitracker.ui.BaseActivity;
 import com.andrada.sitracker.ui.fragment.AuthorsFragment;
+import com.andrada.sitracker.ui.fragment.AuthorsFragment_;
 import com.andrada.sitracker.ui.fragment.DirectoryChooserFragment;
 import com.andrada.sitracker.ui.widget.DrawShadowFrameLayout;
 import com.andrada.sitracker.util.AnalyticsHelper;
@@ -34,7 +35,7 @@ import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
 
-@EActivity(R.layout.activity_authors_narrow)
+@EActivity(R.layout.activity_generic_list)
 @OptionsMenu(R.menu.main_menu)
 public class MyAuthorsActivity extends BaseActivity implements
         DirectoryChooserFragment.OnFragmentInteractionListener {
@@ -48,6 +49,9 @@ public class MyAuthorsActivity extends BaseActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mDialog = DirectoryChooserFragment.newInstance(getResources().getString(R.string.export_folder_name), null, true);
+        getFragmentManager().beginTransaction()
+                .add(R.id.fragment_holder, AuthorsFragment_.builder().build(), "myAuthors")
+                .commit();
         overridePendingTransition(0, 0);
     }
 
@@ -55,10 +59,10 @@ public class MyAuthorsActivity extends BaseActivity implements
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
 
-        AuthorsFragment frag = (AuthorsFragment) getFragmentManager().findFragmentById(
-                R.id.fragment_authors);
+        AuthorsFragment frag = (AuthorsFragment) getFragmentManager().findFragmentByTag("myAuthors");
         enableActionBarAutoHide(frag.getListView());
         registerHideableHeaderView(findViewById(R.id.headerbar));
+
     }
 
     @Override
@@ -101,13 +105,17 @@ public class MyAuthorsActivity extends BaseActivity implements
     protected void onResume() {
         super.onResume();
         invalidateOptionsMenu();
+        setTopClearance();
+    }
 
-        Fragment frag = getFragmentManager().findFragmentById(R.id.fragment_authors);
+    private void setTopClearance() {
+        Fragment frag = getFragmentManager().findFragmentByTag("myAuthors");
         if (frag != null) {
             // configure fragment's top clearance to take our overlaid controls (Action Bar) into account.
             int actionBarSize = UIUtils.calculateActionBarSize(this);
             mDrawShadowFrameLayout.setShadowTopOffset(actionBarSize);
             ((AuthorsFragment) frag).setContentTopClearance(actionBarSize);
+            setProgressBarTopWhenActionBarShown(actionBarSize);
         }
     }
 }
