@@ -16,14 +16,14 @@
 
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="NoParent"/>
+    <style name="NoParent" />
     <!--
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
     -->
-    <style name="FrameworkRoot.Base" parent="@style/Theme.AppCompat.Light"/>
+    <style name="FrameworkRoot.Base" parent="@style/Theme.AppCompat.Light" />
 
-    <style name="FrameworkRoot.Widget" parent="@style/Theme.AppCompat"/>
+    <style name="FrameworkRoot.Widget" parent="@style/Theme.AppCompat" />
 
     <!-- Immediate parent theme to specify base values for custom attributes -->
     <style name="Theme" parent="FrameworkRoot.Base">
@@ -66,17 +66,17 @@
         <item name="searchViewStyle">@style/Widget.SITracker.SearchView</item>
     </style>
 
-    <style name="Theme.SiTracker" parent="Theme.SiTracker.Base"/>
+    <style name="Theme.SiTracker" parent="Theme.SiTracker.Base" />
 
-    <style name="Theme.SiTracker.WithNavDrawer" parent="Theme.SiTracker"/>
+    <style name="Theme.SiTracker.WithNavDrawer" parent="Theme.SiTracker" />
 
     <style name="Theme.SiTracker.Widget" parent="FrameworkRoot.Widget">
         <item name="android:popupMenuStyle">@style/Widget.SiTracker.PopupMenu</item>
         <item name="android:listPopupWindowStyle">@style/Widget.SiTracker.PopupMenu</item>
         <item name="android:dropDownListViewStyle">@style/Widget.SiTracker.ListView.DropDown</item>
-        <item name="android:textAppearanceLargePopupMenu">@style/TextAppearance.LargePopupMenu</item>
+        <item name="android:textAppearanceLargePopupMenu">@style/TextAppearance.LargePopupMenu
+        </item>
     </style>
-
 
     <style name="Widget.SiTracker.HeaderBar.Spinner.Base" parent="Widget.AppCompat.Light.Spinner.DropDown.ActionBar">
         <item name="android:background">?android:selectableItemBackground</item>
@@ -86,7 +86,7 @@
         <item name="android:overlapAnchor" tools:ignore="NewApi">true</item>
     </style>
 
-    <style name="Widget.SiTracker.HeaderBar.Spinner" parent="Widget.SiTracker.HeaderBar.Spinner.Base"/>
+    <style name="Widget.SiTracker.HeaderBar.Spinner" parent="Widget.SiTracker.HeaderBar.Spinner.Base" />
 
     <style name="Widget.SiTracker.PopupMenu" parent="Widget.AppCompat.Light.PopupMenu">
         <item name="android:dropDownSelector">?popupItemBackground</item>
@@ -102,7 +102,7 @@
         <item name="android:textColor">@color/body_text_1</item>
     </style>
 
-    <style name="Widget.SITracker.SearchView" parent="Widget.AppCompat.SearchView"/>
+    <style name="Widget.SITracker.SearchView" parent="Widget.AppCompat.SearchView" />
 
     <style name="Widget.SiTracker.EditText" parent="Widget.AppCompat.EditText">
         <item name="android:background">@drawable/edit_text</item>
@@ -119,7 +119,7 @@
         <item name="colorControlHighlight">#3fff</item>
     </style>
 
-    <style name="ActionBarPopupThemeOverlay" parent="ThemeOverlay.AppCompat.Light"/>
+    <style name="ActionBarPopupThemeOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
     <style name="ActionBar.TitleText" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
         <item name="android:textColor">#fff</item>
@@ -166,11 +166,9 @@
         <item name="isFloatingWindow">false</item>
     </style>
 
-    <style name="Theme.SiTracker.PublicationDetails" parent="Theme.SiTracker.PublicationDetails.Base">
-    </style>
+    <style name="Theme.SiTracker.PublicationDetails" parent="Theme.SiTracker.PublicationDetails.Base"></style>
 
-    <style name="Theme.SiTracker.ImportAuthors" parent="Theme.SiTracker">
-    </style>
+    <style name="Theme.SiTracker.ImportAuthors" parent="Theme.SiTracker"></style>
 
     <!-- END OF ACTIVITY THEME STYLES -->
 

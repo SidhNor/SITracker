@@ -59,6 +59,7 @@
     <dimen name="read_pub_button_height_no_padding">40dp</dimen>
 
     <!-- Action Bar auto-hide-on-scroll behavior parameters -->
+    <dimen name="action_bar_elevation">2dp</dimen>
     <dimen name="action_bar_auto_hide_min_y">152dp</dimen>
     <dimen name="action_bar_auto_hide_sensivity">48dp</dimen>
 
