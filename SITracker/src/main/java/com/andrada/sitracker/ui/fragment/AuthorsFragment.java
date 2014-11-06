@@ -24,6 +24,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
@@ -427,4 +428,7 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
         }
     }
 
+    public boolean canCollectionViewScrollUp() {
+        return ViewCompat.canScrollVertically(mRecyclerView, -1);
+    }
 }

@@ -48,6 +48,7 @@ import android.widget.TextView;
 import com.andrada.sitracker.BuildConfig;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.ui.debug.DebugActionRunnerActivity;
+import com.andrada.sitracker.ui.widget.MultiSwipeRefreshLayout;
 import com.andrada.sitracker.ui.widget.ScrimInsetsScrollView;
 import com.andrada.sitracker.util.LUtils;
 import com.andrada.sitracker.util.PlayServicesUtils;
@@ -65,7 +66,8 @@ import static com.andrada.sitracker.util.LogUtils.makeLogTag;
 /**
  * A base activity that handles common functionality in the app.
  */
-public abstract class BaseActivity extends ActionBarActivity {
+public abstract class BaseActivity extends ActionBarActivity implements
+        MultiSwipeRefreshLayout.CanChildScrollUpCallback {
 
     // symbols for navdrawer items (indices must correspond to array below). This is
     // not a list of items that are necessarily *present* in the Nav Drawer; rather,
@@ -296,6 +298,10 @@ public abstract class BaseActivity extends ActionBarActivity {
                     requestDataRefresh();
                 }
             });
+            if (mSwipeRefreshLayout instanceof MultiSwipeRefreshLayout) {
+                MultiSwipeRefreshLayout mswrl = (MultiSwipeRefreshLayout) mSwipeRefreshLayout;
+                mswrl.setCanChildScrollUpCallback(this);
+            }
         }
     }
 
@@ -763,6 +769,23 @@ public abstract class BaseActivity extends ActionBarActivity {
         int top = mActionBarShown ? mProgressBarTopWhenActionBarShown : 0;
         mSwipeRefreshLayout.setProgressViewOffset(false,
                 top + progressBarStartMargin, top + progressBarEndMargin);
+    }
+
+    protected void onRefreshingStateChanged(boolean refreshing) {
+        if (mSwipeRefreshLayout != null) {
+            mSwipeRefreshLayout.setRefreshing(refreshing);
+        }
+    }
+
+    protected void enableDisableSwipeRefresh(boolean enable) {
+        if (mSwipeRefreshLayout != null) {
+            mSwipeRefreshLayout.setEnabled(enable);
+        }
+    }
+
+    @Override
+    public boolean canSwipeRefreshChildScrollUp() {
+        return false;
     }
 
 }

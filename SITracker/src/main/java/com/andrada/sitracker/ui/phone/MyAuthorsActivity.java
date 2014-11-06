@@ -16,7 +16,6 @@
 
 package com.andrada.sitracker.ui.phone;
 
-import android.app.Fragment;
 import android.os.Bundle;
 
 import com.andrada.sitracker.Constants;
@@ -45,12 +44,15 @@ public class MyAuthorsActivity extends BaseActivity implements
     @ViewById(R.id.main_content)
     DrawShadowFrameLayout mDrawShadowFrameLayout;
 
+    AuthorsFragment authorsFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mDialog = DirectoryChooserFragment.newInstance(getResources().getString(R.string.export_folder_name), null, true);
+        authorsFragment = AuthorsFragment_.builder().build();
         getFragmentManager().beginTransaction()
-                .add(R.id.fragment_holder, AuthorsFragment_.builder().build(), "myAuthors")
+                .add(R.id.fragment_holder, authorsFragment, "myAuthors")
                 .commit();
         overridePendingTransition(0, 0);
     }
@@ -109,13 +111,20 @@ public class MyAuthorsActivity extends BaseActivity implements
     }
 
     private void setTopClearance() {
-        Fragment frag = getFragmentManager().findFragmentByTag("myAuthors");
-        if (frag != null) {
+        if (authorsFragment != null) {
             // configure fragment's top clearance to take our overlaid controls (Action Bar) into account.
             int actionBarSize = UIUtils.calculateActionBarSize(this);
             mDrawShadowFrameLayout.setShadowTopOffset(actionBarSize);
-            ((AuthorsFragment) frag).setContentTopClearance(actionBarSize);
+            authorsFragment.setContentTopClearance(actionBarSize);
             setProgressBarTopWhenActionBarShown(actionBarSize);
         }
+    }
+
+    @Override
+    public boolean canSwipeRefreshChildScrollUp() {
+        if (authorsFragment != null) {
+            return authorsFragment.canCollectionViewScrollUp();
+        }
+        return super.canSwipeRefreshChildScrollUp();
     }
 }
