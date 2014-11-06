@@ -31,9 +31,7 @@ import android.text.TextUtils;
 import android.widget.TextView;
 
 import com.andrada.sitracker.R;
-import com.andrada.sitracker.ui.phone.MyAuthorsActivity;
 import com.andrada.sitracker.ui.phone.MyAuthorsActivity_;
-import com.andrada.sitracker.ui.tablet.MyAuthorsMultipaneActivity;
 import com.andrada.sitracker.ui.tablet.MyAuthorsMultipaneActivity_;
 
 import org.jetbrains.annotations.NotNull;
@@ -127,12 +125,14 @@ public class UIUtils {
                         && !(tabletActivity && !isTablet);
 
                 String className = info.name;
-                pm.setComponentEnabledSetting(
-                        new ComponentName(context, Class.forName(className)),
-                        enable
-                                ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED
-                                : PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-                        PackageManager.DONT_KILL_APP);
+                if (className.contains("andrada")) {
+                    pm.setComponentEnabledSetting(
+                            new ComponentName(context, Class.forName(className)),
+                            enable
+                                    ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED
+                                    : PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                            PackageManager.DONT_KILL_APP);
+                }
             }
         } catch (PackageManager.NameNotFoundException e) {
             LOGE(TAG, "No package info found for our own package.", e);
