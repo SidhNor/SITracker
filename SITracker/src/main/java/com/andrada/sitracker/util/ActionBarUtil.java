@@ -16,14 +16,7 @@
 
 package com.andrada.sitracker.util;
 
-import android.animation.ArgbEvaluator;
-import android.animation.ObjectAnimator;
-import android.animation.TypeEvaluator;
-import android.animation.ValueAnimator;
 import android.content.Context;
-import android.graphics.Color;
-import android.support.v4.view.ViewCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -37,41 +30,24 @@ import java.util.ArrayList;
 
 public class ActionBarUtil {
 
-    public interface ActionBarShowHideListener {
-        void actionBarVisibilityChanged(boolean shown);
-    }
-
     private static final int HEADER_HIDE_ANIM_DURATION = 300;
-    private static final TypeEvaluator ARGB_EVALUATOR = new ArgbEvaluator();
     private Context mContext;
-    private DrawerLayout mDrawerLayout;
     private ActionBarShowHideListener mListener;
-    // Helper methods for L APIs
-    private LUtils mLUtils;
     // When set, these components will be shown/hidden in sync with the action bar
     // to implement the "quick recall" effect (the Action Bar and the header views disappear
     // when you scroll down a list, and reappear quickly when you scroll up).
     private ArrayList<View> mHideableHeaderViews = new ArrayList<View>();
-    private ObjectAnimator mStatusBarColorAnimator;
-
     // variables that control the Action Bar auto hide behavior (aka "quick recall")
     private boolean mActionBarAutoHideEnabled = false;
     private int mActionBarAutoHideSensivity = 0;
     private int mActionBarAutoHideMinY = 0;
     private int mActionBarAutoHideSignal = 0;
     private boolean mActionBarShown = true;
-    private int mThemedStatusBarColor;
-    private int mNormalStatusBarColor;
 
-    public ActionBarUtil(ActionBarActivity context, DrawerLayout drawerLayout, ActionBarShowHideListener listener) {
+    public ActionBarUtil(ActionBarActivity context, ActionBarShowHideListener listener) {
         mContext = context;
-        mDrawerLayout = drawerLayout;
         mListener = listener;
-        mLUtils = LUtils.getInstance(context);
-        mThemedStatusBarColor = context.getResources().getColor(R.color.theme_primary_dark);
-        mNormalStatusBarColor = mThemedStatusBarColor;
     }
-
 
     public void registerHideableHeaderView(View hideableHeaderView) {
         if (!mHideableHeaderViews.contains(hideableHeaderView)) {
@@ -94,26 +70,6 @@ public class ActionBarUtil {
     }
 
     private void onActionBarAutoShowOrHide(boolean shown) {
-        if (mStatusBarColorAnimator != null) {
-            mStatusBarColorAnimator.cancel();
-        }
-        mStatusBarColorAnimator = ObjectAnimator.ofInt(
-                (mDrawerLayout != null) ? mDrawerLayout : mLUtils,
-                (mDrawerLayout != null) ? "statusBarBackgroundColor" : "statusBarColor",
-                shown ? Color.BLACK : mNormalStatusBarColor,
-                shown ? mNormalStatusBarColor : Color.BLACK)
-                .setDuration(250);
-        if (mDrawerLayout != null) {
-            mStatusBarColorAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                @Override
-                public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                    ViewCompat.postInvalidateOnAnimation(mDrawerLayout);
-                }
-            });
-        }
-        mStatusBarColorAnimator.setEvaluator(ARGB_EVALUATOR);
-        mStatusBarColorAnimator.start();
-
         mListener.actionBarVisibilityChanged(mActionBarShown);
 
         for (View view : mHideableHeaderViews) {
@@ -151,19 +107,6 @@ public class ActionBarUtil {
     public boolean isActionBarShown() {
         return mActionBarShown;
     }
-
-
-    public int getThemedStatusBarColor() {
-        return mThemedStatusBarColor;
-    }
-
-    public void setNormalStatusBarColor(int color) {
-        mNormalStatusBarColor = color;
-        if (mDrawerLayout != null) {
-            mDrawerLayout.setStatusBarBackgroundColor(mNormalStatusBarColor);
-        }
-    }
-
 
     public void enableActionBarAutoHide(final ListView listView) {
         initActionBarAutoHide();
@@ -247,5 +190,9 @@ public class ActionBarUtil {
         boolean shouldShow = currentY < mActionBarAutoHideMinY ||
                 (mActionBarAutoHideSignal <= -mActionBarAutoHideSensivity);
         autoShowOrHideActionBar(shouldShow);
+    }
+
+    public interface ActionBarShowHideListener {
+        void actionBarVisibilityChanged(boolean shown);
     }
 }

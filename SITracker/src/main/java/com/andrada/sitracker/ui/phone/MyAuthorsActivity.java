@@ -27,6 +27,7 @@ import com.andrada.sitracker.ui.fragment.AuthorsFragment_;
 import com.andrada.sitracker.ui.fragment.DirectoryChooserFragment;
 import com.andrada.sitracker.ui.widget.DrawShadowFrameLayout;
 import com.andrada.sitracker.util.AnalyticsHelper;
+import com.andrada.sitracker.util.NavDrawerManager;
 import com.andrada.sitracker.util.UIUtils;
 
 import org.androidannotations.annotations.EActivity;
@@ -54,7 +55,6 @@ public class MyAuthorsActivity extends BaseActivity implements
         getFragmentManager().beginTransaction()
                 .add(R.id.fragment_holder, authorsFragment, "myAuthors")
                 .commit();
-        overridePendingTransition(0, 0);
     }
 
     @Override
@@ -74,9 +74,9 @@ public class MyAuthorsActivity extends BaseActivity implements
     }
 
     @Override
-    protected int getSelfNavDrawerItem() {
+    public int getSelfNavDrawerItem() {
         // we only have a nav drawer if we are in top-level Explore mode.
-        return NAVDRAWER_ITEM_MY_AUTHORS;
+        return NavDrawerManager.NAVDRAWER_ITEM_MY_AUTHORS;
     }
 
     @OptionsItem(R.id.action_import)

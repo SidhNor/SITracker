@@ -23,6 +23,7 @@ import com.andrada.sitracker.ui.BaseActivity;
 import com.andrada.sitracker.ui.fragment.AuthorsFragment;
 import com.andrada.sitracker.ui.fragment.PublicationsFragment;
 import com.andrada.sitracker.ui.widget.DrawShadowFrameLayout;
+import com.andrada.sitracker.util.NavDrawerManager;
 import com.andrada.sitracker.util.UIUtils;
 
 import org.androidannotations.annotations.AfterViews;
@@ -54,8 +55,8 @@ public class MyAuthorsMultipaneActivity extends BaseActivity {
     }
 
     @Override
-    protected int getSelfNavDrawerItem() {
+    public int getSelfNavDrawerItem() {
         // we only have a nav drawer if we are in top-level Explore mode.
-        return NAVDRAWER_ITEM_MY_AUTHORS;
+        return NavDrawerManager.NAVDRAWER_ITEM_MY_AUTHORS;
     }
 }

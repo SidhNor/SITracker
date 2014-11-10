@@ -19,14 +19,15 @@ package com.andrada.sitracker.ui;
 import android.os.Bundle;
 
 import com.andrada.sitracker.R;
+import com.andrada.sitracker.util.NavDrawerManager;
 
 import org.androidannotations.annotations.EActivity;
 
 @EActivity(R.layout.activity_new_pubs)
 public class NewPublicationsActivity extends BaseActivity {
     @Override
-    protected int getSelfNavDrawerItem() {
-        return NAVDRAWER_ITEM_NEW_PUBS;
+    public int getSelfNavDrawerItem() {
+        return NavDrawerManager.NAVDRAWER_ITEM_NEW_PUBS;
     }
 
     @Override
