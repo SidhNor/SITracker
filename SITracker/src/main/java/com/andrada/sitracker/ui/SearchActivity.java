@@ -113,9 +113,9 @@ public class SearchActivity extends BaseActivity {
         super.onPostCreate(savedInstanceState);
         ListView collectionView = (ListView) findViewById(R.id.list);
         if (collectionView != null) {
-            enableActionBarAutoHide(collectionView);
+            getActionBarUtil().enableActionBarAutoHide(collectionView);
         }
-        registerHideableHeaderView(findViewById(R.id.headerbar));
+        getActionBarUtil().registerHideableHeaderView(findViewById(R.id.headerbar));
         populateSearchVariants();
     }
 
@@ -187,10 +187,12 @@ public class SearchActivity extends BaseActivity {
     }
 
     @Override
-    protected void onActionBarAutoShowOrHide(boolean shown) {
-        super.onActionBarAutoShowOrHide(shown);
+    public void actionBarVisibilityChanged(boolean shown) {
+        super.actionBarVisibilityChanged(shown);
+        //TODO Move this thing to base
         mDrawShadowFrameLayout.setShadowVisible(shown, shown);
     }
+
 
     @Override
     protected void onNewIntent(Intent intent) {

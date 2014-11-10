@@ -34,7 +34,7 @@ import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
 
-@EActivity(R.layout.activity_generic_list)
+@EActivity(R.layout.activity_si_main)
 @OptionsMenu(R.menu.main_menu)
 public class MyAuthorsActivity extends BaseActivity implements
         DirectoryChooserFragment.OnFragmentInteractionListener {
@@ -62,14 +62,14 @@ public class MyAuthorsActivity extends BaseActivity implements
         super.onPostCreate(savedInstanceState);
 
         AuthorsFragment frag = (AuthorsFragment) getFragmentManager().findFragmentByTag("myAuthors");
-        enableActionBarAutoHide(frag.getListView());
-        registerHideableHeaderView(findViewById(R.id.headerbar));
+        getActionBarUtil().enableActionBarAutoHide(frag.getListView());
+        getActionBarUtil().registerHideableHeaderView(findViewById(R.id.headerbar));
 
     }
 
     @Override
-    protected void onActionBarAutoShowOrHide(boolean shown) {
-        super.onActionBarAutoShowOrHide(shown);
+    public void actionBarVisibilityChanged(boolean shown) {
+        super.actionBarVisibilityChanged(shown);
         mDrawShadowFrameLayout.setShadowVisible(shown, shown);
     }
 

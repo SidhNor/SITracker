@@ -30,7 +30,9 @@
         <FrameLayout
             android:id="@+id/fragment_holder"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"></FrameLayout>
+            android:layout_height="fill_parent" />
+
+        <include layout="@layout/details_pager" />
 
         <LinearLayout
             android:id="@+id/headerbar"
