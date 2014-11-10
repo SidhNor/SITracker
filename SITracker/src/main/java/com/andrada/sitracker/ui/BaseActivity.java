@@ -31,6 +31,7 @@ import android.view.View;
 import com.andrada.sitracker.BuildConfig;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.ui.debug.DebugActionRunnerActivity;
+import com.andrada.sitracker.ui.widget.DrawShadowFrameLayout;
 import com.andrada.sitracker.ui.widget.MultiSwipeRefreshLayout;
 import com.andrada.sitracker.util.ActionBarUtil;
 import com.andrada.sitracker.util.NavDrawerManager;
@@ -67,6 +68,8 @@ public abstract class BaseActivity extends ActionBarActivity implements
     private int mProgressBarTopWhenActionBarShown;
     // SwipeRefreshLayout allows the user to swipe the screen down to trigger a manual refresh
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    //ShadowFrameLayout for setting toolbar shadow
+    private DrawShadowFrameLayout mDrawShadowFrameLayout;
 
     /**
      * Converts an intent into a {@link Bundle} suitable for use as fragment arguments.
@@ -152,12 +155,14 @@ public abstract class BaseActivity extends ActionBarActivity implements
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
+
         mABUtil = new ActionBarUtil(this, this);
         mDrawerManager = new NavDrawerManager(this);
 
         trySetupSwipeRefresh();
         updateSwipeRefreshProgressBarTop();
 
+        mDrawShadowFrameLayout = (DrawShadowFrameLayout) findViewById(R.id.main_content);
         View mainContent = findViewById(R.id.fragment_container);
         if (mainContent != null) {
             mainContent.setAlpha(0);
@@ -268,12 +273,16 @@ public abstract class BaseActivity extends ActionBarActivity implements
 
     protected void setProgressBarTopWhenActionBarShown(int progressBarTopWhenActionBarShown) {
         mProgressBarTopWhenActionBarShown = progressBarTopWhenActionBarShown;
+        if (mDrawShadowFrameLayout != null) {
+            mDrawShadowFrameLayout.setShadowTopOffset(progressBarTopWhenActionBarShown);
+        }
         updateSwipeRefreshProgressBarTop();
     }
 
     @Override
     public void actionBarVisibilityChanged(boolean shown) {
         mDrawerManager.adjustStatusBarBasedOnActionBarVisibility(shown);
+        mDrawShadowFrameLayout.setShadowVisible(shown, shown);
         updateSwipeRefreshProgressBarTop();
     }
 

@@ -187,14 +187,6 @@ public class SearchActivity extends BaseActivity {
     }
 
     @Override
-    public void actionBarVisibilityChanged(boolean shown) {
-        super.actionBarVisibilityChanged(shown);
-        //TODO Move this thing to base
-        mDrawShadowFrameLayout.setShadowVisible(shown, shown);
-    }
-
-
-    @Override
     protected void onNewIntent(Intent intent) {
         LOGD(TAG, "SearchActivity.onNewIntent: " + intent);
         setIntent(intent);

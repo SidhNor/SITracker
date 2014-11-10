@@ -25,7 +25,6 @@ import com.andrada.sitracker.ui.BaseActivity;
 import com.andrada.sitracker.ui.fragment.AuthorsFragment;
 import com.andrada.sitracker.ui.fragment.AuthorsFragment_;
 import com.andrada.sitracker.ui.fragment.DirectoryChooserFragment;
-import com.andrada.sitracker.ui.widget.DrawShadowFrameLayout;
 import com.andrada.sitracker.util.AnalyticsHelper;
 import com.andrada.sitracker.util.NavDrawerManager;
 import com.andrada.sitracker.util.UIUtils;
@@ -33,7 +32,6 @@ import com.andrada.sitracker.util.UIUtils;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
-import org.androidannotations.annotations.ViewById;
 
 @EActivity(R.layout.activity_si_main)
 @OptionsMenu(R.menu.main_menu)
@@ -41,9 +39,6 @@ public class MyAuthorsActivity extends BaseActivity implements
         DirectoryChooserFragment.OnFragmentInteractionListener {
 
     DirectoryChooserFragment mDialog;
-
-    @ViewById(R.id.main_content)
-    DrawShadowFrameLayout mDrawShadowFrameLayout;
 
     AuthorsFragment authorsFragment;
 
@@ -65,12 +60,6 @@ public class MyAuthorsActivity extends BaseActivity implements
         getActionBarUtil().enableActionBarAutoHide(frag.getListView());
         getActionBarUtil().registerHideableHeaderView(findViewById(R.id.headerbar));
 
-    }
-
-    @Override
-    public void actionBarVisibilityChanged(boolean shown) {
-        super.actionBarVisibilityChanged(shown);
-        mDrawShadowFrameLayout.setShadowVisible(shown, shown);
     }
 
     @Override
@@ -114,7 +103,6 @@ public class MyAuthorsActivity extends BaseActivity implements
         if (authorsFragment != null) {
             // configure fragment's top clearance to take our overlaid controls (Action Bar) into account.
             int actionBarSize = UIUtils.calculateActionBarSize(this);
-            mDrawShadowFrameLayout.setShadowTopOffset(actionBarSize);
             authorsFragment.setContentTopClearance(actionBarSize);
             setProgressBarTopWhenActionBarShown(actionBarSize);
         }
