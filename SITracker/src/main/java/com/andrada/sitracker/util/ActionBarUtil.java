@@ -43,6 +43,7 @@ public class ActionBarUtil {
     private int mActionBarAutoHideMinY = 0;
     private int mActionBarAutoHideSignal = 0;
     private boolean mActionBarShown = true;
+    private RecyclerView mCurrentScrollingView;
 
     public ActionBarUtil(ActionBarActivity context, ActionBarShowHideListener listener) {
         mContext = context;
@@ -131,6 +132,7 @@ public class ActionBarUtil {
 
     public void enableActionBarAutoHide(final RecyclerView recyclerView) {
         initActionBarAutoHide();
+        mCurrentScrollingView = recyclerView;
         recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
             int lastFvi = 0;
 
@@ -162,6 +164,14 @@ public class ActionBarUtil {
                 autoShowOrHideActionBar(shouldShow);
             }
         });
+    }
+
+    public void disableActionBarAutoHide() {
+        mActionBarAutoHideEnabled = false;
+        if (mCurrentScrollingView != null) {
+            mCurrentScrollingView.setOnScrollListener(null);
+            mCurrentScrollingView = null;
+        }
     }
 
     /**

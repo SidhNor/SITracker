@@ -247,22 +247,24 @@ public abstract class BaseActivity extends ActionBarActivity implements
 
     @Override
     public void goToNavDrawerItem(int item) {
+        /*
+        //TODO this should probably go to com.andrada.sitracker.util.ActivityFragmentNavigator
+        // fade out the main content
+        View mainContent = mActivity.findViewById(R.id.main_content);
+        if (mainContent != null) {
+            mainContent.animate().alpha(0).setDuration(MAIN_CONTENT_FADEOUT_DURATION);
+        }*/
+
         Intent intent;
         switch (item) {
             case NavDrawerManager.NAVDRAWER_ITEM_MY_AUTHORS:
-                intent = new Intent(this, UIUtils.getMyAuthorsActivityClass(this));
-                startActivity(intent);
-                finish();
+                //TODO Switch fragment with com.andrada.sitracker.util.ActivityFragmentNavigator
                 break;
             case NavDrawerManager.NAVDRAWER_ITEM_EXPLORE:
-                intent = new Intent(this, ExploreAuthorsActivity_.class);
-                startActivity(intent);
-                finish();
+                //TODO Switch fragment with com.andrada.sitracker.util.ActivityFragmentNavigator
                 break;
             case NavDrawerManager.NAVDRAWER_ITEM_NEW_PUBS:
-                intent = new Intent(this, NewPublicationsActivity_.class);
-                startActivity(intent);
-                finish();
+                //TODO Switch fragment with com.andrada.sitracker.util.ActivityFragmentNavigator
                 break;
             case NavDrawerManager.NAVDRAWER_ITEM_SETTINGS:
                 intent = new Intent(this, SettingsActivity_.class);

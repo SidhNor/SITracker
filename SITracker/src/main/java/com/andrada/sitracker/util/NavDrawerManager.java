@@ -46,7 +46,9 @@ public class NavDrawerManager {
     public static final int NAVDRAWER_ITEM_MY_AUTHORS = 0;
     public static final int NAVDRAWER_ITEM_EXPLORE = 1;
     public static final int NAVDRAWER_ITEM_NEW_PUBS = 2;
-    public static final int NAVDRAWER_ITEM_SETTINGS = 3;
+    public static final int NAVDRAWER_ITEM_EXPORT = 3;
+    public static final int NAVDRAWER_ITEM_IMPORT = 4;
+    public static final int NAVDRAWER_ITEM_SETTINGS = 5;
     public static final int NAVDRAWER_ITEM_INVALID = -1;
     public static final int NAVDRAWER_ITEM_SEPARATOR = -2;
     public static final int NAVDRAWER_ITEM_SEPARATOR_SPECIAL = -3;
@@ -58,6 +60,8 @@ public class NavDrawerManager {
             R.string.navdrawer_item_my_authors,
             R.string.navdrawer_item_explore,
             R.string.navdrawer_item_new_pubs,
+            R.string.navdrawer_item_export,
+            R.string.navdrawer_item_import,
             R.string.navdrawer_item_settings
     };
     // icons for navdrawer items (indices must correspond to above array)
@@ -65,7 +69,9 @@ public class NavDrawerManager {
             R.drawable.ic_drawer_my_authors,  // My Authors
             R.drawable.ic_drawer_explore,  // Explore
             R.drawable.ic_drawer_new_pubs, // Map
-            0
+            R.drawable.ic_drawer_export, //Export
+            R.drawable.ic_drawer_import, //Import
+            R.drawable.ic_drawer_settings //Settings
     };
     // delay to launch nav drawer item, to allow close animation to play
     private static final int NAVDRAWER_LAUNCH_DELAY = 250;
@@ -244,6 +250,8 @@ public class NavDrawerManager {
 
         // Other items that are always in the nav drawer
         mNavDrawerItems.add(NAVDRAWER_ITEM_SEPARATOR_SPECIAL);
+        mNavDrawerItems.add(NAVDRAWER_ITEM_EXPORT);
+        mNavDrawerItems.add(NAVDRAWER_ITEM_IMPORT);
         mNavDrawerItems.add(NAVDRAWER_ITEM_SETTINGS);
 
         createNavDrawerItems();
@@ -333,16 +341,8 @@ public class NavDrawerManager {
 
             // change the active item on the list so the user can see the item changed
             setSelectedNavDrawerItem(itemId);
-            // fade out the main content
-            View mainContent = mActivity.findViewById(R.id.main_content);
-            if (mainContent != null) {
-                mainContent.animate().alpha(0).setDuration(MAIN_CONTENT_FADEOUT_DURATION);
-            }
         }
-
         mDrawerLayout.closeDrawer(Gravity.START);
-
-        mActivity.goToNavDrawerItem(itemId);
     }
 
     private boolean isSeparator(int itemId) {

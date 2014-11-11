@@ -31,7 +31,6 @@ import android.text.TextUtils;
 import android.widget.TextView;
 
 import com.andrada.sitracker.R;
-import com.andrada.sitracker.ui.MyAuthorsActivity_;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -189,15 +188,5 @@ public class UIUtils {
         return Color.argb(scaleAlpha ? (Math.round(Color.alpha(color) * factor)) : Color.alpha(color),
                 Math.round(Color.red(color) * factor), Math.round(Color.green(color) * factor),
                 Math.round(Color.blue(color) * factor));
-    }
-
-    public static Class getMyAuthorsActivityClass(Context context) {
-        /*
-        if (UIUtils.isTablet(context)) {
-            return MyAuthorsMultipaneActivity_.class;
-        }
-        */
-
-        return MyAuthorsActivity_.class;
     }
 }

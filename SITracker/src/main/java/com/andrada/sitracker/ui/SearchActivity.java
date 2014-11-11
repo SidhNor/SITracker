@@ -90,7 +90,7 @@ public class SearchActivity extends BaseActivity {
             public void onClick(View view) {
                 navigateUpToFromChild(SearchActivity.this,
                         IntentCompat.makeMainActivity(new ComponentName(SearchActivity.this,
-                                MyAuthorsActivity_.class)));
+                                SiMainActivity_.class)));
             }
         });
 

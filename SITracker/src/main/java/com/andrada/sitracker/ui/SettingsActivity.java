@@ -77,7 +77,7 @@ public class SettingsActivity extends BaseActivity {
             public void onClick(View view) {
                 navigateUpToFromChild(SettingsActivity.this,
                         IntentCompat.makeMainActivity(new ComponentName(SettingsActivity.this,
-                                MyAuthorsActivity_.class)));
+                                SiMainActivity_.class)));
             }
         });
     }

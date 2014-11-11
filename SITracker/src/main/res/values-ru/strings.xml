@@ -28,6 +28,8 @@
     <string name="navdrawer_item_my_authors">Мои авторы</string>
     <string name="navdrawer_item_explore">Ознакомиться</string>
     <string name="navdrawer_item_new_pubs">Обновления</string>
+    <string name="navdrawer_item_export">Экспорт авторов</string>
+    <string name="navdrawer_item_import">Импорт авторов</string>
     <string name="navdrawer_item_settings">Настройки</string>
     <!-- Accessibility description saying that the app's navigation drawer has been closed -->
     <string name="drawer_close">Панель навигации закрыта</string>

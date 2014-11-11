@@ -25,7 +25,7 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 
 import com.andrada.sitracker.R;
-import com.andrada.sitracker.ui.MyAuthorsActivity_;
+import com.andrada.sitracker.ui.SiMainActivity_;
 import com.andrada.sitracker.ui.debug.DebugAction;
 
 import java.util.ArrayList;
@@ -63,14 +63,14 @@ public class ShowAuthorsUpdatedNotificationALotAction implements DebugAction {
 
 
         // Creates an explicit intent for an Activity in your app
-        Intent resultIntent = new Intent(context, MyAuthorsActivity_.class);
+        Intent resultIntent = new Intent(context, SiMainActivity_.class);
         // The stack builder object will contain an artificial back stack for the
         // started Activity.
         // This ensures that navigating backward from the Activity leads out of
         // your application to the Home screen.
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
         // Adds the back stack for the Intent (but not the Intent itself)
-        stackBuilder.addParentStack(MyAuthorsActivity_.class);
+        stackBuilder.addParentStack(SiMainActivity_.class);
         // Adds the Intent that starts the Activity to the top of the stack
         stackBuilder.addNextIntent(resultIntent);
         PendingIntent resultPendingIntent =

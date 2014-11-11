@@ -28,6 +28,8 @@
     <string name="navdrawer_item_my_authors">My Authors</string>
     <string name="navdrawer_item_explore">Explore</string>
     <string name="navdrawer_item_new_pubs">New publications</string>
+    <string name="navdrawer_item_export">Export authors</string>
+    <string name="navdrawer_item_import">Import authors</string>
     <string name="navdrawer_item_settings">Settings</string>
 
     <!-- Accessibility description saying that the app's navigation drawer has been closed -->

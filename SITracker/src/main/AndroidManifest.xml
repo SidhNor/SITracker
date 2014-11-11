@@ -54,11 +54,11 @@
             android:value="AEdPqrEAAAAIO-o9YYeEHO2HMe1a0hktEmHxPWxJY_Rhq_BKOQ" />
 
         <!-- Activities for both phones and tablets -->
-
-        <!--Activity that decides which one to actually run -->
         <activity
-            android:name=".ui.HomeActivitySelector"
-            android:theme="@android:style/Theme.NoDisplay">
+            android:name=".ui.SiMainActivity_"
+            android:label="@string/app_name"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.SiTracker.Main">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -67,23 +67,7 @@
 
         <activity-alias
             android:name=".ui.HomeActivity_"
-            android:targetActivity=".ui.HomeActivitySelector" />
-
-        <activity
-            android:name=".ui.MyAuthorsActivity_"
-            android:label="@string/app_name"
-            android:launchMode="singleTop"
-            android:theme="@style/Theme.SiTracker.MyAuthors"></activity>
-
-        <activity
-            android:name=".ui.ExploreAuthorsActivity_"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.SiTracker.Explore"></activity>
-
-        <activity
-            android:name=".ui.NewPublicationsActivity_"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.SiTracker.NewPubs"></activity>
+            android:targetActivity=".ui.SiMainActivity_" />
 
         <activity
             android:name=".ui.HomeActivity_"
@@ -101,7 +85,7 @@
         <activity
             android:name=".ui.SearchActivity_"
             android:label="@string/title_search"
-            android:parentActivityName=".ui.HomeActivity_"
+            android:parentActivityName=".ui.SiMainActivity_"
             android:theme="@style/Theme.SiTracker.Search">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
@@ -113,28 +97,28 @@
             <!-- Parent activity meta-data to support API level pre 16 -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.andrada.sitracker.ui.HomeActivity_" />
+                android:value="com.andrada.sitracker.ui.SiMainActivity_" />
         </activity>
 
         <activity
             android:name=".ui.SettingsActivity_"
             android:label="@string/title_settings"
-            android:parentActivityName=".ui.HomeActivity_">
+            android:parentActivityName=".ui.SiMainActivity_">
             <!-- Parent activity meta-data to support API level pre 16 -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.andrada.sitracker.ui.HomeActivity_" />
+                android:value="com.andrada.sitracker.ui.SiMainActivity_" />
         </activity>
 
         <activity
             android:name=".ui.ImportAuthorsActivity_"
             android:label="@string/title_import"
-            android:parentActivityName=".ui.HomeActivity_"
+            android:parentActivityName=".ui.SiMainActivity_"
             android:theme="@style/Theme.SiTracker.ImportAuthors">
             <!-- Parent activity meta-data to support API level pre 16 -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.andrada.sitracker.ui.HomeActivity_" />
+                android:value="com.andrada.sitracker.ui.SiMainActivity_" />
         </activity>
 
         <activity android:name=".ui.DirectoryChooserActivity" />
@@ -192,7 +176,11 @@
         <activity
             android:name=".ui.debug.DebugActionRunnerActivity"
             android:label="@string/title_activity_debug_test_runner"
-            android:parentActivityName=".ui.phone.MyAuthorsActivity_" />
+            android:parentActivityName=".ui.SiMainActivity_">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.SiMainActivity_" />
+        </activity>
 
         <service android:name=".tasks.ClearPublicationCacheTask" />
 
