@@ -40,7 +40,6 @@ import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.AppUriContract;
 import com.andrada.sitracker.ui.fragment.RemoteAuthorsFragment;
-import com.andrada.sitracker.ui.phone.MyAuthorsActivity_;
 import com.andrada.sitracker.ui.widget.DrawShadowFrameLayout;
 import com.andrada.sitracker.util.AnalyticsHelper;
 import com.andrada.sitracker.util.UIUtils;

@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package com.andrada.sitracker.ui.phone;
+package com.andrada.sitracker.ui;
 
 import android.os.Bundle;
 
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.tasks.ExportAuthorsTask;
-import com.andrada.sitracker.ui.BaseActivity;
 import com.andrada.sitracker.ui.fragment.AuthorsFragment;
 import com.andrada.sitracker.ui.fragment.AuthorsFragment_;
 import com.andrada.sitracker.ui.fragment.DirectoryChooserFragment;

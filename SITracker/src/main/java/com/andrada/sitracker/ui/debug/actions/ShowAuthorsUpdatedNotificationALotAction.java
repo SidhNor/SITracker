@@ -25,8 +25,8 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 
 import com.andrada.sitracker.R;
+import com.andrada.sitracker.ui.MyAuthorsActivity_;
 import com.andrada.sitracker.ui.debug.DebugAction;
-import com.andrada.sitracker.ui.phone.MyAuthorsActivity_;
 
 import java.util.ArrayList;
 import java.util.List;

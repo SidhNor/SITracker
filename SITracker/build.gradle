@@ -41,7 +41,7 @@ dependencies {
     compile 'de.greenrobot:eventbus:2.2.1'
     compile 'com.melnykov:floatingactionbutton:1.0.6'
     compile 'com.github.amlcurran.showcaseview:library:5.0.0'
-    compile('com.github.bumptech.glide:glide:3.3.+') {
+    compile('com.github.bumptech.glide:glide:3.4.+') {
         exclude group: 'com.google.android', module: 'support-v4'
     }
     compile('com.viewpagerindicator:library:2.4.1@aar') {
@@ -59,7 +59,7 @@ tasks.withType(JavaCompile) {
 
 android {
     compileSdkVersion 21
-    buildToolsVersion '21.1.0'
+    buildToolsVersion '21.1.1'
 
     def versionPropsFile = file('version.properties')
     if (versionPropsFile.canRead()) {

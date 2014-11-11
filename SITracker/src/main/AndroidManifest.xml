@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright 2014 Gleb Godonoga.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,15 +22,15 @@
         android:anyDensity="true"
         android:largeScreens="true"
         android:normalScreens="true"
-        android:xlargeScreens="true"/>
+        android:xlargeScreens="true" />
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <!-- NFC for sharing authors -->
-    <uses-permission android:name="android.permission.NFC"/>
+    <uses-permission android:name="android.permission.NFC" />
 
     <application
         android:name=".SITrackerApp"
@@ -46,13 +45,13 @@
         <!-- Google Analytics Version v4 needs this value for easy tracking -->
         <meta-data
             android:name="com.google.android.gms.analytics.globalConfigResource"
-            android:resource="@xml/global_tracker"/>
+            android:resource="@xml/global_tracker" />
         <meta-data
             android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version"/>
+            android:value="@integer/google_play_services_version" />
         <meta-data
             android:name="com.google.android.backup.api_key"
-            android:value="AEdPqrEAAAAIO-o9YYeEHO2HMe1a0hktEmHxPWxJY_Rhq_BKOQ"/>
+            android:value="AEdPqrEAAAAIO-o9YYeEHO2HMe1a0hktEmHxPWxJY_Rhq_BKOQ" />
 
         <!-- Activities for both phones and tablets -->
 
@@ -61,48 +60,30 @@
             android:name=".ui.HomeActivitySelector"
             android:theme="@android:style/Theme.NoDisplay">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
         <activity-alias
             android:name=".ui.HomeActivity_"
-            android:targetActivity=".ui.HomeActivitySelector"/>
-
-
-        <activity
-            android:name=".ui.phone.MyAuthorsActivity_"
-            android:label="@string/app_name"
-            android:launchMode="singleTop"
-            android:theme="@style/Theme.SiTracker.MyAuthors">
-            <meta-data
-                android:name="com.andrada.sitracker.meta.TARGET_FORM_FACTOR"
-                android:value="handset"/>
-        </activity>
+            android:targetActivity=".ui.HomeActivitySelector" />
 
         <activity
-            android:name=".ui.tablet.MyAuthorsMultipaneActivity_"
+            android:name=".ui.MyAuthorsActivity_"
             android:label="@string/app_name"
             android:launchMode="singleTop"
-            android:theme="@style/Theme.SiTracker.MyAuthors.Wide">
-            <meta-data
-                android:name="com.andrada.sitracker.meta.TARGET_FORM_FACTOR"
-                android:value="tablet"/>
-        </activity>
-
+            android:theme="@style/Theme.SiTracker.MyAuthors"></activity>
 
         <activity
             android:name=".ui.ExploreAuthorsActivity_"
             android:label="@string/app_name"
-            android:theme="@style/Theme.SiTracker.Explore">
-        </activity>
+            android:theme="@style/Theme.SiTracker.Explore"></activity>
 
         <activity
             android:name=".ui.NewPublicationsActivity_"
             android:label="@string/app_name"
-            android:theme="@style/Theme.SiTracker.NewPubs">
-        </activity>
+            android:theme="@style/Theme.SiTracker.NewPubs"></activity>
 
         <activity
             android:name=".ui.HomeActivity_"
@@ -111,9 +92,9 @@
             android:theme="@style/Theme.SiTracker.Home">
             <!-- Android Beam for author adding -->
             <intent-filter>
-                <action android:name="android.nfc.action.NDEF_DISCOVERED"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <data android:mimeType="vnd.android.cursor.item/vnd.sitracker.author"/>
+                <action android:name="android.nfc.action.NDEF_DISCOVERED" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="vnd.android.cursor.item/vnd.sitracker.author" />
             </intent-filter>
         </activity>
 
@@ -123,16 +104,16 @@
             android:parentActivityName=".ui.HomeActivity_"
             android:theme="@style/Theme.SiTracker.Search">
             <intent-filter>
-                <action android:name="android.intent.action.SEARCH"/>
-                <category android:name="android.intent.category.DEFAULT"/>
+                <action android:name="android.intent.action.SEARCH" />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
             <meta-data
                 android:name="android.app.searchable"
-                android:resource="@xml/searchable"/>
+                android:resource="@xml/searchable" />
             <!-- Parent activity meta-data to support API level pre 16 -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.andrada.sitracker.ui.HomeActivity_"/>
+                android:value="com.andrada.sitracker.ui.HomeActivity_" />
         </activity>
 
         <activity
@@ -142,7 +123,7 @@
             <!-- Parent activity meta-data to support API level pre 16 -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.andrada.sitracker.ui.HomeActivity_"/>
+                android:value="com.andrada.sitracker.ui.HomeActivity_" />
         </activity>
 
         <activity
@@ -153,10 +134,10 @@
             <!-- Parent activity meta-data to support API level pre 16 -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.andrada.sitracker.ui.HomeActivity_"/>
+                android:value="com.andrada.sitracker.ui.HomeActivity_" />
         </activity>
 
-        <activity android:name=".ui.DirectoryChooserActivity"/>
+        <activity android:name=".ui.DirectoryChooserActivity" />
 
         <activity
             android:name=".ui.PublicationDetailsActivity"
@@ -166,12 +147,12 @@
             <!-- PARENT_ACTIVITY alone is insufficient for Up navigation for this activity -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.HomeActivity_"/>
+                android:value=".ui.HomeActivity_" />
             <!-- Android Beam for publication adding -->
             <intent-filter>
-                <action android:name="android.nfc.action.NDEF_DISCOVERED"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <data android:mimeType="vnd.android.cursor.item/vnd.sitracker.publication"/>
+                <action android:name="android.nfc.action.NDEF_DISCOVERED" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="vnd.android.cursor.item/vnd.sitracker.publication" />
             </intent-filter>
         </activity>
 
@@ -211,20 +192,20 @@
         <activity
             android:name=".ui.debug.DebugActionRunnerActivity"
             android:label="@string/title_activity_debug_test_runner"
-            android:parentActivityName=".ui.phone.MyAuthorsActivity_"/>
+            android:parentActivityName=".ui.phone.MyAuthorsActivity_" />
 
-        <service android:name=".tasks.ClearPublicationCacheTask"/>
+        <service android:name=".tasks.ClearPublicationCacheTask" />
 
         <!-- Authors update components -->
-        <service android:name=".tasks.UpdateAuthorsTask_"/>
-        <service android:name=".tasks.ImportAuthorsTask_"/>
+        <service android:name=".tasks.UpdateAuthorsTask_" />
+        <service android:name=".tasks.ImportAuthorsTask_" />
 
         <receiver
             android:name=".tasks.receivers.UpdateStatusNotificationReceiver"
             android:exported="false">
             <intent-filter android:priority="0">
-                <action android:name="com.andrada.sitracker.UPDATE_SUCCESS_ACTION"/>
-                <action android:name="com.andrada.sitracker.UPDATE_FAILED_ACTION"/>
+                <action android:name="com.andrada.sitracker.UPDATE_SUCCESS_ACTION" />
+                <action android:name="com.andrada.sitracker.UPDATE_FAILED_ACTION" />
             </intent-filter>
         </receiver>
         <receiver
@@ -233,8 +214,8 @@
             android:exported="true"
             android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
-                <action android:name="android.intent.action.EXTERNAL_APPLICATIONS_AVAILABLE"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.EXTERNAL_APPLICATIONS_AVAILABLE" />
             </intent-filter>
         </receiver>
 
@@ -242,7 +223,7 @@
 
         <meta-data
             android:name="android.app.default_searchable"
-            android:value=".ui.SearchActivity_"/>
+            android:value=".ui.SearchActivity_" />
 
 
     </application>

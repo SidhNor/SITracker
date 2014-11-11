@@ -16,7 +16,6 @@
 
 package com.andrada.sitracker.ui;
 
-import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.content.res.Resources;
 import android.net.Uri;
@@ -34,7 +33,6 @@ import de.keyboardsurfer.android.widget.crouton.Crouton;
 
 public class PublicationDetailsActivity extends SimpleSinglePaneActivity {
 
-    @SuppressLint("AppCompatMethod")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //UIUtils.tryTranslateHttpIntent(this);

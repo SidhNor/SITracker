@@ -38,7 +38,6 @@ import com.andrada.sitracker.contracts.SIPrefs_;
 import com.andrada.sitracker.events.AuthorSortMethodChanged;
 import com.andrada.sitracker.tasks.ClearPublicationCacheTask;
 import com.andrada.sitracker.tasks.UpdateAuthorsTask_;
-import com.andrada.sitracker.ui.phone.MyAuthorsActivity_;
 import com.andrada.sitracker.util.AnalyticsHelper;
 import com.andrada.sitracker.util.ShareHelper;
 import com.google.android.gms.analytics.GoogleAnalytics;
