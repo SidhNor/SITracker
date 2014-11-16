@@ -39,5 +39,4 @@
         android:text="@string/designtime_placeholder_short"
         android:textSize="14sp"
         android:textStyle="normal"/>
-
 </LinearLayout>
