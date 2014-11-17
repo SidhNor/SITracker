@@ -68,7 +68,7 @@
 
     <style name="Theme.SiTracker" parent="Theme.SiTracker.Base" />
 
-    <style name="Theme.SiTracker.WithNavDrawer" parent="Theme.SiTracker" />
+    <style name="Theme.SiTracker.WithNavDrawer" parent="Theme.SiTracker"/>
 
     <style name="Theme.SiTracker.Widget" parent="FrameworkRoot.Widget">
         <item name="android:popupMenuStyle">@style/Widget.SiTracker.PopupMenu</item>

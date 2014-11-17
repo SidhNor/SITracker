@@ -23,6 +23,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,9 +32,12 @@ import android.view.View;
 import com.andrada.sitracker.BuildConfig;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.ui.debug.DebugActionRunnerActivity;
+import com.andrada.sitracker.ui.fragment.AuthorsFragment;
+import com.andrada.sitracker.ui.fragment.AuthorsFragment_;
 import com.andrada.sitracker.ui.widget.DrawShadowFrameLayout;
 import com.andrada.sitracker.ui.widget.MultiSwipeRefreshLayout;
 import com.andrada.sitracker.util.ActionBarUtil;
+import com.andrada.sitracker.util.ActivityFragmentNavigator;
 import com.andrada.sitracker.util.NavDrawerManager;
 import com.andrada.sitracker.util.PlayServicesUtils;
 import com.andrada.sitracker.util.UIUtils;
@@ -51,7 +55,8 @@ import static com.andrada.sitracker.util.LogUtils.makeLogTag;
 public abstract class BaseActivity extends ActionBarActivity implements
         MultiSwipeRefreshLayout.CanChildScrollUpCallback,
         ActionBarUtil.ActionBarShowHideListener,
-        NavDrawerManager.NavDrawerListener {
+        NavDrawerManager.NavDrawerListener,
+        NavDrawerManager.NavDrawerItemAware {
 
     private static final String TAG = makeLogTag(BaseActivity.class);
 
@@ -70,6 +75,8 @@ public abstract class BaseActivity extends ActionBarActivity implements
     private SwipeRefreshLayout mSwipeRefreshLayout;
     //ShadowFrameLayout for setting toolbar shadow
     private DrawShadowFrameLayout mDrawShadowFrameLayout;
+
+    protected NavDrawerManager.NavDrawerItemAware mCurrentNavigationElement;
 
     /**
      * Converts an intent into a {@link Bundle} suitable for use as fragment arguments.
@@ -207,6 +214,10 @@ public abstract class BaseActivity extends ActionBarActivity implements
         return NavDrawerManager.NAVDRAWER_ITEM_INVALID;
     }
 
+    public void setContentTopClearance(int top) { }
+    public boolean canCollectionViewScrollUp() {return false;}
+    public RecyclerView getRecyclerView() { return null; }
+
     private void trySetupSwipeRefresh() {
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
         if (mSwipeRefreshLayout != null) {
@@ -258,7 +269,9 @@ public abstract class BaseActivity extends ActionBarActivity implements
         Intent intent;
         switch (item) {
             case NavDrawerManager.NAVDRAWER_ITEM_MY_AUTHORS:
-                //TODO Switch fragment with com.andrada.sitracker.util.ActivityFragmentNavigator
+                AuthorsFragment authFrag = AuthorsFragment_.builder().build();
+                ActivityFragmentNavigator.switchMainFragmentInMainActivity(this, authFrag);
+                mCurrentNavigationElement = authFrag;
                 break;
             case NavDrawerManager.NAVDRAWER_ITEM_EXPLORE:
                 //TODO Switch fragment with com.andrada.sitracker.util.ActivityFragmentNavigator
@@ -267,8 +280,7 @@ public abstract class BaseActivity extends ActionBarActivity implements
                 //TODO Switch fragment with com.andrada.sitracker.util.ActivityFragmentNavigator
                 break;
             case NavDrawerManager.NAVDRAWER_ITEM_SETTINGS:
-                intent = new Intent(this, SettingsActivity_.class);
-                startActivity(intent);
+                SettingsActivity_.intent(this).start();
                 break;
         }
     }

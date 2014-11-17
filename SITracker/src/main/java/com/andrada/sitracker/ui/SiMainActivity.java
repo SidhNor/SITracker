@@ -31,33 +31,28 @@ import org.androidannotations.annotations.OptionsMenu;
 @OptionsMenu(R.menu.main_menu)
 public class SiMainActivity extends BaseActivity {
 
-    AuthorsFragment authorsFragment;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        authorsFragment = AuthorsFragment_.builder().build();
-        getFragmentManager().beginTransaction()
-                .add(R.id.fragment_holder, authorsFragment, "myAuthors")
-                .commit();
+        goToNavDrawerItem(NavDrawerManager.NAVDRAWER_ITEM_MY_AUTHORS);
     }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
 
-        AuthorsFragment frag = (AuthorsFragment) getFragmentManager().findFragmentByTag("myAuthors");
-        getActionBarUtil().enableActionBarAutoHide(frag.getListView());
-        getActionBarUtil().registerHideableHeaderView(findViewById(R.id.headerbar));
-
+        if (mCurrentNavigationElement != null) {
+            getActionBarUtil().enableActionBarAutoHide(mCurrentNavigationElement.getRecyclerView());
+            getActionBarUtil().registerHideableHeaderView(findViewById(R.id.headerbar));
+        }
     }
 
     @Override
     public int getSelfNavDrawerItem() {
-        // we only have a nav drawer if we are in top-level Explore mode.
-
-        //Query root fragment for self nav drawer item
-        return NavDrawerManager.NAVDRAWER_ITEM_MY_AUTHORS;
+        if (mCurrentNavigationElement != null) {
+            return mCurrentNavigationElement.getSelfNavDrawerItem();
+        }
+        return NavDrawerManager.NAVDRAWER_ITEM_INVALID;
     }
 
     @Override
@@ -68,18 +63,18 @@ public class SiMainActivity extends BaseActivity {
     }
 
     private void setTopClearance() {
-        if (authorsFragment != null) {
+        if (mCurrentNavigationElement != null) {
             // configure fragment's top clearance to take our overlaid controls (Action Bar) into account.
             int actionBarSize = UIUtils.calculateActionBarSize(this);
-            authorsFragment.setContentTopClearance(actionBarSize);
+            mCurrentNavigationElement.setContentTopClearance(actionBarSize);
             setProgressBarTopWhenActionBarShown(actionBarSize);
         }
     }
 
     @Override
     public boolean canSwipeRefreshChildScrollUp() {
-        if (authorsFragment != null) {
-            return authorsFragment.canCollectionViewScrollUp();
+        if (mCurrentNavigationElement != null) {
+            return mCurrentNavigationElement.canCollectionViewScrollUp();
         }
         return super.canSwipeRefreshChildScrollUp();
     }

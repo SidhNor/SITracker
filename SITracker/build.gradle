@@ -50,6 +50,8 @@ dependencies {
     compile('de.keyboardsurfer.android.widget:crouton:1.8.4@aar') {
         exclude group: 'com.google.android', module: 'support-v4'
     }
+    compile 'org.lucasr.twowayview:core:1.0.0-SNAPSHOT@aar'
+    compile 'org.lucasr.twowayview:layouts:1.0.0-SNAPSHOT@aar'
     androidTestCompile 'com.squareup:fest-android:1.0.5'
 }
 

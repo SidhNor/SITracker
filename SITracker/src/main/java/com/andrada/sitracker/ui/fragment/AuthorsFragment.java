@@ -27,7 +27,6 @@ import android.os.Bundle;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -48,14 +47,13 @@ import com.andrada.sitracker.tasks.UpdateAuthorsTask_;
 import com.andrada.sitracker.ui.MultiSelectionUtil;
 import com.andrada.sitracker.ui.SearchActivity_;
 import com.andrada.sitracker.ui.fragment.adapters.AuthorsAdapter;
-import com.andrada.sitracker.ui.widget.DividerItemDecoration;
 import com.andrada.sitracker.util.AnalyticsHelper;
+import com.andrada.sitracker.util.NavDrawerManager;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.InstanceState;
-import org.androidannotations.annotations.ItemClick;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.SystemService;
@@ -64,6 +62,10 @@ import org.androidannotations.annotations.ViewById;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.lucasr.twowayview.ItemClickSupport;
+import org.lucasr.twowayview.TwoWayLayoutManager;
+import org.lucasr.twowayview.widget.DividerItemDecoration;
+import org.lucasr.twowayview.widget.ListLayoutManager;
 
 import java.util.Arrays;
 import java.util.List;
@@ -77,8 +79,10 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 
 @EFragment(R.layout.fragment_myauthors)
 @OptionsMenu(R.menu.authors_menu)
-public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListener,
-        MultiSelectionUtil.MultiChoiceModeListener, View.OnClickListener {
+public class AuthorsFragment extends Fragment implements
+        AuthorUpdateStatusListener,
+        MultiSelectionUtil.MultiChoiceModeListener,
+        NavDrawerManager.NavDrawerItemAware {
 
     @ViewById(R.id.authors_list)
     RecyclerView mRecyclerView;
@@ -182,8 +186,7 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
      *
      * @param view being clicked
      */
-    @Override
-    public void onClick(@NotNull View view) {
+    public void onCroutonClick(@NotNull View view) {
         if (view.getId() == R.id.retryUpdateButton) {
             if (this.mNoNetworkCrouton != null) {
                 Crouton.hide(this.mNoNetworkCrouton);
@@ -210,22 +213,29 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
 
     @AfterViews
     void bindAdapter() {
-        mRecyclerView.setAdapter(adapter);
-        RecyclerView.ItemDecoration itemDecoration =
-                new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST);
-        mRecyclerView.addItemDecoration(itemDecoration);
 
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setLayoutManager(new ListLayoutManager(getActivity(), TwoWayLayoutManager.Orientation.VERTICAL));
+
+        mRecyclerView.setAdapter(adapter);
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(getResources().getDrawable(R.drawable.list_divider)));
+
         mRecyclerView.setHasFixedSize(true);
         mMultiSelectionController = MultiSelectionUtil.attachMultiSelectionController(
                 mRecyclerView, (ActionBarActivity) getActivity(), this);
         mRecyclerView.setBackgroundResource(R.drawable.authors_list_background);
-        //empty.setLayoutResource(R.layout.empty_authors);
         mMultiSelectionController.tryRestoreInstanceState(checkedItems);
+
+        final ItemClickSupport itemClick = ItemClickSupport.addTo(mRecyclerView);
+
+        itemClick.setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
+            @Override
+            public void onItemClick(RecyclerView parent, View child, int position, long id) {
+                listItemClicked(position);
+            }
+        });
     }
 
-    @ItemClick
-    public void listItemClicked(int position) {
+    void listItemClicked(int position) {
         // Notify the parent activity of selected item
         currentAuthorIndex = mRecyclerView.getAdapter().getItemId(position);
         // Set the item as checked to be highlighted
@@ -404,7 +414,12 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
 
     private void showNoNetworkCroutonMessage() {
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.crouton_no_network, null);
-        view.findViewById(R.id.retryUpdateButton).setOnClickListener(this);
+        view.findViewById(R.id.retryUpdateButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onCroutonClick(v);
+            }
+        });
         Configuration croutonConfiguration = new Configuration.Builder()
                 .setDuration(Configuration.DURATION_LONG).build();
         this.mNoNetworkCrouton = Crouton.make(getActivity(), view);
@@ -416,7 +431,7 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
         return adapter;
     }
 
-    public RecyclerView getListView() {
+    public RecyclerView getRecyclerView() {
         return mRecyclerView;
     }
 
@@ -430,5 +445,10 @@ public class AuthorsFragment extends Fragment implements AuthorUpdateStatusListe
 
     public boolean canCollectionViewScrollUp() {
         return ViewCompat.canScrollVertically(mRecyclerView, -1);
+    }
+
+    @Override
+    public int getSelfNavDrawerItem() {
+        return NavDrawerManager.NAVDRAWER_ITEM_MY_AUTHORS;
     }
 }
