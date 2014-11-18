@@ -117,7 +117,7 @@ public class AuthorsAdapter extends RecyclerView.Adapter<AuthorsAdapter.AuthorVi
     public void onBindViewHolder(AuthorsAdapter.AuthorViewHolder authorItemView, int position) {
         if (position < authors.size() && authorItemView.item != null) {
             authorItemView.item.bind(authors.get(position), position == mSelectedItem);
-            authorItemView.item.setChecked(multiSelectedItems.get(position, false));
+            //authorItemView.item.setChecked(multiSelectedItems.get(position, false));
         }
     }
 

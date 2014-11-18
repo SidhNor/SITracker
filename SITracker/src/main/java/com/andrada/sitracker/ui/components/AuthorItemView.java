@@ -102,6 +102,7 @@ public class AuthorItemView extends CheckedRelativeLayout {
     }
 
     private void setOldNewBackgrounds() {
+        //TODO if new - make author title bold and update date text color in theme primary
         final int NEW_BACKGROUND = R.drawable.authors_list_item_selector_new;
         if (mIsNew && currentBackground != NEW_BACKGROUND) {
             this.setBackgroundResource(NEW_BACKGROUND);

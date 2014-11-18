@@ -174,10 +174,10 @@ public class MultiSelectionUtil {
 
         @Override
         public void onDestroyActionMode(ActionMode actionMode) {
-            mListener.onDestroyActionMode(actionMode);
             itemSelection.clearChoices();
             itemSelection.setChoiceMode(ItemSelectionSupport.ChoiceMode.NONE);
             itemClick.setOnItemClickListener(mDefaultItemClickListener);
+            mListener.onDestroyActionMode(actionMode);
             mActionMode = null;
         }
     }
