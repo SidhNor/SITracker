@@ -21,6 +21,8 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 
@@ -50,9 +52,12 @@ public class ShowAuthorsUpdatedNotificationALotAction implements DebugAction {
         if (updatedAuthorNames.size() > 4) {
             inboxStyle.setSummaryText(context.getString(R.string.notification_more_summary, updatedAuthorNames.size() - 4));
         }
+        Bitmap icon = BitmapFactory.decodeResource(context.getResources(),
+                R.mipmap.ic_launcher);
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(context)
                         .setSmallIcon(R.drawable.notification)
+                        .setPriority(Notification.PRIORITY_LOW)
                         .setContentTitle(context.getResources().getString(R.string.notification_title))
                         .setContentText(context.getResources().getQuantityString(R.plurals.authors_updated, updatedAuthorNames.size(), updatedAuthorNames.size()))
                         .setAutoCancel(true)

@@ -174,6 +174,7 @@ public class HomeActivity extends BaseActivity implements DirectoryChooserFragme
         ensureUpdatesAreRunningOnSchedule();
 
         new ShowcaseView.Builder(this)
+                //TODO switch to X, Y position as toolbar is not suppoerted yet
                 .setTarget(new ActionItemTarget(this, R.id.action_search))
                 .setContentTitle(getString(R.string.showcase_getting_started_title))
                 .setContentText(getString(R.string.showcase_getting_started_detail))

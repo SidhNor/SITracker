@@ -27,6 +27,7 @@ import android.os.Bundle;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -47,6 +48,7 @@ import com.andrada.sitracker.tasks.UpdateAuthorsTask_;
 import com.andrada.sitracker.ui.MultiSelectionUtil;
 import com.andrada.sitracker.ui.SearchActivity_;
 import com.andrada.sitracker.ui.fragment.adapters.AuthorsAdapter;
+import com.andrada.sitracker.ui.widget.DividerItemDecoration;
 import com.andrada.sitracker.util.AnalyticsHelper;
 import com.andrada.sitracker.util.NavDrawerManager;
 
@@ -63,9 +65,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lucasr.twowayview.ItemClickSupport;
-import org.lucasr.twowayview.TwoWayLayoutManager;
-import org.lucasr.twowayview.widget.DividerItemDecoration;
-import org.lucasr.twowayview.widget.ListLayoutManager;
 
 import java.util.Arrays;
 import java.util.List;
@@ -97,16 +96,12 @@ public class AuthorsFragment extends Fragment implements
     @InstanceState
     boolean mIsUpdating = false;
 
-    /**
-     * Saved instance state for adapter multiselected authors
-     */
-    @Nullable
-    @InstanceState
-    long[] checkedItems;
     @Nullable
     private Crouton mNoNetworkCrouton;
     @Nullable
     private MultiSelectionUtil.Controller mMultiSelectionController;
+
+    private Bundle savedState;
 
     //region Fragment lifecycle overrides
 
@@ -133,6 +128,12 @@ public class AuthorsFragment extends Fragment implements
             mMultiSelectionController.finish();
         }
         mMultiSelectionController = null;
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        savedState = savedInstanceState;
     }
 
     @Override
@@ -213,26 +214,30 @@ public class AuthorsFragment extends Fragment implements
 
     @AfterViews
     void bindAdapter() {
-
-        mRecyclerView.setLayoutManager(new ListLayoutManager(getActivity(), TwoWayLayoutManager.Orientation.VERTICAL));
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
 
         mRecyclerView.setAdapter(adapter);
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(getResources().getDrawable(R.drawable.list_divider)));
-
-        mRecyclerView.setHasFixedSize(true);
         mMultiSelectionController = MultiSelectionUtil.attachMultiSelectionController(
-                mRecyclerView, (ActionBarActivity) getActivity(), this);
+                mRecyclerView, (ActionBarActivity) getActivity(), this, new ItemClickSupport.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(RecyclerView parent, View child, int position, long id) {
+                        listItemClicked(position);
+                    }
+                });
+        mMultiSelectionController.tryRestoreInstanceState(savedState);
+
         mRecyclerView.setBackgroundResource(R.drawable.authors_list_background);
-        mMultiSelectionController.tryRestoreInstanceState(checkedItems);
+    }
 
-        final ItemClickSupport itemClick = ItemClickSupport.addTo(mRecyclerView);
-
-        itemClick.setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
-            @Override
-            public void onItemClick(RecyclerView parent, View child, int position, long id) {
-                listItemClicked(position);
-            }
-        });
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if (mMultiSelectionController != null) {
+            Bundle multiselectionBundle = mMultiSelectionController.getItemSelection().onSaveInstanceState();
+            outState.putAll(multiselectionBundle);
+        }
+        super.onSaveInstanceState(outState);
     }
 
     void listItemClicked(int position) {
@@ -304,13 +309,14 @@ public class AuthorsFragment extends Fragment implements
     //region CABListener
 
     @Override
-    public void onItemCheckedStateChanged(@NotNull ActionMode mode,
-                                          int position, long id, boolean checked) {
-        int numSelectedAuthors = adapter.getSelectedItemCount();
-        mode.setTitle(getResources().getQuantityString(
-                R.plurals.authors_selected,
-                numSelectedAuthors, numSelectedAuthors));
-        checkedItems = adapter.getSelectedItemsIds();
+    public void onItemCheckedStateChanged(@NotNull ActionMode mode) {
+
+        if (mMultiSelectionController != null) {
+            int numSelectedAuthors = mMultiSelectionController.getItemSelection().getCheckedItemCount();
+            mode.setTitle(getResources().getQuantityString(
+                    R.plurals.authors_selected,
+                    numSelectedAuthors, numSelectedAuthors));
+        }
     }
 
     @Override
@@ -327,8 +333,11 @@ public class AuthorsFragment extends Fragment implements
 
     @Override
     public boolean onActionItemClicked(@NotNull ActionMode mode, @NotNull MenuItem item) {
+        if (mMultiSelectionController == null) {
+            return false;
+        }
+        List<Long> mSelectedAuthors = Arrays.asList(ArrayUtils.toObject(mMultiSelectionController.getItemSelection().getCheckedItemIds()));
         mode.finish();
-        List<Long> mSelectedAuthors = Arrays.asList(ArrayUtils.toObject(adapter.getSelectedItemsIds()));
         if (item.getItemId() == R.id.action_remove) {
             AnalyticsHelper.getInstance().sendEvent(
                     Constants.GA_ADMIN_CATEGORY,
@@ -363,7 +372,7 @@ public class AuthorsFragment extends Fragment implements
 
     @Override
     public void onDestroyActionMode(ActionMode mode) {
-        checkedItems = null;
+
     }
 
     //endregion
@@ -381,7 +390,7 @@ public class AuthorsFragment extends Fragment implements
 
     public void onEvent(AuthorSelectedEvent event) {
         if (event.isDefault && mRecyclerView != null) {
-            mRecyclerView.smoothScrollToPosition(0);
+            mRecyclerView.scrollToPosition(0);
         }
     }
 

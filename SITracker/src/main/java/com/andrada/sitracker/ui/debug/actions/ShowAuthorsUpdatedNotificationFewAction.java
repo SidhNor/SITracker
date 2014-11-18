@@ -21,6 +21,8 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 
@@ -37,9 +39,12 @@ public class ShowAuthorsUpdatedNotificationFewAction implements DebugAction {
         inboxStyle.addLine("Автор Тест Тестович");
         inboxStyle.addLine("Тест Автора Тестинг");
 
+        Bitmap icon = BitmapFactory.decodeResource(context.getResources(),
+                R.mipmap.ic_launcher);
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(context)
                         .setSmallIcon(R.drawable.notification)
+                        .setPriority(Notification.PRIORITY_LOW)
                         .setContentTitle(context.getResources().getString(R.string.notification_title))
                         .setContentText(context.getResources().getQuantityString(R.plurals.authors_updated, 2, 2))
                         .setAutoCancel(true)

@@ -24,12 +24,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <org.lucasr.twowayview.widget.TwoWayView
+        <android.support.v7.widget.RecyclerView
             android:id="@+id/authors_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:cacheColorHint="@color/light_color_hint"
-            android:clipToPadding="false"/>
+            android:clipToPadding="false" />
 
         <ViewStub
             android:id="@+id/empty"

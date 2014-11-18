@@ -51,7 +51,7 @@ import java.util.concurrent.Callable;
 import de.greenrobot.event.EventBus;
 
 @EBean
-public class AuthorsAdapter extends MultiSelectionRecyclerAdapter<AuthorsAdapter.AuthorViewHolder> implements IsNewItemTappedListener {
+public class AuthorsAdapter extends RecyclerView.Adapter<AuthorsAdapter.AuthorViewHolder> implements IsNewItemTappedListener {
 
     List<Author> authors = new ArrayList<Author>();
     long mNewAuthors;
@@ -74,6 +74,7 @@ public class AuthorsAdapter extends MultiSelectionRecyclerAdapter<AuthorsAdapter
     @AfterInject
     void initAdapter() {
         reloadAuthors();
+        setHasStableIds(true);
     }
 
     /**
@@ -146,54 +147,6 @@ public class AuthorsAdapter extends MultiSelectionRecyclerAdapter<AuthorsAdapter
         for (long authId : authorsToMarkAsRead) {
             dismissAuthor(this.getAuthorById(authId));
         }
-    }
-
-    @Override
-    public void toggleSelection(int pos) {
-        if (multiSelectedItems.get(pos, false)) {
-            multiSelectedItems.delete(pos);
-        } else {
-            multiSelectedItems.put(pos, true);
-        }
-        notifyItemChanged(pos);
-    }
-
-    public void toggleSelection(int pos, boolean value) {
-        if (value) {
-            multiSelectedItems.put(pos, true);
-        } else if (multiSelectedItems.get(pos, false)) {
-            multiSelectedItems.delete(pos);
-        }
-        notifyItemChanged(pos);
-    }
-
-    @Override
-    public void clearSelections() {
-        multiSelectedItems.clear();
-        notifyDataSetChanged();
-
-    }
-
-    @Override
-    public int getSelectedItemCount() {
-        return multiSelectedItems.size();
-    }
-
-    @Override
-    public long[] getSelectedItemsIds() {
-        List<Long> items =
-                new ArrayList<Long>(multiSelectedItems.size());
-        for (int i = 0; i < multiSelectedItems.size(); i++) {
-            int position = multiSelectedItems.keyAt(i);
-            if (position >= 0 && position < authors.size()) {
-                items.add(getItemId(position));
-            }
-        }
-        long[] returnIds = new long[items.size()];
-        for (int i = 0; i < items.size(); i++) {
-            returnIds[i] = items.get(i);
-        }
-        return returnIds;
     }
 
     /**

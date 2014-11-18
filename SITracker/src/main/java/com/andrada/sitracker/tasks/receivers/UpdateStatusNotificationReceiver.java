@@ -57,7 +57,6 @@ public class UpdateStatusNotificationReceiver extends BroadcastReceiver {
             //Notify that update failed
             AnalyticsHelper.getInstance().sendException(UpdateFailedIntentMessage.FAILED_MESSAGE);
         }
-
     }
 
     private void sendNotification(int number, List<String> updatedAuthorNames, @NotNull Context context) {
@@ -76,6 +75,7 @@ public class UpdateStatusNotificationReceiver extends BroadcastReceiver {
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(context)
                         .setSmallIcon(R.drawable.notification)
+                        .setPriority(Notification.PRIORITY_LOW)
                         .setContentTitle(context.getResources().getString(R.string.notification_title))
                         .setContentText(context.getResources().getQuantityString(R.plurals.authors_updated, number, number))
                         .setAutoCancel(true)
