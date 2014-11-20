@@ -32,6 +32,7 @@ import com.andrada.sitracker.events.AuthorSelectedEvent;
 import com.andrada.sitracker.ui.components.AuthorItemView;
 import com.andrada.sitracker.ui.components.AuthorItemView_;
 import com.andrada.sitracker.util.AnalyticsHelper;
+import com.andrada.sitracker.util.UIUtils;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Background;
@@ -69,12 +70,15 @@ public class AuthorsAdapter extends RecyclerView.Adapter<AuthorsAdapter.AuthorVi
 
     private int mSelectedItem = 0;
 
-    private long mSelectedAuthorId = 0;
+    private long mSelectedAuthorId = -1;
+
+    private boolean isTablet = false;
 
     @AfterInject
     void initAdapter() {
         reloadAuthors();
         setHasStableIds(true);
+        isTablet = UIUtils.isTablet(context);
     }
 
     /**
@@ -91,7 +95,9 @@ public class AuthorsAdapter extends RecyclerView.Adapter<AuthorsAdapter.AuthorVi
                 newList = authorDao.getAllAuthorsSortedNew();
             }
             mNewAuthors = authorDao.getNewAuthorsCount();
-            setSelectedItem(mSelectedAuthorId);
+            if (mSelectedAuthorId >= 0) {
+                setSelectedItem(mSelectedAuthorId);
+            }
             postDataSetChanged(newList);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -116,7 +122,8 @@ public class AuthorsAdapter extends RecyclerView.Adapter<AuthorsAdapter.AuthorVi
     @Override
     public void onBindViewHolder(AuthorsAdapter.AuthorViewHolder authorItemView, int position) {
         if (position < authors.size() && authorItemView.item != null) {
-            authorItemView.item.bind(authors.get(position), position == mSelectedItem);
+            //There is no selected state on phones
+            authorItemView.item.bind(authors.get(position), isTablet && position == mSelectedItem);
             //authorItemView.item.setChecked(multiSelectedItems.get(position, false));
         }
     }

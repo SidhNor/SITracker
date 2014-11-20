@@ -37,9 +37,8 @@ public class MultiSelectionUtil {
     @NotNull
     public static Controller attachMultiSelectionController(@NotNull final RecyclerView listView,
                                                             @NotNull final ActionBarActivity activity,
-                                                            @NotNull final MultiChoiceModeListener listener,
-                                                            @NotNull final ItemClickSupport.OnItemClickListener defaultListener) {
-        return Controller.attach(listView, activity, listener, defaultListener);
+                                                            @NotNull final MultiChoiceModeListener listener) {
+        return Controller.attach(listView, activity, listener);
     }
 
     /**
@@ -61,8 +60,6 @@ public class MultiSelectionUtil {
         private MultiChoiceModeListener mListener;
 
         private ItemClickSupport.OnItemLongClickListener mLongTapListener;
-        private ItemClickSupport.OnItemClickListener mMultiselectionTouchListener;
-        private ItemClickSupport.OnItemClickListener mDefaultItemClickListener;
         private ItemSelectionSupport itemSelection;
         private ItemClickSupport itemClick;
 
@@ -72,12 +69,11 @@ public class MultiSelectionUtil {
 
         @NotNull
         public static Controller attach(@NotNull RecyclerView recyclerView, @NotNull ActionBarActivity activity,
-                                        @NotNull MultiChoiceModeListener listener, ItemClickSupport.OnItemClickListener defaultListener) {
+                                        @NotNull MultiChoiceModeListener listener) {
             Controller controller = new Controller();
             controller.mRecyclerView = recyclerView;
             controller.mActivity = activity;
             controller.mListener = listener;
-            controller.mDefaultItemClickListener = defaultListener;
             controller.attachDefaultListener();
             return controller;
         }
@@ -91,20 +87,29 @@ public class MultiSelectionUtil {
             this.mLongTapListener = new ItemClickSupport.OnItemLongClickListener() {
                 @Override
                 public boolean onItemLongClick(RecyclerView recyclerView, View view, int position, long id) {
-                    if (mActionMode != null) {
-                        return false;
+                    SparseBooleanArray checkedStates = itemSelection.getCheckedItemPositions();
+
+                    boolean newState = true;
+                    if (checkedStates != null) {
+                        newState = !checkedStates.get(position, false);
                     }
-                    itemSelection.setChoiceMode(ItemSelectionSupport.ChoiceMode.MULTIPLE);
-                    itemSelection.setItemChecked(position, true);
-                    mActionMode = mActivity.startSupportActionMode(Controller.this);
+                    if (mActionMode == null) {
+                        itemSelection.setChoiceMode(ItemSelectionSupport.ChoiceMode.MULTIPLE);
+                        itemSelection.setItemChecked(position, newState);
+                        mActionMode = mActivity.startSupportActionMode(Controller.this);
+                    } else {
+                        itemSelection.setItemChecked(position, newState);
+                        mListener.onItemCheckedStateChanged(mActionMode);
+                        if (itemSelection.getCheckedItemCount() == 0) {
+                            mActionMode.finish();
+                        }
+                    }
                     return true;
                 }
             };
 
             itemClick = ItemClickSupport.addTo(mRecyclerView);
             itemSelection = ItemSelectionSupport.addTo(mRecyclerView);
-
-            itemClick.setOnItemClickListener(mDefaultItemClickListener);
             itemClick.setOnItemLongClickListener(mLongTapListener);
         }
 
@@ -139,19 +144,6 @@ public class MultiSelectionUtil {
         public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
             if (mListener.onCreateActionMode(actionMode, menu)) {
                 mActionMode = actionMode;
-
-                mMultiselectionTouchListener = new ItemClickSupport.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(RecyclerView recyclerView, View view, int position, long id) {
-                        mListener.onItemCheckedStateChanged(mActionMode);
-                        if (itemSelection.getCheckedItemCount() <= 0 && mActionMode != null) {
-                            mActionMode.finish();
-                        }
-                    }
-                };
-
-                itemClick.setOnItemClickListener(mMultiselectionTouchListener);
-
                 if (itemSelection.getCheckedItemCount() > 0) {
                     mListener.onItemCheckedStateChanged(mActionMode);
                 }
@@ -178,7 +170,6 @@ public class MultiSelectionUtil {
         public void onDestroyActionMode(ActionMode actionMode) {
             itemSelection.clearChoices();
             itemSelection.setChoiceMode(ItemSelectionSupport.ChoiceMode.NONE);
-            itemClick.setOnItemClickListener(mDefaultItemClickListener);
             mListener.onDestroyActionMode(actionMode);
             mActionMode = null;
         }

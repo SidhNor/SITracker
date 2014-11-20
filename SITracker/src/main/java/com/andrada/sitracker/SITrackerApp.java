@@ -27,6 +27,8 @@ import com.google.android.gms.analytics.ExceptionReporter;
 
 import java.io.File;
 
+import de.greenrobot.event.EventBus;
+
 import static com.andrada.sitracker.util.LogUtils.LOGD;
 
 public class SITrackerApp extends Application {
@@ -49,6 +51,10 @@ public class SITrackerApp extends Application {
         } catch (Exception ignored) {
             //Ignore everything
         }
+
+        EventBus.builder()
+                .throwSubscriberException(BuildConfig.DEBUG)
+                .installDefaultEventBus();
 
         AnalyticsHelper.initHelper(this);
         ExceptionReporter myReporter = new ExceptionReporter(

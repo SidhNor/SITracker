@@ -19,11 +19,16 @@ package com.andrada.sitracker.ui;
 import android.os.Bundle;
 
 import com.andrada.sitracker.R;
+import com.andrada.sitracker.events.AuthorSelectedEvent;
+import com.andrada.sitracker.ui.fragment.PublicationsFragment_;
+import com.andrada.sitracker.util.ActivityFragmentNavigator;
 import com.andrada.sitracker.util.NavDrawerManager;
 import com.andrada.sitracker.util.UIUtils;
 
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.OptionsMenu;
+
+import de.greenrobot.event.EventBus;
 
 @EActivity(R.layout.activity_si_main)
 @OptionsMenu(R.menu.main_menu)
@@ -32,7 +37,21 @@ public class SiMainActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        int priority = 1;
+        EventBus.getDefault().register(this);
         goToNavDrawerItem(NavDrawerManager.NAVDRAWER_ITEM_MY_AUTHORS);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+
+    public void onEvent(AuthorSelectedEvent event) {
+        //If we received this event here, that means that nobody handle it - switch fragment then
+        ActivityFragmentNavigator.switchMainFragmentToChildFragment(this,
+                PublicationsFragment_.builder().arg("mCurrentId", event.authorId).build());
     }
 
     @Override

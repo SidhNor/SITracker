@@ -71,7 +71,9 @@ public class PublicationsFragment extends Fragment implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-        EventBus.getDefault().register(this);
+        int priority = 3;
+        //PublicationsFragment has a higher priority then SiMainActivity
+        EventBus.getDefault().register(this, priority);
     }
 
     @Override
@@ -117,6 +119,7 @@ public class PublicationsFragment extends Fragment implements
     }
 
     public void onEvent(@NotNull AuthorSelectedEvent event) {
+        EventBus.getDefault().cancelEventDelivery(event);
         updatePublicationsView(event.authorId);
     }
 

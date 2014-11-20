@@ -25,9 +25,25 @@ import com.andrada.sitracker.ui.BaseActivity;
 public class ActivityFragmentNavigator {
 
     public static void switchMainFragmentInMainActivity(BaseActivity activity, Fragment fragment) {
+        Fragment frag = activity.getFragmentManager().findFragmentById(R.id.fragment_holder);
+
         FragmentTransaction transaction = activity.getFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_holder, fragment);
+        if (frag == null) {
+            transaction.add(R.id.fragment_holder, fragment);
+        } else {
+            transaction.replace(R.id.fragment_holder, fragment);
+        }
         transaction.setCustomAnimations(0, 0);
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
+    public static void switchMainFragmentToChildFragment(BaseActivity activity, Fragment fragment) {
+        FragmentTransaction transaction = activity.getFragmentManager().beginTransaction();
+        transaction.setCustomAnimations(
+                R.animator.slide_in_left, R.animator.slide_out_right,
+                R.animator.slide_in_left, R.animator.slide_out_right);
+        transaction.replace(R.id.fragment_holder, fragment);
         transaction.addToBackStack(null);
         transaction.commit();
     }

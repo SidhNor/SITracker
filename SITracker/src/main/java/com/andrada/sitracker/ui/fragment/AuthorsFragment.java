@@ -116,7 +116,7 @@ public class AuthorsFragment extends Fragment implements
     public void onStart() {
         super.onStart();
         getActivity().invalidateOptionsMenu();
-        currentAuthorIndex = currentAuthorIndex == -1 ? adapter.getFirstAuthorId() : currentAuthorIndex;
+        //currentAuthorIndex = currentAuthorIndex == -1 ? adapter.getFirstAuthorId() : currentAuthorIndex;
         setStartupSelected();
     }
 
@@ -149,8 +149,8 @@ public class AuthorsFragment extends Fragment implements
     @UiThread(delay = 100)
     void setStartupSelected() {
         // Set the item as checked to be highlighted
-        adapter.setSelectedItem(currentAuthorIndex);
-        adapter.notifyDataSetChanged();
+        //adapter.setSelectedItem(currentAuthorIndex);
+        //adapter.notifyDataSetChanged();
     }
 
     //region Menu item tap handlers
@@ -219,13 +219,16 @@ public class AuthorsFragment extends Fragment implements
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
 
         mRecyclerView.setAdapter(adapter);
+
+        final ItemClickSupport itemClick = ItemClickSupport.addTo(mRecyclerView);
+        itemClick.setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
+            @Override
+            public void onItemClick(RecyclerView parent, View child, int position, long id) {
+                listItemClicked(position);
+            }
+        });
         mMultiSelectionController = MultiSelectionUtil.attachMultiSelectionController(
-                mRecyclerView, (ActionBarActivity) getActivity(), this, new ItemClickSupport.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(RecyclerView parent, View child, int position, long id) {
-                        listItemClicked(position);
-                    }
-                });
+                mRecyclerView, (ActionBarActivity) getActivity(), this);
         mMultiSelectionController.tryRestoreInstanceState(savedState);
     }
 
@@ -243,7 +246,7 @@ public class AuthorsFragment extends Fragment implements
         currentAuthorIndex = mRecyclerView.getAdapter().getItemId(position);
         // Set the item as checked to be highlighted
         adapter.setSelectedItem(currentAuthorIndex);
-        adapter.notifyDataSetChanged();
+        adapter.notifyItemChanged(position);
     }
 
     private void toggleUpdatingState() {
