@@ -230,8 +230,14 @@ public class NavDrawerManager {
         }*/
     }
 
-    private boolean isNavDrawerOpen() {
+    public boolean isNavDrawerOpen() {
         return mDrawerLayout != null && mDrawerLayout.isDrawerOpen(Gravity.START);
+    }
+
+    public void closeNavDrawer() {
+        if (mDrawerLayout != null) {
+            mDrawerLayout.closeDrawer(Gravity.START);
+        }
     }
 
     /**

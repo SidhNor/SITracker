@@ -16,6 +16,8 @@
 
 package com.andrada.sitracker.ui;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -34,6 +36,8 @@ import com.andrada.sitracker.R;
 import com.andrada.sitracker.ui.debug.DebugActionRunnerActivity;
 import com.andrada.sitracker.ui.fragment.AuthorsFragment;
 import com.andrada.sitracker.ui.fragment.AuthorsFragment_;
+import com.andrada.sitracker.ui.fragment.ExploreAuthorsFragment;
+import com.andrada.sitracker.ui.fragment.ExploreAuthorsFragment_;
 import com.andrada.sitracker.ui.widget.DrawShadowFrameLayout;
 import com.andrada.sitracker.ui.widget.MultiSwipeRefreshLayout;
 import com.andrada.sitracker.util.ActionBarUtil;
@@ -63,9 +67,9 @@ public abstract class BaseActivity extends ActionBarActivity implements
     // fade in and fade out durations for the main content when switching between
     // different Activities of the app through the Nav Drawer
     private static final int MAIN_CONTENT_FADEIN_DURATION = 250;
+    protected NavDrawerManager.NavDrawerItemAware mCurrentNavigationElement;
     private ActionBarUtil mABUtil;
     private NavDrawerManager mDrawerManager;
-
     // Navigation drawer:
     private DrawerLayout mDrawerLayout;
     // Primary toolbar and drawer toggle
@@ -75,8 +79,6 @@ public abstract class BaseActivity extends ActionBarActivity implements
     private SwipeRefreshLayout mSwipeRefreshLayout;
     //ShadowFrameLayout for setting toolbar shadow
     private DrawShadowFrameLayout mDrawShadowFrameLayout;
-
-    protected NavDrawerManager.NavDrawerItemAware mCurrentNavigationElement;
 
     /**
      * Converts an intent into a {@link Bundle} suitable for use as fragment arguments.
@@ -131,11 +133,21 @@ public abstract class BaseActivity extends ActionBarActivity implements
         // Intent in the app.
         UIUtils.enableDisableActivitiesByFormFactor(this);
 
-
         ActionBar ab = getSupportActionBar();
         if (ab != null) {
             ab.setDisplayHomeAsUpEnabled(true);
         }
+
+        getFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+            @Override
+            public void onBackStackChanged() {
+                Fragment frag = getFragmentManager().findFragmentById(R.id.fragment_holder);
+                if (frag instanceof NavDrawerManager.NavDrawerItemAware && mDrawerManager != null) {
+                    mCurrentNavigationElement = (NavDrawerManager.NavDrawerItemAware) frag;
+                    mDrawerManager.setSelectedNavDrawerItem(mCurrentNavigationElement.getSelfNavDrawerItem());
+                }
+            }
+        });
     }
 
     @Override
@@ -269,15 +281,6 @@ public abstract class BaseActivity extends ActionBarActivity implements
 
     @Override
     public void goToNavDrawerItem(int item) {
-        /*
-        //TODO this should probably go to com.andrada.sitracker.util.ActivityFragmentNavigator
-        // fade out the main content
-        View mainContent = mActivity.findViewById(R.id.main_content);
-        if (mainContent != null) {
-            mainContent.animate().alpha(0).setDuration(MAIN_CONTENT_FADEOUT_DURATION);
-        }*/
-
-        Intent intent;
         switch (item) {
             case NavDrawerManager.NAVDRAWER_ITEM_MY_AUTHORS:
                 AuthorsFragment authFrag = AuthorsFragment_.builder().build();
@@ -285,7 +288,9 @@ public abstract class BaseActivity extends ActionBarActivity implements
                 mCurrentNavigationElement = authFrag;
                 break;
             case NavDrawerManager.NAVDRAWER_ITEM_EXPLORE:
-                //TODO Switch fragment with com.andrada.sitracker.util.ActivityFragmentNavigator
+                ExploreAuthorsFragment exploreFrag = ExploreAuthorsFragment_.builder().build();
+                ActivityFragmentNavigator.switchMainFragmentInMainActivity(this, exploreFrag);
+                mCurrentNavigationElement = exploreFrag;
                 break;
             case NavDrawerManager.NAVDRAWER_ITEM_NEW_PUBS:
                 //TODO Switch fragment with com.andrada.sitracker.util.ActivityFragmentNavigator
@@ -355,5 +360,17 @@ public abstract class BaseActivity extends ActionBarActivity implements
         return mABUtil;
     }
 
+    @Override
+    public void onBackPressed() {
+        if (mDrawerManager.isNavDrawerOpen()) {
+            mDrawerManager.closeNavDrawer();
+        } else {
+            //As we are using SupportActivity and native FragmentManager -
+            //we need to query it instead of default ActionBarActivity implementation
+            if (!getFragmentManager().popBackStackImmediate()) {
+                super.onBackPressed();
+            }
+        }
+    }
 
 }
