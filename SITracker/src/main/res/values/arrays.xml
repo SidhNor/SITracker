@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright 2014 Gleb Godonoga.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -57,5 +56,18 @@
         <item>Awesome</item>
         <item>Masterpiece</item>
     </string-array>
+
+    <array name="letter_tile_colors">
+        <item>@color/quantum_yellow800</item>
+        <item>@color/quantum_deeporangeA200</item>
+        <item>@color/quantum_pink300</item>
+        <item>@color/quantum_googred400</item>
+        <item>@color/quantum_grey400</item>
+        <item>@color/quantum_deeppurpleA100</item>
+        <item>@color/quantum_deeppurple300</item>
+        <item>@color/quantum_cyan300</item>
+        <item>@color/quantum_tealA700</item>
+        <item>@color/quantum_googgreenA700</item>
+    </array>
 
 </resources>

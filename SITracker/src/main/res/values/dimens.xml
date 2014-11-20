@@ -48,6 +48,13 @@
     <dimen name="keyline_2_minus_16dp">56dp</dimen>
     <dimen name="default_list_vertical_spacing">8dp</dimen>
 
+    <!-- Authors -->
+    <dimen name="avatar_image_width">40dp</dimen>
+    <dimen name="avatar_image_height">40dp</dimen>
+    <dimen name="tile_letter_font_size_tiny">16.0dip</dimen>
+    <dimen name="tile_letter_font_size_small">24.0dip</dimen>
+    <dimen name="tile_letter_font_size_medium">40.0dip</dimen>
+
     <!--Publications and publication details-->
     <dimen name="publication_item_height">96dp</dimen>
     <dimen name="publication_details_floating_width">500dp</dimen>

@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <!--
   Copyright 2014 Gleb Godonoga.
 
@@ -16,9 +15,9 @@
   limitations under the License.
   -->
 
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_pressed="true" android:drawable="@color/authors_item_grey_pressed_color" />
-    <item android:state_checked="true" android:drawable="@color/authors_item_grey_background_color" />
-    <item android:drawable="@color/authors_item_blue_background_color" android:state_activated="true" />
-    <item android:drawable="@android:color/white" />
-</selector>
+<shape
+    android:shape="rectangle"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <size android:width="4.0dip" />
+    <solid android:color="@color/accent_blue" />
+</shape>

@@ -23,7 +23,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.14.1'
+        classpath 'com.android.tools.build:gradle:0.14.2'
         classpath 'com.neenbedankt.gradle.plugins:android-apt:1.4'
     }
 }
@@ -31,7 +31,7 @@ buildscript {
 allprojects {
     repositories {
         maven { url "http://dl.bintray.com/populov/maven" }
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots/"}
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         mavenCentral()
     }
 }

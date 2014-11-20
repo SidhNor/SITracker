@@ -112,10 +112,12 @@ public class MultiSelectionUtil {
             if (mActionMode != null) {
                 mActionMode.finish();
             }
-            if (mRecyclerView != null) {
+            //TODO This is usually caled on fragment destruction, make sure there is no memory leak here for ItemSelection and ItemClick Support
+            /*if (mRecyclerView != null) {
                 ItemSelectionSupport.removeFrom(mRecyclerView);
                 ItemClickSupport.removeFrom(mRecyclerView);
-            }
+            }*/
+
         }
 
         public void tryRestoreInstanceState(Bundle state) {

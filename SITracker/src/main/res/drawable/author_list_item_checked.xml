@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright 2014 Gleb Godonoga.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,9 +14,7 @@
   limitations under the License.
   -->
 
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_pressed="true" android:drawable="@color/authors_item_grey_pressed_color" />
-    <item android:state_checked="true" android:drawable="@color/authors_item_grey_background_color" />
-    <item android:drawable="@color/authors_item_blue_background_color" android:state_activated="true" />
-    <item android:drawable="@android:color/white" />
-</selector>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/list_dropdown_divider_color" />
+</shape>

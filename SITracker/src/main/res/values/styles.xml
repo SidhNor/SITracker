@@ -68,7 +68,7 @@
 
     <style name="Theme.SiTracker" parent="Theme.SiTracker.Base" />
 
-    <style name="Theme.SiTracker.WithNavDrawer" parent="Theme.SiTracker"/>
+    <style name="Theme.SiTracker.WithNavDrawer" parent="Theme.SiTracker" />
 
     <style name="Theme.SiTracker.Widget" parent="FrameworkRoot.Widget">
         <item name="android:popupMenuStyle">@style/Widget.SiTracker.PopupMenu</item>
@@ -315,6 +315,7 @@
         <item name="android:textColor">@color/body_text_1</item>
         <item name="android:textSize">@dimen/text_size_small</item>
         <item name="android:textAlignment" tools:ignore="NewApi">viewEnd</item>
+        <item name="android:includeFontPadding">false</item>
         <item name="android:layout_gravity">right</item>
     </style>
 

@@ -122,12 +122,12 @@ public class AuthorsFragment extends Fragment implements
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
-        EventBus.getDefault().unregister(this);
         if (mMultiSelectionController != null) {
             mMultiSelectionController.finish();
         }
         mMultiSelectionController = null;
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -227,8 +227,6 @@ public class AuthorsFragment extends Fragment implements
                     }
                 });
         mMultiSelectionController.tryRestoreInstanceState(savedState);
-
-        mRecyclerView.setBackgroundResource(R.drawable.authors_list_background);
     }
 
     @Override
@@ -389,7 +387,7 @@ public class AuthorsFragment extends Fragment implements
     }
 
     public void onEvent(AuthorSelectedEvent event) {
-        if (event.isDefault && mRecyclerView != null) {
+        if (event.isDefault && mRecyclerView != null && mRecyclerView.getLayoutManager() != null) {
             mRecyclerView.scrollToPosition(0);
         }
     }

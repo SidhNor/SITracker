@@ -19,8 +19,6 @@ package com.andrada.sitracker.ui;
 import android.os.Bundle;
 
 import com.andrada.sitracker.R;
-import com.andrada.sitracker.ui.fragment.AuthorsFragment;
-import com.andrada.sitracker.ui.fragment.AuthorsFragment_;
 import com.andrada.sitracker.util.NavDrawerManager;
 import com.andrada.sitracker.util.UIUtils;
 

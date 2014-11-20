@@ -151,6 +151,10 @@ public abstract class BaseActivity extends ActionBarActivity implements
             // Verifies the proper version of Google Play Services exists on the device.
             PlayServicesUtils.checkGooglePlaySevices(this);
         }
+        //Show the action bar back
+        if (mABUtil != null) {
+            mABUtil.autoShowOrHideActionBar(true);
+        }
     }
 
     @Override
@@ -214,9 +218,16 @@ public abstract class BaseActivity extends ActionBarActivity implements
         return NavDrawerManager.NAVDRAWER_ITEM_INVALID;
     }
 
-    public void setContentTopClearance(int top) { }
-    public boolean canCollectionViewScrollUp() {return false;}
-    public RecyclerView getRecyclerView() { return null; }
+    public void setContentTopClearance(int top) {
+    }
+
+    public boolean canCollectionViewScrollUp() {
+        return false;
+    }
+
+    public RecyclerView getRecyclerView() {
+        return null;
+    }
 
     private void trySetupSwipeRefresh() {
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
