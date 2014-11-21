@@ -42,6 +42,7 @@ public class UpdateStatusNotificationReceiver extends BroadcastReceiver {
     private final static int UPDATE_SUCCESS_NOTIFICATION_ID = 11987;
     private final static int UPDATE_FAIL_NOTIFICATION_ID = 2;
 
+
     @Override
     public void onReceive(@NotNull Context context, @NotNull Intent intent) {
         //See if there is something we can notify
@@ -77,6 +78,7 @@ public class UpdateStatusNotificationReceiver extends BroadcastReceiver {
                         .setSmallIcon(R.drawable.notification)
                         .setPriority(Notification.PRIORITY_LOW)
                         .setContentTitle(context.getResources().getString(R.string.notification_title))
+                        .setColor(context.getResources().getColor(R.color.theme_primary))
                         .setContentText(context.getResources().getQuantityString(R.plurals.authors_updated, number, number))
                         .setAutoCancel(true)
                         .setOnlyAlertOnce(true)

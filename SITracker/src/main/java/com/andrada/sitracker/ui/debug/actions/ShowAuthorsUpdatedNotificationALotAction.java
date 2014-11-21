@@ -57,6 +57,7 @@ public class ShowAuthorsUpdatedNotificationALotAction implements DebugAction {
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(context)
                         .setSmallIcon(R.drawable.notification)
+                        .setColor(context.getResources().getColor(R.color.theme_primary))
                         .setPriority(Notification.PRIORITY_LOW)
                         .setContentTitle(context.getResources().getString(R.string.notification_title))
                         .setContentText(context.getResources().getQuantityString(R.plurals.authors_updated, updatedAuthorNames.size(), updatedAuthorNames.size()))

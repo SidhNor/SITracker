@@ -45,6 +45,7 @@ public class ShowAuthorsUpdatedNotificationFewAction implements DebugAction {
                 new NotificationCompat.Builder(context)
                         .setSmallIcon(R.drawable.notification)
                         .setPriority(Notification.PRIORITY_LOW)
+                        .setColor(context.getResources().getColor(R.color.theme_primary))
                         .setContentTitle(context.getResources().getString(R.string.notification_title))
                         .setContentText(context.getResources().getQuantityString(R.plurals.authors_updated, 2, 2))
                         .setAutoCancel(true)
