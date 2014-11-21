@@ -34,9 +34,7 @@ public class ActivityFragmentNavigator {
 
     public static void switchMainFragmentToChildFragment(BaseActivity activity, Fragment fragment) {
         FragmentTransaction transaction = activity.getFragmentManager().beginTransaction();
-        transaction.setCustomAnimations(
-                R.animator.slide_in_left, R.animator.slide_out_right,
-                R.animator.slide_in_left, R.animator.slide_out_right);
+        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         transaction.replace(R.id.fragment_holder, fragment);
         transaction.addToBackStack(fragment.getClass().getName());
         transaction.commit();

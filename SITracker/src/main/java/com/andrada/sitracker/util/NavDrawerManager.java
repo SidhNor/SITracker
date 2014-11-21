@@ -385,9 +385,12 @@ public class NavDrawerManager {
 
     public interface NavDrawerItemAware {
         int getSelfNavDrawerItem();
+
         void setContentTopClearance(int top);
-        boolean canCollectionViewScrollUp();
+
         RecyclerView getRecyclerView();
+
+        void updateSwipeRefreshProgressBarTop();
     }
 
 }

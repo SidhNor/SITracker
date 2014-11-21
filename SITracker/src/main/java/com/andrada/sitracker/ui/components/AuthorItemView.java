@@ -82,7 +82,7 @@ public class AuthorItemView extends CheckedRelativeLayout {
 
         final Bitmap letterTile = tileProvider.getLetterTile(author.getName(), author.getUrlId(), tileSize, tileSize);
 
-        if (author.getAuthorImageUrl() != null) {
+        if (author.getAuthorImageUrl() != null && getContext() != null) {
             Glide.with(getContext())
                     .load(author.getAuthorImageUrl())
                     .placeholder(R.drawable.avatar_placeholder_gray)

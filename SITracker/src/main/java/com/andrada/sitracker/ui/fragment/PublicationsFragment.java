@@ -38,6 +38,7 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.InstanceState;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.UiThread;
@@ -61,8 +62,9 @@ public class PublicationsFragment extends Fragment implements
     @ViewById(R.id.publication_list)
     ExpandableListView mListView;
 
+    @FragmentArg("currentAuthorId")
     @InstanceState
-    long mCurrentId = -1;
+    long activeAuthorId = -1;
 
     @Pref
     SIPrefs_ prefs;
@@ -89,16 +91,16 @@ public class PublicationsFragment extends Fragment implements
         adapter.setShareListener(this);
         mListView.setOnChildClickListener(this);
         mListView.setOnItemLongClickListener(adapter);
-        updatePublicationsView(mCurrentId);
+        updatePublicationsView(activeAuthorId);
     }
 
     public void updatePublicationsView(long id) {
-        mCurrentId = id;
+        activeAuthorId = id;
         adapter.reloadPublicationsForAuthorId(id);
     }
 
     public void onEvent(@NotNull AuthorMarkedAsReadEvent event) {
-        if (mCurrentId == event.author.getId()) {
+        if (activeAuthorId == event.author.getId()) {
             //That means that we are viewing the current author
             //Just do a reload.
             updatePublicationsView(event.author.getId());

@@ -16,13 +16,16 @@
 
 package com.andrada.sitracker.ui;
 
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.events.AuthorSelectedEvent;
+import com.andrada.sitracker.ui.fragment.AuthorsFragment;
+import com.andrada.sitracker.ui.fragment.AuthorsFragment_;
 import com.andrada.sitracker.ui.fragment.PublicationsFragment_;
 import com.andrada.sitracker.util.ActivityFragmentNavigator;
-import com.andrada.sitracker.util.NavDrawerManager;
 import com.andrada.sitracker.util.UIUtils;
 
 import org.androidannotations.annotations.EActivity;
@@ -39,7 +42,14 @@ public class SiMainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         int priority = 1;
         EventBus.getDefault().register(this);
-        goToNavDrawerItem(NavDrawerManager.NAVDRAWER_ITEM_MY_AUTHORS);
+
+        //Bootstrap app with initial fragment
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        AuthorsFragment authFrag = AuthorsFragment_.builder().build();
+        mCurrentNavigationElement = authFrag;
+        transaction.replace(R.id.fragment_holder, authFrag);
+        transaction.setCustomAnimations(0, 0);
+        transaction.commit();
     }
 
     @Override
@@ -50,49 +60,24 @@ public class SiMainActivity extends BaseActivity {
 
     public void onEvent(AuthorSelectedEvent event) {
         //If we received this event here, that means that nobody handle it - switch fragment then
-        ActivityFragmentNavigator.switchMainFragmentToChildFragment(this,
-                PublicationsFragment_.builder().arg("mCurrentId", event.authorId).build());
-    }
-
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-
-        if (mCurrentNavigationElement != null) {
-            getActionBarUtil().enableActionBarAutoHide(mCurrentNavigationElement.getRecyclerView());
-            getActionBarUtil().registerHideableHeaderView(findViewById(R.id.headerbar));
-        }
-    }
-
-    @Override
-    public int getSelfNavDrawerItem() {
-        if (mCurrentNavigationElement != null) {
-            return mCurrentNavigationElement.getSelfNavDrawerItem();
-        }
-        return NavDrawerManager.NAVDRAWER_ITEM_INVALID;
+        Fragment frag = PublicationsFragment_.builder().activeAuthorId(event.authorId).build();
+        ActivityFragmentNavigator.switchMainFragmentToChildFragment(this, frag);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         invalidateOptionsMenu();
-        setTopClearance();
+        setContentTopClearance();
     }
 
-    private void setTopClearance() {
+    public void setContentTopClearance() {
         if (mCurrentNavigationElement != null) {
             // configure fragment's top clearance to take our overlaid controls (Action Bar) into account.
             int actionBarSize = UIUtils.calculateActionBarSize(this);
+            setContentTopClearance(actionBarSize);
             mCurrentNavigationElement.setContentTopClearance(actionBarSize);
             setProgressBarTopWhenActionBarShown(actionBarSize);
         }
-    }
-
-    @Override
-    public boolean canSwipeRefreshChildScrollUp() {
-        if (mCurrentNavigationElement != null) {
-            return mCurrentNavigationElement.canCollectionViewScrollUp();
-        }
-        return super.canSwipeRefreshChildScrollUp();
     }
 }

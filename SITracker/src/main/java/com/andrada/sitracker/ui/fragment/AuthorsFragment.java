@@ -17,7 +17,6 @@
 package com.andrada.sitracker.ui.fragment;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.app.backup.BackupManager;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -78,7 +77,7 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 
 @EFragment(R.layout.fragment_myauthors)
 @OptionsMenu(R.menu.authors_menu)
-public class AuthorsFragment extends Fragment implements
+public class AuthorsFragment extends BaseListFragment implements
         AuthorUpdateStatusListener,
         MultiSelectionUtil.MultiChoiceModeListener,
         NavDrawerManager.NavDrawerItemAware {
@@ -108,7 +107,7 @@ public class AuthorsFragment extends Fragment implements
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
+        //setRetainInstance(true);
         EventBus.getDefault().register(this);
     }
 
@@ -116,8 +115,20 @@ public class AuthorsFragment extends Fragment implements
     public void onStart() {
         super.onStart();
         getActivity().invalidateOptionsMenu();
-        //currentAuthorIndex = currentAuthorIndex == -1 ? adapter.getFirstAuthorId() : currentAuthorIndex;
-        setStartupSelected();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getBaseActivity().getActionBarUtil().enableActionBarAutoHide(getRecyclerView());
+        getBaseActivity().getActionBarUtil().registerHideableHeaderView(getActivity().findViewById(R.id.headerbar));
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        getBaseActivity().getActionBarUtil().deregisterHideableHeaderView(getActivity().findViewById(R.id.headerbar));
+        getBaseActivity().getActionBarUtil().disableActionBarAutoHide();
     }
 
     @Override
@@ -145,14 +156,6 @@ public class AuthorsFragment extends Fragment implements
     }
 
     //endregion
-
-    @UiThread(delay = 100)
-    void setStartupSelected() {
-        // Set the item as checked to be highlighted
-        //adapter.setSelectedItem(currentAuthorIndex);
-        //adapter.notifyDataSetChanged();
-    }
-
     //region Menu item tap handlers
     @OptionsItem(R.id.action_search)
     void menuSearchSelected() {
@@ -224,7 +227,7 @@ public class AuthorsFragment extends Fragment implements
         itemClick.setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
             @Override
             public void onItemClick(RecyclerView parent, View child, int position, long id) {
-                listItemClicked(position);
+                listItemClicked(position, child);
             }
         });
         mMultiSelectionController = MultiSelectionUtil.attachMultiSelectionController(
@@ -241,11 +244,13 @@ public class AuthorsFragment extends Fragment implements
         super.onSaveInstanceState(outState);
     }
 
-    void listItemClicked(int position) {
+    void listItemClicked(int position, View child) {
         // Notify the parent activity of selected item
         currentAuthorIndex = mRecyclerView.getAdapter().getItemId(position);
         // Set the item as checked to be highlighted
         adapter.setSelectedItem(currentAuthorIndex);
+        Bundle bundle = new Bundle();
+        EventBus.getDefault().post(new AuthorSelectedEvent(adapter.getSelectedAuthorId(), bundle));
         adapter.notifyItemChanged(position);
     }
 
@@ -390,9 +395,10 @@ public class AuthorsFragment extends Fragment implements
     }
 
     public void onEvent(AuthorSelectedEvent event) {
-        if (event.isDefault && mRecyclerView != null && mRecyclerView.getLayoutManager() != null) {
+        //TODO why is this even here?
+        /*if (mRecyclerView != null && mRecyclerView.getLayoutManager() != null) {
             mRecyclerView.scrollToPosition(0);
-        }
+        }*/
     }
 
     public void onEvent(BackUpRestoredEvent event) {
@@ -453,7 +459,8 @@ public class AuthorsFragment extends Fragment implements
         }
     }
 
-    public boolean canCollectionViewScrollUp() {
+    @Override
+    public boolean canSwipeRefreshChildScrollUp() {
         return ViewCompat.canScrollVertically(mRecyclerView, -1);
     }
 

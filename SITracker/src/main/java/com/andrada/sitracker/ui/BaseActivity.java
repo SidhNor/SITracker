@@ -22,14 +22,11 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 import com.andrada.sitracker.BuildConfig;
 import com.andrada.sitracker.R;
@@ -39,7 +36,6 @@ import com.andrada.sitracker.ui.fragment.AuthorsFragment_;
 import com.andrada.sitracker.ui.fragment.ExploreAuthorsFragment;
 import com.andrada.sitracker.ui.fragment.ExploreAuthorsFragment_;
 import com.andrada.sitracker.ui.widget.DrawShadowFrameLayout;
-import com.andrada.sitracker.ui.widget.MultiSwipeRefreshLayout;
 import com.andrada.sitracker.util.ActionBarUtil;
 import com.andrada.sitracker.util.ActivityFragmentNavigator;
 import com.andrada.sitracker.util.NavDrawerManager;
@@ -50,17 +46,15 @@ import com.google.android.gms.analytics.GoogleAnalytics;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.andrada.sitracker.util.LogUtils.LOGW;
 import static com.andrada.sitracker.util.LogUtils.makeLogTag;
 
 /**
  * A base activity that handles common functionality in the app.
  */
 public abstract class BaseActivity extends ActionBarActivity implements
-        MultiSwipeRefreshLayout.CanChildScrollUpCallback,
         ActionBarUtil.ActionBarShowHideListener,
-        NavDrawerManager.NavDrawerListener,
-        NavDrawerManager.NavDrawerItemAware {
+        NavDrawerManager.NavDrawerListener/*,
+        NavDrawerManager.NavDrawerItemAware*/ {
 
     private static final String TAG = makeLogTag(BaseActivity.class);
 
@@ -74,9 +68,7 @@ public abstract class BaseActivity extends ActionBarActivity implements
     private DrawerLayout mDrawerLayout;
     // Primary toolbar and drawer toggle
     private Toolbar mActionBarToolbar;
-    private int mProgressBarTopWhenActionBarShown;
-    // SwipeRefreshLayout allows the user to swipe the screen down to trigger a manual refresh
-    private SwipeRefreshLayout mSwipeRefreshLayout;
+
     //ShadowFrameLayout for setting toolbar shadow
     private DrawShadowFrameLayout mDrawShadowFrameLayout;
 
@@ -144,6 +136,7 @@ public abstract class BaseActivity extends ActionBarActivity implements
                 Fragment frag = getFragmentManager().findFragmentById(R.id.fragment_holder);
                 if (frag instanceof NavDrawerManager.NavDrawerItemAware && mDrawerManager != null) {
                     mCurrentNavigationElement = (NavDrawerManager.NavDrawerItemAware) frag;
+                    setContentTopClearance();
                     mDrawerManager.setSelectedNavDrawerItem(mCurrentNavigationElement.getSelfNavDrawerItem());
                 }
             }
@@ -181,18 +174,7 @@ public abstract class BaseActivity extends ActionBarActivity implements
 
         mABUtil = new ActionBarUtil(this, this);
         mDrawerManager = new NavDrawerManager(this);
-
-        trySetupSwipeRefresh();
-        updateSwipeRefreshProgressBarTop();
-
         mDrawShadowFrameLayout = (DrawShadowFrameLayout) findViewById(R.id.main_content);
-        View mainContent = findViewById(R.id.fragment_container);
-        if (mainContent != null) {
-            mainContent.setAlpha(0);
-            mainContent.animate().alpha(1).setDuration(MAIN_CONTENT_FADEIN_DURATION);
-        } else {
-            LOGW(TAG, "No view with ID main_content to fade in.");
-        }
     }
 
     @Override
@@ -227,42 +209,19 @@ public abstract class BaseActivity extends ActionBarActivity implements
      */
     @Override
     public int getSelfNavDrawerItem() {
+        if (mCurrentNavigationElement != null) {
+            return mCurrentNavigationElement.getSelfNavDrawerItem();
+        }
         return NavDrawerManager.NAVDRAWER_ITEM_INVALID;
     }
 
-    public void setContentTopClearance(int top) {
+    public void setContentTopClearance() {
     }
 
-    public boolean canCollectionViewScrollUp() {
-        return false;
-    }
-
-    public RecyclerView getRecyclerView() {
-        return null;
-    }
-
-    private void trySetupSwipeRefresh() {
-        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
-        if (mSwipeRefreshLayout != null) {
-            mSwipeRefreshLayout.setColorSchemeResources(
-                    R.color.refresh_progress_1,
-                    R.color.refresh_progress_2,
-                    R.color.refresh_progress_3);
-            mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-                @Override
-                public void onRefresh() {
-                    requestDataRefresh();
-                }
-            });
-            if (mSwipeRefreshLayout instanceof MultiSwipeRefreshLayout) {
-                MultiSwipeRefreshLayout mswrl = (MultiSwipeRefreshLayout) mSwipeRefreshLayout;
-                mswrl.setCanChildScrollUpCallback(this);
-            }
+    protected void setContentTopClearance(int top) {
+        if (mDrawShadowFrameLayout != null) {
+            mDrawShadowFrameLayout.setShadowTopOffset(top);
         }
-    }
-
-    protected void requestDataRefresh() {
-        //Stub - should be implemented in subclass
     }
 
     @Override
@@ -301,49 +260,23 @@ public abstract class BaseActivity extends ActionBarActivity implements
         }
     }
 
-    protected void setProgressBarTopWhenActionBarShown(int progressBarTopWhenActionBarShown) {
-        mProgressBarTopWhenActionBarShown = progressBarTopWhenActionBarShown;
+    public void setProgressBarTopWhenActionBarShown(int progressBarTopWhenActionBarShown) {
         if (mDrawShadowFrameLayout != null) {
             mDrawShadowFrameLayout.setShadowTopOffset(progressBarTopWhenActionBarShown);
         }
-        updateSwipeRefreshProgressBarTop();
+        if (mCurrentNavigationElement != null) {
+            mCurrentNavigationElement.updateSwipeRefreshProgressBarTop();
+        }
+
     }
 
     @Override
     public void actionBarVisibilityChanged(boolean shown) {
         mDrawerManager.adjustStatusBarBasedOnActionBarVisibility(shown);
         mDrawShadowFrameLayout.setShadowVisible(shown, shown);
-        updateSwipeRefreshProgressBarTop();
-    }
-
-    protected void updateSwipeRefreshProgressBarTop() {
-        if (mSwipeRefreshLayout == null) {
-            return;
+        if (mCurrentNavigationElement != null) {
+            mCurrentNavigationElement.updateSwipeRefreshProgressBarTop();
         }
-        int progressBarStartMargin = getResources().getDimensionPixelSize(
-                R.dimen.swipe_refresh_progress_bar_start_margin);
-        int progressBarEndMargin = getResources().getDimensionPixelSize(
-                R.dimen.swipe_refresh_progress_bar_end_margin);
-        int top = mABUtil.isActionBarShown() ? mProgressBarTopWhenActionBarShown : 0;
-        mSwipeRefreshLayout.setProgressViewOffset(false,
-                top + progressBarStartMargin, top + progressBarEndMargin);
-    }
-
-    protected void onRefreshingStateChanged(boolean refreshing) {
-        if (mSwipeRefreshLayout != null) {
-            mSwipeRefreshLayout.setRefreshing(refreshing);
-        }
-    }
-
-    protected void enableDisableSwipeRefresh(boolean enable) {
-        if (mSwipeRefreshLayout != null) {
-            mSwipeRefreshLayout.setEnabled(enable);
-        }
-    }
-
-    @Override
-    public boolean canSwipeRefreshChildScrollUp() {
-        return false;
     }
 
     public Toolbar getActionBarToolbar() {
