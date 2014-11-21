@@ -33,7 +33,7 @@ public class BaseListFragment extends Fragment
         NavDrawerManager.NavDrawerItemAware {
     // SwipeRefreshLayout allows the user to swipe the screen down to trigger a manual refresh
 
-    private SwipeRefreshLayout mSwipeRefreshLayout;
+    protected SwipeRefreshLayout mSwipeRefreshLayout;
     private int mProgressBarTopWhenActionBarShown;
 
     @Override
@@ -41,6 +41,18 @@ public class BaseListFragment extends Fragment
         super.onResume();
         trySetupSwipeRefresh();
         updateSwipeRefreshProgressBarTop();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mSwipeRefreshLayout != null) {
+            mSwipeRefreshLayout.setOnRefreshListener(null);
+        }
+        if (mSwipeRefreshLayout instanceof MultiSwipeRefreshLayout) {
+            MultiSwipeRefreshLayout mswrl = (MultiSwipeRefreshLayout) mSwipeRefreshLayout;
+            mswrl.setCanChildScrollUpCallback(null);
+        }
     }
 
     private void trySetupSwipeRefresh() {
@@ -64,6 +76,7 @@ public class BaseListFragment extends Fragment
     }
 
     protected void requestDataRefresh() {
+        onRefreshingStateChanged(false);
         //Stub - should be implemented in subclass
     }
 
@@ -113,7 +126,7 @@ public class BaseListFragment extends Fragment
 
     @Override
     public void setContentTopClearance(int top) {
-        //Stub - should be implemented in subclass
+        mProgressBarTopWhenActionBarShown = top;
     }
 
     @Override

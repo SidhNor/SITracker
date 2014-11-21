@@ -452,6 +452,7 @@ public class AuthorsFragment extends BaseListFragment implements
     }
 
     public void setContentTopClearance(int clearance) {
+        super.setContentTopClearance(clearance);
         if (mRecyclerView != null) {
             mRecyclerView.setPadding(mRecyclerView.getPaddingLeft(), clearance,
                     mRecyclerView.getPaddingRight(), mRecyclerView.getPaddingBottom());
