@@ -27,6 +27,7 @@ import android.widget.TextView;
 
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.IsNewItemTappedListener;
+import com.andrada.sitracker.contracts.ItemSelectionChangedListener;
 import com.andrada.sitracker.db.beans.Author;
 import com.andrada.sitracker.ui.widget.CheckedRelativeLayout;
 import com.andrada.sitracker.ui.widget.LetterTileProvider;
@@ -55,6 +56,7 @@ public class AuthorItemView extends CheckedRelativeLayout {
     private boolean mIsNew = false;
     private boolean mPreviousNewState = false;
     private IsNewItemTappedListener mListener;
+    private ItemSelectionChangedListener mSelectionListener;
 
     private final int tileSize;
     private final LetterTileProvider tileProvider;
@@ -71,10 +73,18 @@ public class AuthorItemView extends CheckedRelativeLayout {
         this.delegatedTouchViews.put(
                 ViewConfig.wholeRight(),
                 author_updated);
+
+        this.delegatedTouchViews.put(
+                ViewConfig.wholeLeft(),
+                author_image);
     }
 
     public void setListener(IsNewItemTappedListener listener) {
         mListener = listener;
+    }
+
+    public void setListener(ItemSelectionChangedListener listener) {
+        mSelectionListener = listener;
     }
 
     @SuppressLint("NewApi")
@@ -123,12 +133,15 @@ public class AuthorItemView extends CheckedRelativeLayout {
             mIsNew = false;
             setOldNewStates();
             mListener.onIsNewItemTapped(view);
+        } else if (mSelectionListener != null && view.getId() == R.id.author_image) {
+            mSelectionListener.itemSelectionChanged(this.isChecked());
         }
+
     }
 
     @Override
     protected void onDelegatedTouchViewDown(View view) {
-        if (mIsNew) {
+        if (mIsNew && view.getId() == R.id.author_updated) {
             author_updated.setImageResource(R.drawable.star_selected_focused);
         }
     }
@@ -136,7 +149,7 @@ public class AuthorItemView extends CheckedRelativeLayout {
     @Override
     protected void onDelegatedTouchViewCancel(View view) {
         //If we are not new, just ignore everything
-        if (mIsNew) {
+        if (mIsNew && view.getId() == R.id.author_updated) {
             author_updated.setImageResource(R.drawable.star_selected);
         }
     }

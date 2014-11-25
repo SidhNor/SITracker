@@ -63,6 +63,7 @@
             <TextView
                 android:id="@+id/pub_abstract"
                 style="@style/TextBody"
+                android:transitionName="publicationAbstract"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/content_padding_normal"
@@ -122,6 +123,7 @@
             <TextView
                 android:id="@+id/pub_title"
                 style="@style/PublicationDetail.Title"
+                android:transitionName="publicationTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingLeft="@dimen/keyline_2_pub_detail"

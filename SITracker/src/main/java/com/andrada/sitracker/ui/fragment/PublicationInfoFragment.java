@@ -34,6 +34,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
@@ -410,6 +411,7 @@ public class PublicationInfoFragment extends Fragment implements
             public void run() {
                 onScrollChanged(0, 0); // trigger scroll handling
                 mScrollViewChild.setVisibility(View.VISIBLE);
+                ActivityCompat.startPostponedEnterTransition(getActivity());
             }
         });
     }

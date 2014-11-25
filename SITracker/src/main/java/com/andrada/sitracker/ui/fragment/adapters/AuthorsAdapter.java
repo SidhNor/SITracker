@@ -18,7 +18,6 @@ package com.andrada.sitracker.ui.fragment.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -64,8 +63,6 @@ public class AuthorsAdapter extends RecyclerView.Adapter<AuthorsAdapter.AuthorVi
 
     @RootContext
     Context context;
-
-    private final SparseBooleanArray multiSelectedItems = new SparseBooleanArray();
 
     private int mSelectedItem = 0;
 

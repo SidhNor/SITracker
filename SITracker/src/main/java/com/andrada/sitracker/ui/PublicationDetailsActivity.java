@@ -20,6 +20,7 @@ import android.app.Fragment;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
 import android.view.MenuItem;
@@ -52,6 +53,7 @@ public class PublicationDetailsActivity extends SimpleSinglePaneActivity {
             BeamUtils.setBeamPublicationUri(this, publicationUri);
         }
 
+        ActivityCompat.postponeEnterTransition(this);
         setTitle("");
     }
 
@@ -64,7 +66,7 @@ public class PublicationDetailsActivity extends SimpleSinglePaneActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                finish();
+                ActivityCompat.finishAfterTransition(PublicationDetailsActivity.this);
             }
         });
     }

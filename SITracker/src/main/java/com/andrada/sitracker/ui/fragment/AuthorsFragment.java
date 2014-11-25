@@ -110,7 +110,6 @@ public class AuthorsFragment extends BaseListFragment implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         LOGI("SITracker", "AuthorsFragment - OnCreate");
-        //setRetainInstance(true);
     }
 
     @Override
@@ -128,6 +127,9 @@ public class AuthorsFragment extends BaseListFragment implements
 
         //Set title
         getBaseActivity().getDrawerManager().pushNavigationalState(getString(R.string.navdrawer_item_my_authors), true);
+
+        //Reload authors
+        adapter.reloadAuthors();
     }
 
     @Override
@@ -227,7 +229,6 @@ public class AuthorsFragment extends BaseListFragment implements
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
-
         mRecyclerView.setAdapter(adapter);
 
         final ItemClickSupport itemClick = ItemClickSupport.addTo(mRecyclerView);

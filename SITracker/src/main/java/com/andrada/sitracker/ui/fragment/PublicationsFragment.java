@@ -18,6 +18,9 @@ package com.andrada.sitracker.ui.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.util.Pair;
 import android.view.View;
 import android.widget.ExpandableListView;
 
@@ -149,7 +152,10 @@ public class PublicationsFragment extends BaseListFragment implements
 
         Intent intent = new Intent(Intent.ACTION_VIEW,
                 AppUriContract.buildPublicationUri(pub.getId()), getActivity(), PublicationDetailsActivity.class);
-        getActivity().startActivity(intent);
+        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getBaseActivity(),
+                new Pair<View, String>(view.findViewById(R.id.item_title), "publicationTitle"),
+                new Pair<View, String>(view.findViewById(R.id.item_description), "publicationAbstract"));
+        ActivityCompat.startActivity(getBaseActivity(), intent, options.toBundle());
         return true;
     }
 

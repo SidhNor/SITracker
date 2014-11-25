@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright 2014 Gleb Godonoga.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,7 +16,7 @@
 
 <resources>
 
-    <style name="Theme" parent="FrameworkRoot.Base"/>
+    <style name="Theme" parent="FrameworkRoot.Base" />
     <!-- doesn't contain the pre-L code from the values/styles.xml -->
 
     <style name="Theme.SiTracker" parent="Theme.SiTracker.Base">
@@ -28,6 +27,14 @@
         <item name="android:statusBarColor">@color/theme_primary_dark</item>
 
         <item name="android:alertDialogTheme">@style/Theme.SiTracker.AlertDialog</item>
+
+        <item name="android:windowContentTransitions">true</item>
+        <!-- specify shared element transitions -->
+        <item name="android:windowSharedElementEnterTransition">
+            @transition/change_text_block_transform
+        </item>
+
+
     </style>
 
     <style name="Theme.SiTracker.AlertDialog" parent="android:Theme.Material.Light.Dialog.Alert">
