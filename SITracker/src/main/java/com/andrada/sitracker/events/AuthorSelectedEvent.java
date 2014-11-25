@@ -16,14 +16,12 @@
 
 package com.andrada.sitracker.events;
 
-import android.os.Bundle;
-
 public class AuthorSelectedEvent {
     public final long authorId;
-    public final Bundle extras;
+    public final String authorName;
 
-    public AuthorSelectedEvent(long authorId, Bundle bundle) {
+    public AuthorSelectedEvent(long authorId, String authorName) {
         this.authorId = authorId;
-        this.extras = bundle;
+        this.authorName = authorName;
     }
 }

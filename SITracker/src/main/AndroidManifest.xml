@@ -58,6 +58,7 @@
             android:name=".ui.SiMainActivity_"
             android:label="@string/app_name"
             android:launchMode="singleTop"
+            android:configChanges="orientation|keyboard"
             android:theme="@style/Theme.SiTracker.Main">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

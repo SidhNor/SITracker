@@ -27,6 +27,13 @@ import org.androidannotations.annotations.EFragment;
 public class ExploreAuthorsFragment extends BaseListFragment
         implements NavDrawerManager.NavDrawerItemAware {
 
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getBaseActivity().getDrawerManager().pushNavigationalState(getString(R.string.navdrawer_item_explore), true);
+    }
+
     @Override
     public int getSelfNavDrawerItem() {
         return NavDrawerManager.NAVDRAWER_ITEM_EXPLORE;

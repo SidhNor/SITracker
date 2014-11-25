@@ -91,6 +91,8 @@
 
     <dimen name="headerbar_elevation">2dp</dimen>
     <dimen name="floating_action_button_margin">16dp</dimen>
+    <dimen name="fab_elevation">8dp</dimen>
+    <dimen name="publication_detail_max_header_elevation">@dimen/headerbar_elevation</dimen>
 
 </resources>
 

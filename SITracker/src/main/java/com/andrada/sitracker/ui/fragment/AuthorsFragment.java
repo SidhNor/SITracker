@@ -75,6 +75,8 @@ import de.keyboardsurfer.android.widget.crouton.Configuration;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
+import static com.andrada.sitracker.util.LogUtils.LOGI;
+
 @EFragment(R.layout.fragment_myauthors)
 @OptionsMenu(R.menu.authors_menu)
 public class AuthorsFragment extends BaseListFragment implements
@@ -107,8 +109,8 @@ public class AuthorsFragment extends BaseListFragment implements
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LOGI("SITracker", "AuthorsFragment - OnCreate");
         //setRetainInstance(true);
-        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -120,8 +122,12 @@ public class AuthorsFragment extends BaseListFragment implements
     @Override
     public void onResume() {
         super.onResume();
+        EventBus.getDefault().register(this);
         getBaseActivity().getActionBarUtil().enableActionBarAutoHide(getRecyclerView());
         getBaseActivity().getActionBarUtil().registerHideableHeaderView(getActivity().findViewById(R.id.headerbar));
+
+        //Set title
+        getBaseActivity().getDrawerManager().pushNavigationalState(getString(R.string.navdrawer_item_my_authors), true);
     }
 
     @Override
@@ -129,6 +135,7 @@ public class AuthorsFragment extends BaseListFragment implements
         super.onPause();
         getBaseActivity().getActionBarUtil().deregisterHideableHeaderView(getActivity().findViewById(R.id.headerbar));
         getBaseActivity().getActionBarUtil().disableActionBarAutoHide();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -138,7 +145,7 @@ public class AuthorsFragment extends BaseListFragment implements
         }
         mMultiSelectionController = null;
         super.onDestroy();
-        EventBus.getDefault().unregister(this);
+        LOGI("SITracker", "AuthorsFragment - OnDestroy");
     }
 
     @Override
@@ -249,8 +256,8 @@ public class AuthorsFragment extends BaseListFragment implements
         currentAuthorIndex = mRecyclerView.getAdapter().getItemId(position);
         // Set the item as checked to be highlighted
         adapter.setSelectedItem(currentAuthorIndex);
-        Bundle bundle = new Bundle();
-        EventBus.getDefault().post(new AuthorSelectedEvent(adapter.getSelectedAuthorId(), bundle));
+        String name = ((Author) adapter.getItem(position)).getName();
+        EventBus.getDefault().post(new AuthorSelectedEvent(adapter.getSelectedAuthorId(), name));
         adapter.notifyItemChanged(position);
     }
 
@@ -451,6 +458,7 @@ public class AuthorsFragment extends BaseListFragment implements
         return mRecyclerView;
     }
 
+    @Override
     public void setContentTopClearance(int clearance) {
         super.setContentTopClearance(clearance);
         if (mRecyclerView != null) {

@@ -27,6 +27,7 @@ import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.RecyclerView;
+import android.util.Pair;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,8 +39,11 @@ import com.andrada.sitracker.ui.BaseActivity;
 import com.andrada.sitracker.ui.widget.ScrimInsetsScrollView;
 
 import java.util.ArrayList;
+import java.util.Stack;
 
 public class NavDrawerManager {
+
+    private Stack<Pair<String, Boolean>> actionBarState = new Stack<Pair<String, Boolean>>();
 
     // symbols for navdrawer items (indices must correspond to array below). This is
     // not a list of items that are necessarily *present* in the Nav Drawer; rather,
@@ -85,6 +89,7 @@ public class NavDrawerManager {
     // Navigation drawer:
     private DrawerLayout mDrawerLayout;
     private Handler mHandler;
+    private ActionBarDrawerToggle mToggle;
 
     /**
      * Status bar color related
@@ -186,7 +191,7 @@ public class NavDrawerManager {
             });
         }
 
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(mActivity, mDrawerLayout,
+        mToggle = new ActionBarDrawerToggle(mActivity, mDrawerLayout,
                 mActivity.getActionBarToolbar(), R.string.drawer_open, R.string.drawer_close) {
             @Override
             public void onDrawerClosed(View drawerView) {
@@ -213,8 +218,17 @@ public class NavDrawerManager {
             }
         };
 
-        mDrawerLayout.setDrawerListener(toggle);
-        toggle.syncState();
+        mToggle.setHomeAsUpIndicator(R.drawable.ic_up);
+        mToggle.setToolbarNavigationClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mActivity.onBackPressed();
+            }
+        });
+
+
+        mDrawerLayout.setDrawerListener(mToggle);
+        mToggle.syncState();
 
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, Gravity.START);
 
@@ -228,6 +242,30 @@ public class NavDrawerManager {
             PrefUtils.markWelcomeDone(this);
             mDrawerLayout.openDrawer(Gravity.START);
         }*/
+    }
+
+    public void pushNavigationalState(String title, boolean isRootView) {
+        actionBarState.push(new Pair<String, Boolean>(title, isRootView));
+        if (isRootView) {
+            mToggle.setDrawerIndicatorEnabled(true);
+        } else {
+            mToggle.setDrawerIndicatorEnabled(false);
+        }
+        mActivity.getActionBarToolbar().setTitle(title);
+    }
+
+    public void popNavigationState() {
+        if (actionBarState.size() <= 1) {
+            return;
+        }
+        actionBarState.pop();
+        Pair<String, Boolean> state = actionBarState.peek();
+        if (state.second) {
+            mToggle.setDrawerIndicatorEnabled(true);
+        } else {
+            mToggle.setDrawerIndicatorEnabled(false);
+        }
+        mActivity.getActionBarToolbar().setTitle(state.first);
     }
 
     public boolean isNavDrawerOpen() {

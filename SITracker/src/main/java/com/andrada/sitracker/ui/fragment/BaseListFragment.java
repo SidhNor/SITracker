@@ -81,6 +81,7 @@ public class BaseListFragment extends Fragment
     }
 
     /**
+     * `
      * Should be used to access action bar utils
      *
      * @return

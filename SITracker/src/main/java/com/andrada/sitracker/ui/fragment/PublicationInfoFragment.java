@@ -35,6 +35,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
@@ -47,7 +48,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -107,13 +107,14 @@ import de.keyboardsurfer.android.widget.crouton.Configuration;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
+import static com.andrada.sitracker.util.LogUtils.LOGI;
+
 @EFragment(R.layout.fragment_pub_details)
 @OptionsMenu(R.menu.publication_info_menu)
 public class PublicationInfoFragment extends Fragment implements
         ObservableScrollView.Callbacks {
 
     private static final float PHOTO_ASPECT_RATIO = 1.7777777f;
-    private static final float GAP_FILL_DISTANCE_MULTIPLIER = 1.5f;
 
     @OrmLiteDao(helper = SiDBHelper.class)
     PublicationDao publicationsDao;
@@ -144,12 +145,6 @@ public class PublicationInfoFragment extends Fragment implements
     TextView mVotedOnField;
     @ViewById(R.id.header_pub)
     View mHeaderBox;
-    @ViewById(R.id.header_pub_contents)
-    View mHeaderContentBox;
-    @ViewById(R.id.header_background)
-    View mHeaderBackgroundBox;
-    @ViewById(R.id.header_shadow)
-    View mHeaderShadow;
     @ViewById(R.id.details_container)
     View mDetailsContainer;
     @ViewById(R.id.pub_photo_container)
@@ -175,9 +170,7 @@ public class PublicationInfoFragment extends Fragment implements
     private Uri mPublicationUri;
     private long mPublicationId;
     private boolean mHasPhoto;
-    private boolean mGapFillShown;
     private float newTop;
-    private int mHeaderTopClearance;
     private int mPhotoHeightPixels;
     private int mHeaderHeightPixels;
     private int mReadPubButtonHeightPixels;
@@ -190,6 +183,8 @@ public class PublicationInfoFragment extends Fragment implements
         }
     };
 
+    private float mMaxHeaderElevation;
+    private float mFABElevation;
     private boolean delayedScrollCheck;
     private boolean rateShowcaseShown;
     private boolean mRatingVisible;
@@ -197,6 +192,7 @@ public class PublicationInfoFragment extends Fragment implements
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LOGI("SITracker", "PublicationInfoFragment - onCreate");
         final Intent intent = BaseActivity.fragmentArgumentsToIntent(getArguments());
         mPublicationUri = intent.getData();
 
@@ -206,6 +202,10 @@ public class PublicationInfoFragment extends Fragment implements
         mPublicationId = AppUriContract.getPublicationId(mPublicationUri);
         mHandler = new Handler();
         rateShowcaseShown = prefs.ratingShowcaseShotDone().get();
+        mFABElevation = getResources().getDimensionPixelSize(R.dimen.fab_elevation);
+        mMaxHeaderElevation = getResources().getDimensionPixelSize(
+                R.dimen.publication_detail_max_header_elevation);
+
     }
 
     @Override
@@ -251,6 +251,7 @@ public class PublicationInfoFragment extends Fragment implements
         OpenHelperManager.releaseHelper();
         BackgroundExecutor.cancelAll("publicationDownload", true);
         super.onDestroy();
+        LOGI("SITracker", "PublicationInfoFragment - onDestroy");
     }
 
     @Override
@@ -755,40 +756,21 @@ public class PublicationInfoFragment extends Fragment implements
             }
         }
 
-        newTop = Math.max(mPhotoHeightPixels, scrollY + mHeaderTopClearance);
+        newTop = Math.max(mPhotoHeightPixels, scrollY);
 
         mHeaderBox.setTranslationY(newTop);
         mReadPubButton.setTranslationY(newTop + mHeaderHeightPixels
                 - mReadPubButtonHeightPixels / 2);
-        mHeaderBackgroundBox.setPivotY(mHeaderHeightPixels);
-        int gapFillDistance = (int) (mHeaderTopClearance * GAP_FILL_DISTANCE_MULTIPLIER);
-        boolean showGapFill = !mHasPhoto || (scrollY > (mPhotoHeightPixels - gapFillDistance));
-        float desiredHeaderScaleY = showGapFill ?
-                ((mHeaderHeightPixels + gapFillDistance + 1) * 1f / mHeaderHeightPixels)
-                : 1f;
 
-        if (!mHasPhoto) {
-            mHeaderBackgroundBox.setScaleY(desiredHeaderScaleY);
-        } else if (mGapFillShown != showGapFill) {
-            mHeaderBackgroundBox.animate()
-                    .scaleY(desiredHeaderScaleY)
-                    .setInterpolator(new DecelerateInterpolator(2f))
-                    .setDuration(250)
-                    .start();
-
+        float gapFillProgress = 1;
+        if (mHasPhoto) {
+            gapFillProgress = Math.min(Math.max(UIUtils.getProgress(scrollY,
+                    0,
+                    mPhotoHeightPixels), 0), 1);
         }
-        mGapFillShown = showGapFill;
-
-        mHeaderShadow.setVisibility(View.VISIBLE);
-
-        if (mHeaderTopClearance != 0) {
-            // Fill the gap between status bar and header bar with color
-            float gapFillProgress = Math.min(Math.max(UIUtils.getProgress(scrollY,
-                    mPhotoHeightPixels - mHeaderTopClearance * 2,
-                    mPhotoHeightPixels - mHeaderTopClearance), 0), 1);
-            mHeaderShadow.setAlpha(gapFillProgress);
-
-        }
+        ViewCompat.setElevation(mHeaderBox, gapFillProgress * mMaxHeaderElevation);
+        ViewCompat.setElevation(mReadPubButton, gapFillProgress * mMaxHeaderElevation
+                + mFABElevation);
 
         // Move background photo (parallax effect)
         mPhotoViewContainer.setTranslationY(scrollY * 0.3f);
@@ -797,11 +779,9 @@ public class PublicationInfoFragment extends Fragment implements
 
 
     private void recomputePhotoAndScrollingMetrics() {
-        final int actionBarSize = UIUtils.calculateActionBarSize(getActivity());
-        mHeaderTopClearance = actionBarSize - mHeaderContentBox.getPaddingTop();
-        mHeaderHeightPixels = mHeaderContentBox.getHeight();
+        mHeaderHeightPixels = mHeaderBox.getHeight();
 
-        mPhotoHeightPixels = mHeaderTopClearance;
+        mPhotoHeightPixels = 0;
         if (mHasPhoto) {
             mPhotoHeightPixels = (int) (mPhotoViewContainer.getWidth() / PHOTO_ASPECT_RATIO);
             mPhotoHeightPixels = Math.min(mPhotoHeightPixels, mRootView.getHeight() * 2 / 3);
@@ -812,12 +792,6 @@ public class PublicationInfoFragment extends Fragment implements
         if (lp.height != mPhotoHeightPixels) {
             lp.height = mPhotoHeightPixels;
             mPhotoViewContainer.setLayoutParams(lp);
-        }
-
-        lp = mHeaderBackgroundBox.getLayoutParams();
-        if (lp.height != mHeaderHeightPixels) {
-            lp.height = mHeaderHeightPixels;
-            mHeaderBackgroundBox.setLayoutParams(lp);
         }
 
         ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams)

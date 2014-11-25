@@ -240,6 +240,7 @@ public abstract class BaseActivity extends ActionBarActivity implements
 
     @Override
     public void goToNavDrawerItem(int item) {
+        mABUtil.autoShowOrHideActionBar(true);
         switch (item) {
             case NavDrawerManager.NAVDRAWER_ITEM_MY_AUTHORS:
                 AuthorsFragment authFrag = AuthorsFragment_.builder().build();
@@ -293,11 +294,16 @@ public abstract class BaseActivity extends ActionBarActivity implements
         return mABUtil;
     }
 
+    public NavDrawerManager getDrawerManager() {
+        return mDrawerManager;
+    }
+
     @Override
     public void onBackPressed() {
         if (mDrawerManager.isNavDrawerOpen()) {
             mDrawerManager.closeNavDrawer();
         } else {
+            mDrawerManager.popNavigationState();
             //As we are using SupportActivity and native FragmentManager -
             //we need to query it instead of default ActionBarActivity implementation
             if (!getFragmentManager().popBackStackImmediate()) {

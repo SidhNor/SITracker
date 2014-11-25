@@ -16,7 +16,6 @@
 
 package com.andrada.sitracker.ui.fragment;
 
-import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -50,9 +49,11 @@ import de.greenrobot.event.EventBus;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
+import static com.andrada.sitracker.util.LogUtils.LOGI;
+
 @EFragment(R.layout.fragment_publications)
 @OptionsMenu(R.menu.publications_menu)
-public class PublicationsFragment extends Fragment implements
+public class PublicationsFragment extends BaseListFragment implements
         ExpandableListView.OnChildClickListener,
         PublicationsAdapter.PublicationShareAttemptListener {
 
@@ -66,22 +67,38 @@ public class PublicationsFragment extends Fragment implements
     @InstanceState
     long activeAuthorId = -1;
 
+    @FragmentArg("authorName")
+    String authorName = "";
+
     @Pref
     SIPrefs_ prefs;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
+        LOGI("SITracker", "PublicationsFragment - OnCreate");
+        //setRetainInstance(true);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getBaseActivity().getDrawerManager().pushNavigationalState(authorName, false);
         int priority = 3;
         //PublicationsFragment has a higher priority then SiMainActivity
         EventBus.getDefault().register(this, priority);
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
-        EventBus.getDefault().unregister(this);
+        LOGI("SITracker", "PublicationsFragment - OnDestroy");
     }
 
     @AfterViews
@@ -174,6 +191,16 @@ public class PublicationsFragment extends Fragment implements
             }
             stopProgressAfterShare(errorMessage == -1, msg, pub.getId());
 
+        }
+    }
+
+    @Override
+    public void setContentTopClearance(int clearance) {
+        super.setContentTopClearance(clearance);
+        if (mListView != null) {
+            mListView.setPadding(mListView.getPaddingLeft(), clearance,
+                    mListView.getPaddingRight(), mListView.getPaddingBottom());
+            adapter.notifyDataSetChanged();
         }
     }
 }

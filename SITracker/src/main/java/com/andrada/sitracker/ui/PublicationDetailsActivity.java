@@ -20,9 +20,10 @@ import android.app.Fragment;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
 import android.view.MenuItem;
-import android.view.Window;
+import android.view.View;
 import android.view.WindowManager;
 
 import com.andrada.sitracker.R;
@@ -33,13 +34,15 @@ import de.keyboardsurfer.android.widget.crouton.Crouton;
 
 public class PublicationDetailsActivity extends SimpleSinglePaneActivity {
 
+    private boolean shouldBeFloatingWindow = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //UIUtils.tryTranslateHttpIntent(this);
         BeamUtils.tryUpdateIntentFromBeam(this);
-        requestWindowFeature(Window.FEATURE_ACTION_BAR);
 
-        if (shouldBeFloatingWindow()) {
+        boolean shouldBeFloatingWindow = shouldBeFloatingWindow();
+        if (shouldBeFloatingWindow) {
             setupFloatingWindow();
         }
         super.onCreate(savedInstanceState);
@@ -50,6 +53,20 @@ public class PublicationDetailsActivity extends SimpleSinglePaneActivity {
         }
 
         setTitle("");
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        final Toolbar toolbar = getActionBarToolbar();
+        toolbar.setNavigationIcon(shouldBeFloatingWindow
+                ? R.drawable.ic_ab_close : R.drawable.ic_up);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
     }
 
     @Override
