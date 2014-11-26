@@ -18,7 +18,7 @@ package com.andrada.sitracker.ui.fragment;
 
 import android.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.RecyclerView;
+import android.view.ViewGroup;
 
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.ui.BaseActivity;
@@ -131,7 +131,7 @@ public class BaseListFragment extends Fragment
     }
 
     @Override
-    public RecyclerView getRecyclerView() {
+    public ViewGroup getScrollingView() {
         return null;
     }
 }

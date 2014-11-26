@@ -16,7 +16,7 @@
 
 package com.andrada.sitracker.ui.fragment;
 
-import android.support.v7.widget.RecyclerView;
+import android.view.ViewGroup;
 
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.util.NavDrawerManager;
@@ -45,7 +45,7 @@ public class ExploreAuthorsFragment extends BaseListFragment
     }
 
     @Override
-    public RecyclerView getRecyclerView() {
+    public ViewGroup getScrollingView() {
         return null;
     }
 }

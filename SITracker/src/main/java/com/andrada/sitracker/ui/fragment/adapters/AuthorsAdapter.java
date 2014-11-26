@@ -17,9 +17,9 @@
 package com.andrada.sitracker.ui.fragment.adapters;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 
 import com.andrada.sitracker.contracts.IsNewItemTappedListener;
 import com.andrada.sitracker.contracts.SIPrefs_;
@@ -50,7 +50,7 @@ import java.util.concurrent.Callable;
 import de.greenrobot.event.EventBus;
 
 @EBean
-public class AuthorsAdapter extends RecyclerView.Adapter<AuthorsAdapter.AuthorViewHolder> implements IsNewItemTappedListener {
+public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListener {
 
     List<Author> authors = new ArrayList<Author>();
     long mNewAuthors;
@@ -63,7 +63,6 @@ public class AuthorsAdapter extends RecyclerView.Adapter<AuthorsAdapter.AuthorVi
 
     @RootContext
     Context context;
-
     private int mSelectedItem = 0;
 
     private long mSelectedAuthorId = -1;
@@ -73,7 +72,6 @@ public class AuthorsAdapter extends RecyclerView.Adapter<AuthorsAdapter.AuthorVi
     @AfterInject
     void initAdapter() {
         reloadAuthors();
-        setHasStableIds(true);
         isTablet = UIUtils.isTablet(context);
     }
 
@@ -109,19 +107,13 @@ public class AuthorsAdapter extends RecyclerView.Adapter<AuthorsAdapter.AuthorVi
 
 
     @Override
-    public AuthorsAdapter.AuthorViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        AuthorItemView authorsItemView = AuthorItemView_.build(context);
-        authorsItemView.setListener(this);
-        return new AuthorViewHolder(authorsItemView);
+    public int getCount() {
+        return authors.size();
     }
 
     @Override
-    public void onBindViewHolder(AuthorsAdapter.AuthorViewHolder authorItemView, int position) {
-        if (position < authors.size() && authorItemView.item != null) {
-            //There is no selected state on phones
-            authorItemView.item.bind(authors.get(position), isTablet && position == mSelectedItem);
-            //authorItemView.item.setChecked(multiSelectedItems.get(position, false));
-        }
+    public Object getItem(int position) {
+        return authors.get(position);
     }
 
     @Override
@@ -129,13 +121,20 @@ public class AuthorsAdapter extends RecyclerView.Adapter<AuthorsAdapter.AuthorVi
         return authors.get(position).getId();
     }
 
+    @Nullable
     @Override
-    public int getItemCount() {
-        return authors.size();
-    }
-
-    public Object getItem(int position) {
-        return authors.get(position);
+    public View getView(int position, @Nullable View convertView, ViewGroup parent) {
+        AuthorItemView authorsItemView;
+        if (convertView == null) {
+            authorsItemView = AuthorItemView_.build(context);
+            authorsItemView.setListener(this);
+        } else {
+            authorsItemView = (AuthorItemView) convertView;
+        }
+        if (position < authors.size()) {
+            authorsItemView.bind(authors.get(position), isTablet && position == mSelectedItem);
+        }
+        return authorsItemView;
     }
 
     @Override
@@ -249,14 +248,5 @@ public class AuthorsAdapter extends RecyclerView.Adapter<AuthorsAdapter.AuthorVi
             }
         }
         return -1;
-    }
-
-    public static class AuthorViewHolder extends RecyclerView.ViewHolder {
-        public AuthorItemView item;
-
-        public AuthorViewHolder(AuthorItemView view) {
-            super(view);
-            item = view;
-        }
     }
 }

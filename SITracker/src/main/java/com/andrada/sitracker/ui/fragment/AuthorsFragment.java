@@ -26,14 +26,13 @@ import android.os.Bundle;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewStub;
+import android.widget.ListView;
 
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
@@ -47,7 +46,6 @@ import com.andrada.sitracker.tasks.UpdateAuthorsTask_;
 import com.andrada.sitracker.ui.MultiSelectionUtil;
 import com.andrada.sitracker.ui.SearchActivity_;
 import com.andrada.sitracker.ui.fragment.adapters.AuthorsAdapter;
-import com.andrada.sitracker.ui.widget.DividerItemDecoration;
 import com.andrada.sitracker.util.AnalyticsHelper;
 import com.andrada.sitracker.util.NavDrawerManager;
 
@@ -55,6 +53,7 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.InstanceState;
+import org.androidannotations.annotations.ItemClick;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.SystemService;
@@ -63,10 +62,8 @@ import org.androidannotations.annotations.ViewById;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.lucasr.twowayview.ItemClickSupport;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -80,12 +77,12 @@ import static com.andrada.sitracker.util.LogUtils.LOGI;
 @EFragment(R.layout.fragment_myauthors)
 @OptionsMenu(R.menu.authors_menu)
 public class AuthorsFragment extends BaseListFragment implements
-        AuthorUpdateStatusListener,
-        MultiSelectionUtil.MultiChoiceModeListener,
+        AuthorUpdateStatusListener, MultiSelectionUtil.MultiChoiceModeListener,
         NavDrawerManager.NavDrawerItemAware {
 
+    private final ArrayList<Long> mSelectedAuthors = new ArrayList<Long>();
     @ViewById(R.id.authors_list)
-    RecyclerView mRecyclerView;
+    ListView list;
     @ViewById
     ViewStub empty;
     @Bean
@@ -98,11 +95,12 @@ public class AuthorsFragment extends BaseListFragment implements
     boolean mIsUpdating = false;
 
     @Nullable
+    @InstanceState
+    long[] checkedItems;
+    @Nullable
     private Crouton mNoNetworkCrouton;
     @Nullable
     private MultiSelectionUtil.Controller mMultiSelectionController;
-
-    private Bundle savedState;
 
     //region Fragment lifecycle overrides
 
@@ -122,7 +120,7 @@ public class AuthorsFragment extends BaseListFragment implements
     public void onResume() {
         super.onResume();
         EventBus.getDefault().register(this);
-        getBaseActivity().getActionBarUtil().enableActionBarAutoHide(getRecyclerView());
+        getBaseActivity().getActionBarUtil().enableActionBarAutoHide(getScrollingView());
         getBaseActivity().getActionBarUtil().registerHideableHeaderView(getActivity().findViewById(R.id.headerbar));
 
         //Set title
@@ -151,12 +149,6 @@ public class AuthorsFragment extends BaseListFragment implements
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        savedState = savedInstanceState;
-    }
-
-    @Override
     public void onCreateOptionsMenu(@NotNull Menu menu, MenuInflater inflater) {
         if (mIsUpdating) {
             menu.removeItem(R.id.action_refresh);
@@ -174,7 +166,7 @@ public class AuthorsFragment extends BaseListFragment implements
 
     @OptionsItem(R.id.action_refresh)
     void menuRefreshSelected() {
-        if (!mIsUpdating && adapter.getItemCount() > 0) {
+        if (!mIsUpdating && adapter.getCount() > 0) {
             final NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
             if (activeNetwork != null && activeNetwork.isConnected()) {
                 Intent updateIntent = new Intent(getActivity(), UpdateAuthorsTask_.class);
@@ -221,45 +213,31 @@ public class AuthorsFragment extends BaseListFragment implements
                 }
             }, 1500);
         }
-
     }
 
     @AfterViews
     void bindAdapter() {
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
-        mRecyclerView.setAdapter(adapter);
-
-        final ItemClickSupport itemClick = ItemClickSupport.addTo(mRecyclerView);
-        itemClick.setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
-            @Override
-            public void onItemClick(RecyclerView parent, View child, int position, long id) {
-                listItemClicked(position, child);
-            }
-        });
+        list.setAdapter(adapter);
         mMultiSelectionController = MultiSelectionUtil.attachMultiSelectionController(
-                mRecyclerView, (ActionBarActivity) getActivity(), this);
-        mMultiSelectionController.tryRestoreInstanceState(savedState);
+                list,
+                (ActionBarActivity) getActivity(),
+                this);
+        //ActionMode.setMultiChoiceMode(list, getActivity(), this);
+        list.setBackgroundResource(R.drawable.authors_list_background);
+        empty.setLayoutResource(R.layout.empty_authors);
+        list.setEmptyView(empty);
+        mMultiSelectionController.tryRestoreInstanceState(checkedItems);
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        if (mMultiSelectionController != null) {
-            Bundle multiselectionBundle = mMultiSelectionController.getItemSelection().onSaveInstanceState();
-            outState.putAll(multiselectionBundle);
-        }
-        super.onSaveInstanceState(outState);
-    }
-
-    void listItemClicked(int position, View child) {
+    @ItemClick(R.id.authors_list)
+    public void listItemClicked(int position) {
         // Notify the parent activity of selected item
-        currentAuthorIndex = mRecyclerView.getAdapter().getItemId(position);
+        currentAuthorIndex = list.getItemIdAtPosition(position);
         // Set the item as checked to be highlighted
         adapter.setSelectedItem(currentAuthorIndex);
         String name = ((Author) adapter.getItem(position)).getName();
         EventBus.getDefault().post(new AuthorSelectedEvent(adapter.getSelectedAuthorId(), name));
-        adapter.notifyItemChanged(position);
+        adapter.notifyDataSetChanged();
     }
 
     private void toggleUpdatingState() {
@@ -323,20 +301,25 @@ public class AuthorsFragment extends BaseListFragment implements
     //region CABListener
 
     @Override
-    public void onItemCheckedStateChanged(@NotNull ActionMode mode) {
-
-        if (mMultiSelectionController != null) {
-            int numSelectedAuthors = mMultiSelectionController.getItemSelection().getCheckedItemCount();
-            mode.setTitle(getResources().getQuantityString(
-                    R.plurals.authors_selected,
-                    numSelectedAuthors, numSelectedAuthors));
+    public void onItemCheckedStateChanged(@NotNull ActionMode mode,
+                                          int position, long id, boolean checked) {
+        if (checked) {
+            mSelectedAuthors.add(((Author) adapter.getItem(position)).getId());
+        } else {
+            mSelectedAuthors.remove(((Author) adapter.getItem(position)).getId());
         }
+        int numSelectedAuthors = mSelectedAuthors.size();
+        mode.setTitle(getResources().getQuantityString(
+                R.plurals.authors_selected,
+                numSelectedAuthors, numSelectedAuthors));
+        checkedItems = ArrayUtils.toPrimitive(mSelectedAuthors.toArray(new Long[mSelectedAuthors.size()]));
     }
 
     @Override
     public boolean onCreateActionMode(@NotNull ActionMode mode, Menu menu) {
         MenuInflater inflater = mode.getMenuInflater();
         inflater.inflate(R.menu.context_authors, menu);
+        mSelectedAuthors.clear();
         return true;
     }
 
@@ -347,10 +330,6 @@ public class AuthorsFragment extends BaseListFragment implements
 
     @Override
     public boolean onActionItemClicked(@NotNull ActionMode mode, @NotNull MenuItem item) {
-        if (mMultiSelectionController == null) {
-            return false;
-        }
-        List<Long> mSelectedAuthors = Arrays.asList(ArrayUtils.toObject(mMultiSelectionController.getItemSelection().getCheckedItemIds()));
         mode.finish();
         if (item.getItemId() == R.id.action_remove) {
             AnalyticsHelper.getInstance().sendEvent(
@@ -372,7 +351,7 @@ public class AuthorsFragment extends BaseListFragment implements
             bm.dataChanged();
             return true;
         } else if (item.getItemId() == R.id.action_open_authors_browser) {
-            for (int i = 0; i < adapter.getItemCount(); i++) {
+            for (int i = 0; i < adapter.getCount(); i++) {
                 if (mSelectedAuthors.contains(adapter.getItemId(i))) {
                     Intent intent = new Intent(Intent.ACTION_VIEW);
                     intent.setData(Uri.parse(((Author) adapter.getItem(i)).getUrl()));
@@ -386,7 +365,7 @@ public class AuthorsFragment extends BaseListFragment implements
 
     @Override
     public void onDestroyActionMode(ActionMode mode) {
-
+        checkedItems = null;
     }
 
     //endregion
@@ -455,23 +434,24 @@ public class AuthorsFragment extends BaseListFragment implements
         return adapter;
     }
 
-    public RecyclerView getRecyclerView() {
-        return mRecyclerView;
+    @Override
+    public ListView getScrollingView() {
+        return list;
     }
 
     @Override
     public void setContentTopClearance(int clearance) {
         super.setContentTopClearance(clearance);
-        if (mRecyclerView != null) {
-            mRecyclerView.setPadding(mRecyclerView.getPaddingLeft(), clearance,
-                    mRecyclerView.getPaddingRight(), mRecyclerView.getPaddingBottom());
+        if (list != null) {
+            list.setPadding(list.getPaddingLeft(), clearance,
+                    list.getPaddingRight(), list.getPaddingBottom());
             adapter.notifyDataSetChanged();
         }
     }
 
     @Override
     public boolean canSwipeRefreshChildScrollUp() {
-        return ViewCompat.canScrollVertically(mRecyclerView, -1);
+        return ViewCompat.canScrollVertically(list, -1);
     }
 
     @Override

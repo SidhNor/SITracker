@@ -20,6 +20,7 @@ import android.content.Context;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.AbsListView;
 import android.widget.ListView;
@@ -43,7 +44,8 @@ public class ActionBarUtil {
     private int mActionBarAutoHideMinY = 0;
     private int mActionBarAutoHideSignal = 0;
     private boolean mActionBarShown = true;
-    private RecyclerView mCurrentScrollingView;
+
+    private ViewGroup mCurrentScrollingView;
 
     public ActionBarUtil(ActionBarActivity context, ActionBarShowHideListener listener) {
         mContext = context;
@@ -111,6 +113,7 @@ public class ActionBarUtil {
 
     public void enableActionBarAutoHide(final ListView listView) {
         initActionBarAutoHide();
+        mCurrentScrollingView = listView;
         listView.setOnScrollListener(new AbsListView.OnScrollListener() {
             final static int ITEMS_THRESHOLD = 3;
             int lastFvi = 0;
@@ -169,7 +172,11 @@ public class ActionBarUtil {
     public void disableActionBarAutoHide() {
         mActionBarAutoHideEnabled = false;
         if (mCurrentScrollingView != null) {
-            mCurrentScrollingView.setOnScrollListener(null);
+            if (mCurrentScrollingView instanceof ListView) {
+                ((ListView) mCurrentScrollingView).setOnScrollListener(null);
+            } else if (mCurrentScrollingView instanceof RecyclerView) {
+                ((RecyclerView) mCurrentScrollingView).setOnScrollListener(null);
+            }
             mCurrentScrollingView = null;
         }
     }

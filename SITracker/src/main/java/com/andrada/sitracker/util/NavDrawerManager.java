@@ -26,7 +26,6 @@ import android.os.Handler;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.widget.RecyclerView;
 import android.util.Pair;
 import android.view.Gravity;
 import android.view.View;
@@ -426,7 +425,7 @@ public class NavDrawerManager {
 
         void setContentTopClearance(int top);
 
-        RecyclerView getRecyclerView();
+        ViewGroup getScrollingView();
 
         void updateSwipeRefreshProgressBarTop();
     }
