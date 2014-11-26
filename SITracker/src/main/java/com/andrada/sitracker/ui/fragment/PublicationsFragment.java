@@ -23,6 +23,7 @@ import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
 import android.view.View;
 import android.widget.ExpandableListView;
+import android.widget.FrameLayout;
 
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.AppUriContract;
@@ -204,8 +205,10 @@ public class PublicationsFragment extends BaseListFragment implements
     public void setContentTopClearance(int clearance) {
         super.setContentTopClearance(clearance);
         if (mListView != null) {
-            mListView.setPadding(mListView.getPaddingLeft(), clearance,
-                    mListView.getPaddingRight(), mListView.getPaddingBottom());
+            FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) mListView.getLayoutParams();
+            params.setMargins(0, clearance, 0, 0);
+            /*mListView.setPadding(mListView.getPaddingLeft(), clearance,
+                    mListView.getPaddingRight(), mListView.getPaddingBottom());*/
             adapter.notifyDataSetChanged();
         }
     }

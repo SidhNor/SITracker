@@ -61,7 +61,7 @@ public class SiMainActivity extends BaseActivity {
     public void onEvent(AuthorSelectedEvent event) {
         //If we received this event here, that means that nobody handle it - switch fragment then
         Fragment frag = PublicationsFragment_.builder().activeAuthorId(event.authorId).authorName(event.authorName).build();
-        getActionBarUtil().autoShowOrHideActionBar(true);
+        //getActionBarUtil().autoShowOrHideActionBar(true);
         ActivityFragmentNavigator.switchMainFragmentToChildFragment(this, frag);
     }
 

@@ -133,8 +133,9 @@ public class AuthorsFragment extends BaseListFragment implements
     @Override
     public void onPause() {
         super.onPause();
-        getBaseActivity().getActionBarUtil().deregisterHideableHeaderView(getActivity().findViewById(R.id.headerbar));
         getBaseActivity().getActionBarUtil().disableActionBarAutoHide();
+        getBaseActivity().getActionBarUtil().autoShowOrHideActionBar(true);
+        getBaseActivity().getActionBarUtil().deregisterHideableHeaderView(getActivity().findViewById(R.id.headerbar));
         EventBus.getDefault().unregister(this);
     }
 
