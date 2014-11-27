@@ -24,11 +24,12 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.ViewSwitcher;
 
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.IsNewItemTappedListener;
-import com.andrada.sitracker.contracts.ItemSelectionChangedListener;
 import com.andrada.sitracker.db.beans.Author;
+import com.andrada.sitracker.events.AuthorCheckedEvent;
 import com.andrada.sitracker.ui.widget.CheckedRelativeLayout;
 import com.andrada.sitracker.ui.widget.LetterTileProvider;
 import com.andrada.sitracker.util.DateFormatterUtil;
@@ -42,6 +43,8 @@ import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
 import org.jetbrains.annotations.NotNull;
 
+import de.greenrobot.event.EventBus;
+
 @EViewGroup(R.layout.authors_list_item)
 public class AuthorItemView extends CheckedRelativeLayout {
 
@@ -51,13 +54,17 @@ public class AuthorItemView extends CheckedRelativeLayout {
     TextView author_update_date;
     @ViewById
     ImageButton author_updated;
+
+    @ViewById(R.id.author_image_contaner)
+    ViewSwitcher authorImageCnt;
+
     @ViewById
     ImageView author_image;
     private boolean mIsNew = false;
     private boolean mPreviousNewState = false;
     private IsNewItemTappedListener mListener;
-    private ItemSelectionChangedListener mSelectionListener;
 
+    private String currentImg;
     private final int tileSize;
     private final LetterTileProvider tileProvider;
 
@@ -76,23 +83,19 @@ public class AuthorItemView extends CheckedRelativeLayout {
 
         this.delegatedTouchViews.put(
                 ViewConfig.wholeLeft(),
-                author_image);
+                authorImageCnt);
     }
 
     public void setListener(IsNewItemTappedListener listener) {
         mListener = listener;
     }
 
-    public void setListener(ItemSelectionChangedListener listener) {
-        mSelectionListener = listener;
-    }
-
     @SuppressLint("NewApi")
     public void bind(@NotNull Author author, boolean isSelected) {
-
         final Bitmap letterTile = tileProvider.getLetterTile(author.getName(), author.getUrlId(), tileSize, tileSize);
 
-        if (author.getAuthorImageUrl() != null && getContext() != null) {
+        if (author.getAuthorImageUrl() != null && getContext() != null && !author.getAuthorImageUrl().equals(currentImg)) {
+            currentImg = author.getAuthorImageUrl();
             Glide.with(getContext())
                     .load(author.getAuthorImageUrl())
                     .placeholder(R.drawable.avatar_placeholder_gray)
@@ -109,7 +112,7 @@ public class AuthorItemView extends CheckedRelativeLayout {
                         }
                     })
                     .into(author_image);
-        } else {
+        } else if (currentImg == null) {
             author_image.setImageBitmap(letterTile);
         }
 
@@ -128,15 +131,30 @@ public class AuthorItemView extends CheckedRelativeLayout {
     }
 
     @Override
+    public void setChecked(boolean checked) {
+        super.setChecked(checked);
+        if (checked && authorImageCnt.getCurrentView() == author_image) {
+            //Show next
+            authorImageCnt.showNext();
+        } else if (!checked && authorImageCnt.getCurrentView() != author_image) {
+            //show prev
+            authorImageCnt.showPrevious();
+        }
+    }
+
+    @Override
     protected void onDelegatedTouchViewClicked(@NotNull View view) {
         if (mListener != null && view.getId() == R.id.author_updated && mIsNew) {
             mIsNew = false;
             setOldNewStates();
             mListener.onIsNewItemTapped(view);
-        } else if (mSelectionListener != null && view.getId() == R.id.author_image) {
-            mSelectionListener.itemSelectionChanged(this.isChecked());
+        } else if (view.getId() == R.id.author_image_contaner) {
+            this.toggle();
+            Author auth = (Author) author_updated.getTag();
+            if (auth != null) {
+                EventBus.getDefault().post(new AuthorCheckedEvent(auth.getId(), this));
+            }
         }
-
     }
 
     @Override
@@ -170,5 +188,4 @@ public class AuthorItemView extends CheckedRelativeLayout {
             mPreviousNewState = false;
         }
     }
-
 }

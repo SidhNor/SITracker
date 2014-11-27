@@ -28,6 +28,7 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.Adapter;
 import android.widget.AdapterView;
+import android.widget.Checkable;
 import android.widget.ListView;
 
 import org.jetbrains.annotations.NotNull;
@@ -243,6 +244,16 @@ public class MultiSelectionUtil {
             mItemsToCheck.add(new Pair<Integer, Long>(position, id));
             mActionMode = mActivity.startSupportActionMode(Controller.this);
             return true;
+        }
+
+        public void startActionModeOrSelectId(long authorId, View view) {
+            int position = mListView.getPositionForView(view);
+            if (mActionMode == null) {
+                onItemLongClick(null, view, position, authorId);
+            } else {
+                mListView.setItemChecked(position, ((Checkable) view).isChecked());
+                onItemClick(null, view, position, authorId);
+            }
         }
     }
 }

@@ -14,8 +14,17 @@
  * limitations under the License.
  */
 
-package com.andrada.sitracker.contracts;
+package com.andrada.sitracker.events;
 
-public interface ItemSelectionChangedListener {
-    void itemSelectionChanged(boolean selected);
+import android.view.View;
+
+public class AuthorCheckedEvent {
+
+    public final long authorId;
+    public final View view;
+
+    public AuthorCheckedEvent(long authorId, View view) {
+        this.authorId = authorId;
+        this.view = view;
+    }
 }

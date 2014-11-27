@@ -39,6 +39,7 @@ import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.AuthorUpdateStatusListener;
 import com.andrada.sitracker.db.beans.Author;
+import com.andrada.sitracker.events.AuthorCheckedEvent;
 import com.andrada.sitracker.events.AuthorSelectedEvent;
 import com.andrada.sitracker.events.AuthorSortMethodChanged;
 import com.andrada.sitracker.events.BackUpRestoredEvent;
@@ -399,6 +400,12 @@ public class AuthorsFragment extends BaseListFragment implements
         if (adapter != null) {
             adapter.reloadAuthors();
             this.showSuccessfulRestore();
+        }
+    }
+
+    public void onEvent(AuthorCheckedEvent event) {
+        if (mMultiSelectionController != null) {
+            mMultiSelectionController.startActionModeOrSelectId(event.authorId, event.view);
         }
     }
 
