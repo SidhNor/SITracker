@@ -18,6 +18,7 @@ package com.andrada.sitracker.ui.fragment;
 
 import android.app.Activity;
 import android.app.backup.BackupManager;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -43,11 +44,14 @@ import com.andrada.sitracker.events.AuthorSortMethodChanged;
 import com.andrada.sitracker.events.BackUpRestoredEvent;
 import com.andrada.sitracker.events.PublicationMarkedAsReadEvent;
 import com.andrada.sitracker.tasks.UpdateAuthorsTask_;
+import com.andrada.sitracker.tasks.filters.UpdateStatusMessageFilter;
+import com.andrada.sitracker.tasks.receivers.UpdateStatusReceiver;
 import com.andrada.sitracker.ui.MultiSelectionUtil;
 import com.andrada.sitracker.ui.SearchActivity_;
 import com.andrada.sitracker.ui.fragment.adapters.AuthorsAdapter;
 import com.andrada.sitracker.util.AnalyticsHelper;
 import com.andrada.sitracker.util.NavDrawerManager;
+import com.andrada.sitracker.util.UpdateServiceHelper;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
@@ -91,7 +95,6 @@ public class AuthorsFragment extends BaseListFragment implements
     ConnectivityManager connectivityManager;
     @InstanceState
     long currentAuthorIndex = -1;
-    @InstanceState
     boolean mIsUpdating = false;
 
     @Nullable
@@ -101,6 +104,8 @@ public class AuthorsFragment extends BaseListFragment implements
     private Crouton mNoNetworkCrouton;
     @Nullable
     private MultiSelectionUtil.Controller mMultiSelectionController;
+
+    private BroadcastReceiver updateStatusReceiver;
 
     //region Fragment lifecycle overrides
 
@@ -126,8 +131,21 @@ public class AuthorsFragment extends BaseListFragment implements
         //Set title
         getBaseActivity().getDrawerManager().pushNavigationalState(getString(R.string.navdrawer_item_my_authors), true);
 
+        //Receiver registration
+        mIsUpdating = UpdateServiceHelper.isServiceCurrentlyRunning(getActivity().getApplicationContext());
+
+        if (updateStatusReceiver == null) {
+            updateStatusReceiver = new UpdateStatusReceiver(this);
+            updateStatusReceiver.setOrderedHint(true);
+        }
+        UpdateStatusMessageFilter filter = new UpdateStatusMessageFilter();
+        filter.setPriority(1);
+        getActivity().registerReceiver(updateStatusReceiver, filter);
+
         //Reload authors
         adapter.reloadAuthors();
+
+        onRefreshingStateChanged(mIsUpdating);
     }
 
     @Override
@@ -137,6 +155,7 @@ public class AuthorsFragment extends BaseListFragment implements
         getBaseActivity().getActionBarUtil().autoShowOrHideActionBar(true);
         getBaseActivity().getActionBarUtil().deregisterHideableHeaderView(getActivity().findViewById(R.id.headerbar));
         EventBus.getDefault().unregister(this);
+        getActivity().unregisterReceiver(updateStatusReceiver);
     }
 
     @Override
@@ -150,12 +169,11 @@ public class AuthorsFragment extends BaseListFragment implements
     }
 
     @Override
-    public void onCreateOptionsMenu(@NotNull Menu menu, MenuInflater inflater) {
-        if (mIsUpdating) {
-            menu.removeItem(R.id.action_refresh);
-        }
-        super.onCreateOptionsMenu(menu, inflater);
+    @UiThread(delay = 100)
+    protected void onRefreshingStateChanged(boolean refreshing) {
+        super.onRefreshingStateChanged(refreshing);
     }
+
 
     //endregion
     //region Menu item tap handlers
@@ -165,8 +183,14 @@ public class AuthorsFragment extends BaseListFragment implements
         SearchActivity_.intent(this.getActivity()).start();
     }
 
-    @OptionsItem(R.id.action_refresh)
-    void menuRefreshSelected() {
+    protected void requestDataRefresh() {
+        if (mIsUpdating) {
+            return;
+        }
+        performManualRefresh();
+    }
+
+    void performManualRefresh() {
         if (!mIsUpdating && adapter.getCount() > 0) {
             final NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
             if (activeNetwork != null && activeNetwork.isConnected()) {
@@ -177,6 +201,8 @@ public class AuthorsFragment extends BaseListFragment implements
                         Constants.GA_READ_CATEGORY,
                         Constants.GA_EVENT_AUTHORS_MANUAL_REFRESH,
                         Constants.GA_EVENT_AUTHORS_MANUAL_REFRESH);
+
+                //Start refreshing
                 toggleUpdatingState();
             } else {
                 //Surface crouton that network is unavailable
@@ -207,7 +233,7 @@ public class AuthorsFragment extends BaseListFragment implements
                         activity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                menuRefreshSelected();
+                                performManualRefresh();
                             }
                         });
                     }
@@ -243,31 +269,13 @@ public class AuthorsFragment extends BaseListFragment implements
 
     private void toggleUpdatingState() {
         mIsUpdating = !mIsUpdating;
-
-        //TODO switch to toolbar usage
-        /*
-        ActionBar bar = getActivity().getActionBar();
-        bar.setDisplayShowHomeEnabled(!mIsUpdating);
-        bar.setDisplayShowTitleEnabled(!mIsUpdating);
-        bar.setDisplayShowCustomEnabled(mIsUpdating);
-
-        EventBus.getDefault().post(new ProgressBarToggleEvent(mIsUpdating));
-        if (mIsUpdating) {
-            View mLogoView = LayoutInflater.from(getActivity()).inflate(R.layout.updating_actionbar_layout, null);
-
-            bar.setCustomView(mLogoView, new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT));
-            mLogoView.clearAnimation();
-            mLogoView.startAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.ab_custom_view_anim));
-        }
-        */
-        getActivity().invalidateOptionsMenu();
+        onRefreshingStateChanged(mIsUpdating);
     }
 
 
     //region Public methods
     public boolean isUpdating() {
-        return mIsUpdating;
+        return UpdateServiceHelper.isServiceCurrentlyRunning(getActivity().getApplicationContext());
     }
 
     public String getCurrentSelectedAuthorName() {
@@ -283,9 +291,7 @@ public class AuthorsFragment extends BaseListFragment implements
     //region AuthorUpdateStatusListener callbacks
     @Override
     public void onAuthorsUpdated() {
-        if (isUpdating()) {
-            toggleUpdatingState();
-        }
+        toggleUpdatingState();
         adapter.reloadAuthors();
     }
 

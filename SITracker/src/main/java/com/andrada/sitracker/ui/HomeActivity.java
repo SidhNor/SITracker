@@ -17,7 +17,6 @@
 package com.andrada.sitracker.ui;
 
 import android.annotation.SuppressLint;
-import android.app.AlarmManager;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -59,7 +58,6 @@ import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.FragmentById;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
-import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.res.StringRes;
 import org.androidannotations.annotations.sharedpreferences.Pref;
@@ -154,8 +152,6 @@ public class HomeActivity extends BaseActivity implements DirectoryChooserFragme
     SlidingPaneLayout slidingPane;
     @ViewById
     ProgressBar globalProgress;
-    @SystemService
-    AlarmManager alarmManager;
     @Pref
     SIPrefs_ prefs;
     @StringRes(R.string.app_name)
