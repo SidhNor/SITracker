@@ -28,7 +28,7 @@ import com.andrada.sitracker.util.NavDrawerManager;
 /**
  * Base fragment supports swipe refresh layout and auto hiding action bar.
  */
-public class BaseListFragment extends Fragment
+public abstract class BaseListFragment extends Fragment
         implements MultiSwipeRefreshLayout.CanChildScrollUpCallback,
         NavDrawerManager.NavDrawerItemAware {
     // SwipeRefreshLayout allows the user to swipe the screen down to trigger a manual refresh

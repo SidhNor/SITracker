@@ -35,6 +35,8 @@ import com.andrada.sitracker.ui.fragment.AuthorsFragment;
 import com.andrada.sitracker.ui.fragment.AuthorsFragment_;
 import com.andrada.sitracker.ui.fragment.ExploreAuthorsFragment;
 import com.andrada.sitracker.ui.fragment.ExploreAuthorsFragment_;
+import com.andrada.sitracker.ui.fragment.NewPublicationsFragment;
+import com.andrada.sitracker.ui.fragment.NewPublicationsFragment_;
 import com.andrada.sitracker.ui.widget.DrawShadowFrameLayout;
 import com.andrada.sitracker.util.ActionBarUtil;
 import com.andrada.sitracker.util.ActivityFragmentNavigator;
@@ -253,7 +255,9 @@ public abstract class BaseActivity extends ActionBarActivity implements
                 mCurrentNavigationElement = exploreFrag;
                 break;
             case NavDrawerManager.NAVDRAWER_ITEM_NEW_PUBS:
-                //TODO Switch fragment with com.andrada.sitracker.util.ActivityFragmentNavigator
+                NewPublicationsFragment newPubsFrag = NewPublicationsFragment_.builder().build();
+                ActivityFragmentNavigator.switchMainFragmentInMainActivity(this, newPubsFrag);
+                mCurrentNavigationElement = newPubsFrag;
                 break;
             case NavDrawerManager.NAVDRAWER_ITEM_SETTINGS:
                 SettingsActivity_.intent(this).start();
