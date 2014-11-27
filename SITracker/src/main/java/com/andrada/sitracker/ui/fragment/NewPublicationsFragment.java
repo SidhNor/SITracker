@@ -24,6 +24,7 @@ import com.andrada.sitracker.R;
 import com.andrada.sitracker.ui.fragment.adapters.NewPubsAdapter;
 import com.andrada.sitracker.util.NavDrawerManager;
 
+import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ViewById;
@@ -42,6 +43,13 @@ public class NewPublicationsFragment extends BaseListFragment {
         super.onResume();
         //Set title
         getBaseActivity().getDrawerManager().pushNavigationalState(getString(R.string.navdrawer_item_new_pubs), true);
+
+        adapter.reloadNewPublications();
+    }
+
+    @AfterViews
+    void bindAdapter() {
+        list.setAdapter(adapter);
     }
 
     @Override

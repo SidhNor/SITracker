@@ -16,39 +16,98 @@
 
 package com.andrada.sitracker.ui.fragment.adapters;
 
+import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
+import com.andrada.sitracker.db.beans.Publication;
 import com.andrada.sitracker.db.dao.PublicationDao;
 import com.andrada.sitracker.db.manager.SiDBHelper;
+import com.andrada.sitracker.ui.components.AuthorItemView_;
+import com.andrada.sitracker.ui.components.NewPubItemView;
+import com.andrada.sitracker.ui.components.NewPubItemView_;
 
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.OrmLiteDao;
+import org.androidannotations.annotations.RootContext;
+import org.androidannotations.annotations.UiThread;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 @EBean
 public class NewPubsAdapter extends BaseAdapter {
 
+    private List<Publication> publications = new ArrayList<Publication>();
+
     @OrmLiteDao(helper = SiDBHelper.class)
     PublicationDao publicationsDao;
 
+    @RootContext
+    Context context;
+
+    @Background
+    public void reloadNewPublications() {
+        List<Publication> pubs;
+        try {
+            pubs = publicationsDao.getNewPublications();
+            postDataChanged(pubs);
+        } catch (SQLException e) {
+            //TODO do something about this error
+            e.printStackTrace();
+        }
+
+    }
+
+    @UiThread
+    protected void postDataChanged(List<Publication> newPubs) {
+        publications.clear();
+        publications.addAll(newPubs);
+        notifyDataSetChanged();
+    }
+
     @Override
     public int getCount() {
-        return 0;
+        return publications.size();
     }
 
     @Override
     public Object getItem(int position) {
+        if (position >= 0 && position < publications.size()) {
+            return publications.get(position);
+        }
         return null;
     }
 
     @Override
     public long getItemId(int position) {
-        return 0;
+        if (position >= 0 && position < publications.size()) {
+            Publication pub = publications.get(position);
+            return pub.getId();
+        }
+        return -1;
+    }
+
+    @Override
+    public boolean hasStableIds() {
+        return true;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        return null;
+        NewPubItemView newPubItemView;
+        if (convertView == null) {
+            newPubItemView = NewPubItemView_.build(context);
+            //newPubItemView.setListener(this);
+        } else {
+            newPubItemView = (NewPubItemView) convertView;
+        }
+        if (position < publications.size()) {
+            newPubItemView.bind(publications.get(position));
+        }
+        return newPubItemView;
     }
 }

@@ -41,7 +41,7 @@ public class SiMainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         int priority = 1;
-        EventBus.getDefault().register(this);
+        EventBus.getDefault().register(this, priority);
 
         //Bootstrap app with initial fragment
         FragmentTransaction transaction = getFragmentManager().beginTransaction();

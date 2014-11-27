@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="@dimen/keyline_1"
+    android:layout_marginRight="@dimen/keyline_1"
+    android:baselineAligned="false"
+    android:minHeight="72dp"
+    android:orientation="horizontal"
+    tools:context=".ui.SiMainActivity">
+
+    <RelativeLayout
+        android:id="@+id/pub_img_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/publication_image"
+            android:layout_width="@dimen/keyline_2_minus_16dp"
+            android:layout_height="@dimen/keyline_2"
+            android:layout_centerHorizontal="true"
+            android:contentDescription="@null"
+            android:paddingLeft="@dimen/keyline_1"
+            android:scaleType="centerInside"
+            android:src="@drawable/blank_book"
+            android:visibility="visible"/>
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/item_title"
+        style="@style/Publication.Title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="@dimen/text_vertical_spacing"
+        android:layout_toLeftOf="@+id/actions_view"
+        android:layout_toRightOf="@+id/pub_img_container"
+        android:paddingLeft="@dimen/keyline_1"
+        android:text="@string/designtime_placeholder_short"/>
+
+    <com.andrada.sitracker.ui.widget.EllipsizedTextView
+        android:id="@+id/item_description"
+        style="@style/Publication.Subtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/item_title"
+        android:layout_toLeftOf="@+id/actions_view"
+        android:layout_toRightOf="@+id/pub_img_container"
+        android:paddingLeft="@dimen/keyline_1"
+        android:text="@string/designtime_placeholder_long"/>
+
+    <LinearLayout
+        android:id="@+id/actions_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="@dimen/default_grid_margin"
+        android:orientation="vertical"
+        android:paddingRight="@dimen/keyline_1">
+
+        <TextView
+            android:id="@+id/item_update_date"
+            style="@style/Widget.UpdateDate.Text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/text_vertical_spacing"
+            android:text="@string/designtime_placeholder_date"/>
+
+        <TextView
+            android:id="@+id/itemSize"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginBottom="@dimen/text_vertical_spacing"
+            android:text="@string/designtime_placeholder_size"
+            android:textAlignment="viewEnd"
+            android:textSize="@dimen/text_size_medium"/>
+
+        <ImageButton
+            android:id="@+id/item_updated"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_gravity="right"
+            android:layout_weight="1"
+            android:background="@null"
+            android:contentDescription="@string/notification_title"
+            android:src="@drawable/star_unselected"/>
+    </LinearLayout>
+
+</RelativeLayout>
