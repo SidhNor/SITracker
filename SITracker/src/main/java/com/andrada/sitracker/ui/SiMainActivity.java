@@ -37,6 +37,17 @@ import de.greenrobot.event.EventBus;
 @OptionsMenu(R.menu.main_menu)
 public class SiMainActivity extends BaseActivity {
 
+    /*
+    @ViewById(R.id.details_pager)
+    ViewPager pager;
+
+    @ViewById(R.id.fragment_holder)
+    View fragmentHolder;
+
+    @Bean
+    PublicationsPageAdapter pageAdapter;
+    */
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

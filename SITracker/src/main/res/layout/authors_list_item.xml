@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright 2014 Gleb Godonoga.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,10 +28,10 @@
 
     <ViewSwitcher
         android:id="@+id/author_image_contaner"
-            android:layout_width="@dimen/avatar_image_width"
-            android:layout_height="@dimen/avatar_image_height"
-            android:layout_marginRight="@dimen/keyline_1"
-            android:layout_marginTop="@dimen/keyline_1"
+        android:layout_width="@dimen/avatar_image_width"
+        android:layout_height="@dimen/avatar_image_height"
+        android:layout_marginRight="@dimen/keyline_1"
+        android:layout_marginTop="@dimen/keyline_1_vertical"
         android:animateFirstView="false">
 
         <com.andrada.sitracker.ui.widget.BezelImageView
@@ -52,46 +51,46 @@
     </ViewSwitcher>
 
     <RelativeLayout
-            android:layout_width="0dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/author_update_date"
+            style="@style/Widget.UpdateDate.Text"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1">
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="@dimen/keyline_1_vertical"
+            tools:text="@string/designtime_placeholder_date" />
 
-            <TextView
-                android:id="@+id/author_update_date"
-                style="@style/Widget.UpdateDate.Text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginTop="@dimen/keyline_1"
-                tools:text="@string/designtime_placeholder_date" />
+        <ImageButton
+            android:id="@+id/author_updated"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:background="@null"
+            android:src="@drawable/star_unselected"
+            android:scaleType="fitEnd"
+            android:contentDescription="@string/notification_title"
+            android:paddingBottom="@dimen/keyline_1_vertical_minus_8dp"
+            android:cropToPadding="false" />
 
-            <ImageButton
-                android:id="@+id/author_updated"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:background="@null"
-                android:src="@drawable/star_unselected"
-                android:scaleType="fitEnd"
-                android:contentDescription="@string/notification_title"
-                android:paddingBottom="@dimen/keyline_1_minus_8dp"
-                android:cropToPadding="false" />
-
-            <TextView
-                android:id="@+id/author_title"
-                style="@style/Authors.Title"
-                android:minHeight="72dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_toLeftOf="@id/author_update_date"
-                android:layout_toStartOf="@id/author_update_date"
-                tools:text="@string/designtime_placeholder_medium"
-                android:layout_centerVertical="true" />
-        </RelativeLayout>
+        <TextView
+            android:id="@+id/author_title"
+            style="@style/Authors.Title"
+            android:minHeight="72dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@id/author_update_date"
+            android:layout_toStartOf="@id/author_update_date"
+            tools:text="@string/designtime_placeholder_medium"
+            android:layout_centerVertical="true" />
+    </RelativeLayout>
 
 </LinearLayout>
 
