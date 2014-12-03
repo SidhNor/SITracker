@@ -75,6 +75,11 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
         isTablet = UIUtils.isTablet(context);
     }
 
+    public void updateContext(Context context) {
+        this.context = context;
+    }
+
+
     /**
      * Reloads authors in background posting change set notification to UI Thread
      */

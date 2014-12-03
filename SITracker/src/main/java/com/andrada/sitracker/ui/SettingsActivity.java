@@ -68,7 +68,7 @@ public class SettingsActivity extends BaseActivity {
     }
 
     @AfterViews
-    void afterViews() {
+    protected void afterViews() {
         Toolbar toolbar = getActionBarToolbar();
         toolbar.setTitle(R.string.title_settings);
         toolbar.setNavigationIcon(R.drawable.ic_up);

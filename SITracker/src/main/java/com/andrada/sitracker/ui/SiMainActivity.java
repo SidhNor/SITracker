@@ -16,28 +16,33 @@
 
 package com.andrada.sitracker.ui;
 
-import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.support.v4.view.ViewPager;
+import android.view.View;
 
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.events.AuthorSelectedEvent;
 import com.andrada.sitracker.ui.fragment.AuthorsFragment;
 import com.andrada.sitracker.ui.fragment.AuthorsFragment_;
-import com.andrada.sitracker.ui.fragment.PublicationsFragment_;
-import com.andrada.sitracker.util.ActivityFragmentNavigator;
+import com.andrada.sitracker.ui.fragment.adapters.PublicationsPageAdapter;
+import com.andrada.sitracker.util.NavDrawerManager;
 import com.andrada.sitracker.util.UIUtils;
 
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.InstanceState;
 import org.androidannotations.annotations.OptionsMenu;
+import org.androidannotations.annotations.ViewById;
 
 import de.greenrobot.event.EventBus;
 
-@EActivity(R.layout.activity_si_main)
+@EActivity
 @OptionsMenu(R.menu.main_menu)
 public class SiMainActivity extends BaseActivity {
 
-    /*
+
     @ViewById(R.id.details_pager)
     ViewPager pager;
 
@@ -46,7 +51,27 @@ public class SiMainActivity extends BaseActivity {
 
     @Bean
     PublicationsPageAdapter pageAdapter;
-    */
+
+    @InstanceState
+    boolean pagerShown = false;
+    @InstanceState
+    long selectedId;
+
+    private final ViewPager.OnPageChangeListener mPageListener = new ViewPager.OnPageChangeListener() {
+        @Override
+        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+        }
+
+        @Override
+        public void onPageSelected(int position) {
+            selectedId = pageAdapter.getItemDSForPosition(position).getId();
+            getActionBarToolbar().setTitle(pageAdapter.getItemDSForPosition(position).getName());
+        }
+
+        @Override
+        public void onPageScrollStateChanged(int state) {
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,13 +79,27 @@ public class SiMainActivity extends BaseActivity {
         int priority = 1;
         EventBus.getDefault().register(this, priority);
 
-        //Bootstrap app with initial fragment
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        AuthorsFragment authFrag = AuthorsFragment_.builder().build();
-        mCurrentNavigationElement = authFrag;
-        transaction.replace(R.id.fragment_holder, authFrag);
-        transaction.setCustomAnimations(0, 0);
-        transaction.commit();
+        /*
+        if (UIUtils.isTablet(this) && UIUtils.isLandscape(this)) {
+            setContentView(R.layout.activity_si_main_two_pane);
+        }
+        */
+        setContentView(R.layout.activity_si_main);
+    }
+
+    @AfterViews
+    protected void afterViews() {
+        mCurrentNavigationElement = (NavDrawerManager.NavDrawerItemAware) getFragmentManager().findFragmentByTag("currentFrag");
+        if (mCurrentNavigationElement == null) {
+            //Bootstrap app with initial fragment
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            AuthorsFragment authFrag = AuthorsFragment_.builder().build();
+            mCurrentNavigationElement = authFrag;
+            transaction.replace(R.id.fragment_holder, authFrag, "currentFrag");
+            transaction.setCustomAnimations(0, 0);
+            transaction.commit();
+        }
+        super.afterViews();
     }
 
     @Override
@@ -70,17 +109,43 @@ public class SiMainActivity extends BaseActivity {
     }
 
     public void onEvent(AuthorSelectedEvent event) {
-        //If we received this event here, that means that nobody handle it - switch fragment then
-        Fragment frag = PublicationsFragment_.builder().activeAuthorId(event.authorId).authorName(event.authorName).build();
-        //getActionBarUtil().autoShowOrHideActionBar(true);
-        ActivityFragmentNavigator.switchMainFragmentToChildFragment(this, frag);
+        shouldSkipOnePop = true;
+        pager.setAdapter(pageAdapter);
+        pager.setVisibility(View.VISIBLE);
+        pagerShown = true;
+        fragmentHolder.setVisibility(View.GONE);
+
+        getDrawerManager().pushNavigationalState(event.authorName, false);
+
+        selectedId = event.authorId;
+        int positionToSelect = pageAdapter.getItemPositionForId(event.authorId);
+        pager.setCurrentItem(positionToSelect);
+        //getActionBarToolbar().setTitle(event.authorName);
+        getActionBarUtil().autoShowOrHideActionBar(true);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        /*if (pagerShown) {
+            shouldSkipOnePop = true;
+            pager.setAdapter(pageAdapter);
+            pager.setVisibility(View.VISIBLE);
+            pagerShown = true;
+            fragmentHolder.setVisibility(View.GONE);
+            int positionToSelect = pageAdapter.getItemPositionForId(selectedId);
+            pager.setCurrentItem(positionToSelect);
+            getActionBarUtil().autoShowOrHideActionBar(true);
+        }*/
+        pager.setOnPageChangeListener(mPageListener);
         invalidateOptionsMenu();
         setContentTopClearance();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        pager.setOnPageChangeListener(null);
     }
 
     public void setContentTopClearance() {
@@ -89,7 +154,19 @@ public class SiMainActivity extends BaseActivity {
             int actionBarSize = UIUtils.calculateActionBarSize(this);
             setContentTopClearance(actionBarSize);
             mCurrentNavigationElement.setContentTopClearance(actionBarSize);
+            pager.setPadding(pager.getPaddingLeft(), actionBarSize,
+                    pager.getPaddingRight(), pager.getPaddingBottom());
             setProgressBarTopWhenActionBarShown(actionBarSize);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (shouldSkipOnePop) {
+            pager.setVisibility(View.GONE);
+            pagerShown = false;
+            fragmentHolder.setVisibility(View.VISIBLE);
+        }
+        super.onBackPressed();
     }
 }

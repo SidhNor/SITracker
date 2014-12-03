@@ -112,7 +112,7 @@ public class AuthorItemView extends CheckedRelativeLayout {
                         }
                     })
                     .into(author_image);
-        } else if (currentImg == null) {
+        } else if (author.getAuthorImageUrl() == null) {
             author_image.setImageBitmap(letterTile);
         }
 

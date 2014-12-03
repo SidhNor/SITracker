@@ -113,6 +113,8 @@ public class AuthorsFragment extends BaseListFragment implements
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+        getBaseActivity().getDrawerManager().pushNavigationalState(getString(R.string.navdrawer_item_my_authors), true);
         LOGI("SITracker", "AuthorsFragment - OnCreate");
     }
 
@@ -120,6 +122,7 @@ public class AuthorsFragment extends BaseListFragment implements
     public void onStart() {
         super.onStart();
         getActivity().invalidateOptionsMenu();
+        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -128,9 +131,6 @@ public class AuthorsFragment extends BaseListFragment implements
         EventBus.getDefault().register(this);
         getBaseActivity().getActionBarUtil().enableActionBarAutoHide(getScrollingView());
         getBaseActivity().getActionBarUtil().registerHideableHeaderView(getActivity().findViewById(R.id.headerbar));
-
-        //Set title
-        getBaseActivity().getDrawerManager().pushNavigationalState(getString(R.string.navdrawer_item_my_authors), true);
 
         //Receiver registration
         mIsUpdating = UpdateServiceHelper.isServiceCurrentlyRunning(getActivity().getApplicationContext());
@@ -243,8 +243,10 @@ public class AuthorsFragment extends BaseListFragment implements
         }
     }
 
+
     @AfterViews
     void bindAdapter() {
+        adapter.updateContext(getBaseActivity());
         list.setAdapter(adapter);
         mMultiSelectionController = MultiSelectionUtil.attachMultiSelectionController(
                 list,

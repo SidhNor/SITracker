@@ -189,4 +189,9 @@ public class UIUtils {
                 Math.round(Color.red(color) * factor), Math.round(Color.green(color) * factor),
                 Math.round(Color.blue(color) * factor));
     }
+
+    public static boolean isLandscape(Context context) {
+        return context != null &&
+                context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
+    }
 }

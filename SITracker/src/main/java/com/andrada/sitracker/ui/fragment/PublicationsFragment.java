@@ -30,7 +30,6 @@ import com.andrada.sitracker.contracts.AppUriContract;
 import com.andrada.sitracker.contracts.SIPrefs_;
 import com.andrada.sitracker.db.beans.Publication;
 import com.andrada.sitracker.events.AuthorMarkedAsReadEvent;
-import com.andrada.sitracker.events.AuthorSelectedEvent;
 import com.andrada.sitracker.exceptions.SharePublicationException;
 import com.andrada.sitracker.ui.PublicationDetailsActivity;
 import com.andrada.sitracker.ui.fragment.adapters.PublicationsAdapter;
@@ -81,13 +80,13 @@ public class PublicationsFragment extends BaseListFragment implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         LOGI("SITracker", "PublicationsFragment - OnCreate");
-        //setRetainInstance(true);
+        setRetainInstance(true);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        getBaseActivity().getDrawerManager().pushNavigationalState(authorName, false);
+        //getBaseActivity().getDrawerManager().pushNavigationalState(authorName, false);
         int priority = 3;
         //PublicationsFragment has a higher priority then SiMainActivity
         EventBus.getDefault().register(this, priority);
@@ -141,11 +140,12 @@ public class PublicationsFragment extends BaseListFragment implements
         }
     }
 
-    public void onEvent(@NotNull AuthorSelectedEvent event) {
-        EventBus.getDefault().cancelEventDelivery(event);
-        updatePublicationsView(event.authorId);
-    }
-
+    /*
+        public void onEvent(@NotNull AuthorSelectedEvent event) {
+            EventBus.getDefault().cancelEventDelivery(event);
+            updatePublicationsView(event.authorId);
+        }
+    */
     @Override
     public boolean onChildClick(ExpandableListView expandableListView,
                                 View view, int groupPosition, int childPosition, long l) {

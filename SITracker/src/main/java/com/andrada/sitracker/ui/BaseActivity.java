@@ -74,6 +74,8 @@ public abstract class BaseActivity extends ActionBarActivity implements
     //ShadowFrameLayout for setting toolbar shadow
     private DrawShadowFrameLayout mDrawShadowFrameLayout;
 
+    protected boolean shouldSkipOnePop = false;
+
     /**
      * Converts an intent into a {@link Bundle} suitable for use as fragment arguments.
      */
@@ -170,13 +172,19 @@ public abstract class BaseActivity extends ActionBarActivity implements
         GoogleAnalytics.getInstance(this).reportActivityStart(this);
     }
 
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-
+    protected void afterViews() {
         mABUtil = new ActionBarUtil(this, this);
         mDrawerManager = new NavDrawerManager(this);
         mDrawShadowFrameLayout = (DrawShadowFrameLayout) findViewById(R.id.main_content);
+    }
+
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        if (mABUtil == null || mDrawerManager == null) {
+            afterViews();
+        }
     }
 
     @Override
@@ -310,6 +318,10 @@ public abstract class BaseActivity extends ActionBarActivity implements
             mDrawerManager.popNavigationState();
             //As we are using SupportActivity and native FragmentManager -
             //we need to query it instead of default ActionBarActivity implementation
+            if (shouldSkipOnePop) {
+                shouldSkipOnePop = false;
+                return;
+            }
             if (!getFragmentManager().popBackStackImmediate()) {
                 super.onBackPressed();
             }

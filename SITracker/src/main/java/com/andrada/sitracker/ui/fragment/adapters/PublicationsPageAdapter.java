@@ -68,6 +68,10 @@ public class PublicationsPageAdapter extends SmartFragmentStatePagerAdapter {
         }
     }
 
+    public Author getItemDSForPosition(int position) {
+        return authors.get(position);
+    }
+
 
     public int getItemPositionForId(long authorId) {
         for (int i = 0; i < authors.size(); i++) {

@@ -82,7 +82,8 @@ public class SearchActivity extends BaseActivity {
     int mCurrentSearchType = 0;
 
     @AfterViews
-    void afterViews() {
+    protected void afterViews() {
+        super.afterViews();
         Toolbar toolbar = getActionBarToolbar();
         toolbar.setTitle(R.string.title_search);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {

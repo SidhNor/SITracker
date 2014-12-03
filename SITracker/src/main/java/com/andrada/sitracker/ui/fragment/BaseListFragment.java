@@ -59,7 +59,10 @@ public abstract class BaseListFragment extends Fragment
     }
 
     private void trySetupSwipeRefresh() {
-        mSwipeRefreshLayout = (SwipeRefreshLayout) getActivity().findViewById(R.id.swipe_refresh_layout);
+        if (this.getView() == null) {
+            return;
+        }
+        mSwipeRefreshLayout = (SwipeRefreshLayout) this.getView().findViewById(R.id.swipe_refresh_layout);
         if (mSwipeRefreshLayout != null) {
             mSwipeRefreshLayout.setColorSchemeResources(
                     R.color.refresh_progress_1,
