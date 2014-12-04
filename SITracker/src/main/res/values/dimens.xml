@@ -53,9 +53,10 @@
     <!-- Authors -->
     <dimen name="avatar_image_width">40dp</dimen>
     <dimen name="avatar_image_height">40dp</dimen>
-    <dimen name="tile_letter_font_size_tiny">16.0dip</dimen>
-    <dimen name="tile_letter_font_size_small">24.0dip</dimen>
-    <dimen name="tile_letter_font_size_medium">40.0dip</dimen>
+    <dimen name="avatar_border_width">.5dp</dimen>
+    <dimen name="tile_letter_font_size">24dp</dimen>
+    <dimen name="tile_letter_font_size_small">16dp</dimen>
+    <dimen name="tile_divider_width">1dp</dimen>
 
     <!--Publications and publication details-->
     <dimen name="publication_item_height">96dp</dimen>

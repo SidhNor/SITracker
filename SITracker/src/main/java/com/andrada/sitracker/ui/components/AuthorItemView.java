@@ -18,25 +18,19 @@ package com.andrada.sitracker.ui.components;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.ViewSwitcher;
 
 import com.andrada.sitracker.R;
+import com.andrada.sitracker.bitmap.CheckableAvatarFlipDrawable;
 import com.andrada.sitracker.contracts.IsNewItemTappedListener;
 import com.andrada.sitracker.db.beans.Author;
 import com.andrada.sitracker.events.AuthorCheckedEvent;
 import com.andrada.sitracker.ui.widget.CheckedRelativeLayout;
-import com.andrada.sitracker.ui.widget.LetterTileProvider;
 import com.andrada.sitracker.util.DateFormatterUtil;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EViewGroup;
@@ -55,35 +49,37 @@ public class AuthorItemView extends CheckedRelativeLayout {
     @ViewById
     ImageButton author_updated;
 
-    @ViewById(R.id.author_image_contaner)
-    ViewSwitcher authorImageCnt;
-
     @ViewById
     ImageView author_image;
     private boolean mIsNew = false;
     private boolean mPreviousNewState = false;
     private IsNewItemTappedListener mListener;
 
-    private String currentImg;
-    private final int tileSize;
-    private final LetterTileProvider tileProvider;
+    private CheckableAvatarFlipDrawable avatarFlipDrawable;
+
+    private long currentAuthorId;
+
+    private int avatarDimen;
 
     public AuthorItemView(@NotNull Context context) {
         super(context);
         this.setBackgroundResource(R.drawable.authors_list_item_selector_normal);
-        tileSize = getResources().getDimensionPixelSize(R.dimen.avatar_image_height);
-        tileProvider = new LetterTileProvider(getContext());
+        avatarFlipDrawable = new CheckableAvatarFlipDrawable(context.getResources(), 250);
+        avatarDimen = (int) getResources().getDimension(R.dimen.avatar_image_height);
     }
 
     @AfterViews
     void afterViews() {
+        author_image.setImageDrawable(avatarFlipDrawable);
+
+        avatarFlipDrawable.getAvatarDrawable().setDecodeDimensions(avatarDimen, avatarDimen);
         this.delegatedTouchViews.put(
                 ViewConfig.wholeRight(),
                 author_updated);
 
         this.delegatedTouchViews.put(
                 ViewConfig.wholeLeft(),
-                authorImageCnt);
+                author_image);
     }
 
     public void setListener(IsNewItemTappedListener listener) {
@@ -92,30 +88,18 @@ public class AuthorItemView extends CheckedRelativeLayout {
 
     @SuppressLint("NewApi")
     public void bind(@NotNull Author author, boolean isSelected) {
-        final Bitmap letterTile = tileProvider.getLetterTile(author.getName(), author.getUrlId(), tileSize, tileSize);
 
-        if (author.getAuthorImageUrl() != null && getContext() != null && !author.getAuthorImageUrl().equals(currentImg)) {
-            currentImg = author.getAuthorImageUrl();
-            Glide.with(getContext())
-                    .load(author.getAuthorImageUrl())
-                    .placeholder(R.drawable.avatar_placeholder_gray)
-                    .listener(new RequestListener<String, GlideDrawable>() {
-                        @Override
-                        public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-                            author_image.setImageBitmap(letterTile);
-                            return true;
-                        }
+        boolean newlyBound = author.getId() != currentAuthorId;
+        currentAuthorId = author.getId();
 
-                        @Override
-                        public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                            return false;
-                        }
-                    })
-                    .into(author_image);
-        } else if (author.getAuthorImageUrl() == null) {
-            author_image.setImageBitmap(letterTile);
+        if (newlyBound) {
+            avatarFlipDrawable.getAvatarDrawable().unbind();
+            avatarFlipDrawable.reset(!isSelected);
         }
 
+        if (getContext() != null) {
+            avatarFlipDrawable.getAvatarDrawable().bind(getContext(), author.getName(), author.getAuthorImageUrl());
+        }
 
         //TODO Activate only in case its a table
         //UIUtils.isTablet(getContext());
@@ -133,13 +117,7 @@ public class AuthorItemView extends CheckedRelativeLayout {
     @Override
     public void setChecked(boolean checked) {
         super.setChecked(checked);
-        if (checked && authorImageCnt.getCurrentView() == author_image) {
-            //Show next
-            authorImageCnt.showNext();
-        } else if (!checked && authorImageCnt.getCurrentView() != author_image) {
-            //show prev
-            authorImageCnt.showPrevious();
-        }
+        avatarFlipDrawable.flipTo(!checked);
     }
 
     @Override
@@ -148,7 +126,7 @@ public class AuthorItemView extends CheckedRelativeLayout {
             mIsNew = false;
             setOldNewStates();
             mListener.onIsNewItemTapped(view);
-        } else if (view.getId() == R.id.author_image_contaner) {
+        } else if (view.getId() == R.id.author_image) {
             this.toggle();
             Author auth = (Author) author_updated.getTag();
             if (auth != null) {

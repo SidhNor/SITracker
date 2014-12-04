@@ -63,6 +63,10 @@
     <color name="authors_item_grey_ripple_color">#20444444</color>
     <color name="accent_blue">#ff4285f4</color>
 
+    <!-- Color.GRAY -->
+    <color name="checkmark_tile_background_color">#ff888888</color>
+    <color name="letter_tile_default_color">#f48fb1</color>
+    <color name="letter_tile_font_color">#ffffff</color>
 
     <!-- quantum colors -->
     <color name="quantum_googred400">#ffe06055</color>

@@ -16,39 +16,23 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
     android:layout_marginLeft="@dimen/keyline_1"
     android:layout_marginRight="@dimen/keyline_1"
-    android:minHeight="72dp"
     android:baselineAligned="false"
+    android:minHeight="72dp"
+    android:orientation="horizontal"
     tools:context=".ui.SiMainActivity">
 
-    <ViewSwitcher
-        android:id="@+id/author_image_contaner"
+    <ImageView
+        android:id="@+id/author_image"
         android:layout_width="@dimen/avatar_image_width"
         android:layout_height="@dimen/avatar_image_height"
         android:layout_marginRight="@dimen/keyline_1"
         android:layout_marginTop="@dimen/keyline_1_vertical"
-        android:animateFirstView="false">
+        android:scaleType="centerCrop" />
 
-        <com.andrada.sitracker.ui.widget.BezelImageView
-            android:id="@+id/author_image"
-            android:layout_width="@dimen/avatar_image_width"
-            android:layout_height="@dimen/avatar_image_height"
-            android:scaleType="centerCrop"
-            app:maskDrawable="@drawable/circle_mask" />
-
-        <ImageView
-            android:layout_width="@dimen/avatar_image_width"
-            android:layout_height="@dimen/avatar_image_height"
-            android:background="@drawable/circle_selection"
-            android:scaleType="center"
-            android:src="@drawable/ic_check_wht_24dp"
-            android:contentDescription="@null" />
-    </ViewSwitcher>
 
     <RelativeLayout
         android:layout_width="0dp"
@@ -74,22 +58,22 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:background="@null"
-            android:src="@drawable/star_unselected"
-            android:scaleType="fitEnd"
             android:contentDescription="@string/notification_title"
+            android:cropToPadding="false"
             android:paddingBottom="@dimen/keyline_1_vertical_minus_8dp"
-            android:cropToPadding="false" />
+            android:scaleType="fitEnd"
+            android:src="@drawable/star_unselected" />
 
         <TextView
             android:id="@+id/author_title"
             style="@style/Authors.Title"
-            android:minHeight="72dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:layout_toLeftOf="@id/author_update_date"
             android:layout_toStartOf="@id/author_update_date"
-            tools:text="@string/designtime_placeholder_medium"
-            android:layout_centerVertical="true" />
+            android:minHeight="72dp"
+            tools:text="@string/designtime_placeholder_medium" />
     </RelativeLayout>
 
 </LinearLayout>
