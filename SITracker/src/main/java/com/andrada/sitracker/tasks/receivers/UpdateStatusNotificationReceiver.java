@@ -29,7 +29,7 @@ import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.tasks.messages.UpdateFailedIntentMessage;
 import com.andrada.sitracker.tasks.messages.UpdateSuccessfulIntentMessage;
-import com.andrada.sitracker.ui.HomeActivity_;
+import com.andrada.sitracker.ui.SiMainActivity_;
 import com.andrada.sitracker.util.AnalyticsHelper;
 
 import org.jetbrains.annotations.NotNull;
@@ -88,14 +88,14 @@ public class UpdateStatusNotificationReceiver extends BroadcastReceiver {
 
 
         // Creates an explicit intent for an Activity in your app
-        Intent resultIntent = new Intent(context, HomeActivity_.class);
+        Intent resultIntent = new Intent(context, SiMainActivity_.class);
         // The stack builder object will contain an artificial back stack for the
         // started Activity.
         // This ensures that navigating backward from the Activity leads out of
         // your application to the Home screen.
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
         // Adds the back stack for the Intent (but not the Intent itself)
-        stackBuilder.addParentStack(HomeActivity_.class);
+        stackBuilder.addParentStack(SiMainActivity_.class);
         // Adds the Intent that starts the Activity to the top of the stack
         stackBuilder.addNextIntent(resultIntent);
         PendingIntent resultPendingIntent =
