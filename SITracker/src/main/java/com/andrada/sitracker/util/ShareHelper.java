@@ -275,7 +275,7 @@ public final class ShareHelper {
             bs.flush();
             bs.close();
 
-        } catch (IOException e) {
+        } catch (IOException | IllegalStateException e) {
             result = false;
         } finally {
             if (bs != null) {

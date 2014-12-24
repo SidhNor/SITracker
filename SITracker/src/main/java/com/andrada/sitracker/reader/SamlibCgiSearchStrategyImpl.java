@@ -164,7 +164,11 @@ public class SamlibCgiSearchStrategyImpl implements SearchStrategy {
                 String[] authNames = authorMap.keySet().toArray(new String[1]);
                 LOGD(TAG, "Got unique authors from page: " + authNames.length);
                 Arrays.sort(authNames, ru_RUCollator);
-                int startIdx = Arrays.binarySearch(authNames, searchString, ru_RUCollator);
+                int startIdx = 0;
+                try {
+                    startIdx = Arrays.binarySearch(authNames, searchString, ru_RUCollator);
+                } catch (Exception ignored) { }
+
                 if (startIdx < 0) {
                     startIdx = -startIdx - 1;
                 }
@@ -205,7 +209,7 @@ public class SamlibCgiSearchStrategyImpl implements SearchStrategy {
         public CgiSearchResultVO(String line) {
             String str = line + " |";
             String[] components = str.split("\\|");
-            if (components.length < 7) {
+            if (components.length < 8) {
                 throw new IllegalArgumentException("Wrong line");
             }
             this.url = "http://samlib.ru/" + components[0];
