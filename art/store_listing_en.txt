@@ -12,8 +12,5 @@ If you encounter any issue, please feel free to report it.
 
 What's new:
 
-• Fixed crash when downloading publication without a title or some other anomalies.
-• Fixed notification display when more then 4 authors were updated in a single session.
-• Fixed some more crashes when opening large publications on low memory devices.
-• Fixed crash when viewing publication info.
-
+• Android Lollipop ready.
+• Fixed couple of crashes
