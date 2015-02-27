@@ -58,7 +58,7 @@ tasks.withType(JavaCompile) {
 
 android {
     compileSdkVersion 21
-    buildToolsVersion '21.1.1'
+    buildToolsVersion '21.1.2'
 
 
     def versionPropsFile = file('version.properties')

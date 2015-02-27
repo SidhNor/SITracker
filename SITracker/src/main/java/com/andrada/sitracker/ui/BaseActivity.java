@@ -267,6 +267,12 @@ public abstract class BaseActivity extends ActionBarActivity implements
                 ActivityFragmentNavigator.switchMainFragmentInMainActivity(this, newPubsFrag);
                 mCurrentNavigationElement = newPubsFrag;
                 break;
+            case NavDrawerManager.NAVDRAWER_ITEM_EXPORT:
+
+                break;
+            case NavDrawerManager.NAVDRAWER_ITEM_IMPORT:
+                ImportAuthorsActivity_.intent(this).start();
+                break;
             case NavDrawerManager.NAVDRAWER_ITEM_SETTINGS:
                 SettingsActivity_.intent(this).start();
                 break;
