@@ -26,6 +26,8 @@ import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.v4.content.IntentCompat;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -45,6 +47,7 @@ import com.andrada.sitracker.ui.components.ImportProgressView;
 import com.andrada.sitracker.ui.components.ImportProgressView_;
 import com.andrada.sitracker.util.AnalyticsHelper;
 
+import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
@@ -192,6 +195,20 @@ public class ImportAuthorsActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
+    }
+
+    @AfterViews
+    protected void afterViews() {
+        Toolbar toolbar = getActionBarToolbar();
+        toolbar.setTitle(R.string.title_import);
+        toolbar.setNavigationIcon(R.drawable.ic_up);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                supportNavigateUpTo(IntentCompat.makeMainActivity(new ComponentName(ImportAuthorsActivity.this,
+                                SiMainActivity_.class)));
+            }
+        });
     }
 
     @Override

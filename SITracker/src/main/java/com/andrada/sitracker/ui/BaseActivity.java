@@ -318,7 +318,11 @@ public abstract class BaseActivity extends ActionBarActivity implements
 
     @Override
     public void onBackPressed() {
-        if (mDrawerManager.isNavDrawerOpen()) {
+        if (mDrawerManager == null) {
+            if (!getFragmentManager().popBackStackImmediate()) {
+                super.onBackPressed();
+            }
+        } else if (mDrawerManager.isNavDrawerOpen()) {
             mDrawerManager.closeNavDrawer();
         } else {
             mDrawerManager.popNavigationState();

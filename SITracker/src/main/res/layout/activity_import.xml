@@ -16,80 +16,73 @@
   limitations under the License.
   -->
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginLeft="@dimen/import_activity_spacing"
-                android:layout_marginRight="@dimen/import_activity_spacing"
                 android:background="@drawable/import_activity_background"
                 android:orientation="vertical"
-                android:padding="@dimen/activity_vertical_margin">
+                tools:context=".ui.ImportAuthorsActivity_">
 
-    <LinearLayout
-        android:id="@+id/headerbar"
-        style="@style/HeaderBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        android:orientation="vertical">
+    <include layout="@layout/toolbar_actionbar_with_headerbar" />
 
-        <include layout="@layout/toolbar_actionbar" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/actionsContainer"
-        android:layout_below="@id/headerbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <LinearLayout
-            android:id="@+id/buttonPanel"
+    <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/divider_margin_top">
-
-            <Button
-                android:id="@+id/chooseFileButton"
-                style="@style/Compat.ButtonBarButton"
-                android:layout_width="0dp"
+            android:layout_marginLeft="@dimen/import_activity_spacing"
+            android:layout_marginRight="@dimen/import_activity_spacing">
+        <LinearLayout
+                android:id="@+id/actionsContainer"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/choose_import_file"/>
+                android:orientation="vertical">
 
-            <Button
-                android:id="@+id/performImportButton"
-                style="@style/Compat.ButtonBarButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:enabled="false"
-                android:text="@string/perform_import"/>
+            <LinearLayout
+                    android:id="@+id/buttonPanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/divider_margin_top">
+
+                <Button
+                        android:id="@+id/chooseFileButton"
+                        style="@style/Compat.ButtonBarButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/choose_import_file"/>
+
+                <Button
+                        android:id="@+id/performImportButton"
+                        style="@style/Compat.ButtonBarButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:enabled="false"
+                        android:text="@string/perform_import"/>
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
 
-    <View
-        android:id="@+id/separator"
-        style="@style/Theme.SiTracker.DividerThick"
-        android:layout_below="@+id/actionsContainer"
-        android:layout_marginBottom="@dimen/divider_margin_bottom"
-        android:layout_marginTop="@dimen/divider_margin_top"/>
+        <View
+                android:id="@+id/separator"
+                style="@style/Theme.SiTracker.DividerThick"
+                android:layout_below="@+id/actionsContainer"
+                android:layout_marginBottom="@dimen/divider_margin_bottom"
+                android:layout_marginTop="@dimen/divider_margin_top"/>
 
-    <ListView
-        android:id="@+id/list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentBottom="true"
-        android:layout_below="@+id/separator"
-        android:cacheColorHint="@color/light_color_hint"/>
+        <ListView
+                android:id="@+id/list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentBottom="true"
+                android:layout_below="@+id/separator"
+                android:cacheColorHint="@color/light_color_hint"/>
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:visibility="gone"/>
-
-</RelativeLayout>
+        <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:visibility="gone"/>
+    </RelativeLayout>
+</LinearLayout>
