@@ -155,7 +155,10 @@ public class SamlibCgiSearchStrategyImpl implements SearchStrategy {
                 for (String line : lines) {
                     try {
                         CgiSearchResultVO item = new CgiSearchResultVO(line);
-                        authorMap.put(item.name, item);
+                        //ensure key is not null
+                        if (item.name != null) {
+                            authorMap.put(item.name, item);
+                        }
                     } catch (IllegalArgumentException ignored) {
                     }
                 }
