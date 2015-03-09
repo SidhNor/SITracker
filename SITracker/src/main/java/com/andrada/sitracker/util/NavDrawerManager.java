@@ -361,7 +361,9 @@ public class NavDrawerManager {
     }
 
     private boolean isSpecialItem(int itemId) {
-        return itemId == NavDrawerManager.NAVDRAWER_ITEM_SETTINGS;
+        return itemId == NavDrawerManager.NAVDRAWER_ITEM_SETTINGS ||
+                itemId == NavDrawerManager.NAVDRAWER_ITEM_IMPORT ||
+                itemId == NavDrawerManager.NAVDRAWER_ITEM_EXPORT;
     }
 
     private void onNavDrawerItemClicked(final int itemId) {

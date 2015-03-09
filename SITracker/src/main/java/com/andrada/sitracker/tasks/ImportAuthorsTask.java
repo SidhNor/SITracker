@@ -37,6 +37,7 @@ import com.andrada.sitracker.reader.SiteDetector;
 import com.andrada.sitracker.reader.SiteStrategy;
 import com.andrada.sitracker.ui.HomeActivity_;
 import com.andrada.sitracker.ui.ImportAuthorsActivity_;
+import com.andrada.sitracker.ui.SiMainActivity_;
 import com.andrada.sitracker.util.AnalyticsHelper;
 import com.andrada.sitracker.util.SamlibPageHelper;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
@@ -62,17 +63,26 @@ import static com.andrada.sitracker.util.LogUtils.makeLogTag;
 public class ImportAuthorsTask extends IntentService {
 
     public static final String AUTHOR_LIST_EXTRA = "authorsList";
+
     private final static int NOTIFICATION_ID = 628986143;
+
     private static final String TAG = makeLogTag(ImportAuthorsTask.class);
+
     private final IBinder mBinder = new ImportAuthorsBinder();
+
     @SystemService
     ConnectivityManager connectivityManager;
+
     @SystemService
     NotificationManager notificationManager;
+
     private volatile boolean shouldCancel = false;
+
     private SiDBHelper helper;
+
     @NotNull
     private List<String> authorsList = new ArrayList<String>();
+
     private ImportProgress importProgress;
 
     public ImportAuthorsTask() {
@@ -131,7 +141,8 @@ public class ImportAuthorsTask extends IntentService {
                         .setSmallIcon(android.R.drawable.stat_notify_sync)
                         .setOngoing(true)
                         .setAutoCancel(false)
-                        .setContentTitle(getResources().getString(R.string.notification_import_title))
+                        .setContentTitle(
+                                getResources().getString(R.string.notification_import_title))
                         .setAutoCancel(true);
 
         // Creates an explicit intent for an Activity in your app
@@ -173,11 +184,15 @@ public class ImportAuthorsTask extends IntentService {
                     notificationManager.cancel(NOTIFICATION_ID);
                     break;
                 }
-                EventBus.getDefault().post(new ImportUpdates(new ImportProgress(this.importProgress)));
+                EventBus.getDefault()
+                        .post(new ImportUpdates(new ImportProgress(this.importProgress)));
                 mBuilder.setContentText(getResources()
-                        .getString(R.string.notification_import_progress, importProgress.getTotalProcessed(), importProgress.getTotalAuthors()))
+                        .getString(R.string.notification_import_progress,
+                                importProgress.getTotalProcessed(),
+                                importProgress.getTotalAuthors()))
                         .setAutoCancel(false)
-                        .setProgress(importProgress.getTotalAuthors(), importProgress.getTotalProcessed(), false);
+                        .setProgress(importProgress.getTotalAuthors(),
+                                importProgress.getTotalProcessed(), false);
                 notificationManager.notify(NOTIFICATION_ID, mBuilder.build());
                 //Sleep for 5 seconds to avoid ban
                 Thread.sleep(5000);
@@ -190,7 +205,7 @@ public class ImportAuthorsTask extends IntentService {
             }
         }
         if (!shouldCancel) {
-            Intent finishIntent = HomeActivity_.intent(this)
+            Intent finishIntent = SiMainActivity_.intent(this)
                     .authorsProcessed(importProgress.getTotalAuthors())
                     .authorsSuccessfullyImported(importProgress.getSuccessfullyImported())
                     .get();
@@ -200,7 +215,7 @@ public class ImportAuthorsTask extends IntentService {
             // your application to the Home screen.
             stackBuilder = TaskStackBuilder.create(this);
             // Adds the back stack for the Intent (but not the Intent itself)
-            stackBuilder.addParentStack(HomeActivity_.class);
+            stackBuilder.addParentStack(SiMainActivity_.class);
             // Adds the Intent that starts the Activity to the top of the stack
             stackBuilder.addNextIntent(finishIntent);
 
@@ -217,7 +232,8 @@ public class ImportAuthorsTask extends IntentService {
                     .setOngoing(false)
                     .setAutoCancel(true)
                     .setContentText(getResources().getString(R.string.notification_import_complete))
-                    .setContentIntent(stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT));
+                    .setContentIntent(
+                            stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT));
             notificationManager.notify(NOTIFICATION_ID, mBuilder.build());
         }
     }
@@ -246,10 +262,15 @@ public class ImportAuthorsTask extends IntentService {
     }
 
     public static class ImportProgress {
+
         private int totalAuthors = 0;
+
         private int successfullyImported = 0;
+
         private int failedImport = 0;
+
         private int totalProcessed = 0;
+
         private List<String> failedAuthors = new ArrayList<String>();
 
         public ImportProgress(int totalAuthors) {
@@ -298,6 +319,7 @@ public class ImportAuthorsTask extends IntentService {
     }
 
     public class ImportAuthorsBinder extends Binder {
+
         @NotNull
         public ImportAuthorsTask getService() {
             return ImportAuthorsTask.this;

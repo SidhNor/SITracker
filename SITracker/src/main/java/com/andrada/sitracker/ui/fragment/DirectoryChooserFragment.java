@@ -103,6 +103,7 @@ public class DirectoryChooserFragment extends DialogFragment {
     @Nullable
     private FileObserver mFileObserver;
 
+    private boolean nonActivityListener = false;
 
     public DirectoryChooserFragment() {
         // Required empty public constructor
@@ -131,6 +132,23 @@ public class DirectoryChooserFragment extends DialogFragment {
         args.putString(ARG_INITIAL_DIRECTORY, initialDirectory);
         args.putBoolean(ARG_IS_DIRECTORY_CHOOSER, isDirectoryChooser);
         fragment.setArguments(args);
+        return fragment;
+    }
+
+    @NotNull
+    public static DirectoryChooserFragment newInstance(
+            final String newDirectoryName,
+            final String initialDirectory,
+            final Boolean isDirectoryChooser,
+            final OnFragmentInteractionListener listener) {
+        DirectoryChooserFragment fragment = new DirectoryChooserFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_NEW_DIRECTORY_NAME, newDirectoryName);
+        args.putString(ARG_INITIAL_DIRECTORY, initialDirectory);
+        args.putBoolean(ARG_IS_DIRECTORY_CHOOSER, isDirectoryChooser);
+        fragment.setArguments(args);
+        fragment.mListener = listener;
+        fragment.nonActivityListener = true;
         return fragment;
     }
 
@@ -294,7 +312,9 @@ public class DirectoryChooserFragment extends DialogFragment {
     public void onAttach(@NotNull Activity activity) {
         super.onAttach(activity);
         try {
-            mListener = (OnFragmentInteractionListener) activity;
+            if (!nonActivityListener) {
+                mListener = (OnFragmentInteractionListener) activity;
+            }
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -304,7 +324,9 @@ public class DirectoryChooserFragment extends DialogFragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        if (!nonActivityListener) {
+            mListener = null;
+        }
     }
 
     @Override

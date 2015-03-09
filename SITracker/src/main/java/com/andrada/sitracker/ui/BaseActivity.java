@@ -73,6 +73,7 @@ public abstract class BaseActivity extends ActionBarActivity implements
 
     //ShadowFrameLayout for setting toolbar shadow
     private DrawShadowFrameLayout mDrawShadowFrameLayout;
+    private ExportAuthorsController mExportCtrl;
 
     protected boolean shouldSkipOnePop = false;
 
@@ -133,6 +134,8 @@ public abstract class BaseActivity extends ActionBarActivity implements
         if (ab != null) {
             ab.setDisplayHomeAsUpEnabled(true);
         }
+
+        mExportCtrl = new ExportAuthorsController(this);
 
         getFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
             @Override
@@ -268,7 +271,7 @@ public abstract class BaseActivity extends ActionBarActivity implements
                 mCurrentNavigationElement = newPubsFrag;
                 break;
             case NavDrawerManager.NAVDRAWER_ITEM_EXPORT:
-
+                mExportCtrl.showDialog();
                 break;
             case NavDrawerManager.NAVDRAWER_ITEM_IMPORT:
                 ImportAuthorsActivity_.intent(this).start();

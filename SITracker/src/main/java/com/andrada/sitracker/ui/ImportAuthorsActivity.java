@@ -227,11 +227,12 @@ public class ImportAuthorsActivity extends BaseActivity {
 
     public void onEventMainThread(@NotNull ImportUpdates event) {
         if (event.isFinished()) {
-            toggleButtonAndProgressPanels(false);
-            HomeActivity_.intent(this)
+            //toggleButtonAndProgressPanels(false);
+            SiMainActivity_.intent(this)
                     .authorsProcessed(event.getImportProgress().getTotalAuthors())
                     .authorsSuccessfullyImported(event.getImportProgress().getSuccessfullyImported())
                     .start();
+            this.finish();
         } else if (progressPanel != null) {
             //Update progress
             progressPanel.updateProgress(event.getImportProgress());
