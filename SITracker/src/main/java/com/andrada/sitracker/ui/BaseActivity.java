@@ -18,6 +18,7 @@ package com.andrada.sitracker.ui;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -29,8 +30,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.andrada.sitracker.BuildConfig;
+import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.ui.debug.DebugActionRunnerActivity;
+import com.andrada.sitracker.ui.fragment.AboutDialog;
 import com.andrada.sitracker.ui.fragment.AuthorsFragment;
 import com.andrada.sitracker.ui.fragment.AuthorsFragment_;
 import com.andrada.sitracker.ui.fragment.ExploreAuthorsFragment;
@@ -40,6 +43,7 @@ import com.andrada.sitracker.ui.fragment.NewPublicationsFragment_;
 import com.andrada.sitracker.ui.widget.DrawShadowFrameLayout;
 import com.andrada.sitracker.util.ActionBarUtil;
 import com.andrada.sitracker.util.ActivityFragmentNavigator;
+import com.andrada.sitracker.util.AnalyticsHelper;
 import com.andrada.sitracker.util.NavDrawerManager;
 import com.andrada.sitracker.util.PlayServicesUtils;
 import com.andrada.sitracker.util.UIUtils;
@@ -278,6 +282,17 @@ public abstract class BaseActivity extends ActionBarActivity implements
                 break;
             case NavDrawerManager.NAVDRAWER_ITEM_SETTINGS:
                 SettingsActivity_.intent(this).start();
+                break;
+            case NavDrawerManager.NAVDRAWER_ITEM_ABOUT:
+                AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_ABOUT_DIALOG);
+                FragmentManager fm = this.getFragmentManager();
+                FragmentTransaction ft = fm.beginTransaction();
+                Fragment prev = fm.findFragmentByTag(AboutDialog.FRAGMENT_TAG);
+                if (prev != null) {
+                    ft.remove(prev);
+                }
+                ft.addToBackStack(null);
+                new AboutDialog().show(ft, AboutDialog.FRAGMENT_TAG);
                 break;
         }
     }

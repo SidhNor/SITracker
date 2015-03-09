@@ -53,6 +53,7 @@ public class NavDrawerManager {
     public static final int NAVDRAWER_ITEM_EXPORT = 3;
     public static final int NAVDRAWER_ITEM_IMPORT = 4;
     public static final int NAVDRAWER_ITEM_SETTINGS = 5;
+    public static final int NAVDRAWER_ITEM_ABOUT = 6;
     public static final int NAVDRAWER_ITEM_INVALID = -1;
     public static final int NAVDRAWER_ITEM_SEPARATOR = -2;
     public static final int NAVDRAWER_ITEM_SEPARATOR_SPECIAL = -3;
@@ -66,7 +67,8 @@ public class NavDrawerManager {
             R.string.navdrawer_item_new_pubs,
             R.string.navdrawer_item_export,
             R.string.navdrawer_item_import,
-            R.string.navdrawer_item_settings
+            R.string.navdrawer_item_settings,
+            R.string.action_about
     };
     // icons for navdrawer items (indices must correspond to above array)
     private static final int[] NAVDRAWER_ICON_RES_ID = new int[]{
@@ -75,7 +77,8 @@ public class NavDrawerManager {
             R.drawable.ic_drawer_new_pubs, // Map
             R.drawable.ic_drawer_export, //Export
             R.drawable.ic_drawer_import, //Import
-            R.drawable.ic_drawer_settings //Settings
+            R.drawable.ic_drawer_settings, //Settings
+            0 //About
     };
     // delay to launch nav drawer item, to allow close animation to play
     private static final int NAVDRAWER_LAUNCH_DELAY = 250;
@@ -297,6 +300,7 @@ public class NavDrawerManager {
         mNavDrawerItems.add(NAVDRAWER_ITEM_EXPORT);
         mNavDrawerItems.add(NAVDRAWER_ITEM_IMPORT);
         mNavDrawerItems.add(NAVDRAWER_ITEM_SETTINGS);
+        mNavDrawerItems.add(NAVDRAWER_ITEM_ABOUT);
 
         createNavDrawerItems();
     }
@@ -361,9 +365,10 @@ public class NavDrawerManager {
     }
 
     private boolean isSpecialItem(int itemId) {
-        return itemId == NavDrawerManager.NAVDRAWER_ITEM_SETTINGS ||
-                itemId == NavDrawerManager.NAVDRAWER_ITEM_IMPORT ||
-                itemId == NavDrawerManager.NAVDRAWER_ITEM_EXPORT;
+        return itemId == NAVDRAWER_ITEM_SETTINGS ||
+                itemId == NAVDRAWER_ITEM_IMPORT ||
+                itemId == NAVDRAWER_ITEM_EXPORT ||
+                itemId == NAVDRAWER_ITEM_ABOUT;
     }
 
     private void onNavDrawerItemClicked(final int itemId) {

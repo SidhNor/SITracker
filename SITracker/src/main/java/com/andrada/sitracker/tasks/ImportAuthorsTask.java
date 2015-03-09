@@ -35,7 +35,6 @@ import com.andrada.sitracker.db.manager.SiDBHelper;
 import com.andrada.sitracker.events.ImportUpdates;
 import com.andrada.sitracker.reader.SiteDetector;
 import com.andrada.sitracker.reader.SiteStrategy;
-import com.andrada.sitracker.ui.HomeActivity_;
 import com.andrada.sitracker.ui.ImportAuthorsActivity_;
 import com.andrada.sitracker.ui.SiMainActivity_;
 import com.andrada.sitracker.util.AnalyticsHelper;

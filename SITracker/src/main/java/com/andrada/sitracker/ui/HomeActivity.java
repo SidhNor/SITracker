@@ -275,12 +275,14 @@ public class HomeActivity extends BaseActivity implements DirectoryChooserFragme
         }
     }
 
-    @OptionsItem(R.id.action_import)
+    @Deprecated
+    //@OptionsItem(R.id.action_import)
     void menuImportSelected() {
         startActivity(com.andrada.sitracker.ui.ImportAuthorsActivity_.intent(this).get());
     }
 
-    @OptionsItem(R.id.action_export)
+    @Deprecated
+    //@OptionsItem(R.id.action_export)
     void menuExportSelected() {
         AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_EXPORT_DIALOG);
         mDialog.show(getFragmentManager(), null);
