@@ -140,6 +140,7 @@ public class SiMainActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        pageAdapter.reloadAuthors();
         /*if (pagerShown) {
             shouldSkipOnePop = true;
             pager.setAdapter(pageAdapter);

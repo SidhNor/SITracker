@@ -77,7 +77,7 @@ public class NavDrawerManager {
             R.drawable.ic_drawer_new_pubs, // Map
             R.drawable.ic_drawer_export, //Export
             R.drawable.ic_drawer_import, //Import
-            R.drawable.ic_drawer_settings, //Settings
+            0, //Settings
             0 //About
     };
     // delay to launch nav drawer item, to allow close animation to play
@@ -286,8 +286,6 @@ public class NavDrawerManager {
     private void populateNavDrawer() {
         mNavDrawerItems.clear();
 
-        // decide which items will appear in the nav drawer
-
         // My authors always shown
         mNavDrawerItems.add(NAVDRAWER_ITEM_MY_AUTHORS);
         // Explore is always shown
@@ -299,6 +297,7 @@ public class NavDrawerManager {
         mNavDrawerItems.add(NAVDRAWER_ITEM_SEPARATOR_SPECIAL);
         mNavDrawerItems.add(NAVDRAWER_ITEM_EXPORT);
         mNavDrawerItems.add(NAVDRAWER_ITEM_IMPORT);
+        mNavDrawerItems.add(NAVDRAWER_ITEM_SEPARATOR_SPECIAL);
         mNavDrawerItems.add(NAVDRAWER_ITEM_SETTINGS);
         mNavDrawerItems.add(NAVDRAWER_ITEM_ABOUT);
 
