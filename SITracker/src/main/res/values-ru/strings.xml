@@ -53,6 +53,7 @@
 
     <string name="update_failed_crouton_message">Не удалось обновить авторов.</string>
     <string name="no_authors">Вы пока не добавили никаких авторов</string>
+    <string name="no_new_pubs">Проды нет</string>
     <plurals name="authors_selected">
         <item quantity="one">%d выбранный</item>
         <item quantity="few">

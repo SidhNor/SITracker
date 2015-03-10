@@ -33,6 +33,7 @@ import org.androidannotations.annotations.ViewById;
 import android.content.Intent;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.ViewCompat;
+import android.view.ViewStub;
 import android.widget.ListView;
 
 @EFragment(R.layout.fragment_newpubs)
@@ -40,6 +41,9 @@ public class NewPublicationsFragment extends BaseListFragment {
 
     @ViewById(R.id.new_pubs_list)
     ListView list;
+
+    @ViewById
+    ViewStub empty;
 
     @Bean
     NewPubsAdapter adapter;
@@ -52,6 +56,8 @@ public class NewPublicationsFragment extends BaseListFragment {
                 .pushNavigationalState(getString(R.string.navdrawer_item_new_pubs), true);
 
         adapter.reloadNewPublications();
+        empty.setLayoutResource(R.layout.empty_new_pubs);
+        list.setEmptyView(empty);
     }
 
     @AfterViews

@@ -54,6 +54,7 @@
 
     <string name="update_failed_crouton_message">Update failed for an unexpected reason.</string>
     <string name="no_authors">You haven\'t added any authors yet</string>
+    <string name="no_new_pubs">No updates so far</string>
     <plurals name="authors_selected">
         <item quantity="one">1 selected</item>
         <item quantity="few">
