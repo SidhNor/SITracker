@@ -17,17 +17,23 @@
 package com.andrada.sitracker.ui.fragment;
 
 
-import android.support.v4.view.ViewCompat;
-import android.widget.ListView;
-
 import com.andrada.sitracker.R;
+import com.andrada.sitracker.contracts.AppUriContract;
+import com.andrada.sitracker.db.beans.Publication;
+import com.andrada.sitracker.ui.PublicationDetailsActivity;
 import com.andrada.sitracker.ui.fragment.adapters.NewPubsAdapter;
 import com.andrada.sitracker.util.NavDrawerManager;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.ItemClick;
 import org.androidannotations.annotations.ViewById;
+
+import android.content.Intent;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.view.ViewCompat;
+import android.widget.ListView;
 
 @EFragment(R.layout.fragment_newpubs)
 public class NewPublicationsFragment extends BaseListFragment {
@@ -42,7 +48,8 @@ public class NewPublicationsFragment extends BaseListFragment {
     public void onResume() {
         super.onResume();
         //Set title
-        getBaseActivity().getDrawerManager().pushNavigationalState(getString(R.string.navdrawer_item_new_pubs), true);
+        getBaseActivity().getDrawerManager()
+                .pushNavigationalState(getString(R.string.navdrawer_item_new_pubs), true);
 
         adapter.reloadNewPublications();
     }
@@ -65,6 +72,14 @@ public class NewPublicationsFragment extends BaseListFragment {
                     list.getPaddingRight(), list.getPaddingBottom());
             adapter.notifyDataSetChanged();
         }
+    }
+
+    @ItemClick(R.id.new_pubs_list)
+    void listItemClick(Publication pub) {
+        Intent intent = new Intent(Intent.ACTION_VIEW,
+                AppUriContract.buildPublicationUri(pub.getId()), getActivity(),
+                PublicationDetailsActivity.class);
+        ActivityCompat.startActivity(getBaseActivity(), intent, null);
     }
 
     @Override

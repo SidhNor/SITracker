@@ -16,15 +16,11 @@
 
 package com.andrada.sitracker.ui.fragment.adapters;
 
-import android.content.Context;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-
+import com.andrada.sitracker.contracts.IsNewItemTappedListener;
+import com.andrada.sitracker.contracts.SIPrefs_;
 import com.andrada.sitracker.db.beans.Publication;
 import com.andrada.sitracker.db.dao.PublicationDao;
 import com.andrada.sitracker.db.manager.SiDBHelper;
-import com.andrada.sitracker.ui.components.AuthorItemView_;
 import com.andrada.sitracker.ui.components.NewPubItemView;
 import com.andrada.sitracker.ui.components.NewPubItemView_;
 
@@ -33,13 +29,19 @@ import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.OrmLiteDao;
 import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.UiThread;
+import org.androidannotations.annotations.sharedpreferences.Pref;
+
+import android.content.Context;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 @EBean
-public class NewPubsAdapter extends BaseAdapter {
+public class NewPubsAdapter extends BaseAdapter implements IsNewItemTappedListener {
 
     private List<Publication> publications = new ArrayList<Publication>();
 
@@ -49,9 +51,15 @@ public class NewPubsAdapter extends BaseAdapter {
     @RootContext
     Context context;
 
+    @Pref
+    SIPrefs_ prefs;
+
+    boolean shouldShowImages;
+
     @Background
     public void reloadNewPublications() {
         List<Publication> pubs;
+        shouldShowImages = prefs.displayPubImages().get();
         try {
             pubs = publicationsDao.getNewPublications();
             postDataChanged(pubs);
@@ -101,13 +109,18 @@ public class NewPubsAdapter extends BaseAdapter {
         NewPubItemView newPubItemView;
         if (convertView == null) {
             newPubItemView = NewPubItemView_.build(context);
-            //newPubItemView.setListener(this);
+            newPubItemView.setListener(this);
         } else {
             newPubItemView = (NewPubItemView) convertView;
         }
         if (position < publications.size()) {
-            newPubItemView.bind(publications.get(position));
+            newPubItemView.bind(publications.get(position), shouldShowImages);
         }
         return newPubItemView;
+    }
+
+    @Override
+    public void onIsNewItemTapped(View checkBox) {
+        //TODO make item not new, reload stuff
     }
 }

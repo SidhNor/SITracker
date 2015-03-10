@@ -16,15 +16,6 @@
 
 package com.andrada.sitracker.ui.components;
 
-import android.content.Context;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.TextView;
-
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.IsNewItemTappedListener;
 import com.andrada.sitracker.db.beans.Publication;
@@ -38,6 +29,15 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
 import org.jetbrains.annotations.NotNull;
+
+import android.content.Context;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 @EViewGroup(R.layout.publications_item)
 public class PublicationItemView extends TouchDelegateRelativeLayout {
@@ -70,6 +70,7 @@ public class PublicationItemView extends TouchDelegateRelativeLayout {
     ViewGroup backgroundPane;
 
     Animation scaleFadeOutAnim;
+
     Animation fadeInAnim;
 
     private boolean mIsNew = false;
@@ -78,7 +79,6 @@ public class PublicationItemView extends TouchDelegateRelativeLayout {
 
     public PublicationItemView(@NotNull Context context) {
         super(context);
-
     }
 
     @AfterViews
@@ -112,7 +112,8 @@ public class PublicationItemView extends TouchDelegateRelativeLayout {
     public void bind(@NotNull Publication publication, boolean loadImages) {
         mIsNew = publication.getNew();
         item_title.setText(publication.getName());
-        item_updated.setImageResource(mIsNew ? R.drawable.star_selected : R.drawable.star_unselected);
+        item_updated
+                .setImageResource(mIsNew ? R.drawable.star_selected : R.drawable.star_unselected);
         item_updated.setTag(publication);
         item_update_date.setText(
                 DateFormatterUtil.getFriendlyDateRelativeToToday(publication.getUpdateDate(),
@@ -138,7 +139,6 @@ public class PublicationItemView extends TouchDelegateRelativeLayout {
 
         UIUtils.setTextMaybeHtml(item_description,
                 SamlibPageHelper.stripDescriptionOfImages(publication.getDescription()));
-
 
         StringBuilder builder = new StringBuilder();
         int oldSize = publication.getOldSize();

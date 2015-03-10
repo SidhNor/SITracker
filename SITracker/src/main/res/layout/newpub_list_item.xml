@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:layout_marginLeft="@dimen/keyline_1"
-    android:layout_marginRight="@dimen/keyline_1"
     android:baselineAligned="false"
     android:minHeight="72dp"
     android:orientation="horizontal"
@@ -22,6 +19,7 @@
             android:layout_height="@dimen/keyline_2"
             android:layout_centerHorizontal="true"
             android:contentDescription="@null"
+            android:paddingTop="@dimen/keyline_1"
             android:paddingLeft="@dimen/keyline_1"
             android:scaleType="centerInside"
             android:src="@drawable/blank_book"
@@ -35,20 +33,33 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_marginBottom="@dimen/text_vertical_spacing"
+        android:paddingTop="@dimen/keyline_1"
         android:layout_toLeftOf="@+id/actions_view"
         android:layout_toRightOf="@+id/pub_img_container"
         android:paddingLeft="@dimen/keyline_1"
         android:text="@string/designtime_placeholder_short"/>
 
     <com.andrada.sitracker.ui.widget.EllipsizedTextView
-        android:id="@+id/item_description"
-        style="@style/Publication.Subtitle"
+        android:id="@+id/author_name"
+        style="@style/Publication.Subtitle.Short"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/item_title"
         android:layout_toLeftOf="@+id/actions_view"
         android:layout_toRightOf="@+id/pub_img_container"
         android:paddingLeft="@dimen/keyline_1"
+        android:text="@string/designtime_placeholder_long" android:textStyle="bold"/>
+
+    <com.andrada.sitracker.ui.widget.EllipsizedTextView
+        android:id="@+id/item_description"
+        style="@style/Publication.Subtitle.Short"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/author_name"
+        android:layout_toLeftOf="@+id/actions_view"
+        android:layout_toRightOf="@+id/pub_img_container"
+        android:paddingLeft="@dimen/keyline_1"
+        android:paddingBottom="@dimen/keyline_1"
         android:text="@string/designtime_placeholder_long"/>
 
     <LinearLayout
@@ -59,7 +70,8 @@
         android:layout_alignParentTop="true"
         android:layout_marginLeft="@dimen/default_grid_margin"
         android:orientation="vertical"
-        android:paddingRight="@dimen/keyline_1">
+        android:paddingRight="@dimen/keyline_1"
+        android:paddingTop="@dimen/keyline_1">
 
         <TextView
             android:id="@+id/item_update_date"

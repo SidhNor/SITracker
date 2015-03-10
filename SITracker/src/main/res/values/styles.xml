@@ -247,6 +247,11 @@
         <item name="android:textColor">@color/body_text_2</item>
     </style>
 
+    <style name="Publication.Subtitle.Short" parent="Publication.Subtitle">
+        <item name="android:maxLines">1</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
     <style name="PublicationDetail.Title" parent="">
         <item name="android:ellipsize">end</item>
         <item name="android:textSize">@dimen/text_size_xlarge</item>
