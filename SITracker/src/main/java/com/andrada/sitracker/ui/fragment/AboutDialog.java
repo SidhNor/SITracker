@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Gleb Godonoga.
+ * Copyright 2015 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,17 @@
 
 package com.andrada.sitracker.ui.fragment;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.andrada.sitracker.R;
+import com.andrada.sitracker.ui.components.AboutDialogView;
+import com.andrada.sitracker.ui.components.AboutDialogView_;
+
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.DialogInterface;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -32,10 +35,6 @@ import android.text.SpannableStringBuilder;
 import android.text.style.ClickableSpan;
 import android.view.View;
 import android.webkit.WebView;
-
-import com.andrada.sitracker.R;
-import com.andrada.sitracker.ui.components.AboutDialogView;
-import com.andrada.sitracker.ui.components.AboutDialogView_;
 
 public class AboutDialog extends DialogFragment {
 
@@ -81,16 +80,18 @@ public class AboutDialog extends DialogFragment {
         AboutDialogView aboutBodyView = AboutDialogView_.build(getActivity());
         aboutBodyView.bindData(getString(R.string.app_version_format, versionName), aboutBody);
 
-        return new AlertDialog.Builder(getActivity())
-                .setTitle(R.string.action_about)
-                .setView(aboutBodyView)
-                .setPositiveButton(android.R.string.ok,
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                dialog.dismiss();
-                            }
-                        }
-                ).create();
+        return new MaterialDialog.Builder(getActivity())
+                .title(R.string.action_about)
+                .customView(aboutBodyView, true)
+                .positiveText(android.R.string.ok)
+                .callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
+                        super.onPositive(dialog);
+                        dialog.dismiss();
+                    }
+                })
+                .show();
     }
 
     public static void showWhatsNew(Activity activity) {
@@ -127,17 +128,18 @@ public class AboutDialog extends DialogFragment {
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             WebView webView = new WebView(getActivity());
             webView.loadData(getString(R.string.change_log), "text/html; charset=utf-8", "utf-8");
-            return new AlertDialog.Builder(getActivity())
-                    .setTitle(R.string.whats_new)
-                    .setView(webView)
-                    .setPositiveButton(android.R.string.ok,
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    dialog.dismiss();
-                                }
-                            }
-                    )
-                    .create();
+            return new MaterialDialog.Builder(getActivity())
+                    .title(R.string.whats_new)
+                    .customView(webView, true)
+                    .positiveText(android.R.string.ok)
+                    .callback(new MaterialDialog.ButtonCallback() {
+                        @Override
+                        public void onPositive(MaterialDialog dialog) {
+                            super.onPositive(dialog);
+                            dialog.dismiss();
+                        }
+                    })
+                    .show();
         }
     }
 
@@ -152,17 +154,18 @@ public class AboutDialog extends DialogFragment {
             WebView webView = new WebView(getActivity());
             webView.loadUrl("file:///android_asset/licenses.html");
 
-            return new AlertDialog.Builder(getActivity())
-                    .setTitle(R.string.about_licenses)
-                    .setView(webView)
-                    .setPositiveButton(android.R.string.ok,
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    dialog.dismiss();
-                                }
-                            }
-                    )
-                    .create();
+            return new MaterialDialog.Builder(getActivity())
+                    .title(R.string.about_licenses)
+                    .customView(webView, false)
+                    .positiveText(android.R.string.ok)
+                    .callback(new MaterialDialog.ButtonCallback() {
+                        @Override
+                        public void onPositive(MaterialDialog dialog) {
+                            super.onPositive(dialog);
+                            dialog.dismiss();
+                        }
+                    })
+                    .show();
         }
     }
 }

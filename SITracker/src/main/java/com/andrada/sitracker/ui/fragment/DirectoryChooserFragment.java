@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Gleb Godonoga.
+ * Copyright 2015 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,18 @@
 
 package com.andrada.sitracker.ui.fragment;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.andrada.sitracker.R;
+import com.andrada.sitracker.ui.components.FileFolderView;
+import com.andrada.sitracker.ui.components.FileFolderView_;
+import com.andrada.sitracker.util.LogUtils;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.DialogFragment;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Color;
@@ -40,14 +47,6 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import com.andrada.sitracker.R;
-import com.andrada.sitracker.ui.components.FileFolderView;
-import com.andrada.sitracker.ui.components.FileFolderView_;
-import com.andrada.sitracker.util.LogUtils;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -74,32 +73,47 @@ public class DirectoryChooserFragment extends DialogFragment {
     public static final String KEY_CURRENT_DIRECTORY = "CURRENT_DIRECTORY";
 
     private static final String ARG_IS_DIRECTORY_CHOOSER = "DIRECTORY_CHOOSER_SETTING";
+
     private static final String ARG_NEW_DIRECTORY_NAME = "NEW_DIRECTORY_NAME";
+
     private static final String ARG_INITIAL_DIRECTORY = "INITIAL_DIRECTORY";
+
     private static final String TAG = LogUtils.makeLogTag(DirectoryChooserFragment.class);
+
     private String mNewDirectoryName;
+
     private String mInitialDirectory;
+
     private Boolean mIsDirectoryChooser = true;
 
     @NotNull
     private OnFragmentInteractionListener mListener;
 
     private Button mBtnConfirm;
+
     private ImageButton mBtnNavUp;
+
     private ImageButton mBtnCreateFolder;
+
     private TextView mTxtvSelectedFolderLabel;
+
     private TextView mTxtvSelectedFolder;
 
     private FolderArrayAdapter mListDirectoriesAdapter;
+
     private ArrayList<FileDescriptor> mFilenames;
+
     /**
      * The directory that is currently being shown.
      */
     @Nullable
     private File mSelectedDir;
+
     @Nullable
     private File mSelectedFile;
+
     private File[] mFilesInDir;
+
     @Nullable
     private FileObserver mFileObserver;
 
@@ -116,7 +130,8 @@ public class DirectoryChooserFragment extends DialogFragment {
      * @param newDirectoryName Name of the directory to create.
      * @param initialDirectory Optional argument to define the path of the directory
      *                         that will be shown first.
-     *                         If it is not sent or if path denotes a non readable/writable directory
+     *                         If it is not sent or if path denotes a non readable/writable
+     *                         directory
      *                         or it is not a directory, it defaults to
      *                         {@link android.os.Environment#getExternalStorageDirectory()}
      * @return A new instance of fragment DirectoryChooserFragment.
@@ -186,7 +201,7 @@ public class DirectoryChooserFragment extends DialogFragment {
 
     @Override
     public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+            Bundle savedInstanceState) {
 
         assert getActivity() != null;
         final View view = inflater.inflate(R.layout.directory_chooser, container, false);
@@ -204,7 +219,8 @@ public class DirectoryChooserFragment extends DialogFragment {
             View horDivider = view.findViewById(R.id.horizontalDivider);
             if (horDivider != null) {
                 horDivider.setVisibility(View.INVISIBLE);
-                RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) horDivider.getLayoutParams();
+                RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) horDivider
+                        .getLayoutParams();
                 params.addRule(RelativeLayout.CENTER_HORIZONTAL, 0);
                 params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
                 params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
@@ -233,7 +249,7 @@ public class DirectoryChooserFragment extends DialogFragment {
 
             @Override
             public void onItemClick(AdapterView<?> adapter, View view,
-                                    int position, long id) {
+                    int position, long id) {
                 debug("Selected index: %d", position);
                 if (mFilesInDir != null && position >= 0
                         && position < mFilesInDir.length) {
@@ -355,7 +371,8 @@ public class DirectoryChooserFragment extends DialogFragment {
             return;
         }
 
-        menuItem.setVisible(mInitialDirectory != null && isValidFile(new File(mInitialDirectory)) && mNewDirectoryName != null && mIsDirectoryChooser);
+        menuItem.setVisible(mInitialDirectory != null && isValidFile(new File(mInitialDirectory))
+                && mNewDirectoryName != null && mIsDirectoryChooser);
     }
 
     @Override
@@ -375,31 +392,26 @@ public class DirectoryChooserFragment extends DialogFragment {
      * new folder.
      */
     private void openNewFolderDialog() {
-        new AlertDialog.Builder(getActivity())
-                .setTitle(R.string.fp_create_folder_label)
-                .setMessage(
-                        String.format(getString(R.string.fp_create_folder_msg),
-                                mNewDirectoryName))
-                .setNegativeButton(R.string.fp_cancel_label,
-                        new DialogInterface.OnClickListener() {
+        new MaterialDialog.Builder(getActivity())
+                .title(R.string.fp_create_folder_label)
+                .content(String.format(getString(R.string.fp_create_folder_msg), mNewDirectoryName))
+                .positiveText(R.string.fp_confirm_label)
+                .negativeText(R.string.fp_cancel_label)
+                .callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
+                        super.onPositive(dialog);
+                        dialog.dismiss();
+                        int msg = createFolder();
+                        Crouton.makeText(getActivity(), msg, Style.INFO).show();
+                    }
 
-                            @Override
-                            public void onClick(@NotNull DialogInterface dialog,
-                                                int which) {
-                                dialog.dismiss();
-                            }
-                        })
-                .setPositiveButton(R.string.fp_confirm_label,
-                        new DialogInterface.OnClickListener() {
-
-                            @Override
-                            public void onClick(@NotNull DialogInterface dialog,
-                                                int which) {
-                                dialog.dismiss();
-                                int msg = createFolder();
-                                Crouton.makeText(getActivity(), msg, Style.INFO).show();
-                            }
-                        }).create().show();
+                    @Override
+                    public void onNegative(MaterialDialog dialog) {
+                        super.onNegative(dialog);
+                        dialog.dismiss();
+                    }
+                }).show();
     }
 
     /**
@@ -418,7 +430,8 @@ public class DirectoryChooserFragment extends DialogFragment {
             mSelectedFile = dir;
             mTxtvSelectedFolder.setText(dir.getAbsolutePath());
             if (isAdded()) {
-                mTxtvSelectedFolderLabel.setText(getResources().getString(R.string.fp_selected_file_label));
+                mTxtvSelectedFolderLabel
+                        .setText(getResources().getString(R.string.fp_selected_file_label));
             }
             if (isValidFile(mSelectedFile)) {
                 returnSelectedFile();
@@ -445,9 +458,11 @@ public class DirectoryChooserFragment extends DialogFragment {
                 mFilesInDir = new File[numDirectories];
                 mFilenames.clear();
                 for (int i = 0, counter = 0; i < numDirectories; counter++) {
-                    if ((mIsDirectoryChooser && contents[counter].isDirectory()) || !mIsDirectoryChooser) {
+                    if ((mIsDirectoryChooser && contents[counter].isDirectory())
+                            || !mIsDirectoryChooser) {
                         mFilesInDir[i] = contents[counter];
-                        mFilenames.add(new FileDescriptor(contents[counter].getName(), contents[counter].isDirectory()));
+                        mFilenames.add(new FileDescriptor(contents[counter].getName(),
+                                contents[counter].isDirectory()));
                         i++;
                     }
                 }
@@ -483,7 +498,8 @@ public class DirectoryChooserFragment extends DialogFragment {
                 mSelectedDir = dir;
                 mSelectedFile = null;
                 if (isAdded()) {
-                    mTxtvSelectedFolderLabel.setText(getResources().getString(R.string.fp_selected_folder_label));
+                    mTxtvSelectedFolderLabel
+                            .setText(getResources().getString(R.string.fp_selected_folder_label));
                 }
                 mTxtvSelectedFolder.setText(dir.getAbsolutePath());
                 mListDirectoriesAdapter.notifyDataSetChanged();
@@ -508,7 +524,8 @@ public class DirectoryChooserFragment extends DialogFragment {
     private void refreshButtonState() {
         final Activity activity = getActivity();
         if (activity != null && mSelectedDir != null) {
-            boolean valid = mIsDirectoryChooser ? isValidFile(mSelectedDir) : isValidFile(mSelectedFile);
+            boolean valid = mIsDirectoryChooser ? isValidFile(mSelectedDir)
+                    : isValidFile(mSelectedFile);
             mBtnConfirm.setEnabled(valid);
             getActivity().invalidateOptionsMenu();
         }
@@ -618,6 +635,7 @@ public class DirectoryChooserFragment extends DialogFragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
+
         /**
          * Triggered when the user successfully selected their destination directory.
          */
@@ -630,7 +648,9 @@ public class DirectoryChooserFragment extends DialogFragment {
     }
 
     private class FileDescriptor implements Comparable<FileDescriptor> {
+
         private String fileName;
+
         private Boolean isDirectory;
 
         public FileDescriptor(String filename, Boolean isDirectory) {
@@ -684,7 +704,8 @@ public class DirectoryChooserFragment extends DialogFragment {
 
     private class FolderArrayAdapter extends ArrayAdapter<FileDescriptor> {
 
-        public FolderArrayAdapter(@NotNull Context context, int resource, List<FileDescriptor> objects) {
+        public FolderArrayAdapter(@NotNull Context context, int resource,
+                List<FileDescriptor> objects) {
             super(context, resource, objects);
         }
 

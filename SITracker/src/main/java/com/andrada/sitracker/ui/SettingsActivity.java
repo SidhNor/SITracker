@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Gleb Godonoga.
+ * Copyright 2015 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,28 @@
 
 package com.andrada.sitracker.ui;
 
+import com.google.android.gms.analytics.GoogleAnalytics;
+
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.andrada.sitracker.Constants;
+import com.andrada.sitracker.R;
+import com.andrada.sitracker.contracts.SIPrefs_;
+import com.andrada.sitracker.events.AuthorSortMethodChanged;
+import com.andrada.sitracker.tasks.ClearPublicationCacheTask;
+import com.andrada.sitracker.tasks.UpdateAuthorsTask_;
+import com.andrada.sitracker.util.AnalyticsHelper;
+import com.andrada.sitracker.util.ShareHelper;
+
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.SystemService;
+import org.androidannotations.annotations.sharedpreferences.Pref;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
-import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -31,24 +50,6 @@ import android.preference.PreferenceFragment;
 import android.support.v4.content.IntentCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-
-import com.andrada.sitracker.Constants;
-import com.andrada.sitracker.R;
-import com.andrada.sitracker.contracts.SIPrefs_;
-import com.andrada.sitracker.events.AuthorSortMethodChanged;
-import com.andrada.sitracker.tasks.ClearPublicationCacheTask;
-import com.andrada.sitracker.tasks.UpdateAuthorsTask_;
-import com.andrada.sitracker.util.AnalyticsHelper;
-import com.andrada.sitracker.util.ShareHelper;
-import com.google.android.gms.analytics.GoogleAnalytics;
-
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.SystemService;
-import org.androidannotations.annotations.sharedpreferences.Pref;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import de.greenrobot.event.EventBus;
 
@@ -200,10 +201,11 @@ public class SettingsActivity extends BaseActivity {
                 if (ShareHelper.getExternalDirectoryBasedOnPath(path) != null) {
                     setDownloadFolderSummary(path);
                 } else {
-                    final AlertDialog.Builder builder = new AlertDialog.Builder(this.getActivity());
-                    builder.setTitle("Invalid directory");
-                    builder.setMessage("Your directory is invalid");
-                    builder.setPositiveButton(android.R.string.ok, null);
+                    final MaterialDialog.Builder builder = new MaterialDialog.Builder(
+                            this.getActivity());
+                    builder.title("Invalid directory");
+                    builder.content("Your directory is invalid");
+                    builder.positiveText(android.R.string.ok);
                     builder.show();
                 }
             } else if (Constants.PREF_USAGE_OPT_OUT_KEY.equals(key)) {
