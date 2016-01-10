@@ -42,7 +42,6 @@ import org.jetbrains.annotations.NotNull;
 import de.greenrobot.event.EventBus;
 
 @EActivity
-@OptionsMenu(R.menu.main_menu)
 public class SiMainActivity extends BaseActivity {
 
     @ViewById(R.id.fragment_holder)

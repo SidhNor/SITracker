@@ -34,6 +34,8 @@
 -keepattributes Signature
 
 
+-dontwarn com.viewpagerindicator.LinePageIndicator
+
 # OrmLite uses reflection
 -keep class com.j256.**
 -keepclassmembers class com.j256.** { *; }

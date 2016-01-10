@@ -179,27 +179,12 @@ public abstract class BaseActivity extends AppCompatActivity implements
         int id = item.getItemId();
 
         switch (id) {
-            case R.id.menu_debug:
-                if (BuildConfig.DEBUG) {
-                    startActivity(new Intent(this, DebugActionRunnerActivity.class));
-                }
-                return true;
             case android.R.id.home:
                 getDrawerManager().openNavDrawer();
                 return true;
         }
         //Handle default options
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        boolean result = super.onCreateOptionsMenu(menu);
-        MenuItem debugItem = menu.findItem(R.id.menu_debug);
-        if (debugItem != null) {
-            debugItem.setVisible(BuildConfig.DEBUG);
-        }
-        return result;
     }
 
     @Override
