@@ -20,6 +20,7 @@ package com.andrada.sitracker.ui.fragment;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.AppUriContract;
 import com.andrada.sitracker.db.beans.Publication;
+import com.andrada.sitracker.ui.BaseActivity;
 import com.andrada.sitracker.ui.PublicationDetailsActivity;
 import com.andrada.sitracker.ui.fragment.adapters.NewPubsAdapter;
 import com.andrada.sitracker.util.NavDrawerManager;
@@ -51,10 +52,7 @@ public class NewPublicationsFragment extends BaseListFragment {
     @Override
     public void onResume() {
         super.onResume();
-        //Set title
-        getBaseActivity().getDrawerManager()
-                .pushNavigationalState(getString(R.string.navdrawer_item_new_pubs), true);
-
+        ((BaseActivity)getActivity()).getActionBarToolbar().setTitle(getString(R.string.navdrawer_item_new_pubs));
         adapter.reloadNewPublications();
         empty.setLayoutResource(R.layout.empty_new_pubs);
         list.setEmptyView(empty);
@@ -70,16 +68,6 @@ public class NewPublicationsFragment extends BaseListFragment {
         return list;
     }
 
-    @Override
-    public void setContentTopClearance(int clearance) {
-        super.setContentTopClearance(clearance);
-        if (list != null) {
-            list.setPadding(list.getPaddingLeft(), clearance,
-                    list.getPaddingRight(), list.getPaddingBottom());
-            adapter.notifyDataSetChanged();
-        }
-    }
-
     @ItemClick(R.id.new_pubs_list)
     void listItemClick(Publication pub) {
         Intent intent = new Intent(Intent.ACTION_VIEW,
@@ -93,8 +81,4 @@ public class NewPublicationsFragment extends BaseListFragment {
         return ViewCompat.canScrollVertically(list, -1);
     }
 
-    @Override
-    public int getSelfNavDrawerItem() {
-        return NavDrawerManager.NAVDRAWER_ITEM_NEW_PUBS;
-    }
 }

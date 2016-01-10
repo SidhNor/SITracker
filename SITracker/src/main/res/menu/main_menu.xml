@@ -16,17 +16,5 @@
   limitations under the License.
   -->
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item
-        android:id="@+id/action_about"
-        android:orderInCategory="103"
-        android:title="@string/action_about"
-        app:showAsAction="never"/>
-    <item
-        android:id="@+id/menu_debug"
-        android:orderInCategory="104"
-        android:title="@string/description_debug"
-        android:visible="false"
-        app:showAsAction="never"/>
+<menu>
 </menu>

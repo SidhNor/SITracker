@@ -25,7 +25,6 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/crouton_background"
         android:baselineAligned="false"
         android:gravity="center_vertical"
         android:orientation="horizontal"
@@ -33,7 +32,7 @@
 
         <TextView
             android:id="@+id/importResultTitle"
-            style="@style/Widget.WhiteBody.Title"
+            style="@style/TextHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/author_import_success_crouton_message"/>
@@ -46,11 +45,11 @@
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="5dp"
             android:layout_marginTop="5dp"
-            android:background="#FFDDDDDD"/>
+            android:background="#b4b4b4"/>
 
         <TextView
             android:id="@+id/totalAuthorsText"
-            style="@style/Widget.WhiteBody.Text"
+            style="@style/TextBody"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/importDivider"
@@ -58,7 +57,7 @@
 
         <TextView
             android:id="@+id/successAuthorsText"
-            style="@style/Widget.WhiteBody.Text"
+            style="@style/TextBody"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/totalAuthorsText"
@@ -66,7 +65,7 @@
 
         <TextView
             android:id="@+id/failedAuthorsText"
-            style="@style/Widget.WhiteBody.Text"
+            style="@style/TextBody"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/successAuthorsText"

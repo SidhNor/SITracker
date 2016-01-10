@@ -20,41 +20,46 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.andrada.sitracker.ui.widget.DrawShadowFrameLayout
+    <android.support.design.widget.CoordinatorLayout
         android:id="@+id/main_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipChildren="false"
-        app:shadowDrawable="@drawable/header_shadow">
+        android:clipChildren="false">
+
+        <android.support.design.widget.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            android:fitsSystemWindows="true">
+
+            <include layout="@layout/toolbar_actionbar" />
+
+        </android.support.design.widget.AppBarLayout>
 
         <FrameLayout
             android:id="@+id/fragment_holder"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent" />
-
-        <include layout="@layout/details_pager" />
-
-        <LinearLayout
-            android:id="@+id/headerbar"
-            style="@style/HeaderBar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:orientation="vertical">
-
-            <include layout="@layout/toolbar_actionbar" />
-        </LinearLayout>
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
         <ViewStub
             android:id="@+id/stub_floating_action_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|right|center"
+            android:layout_gravity="bottom|end|center"
             android:layout_margin="@dimen/floating_action_button_margin"
             android:inflatedId="@+id/floating_action_button"
             android:layout="@layout/floating_action_button" />
 
-    </com.andrada.sitracker.ui.widget.DrawShadowFrameLayout>
+    </android.support.design.widget.CoordinatorLayout>
+
     <!-- Nav drawer -->
-    <include layout="@layout/navdrawer" />
+    <android.support.design.widget.NavigationView
+        android:id="@+id/navigation_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        app:headerLayout="@layout/navdrawer_header"
+        app:menu="@menu/drawer"/>
+
 </android.support.v4.widget.DrawerLayout>

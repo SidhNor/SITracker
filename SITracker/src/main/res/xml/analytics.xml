@@ -29,9 +29,9 @@
     <bool name="ga_reportUncaughtExceptions">true</bool>
 
     <integer name="ga_sessionTimeout">120</integer>
-    <integer name="ga_dispatchPeriod">30</integer>
+    <boolean name="ga_anonymizeIp">true</boolean>
 
-    <screenName name="com.andrada.sitracker.ui.HomeActivity_">Home</screenName>
+    <screenName name="com.andrada.sitracker.ui.SiMainActivity_">Home</screenName>
     <screenName name="com.andrada.sitracker.ui.ImportAuthorsActivity_">Import</screenName>
     <screenName name="com.andrada.sitracker.ui.SettingsActivity_">Preferences</screenName>
     <screenName name="com.andrada.sitracker.ui.DirectoryChooserActivity">Directory chooser</screenName>

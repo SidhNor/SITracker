@@ -20,7 +20,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.annotation.TargetApi;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -34,13 +33,17 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
+import android.text.style.ForegroundColorSpan;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -104,9 +107,6 @@ import java.util.Date;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
-import de.keyboardsurfer.android.widget.crouton.Configuration;
-import de.keyboardsurfer.android.widget.crouton.Crouton;
-import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.andrada.sitracker.util.LogUtils.LOGI;
 
@@ -228,7 +228,6 @@ public class PublicationInfoFragment extends Fragment implements
         EventBus.getDefault().unregister(this);
     }
 
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void onDestroyView() {
         super.onDestroyView();
@@ -237,13 +236,7 @@ public class PublicationInfoFragment extends Fragment implements
         }
         ViewTreeObserver vto = mScrollView.getViewTreeObserver();
         if (vto.isAlive()) {
-            //noinspection deprecation
-            if (UIUtils.hasJellyBean()) {
-                vto.removeOnGlobalLayoutListener(mGlobalLayoutListener);
-            } else {
-                vto.removeGlobalOnLayoutListener(mGlobalLayoutListener);
-            }
-
+            vto.removeOnGlobalLayoutListener(mGlobalLayoutListener);
         }
     }
 
@@ -331,7 +324,10 @@ public class PublicationInfoFragment extends Fragment implements
                 @Override
                 public void run() {
                     showPublicationState(PublicationState.WAITING_REFRESH, false);
-                    showCustomPositionedCrouton(msg, false);
+                    SpannableStringBuilder snackbarText = new SpannableStringBuilder();
+                    snackbarText.append(msg);
+                    snackbarText.setSpan(new ForegroundColorSpan(0xFFFF0000), 0, snackbarText.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    Snackbar.make(getView(), snackbarText, Snackbar.LENGTH_SHORT).show();
                 }
             });
         } finally {
@@ -668,8 +664,12 @@ public class PublicationInfoFragment extends Fragment implements
         } else {
             msg = getString(R.string.publication_rating_submit_error);
         }
-        showCustomPositionedCrouton(msg, result.ratingSubmissionResult);
-
+        SpannableStringBuilder snackbarText = new SpannableStringBuilder();
+        snackbarText.append(msg);
+        if (!result.ratingSubmissionResult) {
+            snackbarText.setSpan(new ForegroundColorSpan(0xFFFF0000), 0, snackbarText.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+        Snackbar.make(getView(), snackbarText, Snackbar.LENGTH_SHORT).show();
     }
 
     private void showEnableUpdatesBackCard() {
@@ -692,30 +692,6 @@ public class PublicationInfoFragment extends Fragment implements
         });
     }
 
-    private void showCustomPositionedCrouton(String message, boolean success) {
-        if (getActivity() == null) {
-            return;
-        }
-        View view = LayoutInflater.from(getActivity()).inflate(R.layout.crouton_custom_pos_textview, null);
-        if (success) {
-            view.findViewById(android.R.id.background).setBackgroundColor(Style.holoGreenLight);
-        } else {
-            view.findViewById(android.R.id.background).setBackgroundColor(Style.holoRedLight);
-        }
-        int topPadding = UIUtils.calculateActionBarSize(getActivity());
-        if (!mHasPhoto) {
-            topPadding = (int) (newTop + mHeaderHeightPixels);
-        }
-        view.setPadding(view.getPaddingLeft(), topPadding,
-                view.getPaddingRight(), view.getPaddingBottom());
-        TextView tv = (TextView) view.findViewById(android.R.id.text1);
-        tv.setText(message);
-        Crouton cr = Crouton.make(getActivity(), view);
-        cr.setConfiguration(new Configuration.Builder()
-                .setDuration(Configuration.DURATION_LONG).build());
-        cr.show();
-    }
-
     private void showPublicationState(PublicationState state, boolean allowAnimate) {
         if (!isDetached()) {
             mDownloaded = state.equals(PublicationState.READY_FOR_READING);
@@ -735,7 +711,6 @@ public class PublicationInfoFragment extends Fragment implements
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     @Override
     public void onScrollChanged(int deltaX, int deltaY) {
         final BaseActivity activity = (BaseActivity) getActivity();

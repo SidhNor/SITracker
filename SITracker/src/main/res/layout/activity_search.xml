@@ -25,12 +25,11 @@
     tools:context=".ui.SearchActivity_">
 
     <!-- Main layout -->
-    <com.andrada.sitracker.ui.widget.DrawShadowFrameLayout
+    <android.support.design.widget.CoordinatorLayout
         android:id="@+id/main_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#fff0f0f0"
-        app:shadowDrawable="@drawable/header_shadow">
+        android:background="#fff0f0f0">
 
         <!-- Fragment showing the grid of searched authors -->
         <fragment
@@ -40,7 +39,7 @@
             android:layout_height="match_parent"
             tools:layout="@layout/fragment_search"/>
 
-        <LinearLayout
+        <android.support.design.widget.AppBarLayout
             android:id="@+id/headerbar"
             style="@style/HeaderBar"
             android:layout_width="match_parent"
@@ -65,8 +64,8 @@
                     android:layout_height="match_parent"
                     android:layout_weight="@integer/filter_spinner_weight"/>
             </LinearLayout>
-        </LinearLayout>
+        </android.support.design.widget.AppBarLayout>
 
-    </com.andrada.sitracker.ui.widget.DrawShadowFrameLayout>
+    </android.support.design.widget.CoordinatorLayout>
 
 </FrameLayout>

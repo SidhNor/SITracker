@@ -17,7 +17,7 @@
 
 <resources>
 
-    <declare-styleable name="BaseTheme">
+    <declare-styleable name="FrameworkRoot.Base">
         <attr name="actionBarIconColor" format="color"/>
         <attr name="actionBarOverlayTopOffset" format="dimension"/>
         <attr name="actionBarInsetStart" format="dimension"/>
@@ -30,15 +30,6 @@
     <declare-styleable name="CollectionView">
         <attr name="internalPadding" format="dimension"/>
         <attr name="contentTopClearance" format="dimension"/>
-    </declare-styleable>
-
-    <declare-styleable name="ScrimInsetsView">
-        <attr name="insetForeground" format="reference|color"/>
-    </declare-styleable>
-
-    <declare-styleable name="DrawShadowFrameLayout">
-        <attr name="shadowDrawable" format="reference"/>
-        <attr name="shadowVisible" format="boolean"/>
     </declare-styleable>
 
     <declare-styleable name="BezelImageView">

@@ -18,13 +18,15 @@ package com.andrada.sitracker.ui.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.widget.ExpandableListView;
-import android.widget.FrameLayout;
-
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.AppUriContract;
 import com.andrada.sitracker.contracts.SIPrefs_;
@@ -49,8 +51,6 @@ import org.androidannotations.annotations.sharedpreferences.Pref;
 import org.jetbrains.annotations.NotNull;
 
 import de.greenrobot.event.EventBus;
-import de.keyboardsurfer.android.widget.crouton.Crouton;
-import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.andrada.sitracker.util.LogUtils.LOGI;
 
@@ -86,7 +86,7 @@ public class PublicationsFragment extends BaseListFragment implements
     @Override
     public void onResume() {
         super.onResume();
-        //getBaseActivity().getDrawerManager().pushNavigationalState(authorName, false);
+        getBaseActivity().getActionBarToolbar().setTitle(authorName);
         int priority = 3;
         //PublicationsFragment has a higher priority then SiMainActivity
         EventBus.getDefault().register(this, priority);
@@ -132,11 +132,11 @@ public class PublicationsFragment extends BaseListFragment implements
         //Stop loading progress in adapter
         adapter.stopProgressOnPublication(id, success);
         if (!success) {
-            Style.Builder alertStyle = new Style.Builder()
-                    .setTextAppearance(android.R.attr.textAppearanceLarge)
-                    .setPaddingInPixels(25);
-            alertStyle.setBackgroundColorValue(Style.holoRedLight);
-            Crouton.makeText(getActivity(), errorMessage, alertStyle.build()).show();
+            SpannableStringBuilder snackbarText = new SpannableStringBuilder();
+            snackbarText.append(errorMessage);
+            snackbarText.setSpan(new ForegroundColorSpan(0xFFFF0000), 0, snackbarText.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+            Snackbar.make(getActivity().findViewById(R.id.drawer_layout), snackbarText, Snackbar.LENGTH_SHORT).show();
         }
     }
 
@@ -154,8 +154,8 @@ public class PublicationsFragment extends BaseListFragment implements
         Intent intent = new Intent(Intent.ACTION_VIEW,
                 AppUriContract.buildPublicationUri(pub.getId()), getActivity(), PublicationDetailsActivity.class);
         ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getBaseActivity(),
-                new Pair<View, String>(view.findViewById(R.id.item_title), "publicationTitle"),
-                new Pair<View, String>(view.findViewById(R.id.item_description), "publicationAbstract"));
+                new Pair<>(view.findViewById(R.id.item_title), "publicationTitle"),
+                new Pair<>(view.findViewById(R.id.item_description), "publicationAbstract"));
         ActivityCompat.startActivity(getBaseActivity(), intent, options.toBundle());
         return true;
     }
@@ -201,15 +201,4 @@ public class PublicationsFragment extends BaseListFragment implements
         }
     }
 
-    @Override
-    public void setContentTopClearance(int clearance) {
-        super.setContentTopClearance(clearance);
-        if (mListView != null) {
-            FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) mListView.getLayoutParams();
-            params.setMargins(0, clearance, 0, 0);
-            /*mListView.setPadding(mListView.getPaddingLeft(), clearance,
-                    mListView.getPaddingRight(), mListView.getPaddingBottom());*/
-            adapter.notifyDataSetChanged();
-        }
-    }
 }

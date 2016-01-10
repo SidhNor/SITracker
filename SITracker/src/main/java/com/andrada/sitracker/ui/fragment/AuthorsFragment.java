@@ -24,10 +24,14 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.ViewCompat;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
-import android.view.LayoutInflater;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.style.ForegroundColorSpan;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -37,6 +41,7 @@ import android.widget.ListView;
 
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
+import com.andrada.sitracker.contracts.AppUriContract;
 import com.andrada.sitracker.contracts.AuthorUpdateStatusListener;
 import com.andrada.sitracker.db.beans.Author;
 import com.andrada.sitracker.events.AuthorCheckedEvent;
@@ -47,6 +52,9 @@ import com.andrada.sitracker.events.PublicationMarkedAsReadEvent;
 import com.andrada.sitracker.tasks.UpdateAuthorsTask_;
 import com.andrada.sitracker.tasks.filters.UpdateStatusMessageFilter;
 import com.andrada.sitracker.tasks.receivers.UpdateStatusReceiver;
+import com.andrada.sitracker.ui.AuthorDetailsActivity;
+import com.andrada.sitracker.ui.AuthorDetailsActivity_;
+import com.andrada.sitracker.ui.BaseActivity;
 import com.andrada.sitracker.ui.MultiSelectionUtil;
 import com.andrada.sitracker.ui.SearchActivity_;
 import com.andrada.sitracker.ui.fragment.adapters.AuthorsAdapter;
@@ -73,9 +81,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import de.greenrobot.event.EventBus;
-import de.keyboardsurfer.android.widget.crouton.Configuration;
-import de.keyboardsurfer.android.widget.crouton.Crouton;
-import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.andrada.sitracker.util.LogUtils.LOGI;
 
@@ -101,8 +106,10 @@ public class AuthorsFragment extends BaseListFragment implements
     @Nullable
     @InstanceState
     long[] checkedItems;
+
     @Nullable
-    private Crouton mNoNetworkCrouton;
+    private Snackbar mNoNetworkSnack;
+
     @Nullable
     private MultiSelectionUtil.Controller mMultiSelectionController;
 
@@ -114,7 +121,7 @@ public class AuthorsFragment extends BaseListFragment implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-        getBaseActivity().getDrawerManager().pushNavigationalState(getString(R.string.navdrawer_item_my_authors), true);
+        //getBaseActivity().getDrawerManager().pushNavigationalState(getString(R.string.navdrawer_item_my_authors), true);
         LOGI("SITracker", "AuthorsFragment - OnCreate");
     }
 
@@ -129,8 +136,8 @@ public class AuthorsFragment extends BaseListFragment implements
     public void onResume() {
         super.onResume();
         EventBus.getDefault().register(this);
-        getBaseActivity().getActionBarUtil().enableActionBarAutoHide(getScrollingView());
-        getBaseActivity().getActionBarUtil().registerHideableHeaderView(getActivity().findViewById(R.id.headerbar));
+
+        ((BaseActivity) getActivity()).getActionBarToolbar().setTitle(getString(R.string.navdrawer_item_my_authors));
 
         //Receiver registration
         mIsUpdating = UpdateServiceHelper.isServiceCurrentlyRunning(getActivity().getApplicationContext());
@@ -152,9 +159,6 @@ public class AuthorsFragment extends BaseListFragment implements
     @Override
     public void onPause() {
         super.onPause();
-        getBaseActivity().getActionBarUtil().disableActionBarAutoHide();
-        getBaseActivity().getActionBarUtil().autoShowOrHideActionBar(true);
-        getBaseActivity().getActionBarUtil().deregisterHideableHeaderView(getActivity().findViewById(R.id.headerbar));
         EventBus.getDefault().unregister(this);
         getActivity().unregisterReceiver(updateStatusReceiver);
     }
@@ -207,7 +211,7 @@ public class AuthorsFragment extends BaseListFragment implements
                 toggleUpdatingState();
             } else {
                 //Surface crouton that network is unavailable
-                showNoNetworkCroutonMessage();
+                showNoNetworkSnackbar();
             }
         }
     }
@@ -215,15 +219,14 @@ public class AuthorsFragment extends BaseListFragment implements
     //endregion
 
     /**
-     * Crouton click handler
-     *
-     * @param view being clicked
+     * Snackbar click handler
      */
-    public void onCroutonClick(@NotNull View view) {
-        if (view.getId() == R.id.retryUpdateButton) {
-            if (this.mNoNetworkCrouton != null) {
-                Crouton.hide(this.mNoNetworkCrouton);
-                this.mNoNetworkCrouton = null;
+    private View.OnClickListener snackBarClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (mNoNetworkSnack != null) {
+                mNoNetworkSnack.dismiss();
+                mNoNetworkSnack = null;
             }
             Timer timer = new Timer();
             timer.schedule(new TimerTask() {
@@ -241,7 +244,7 @@ public class AuthorsFragment extends BaseListFragment implements
                 }
             }, 1500);
         }
-    }
+    };
 
 
     @AfterViews
@@ -250,7 +253,7 @@ public class AuthorsFragment extends BaseListFragment implements
         list.setAdapter(adapter);
         mMultiSelectionController = MultiSelectionUtil.attachMultiSelectionController(
                 list,
-                (ActionBarActivity) getActivity(),
+                (AppCompatActivity) getActivity(),
                 this);
         //ActionMode.setMultiChoiceMode(list, getActivity(), this);
         list.setBackgroundResource(R.drawable.authors_list_background);
@@ -265,9 +268,10 @@ public class AuthorsFragment extends BaseListFragment implements
         currentAuthorIndex = list.getItemIdAtPosition(position);
         // Set the item as checked to be highlighted
         adapter.setSelectedItem(currentAuthorIndex);
-        String name = ((Author) adapter.getItem(position)).getName();
-        EventBus.getDefault().post(new AuthorSelectedEvent(adapter.getSelectedAuthorId(), name));
         adapter.notifyDataSetChanged();
+
+        Author auth = (Author) adapter.getItem(position);
+        EventBus.getDefault().post(new AuthorSelectedEvent(auth.getId(), auth.getName()));
     }
 
     private void toggleUpdatingState() {
@@ -302,9 +306,11 @@ public class AuthorsFragment extends BaseListFragment implements
     public void onAuthorsUpdateFailed() {
         toggleUpdatingState();
         //surface crouton that update failed
-        Crouton.makeText(getActivity(),
-                getResources().getText(R.string.update_failed_crouton_message),
-                Style.ALERT).show();
+        SpannableStringBuilder snackbarText = new SpannableStringBuilder();
+        snackbarText.append(getResources().getText(R.string.update_failed_crouton_message));
+        snackbarText.setSpan(new ForegroundColorSpan(0xFFFF0000), 0, snackbarText.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        Snackbar.make(getActivity().findViewById(R.id.drawer_layout), snackbarText, Snackbar.LENGTH_SHORT).show();
     }
     //endregion
 
@@ -414,11 +420,7 @@ public class AuthorsFragment extends BaseListFragment implements
     @UiThread
     protected void showSuccessfulRestore() {
         String message = getResources().getString(R.string.backup_restored_crouton_message);
-        Style.Builder alertStyle = new Style.Builder()
-                .setTextAppearance(android.R.attr.textAppearanceLarge)
-                .setPaddingInPixels(25);
-        alertStyle.setBackgroundColorValue(Style.holoGreenLight);
-        Crouton.makeText(getActivity(), message, alertStyle.build()).show();
+        Snackbar.make(getActivity().findViewById(R.id.drawer_layout), message, Snackbar.LENGTH_SHORT).show();
     }
 
 
@@ -431,19 +433,11 @@ public class AuthorsFragment extends BaseListFragment implements
     //endregion
 
 
-    private void showNoNetworkCroutonMessage() {
-        View view = LayoutInflater.from(getActivity()).inflate(R.layout.crouton_no_network, null);
-        view.findViewById(R.id.retryUpdateButton).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onCroutonClick(v);
-            }
-        });
-        Configuration croutonConfiguration = new Configuration.Builder()
-                .setDuration(Configuration.DURATION_LONG).build();
-        this.mNoNetworkCrouton = Crouton.make(getActivity(), view);
-        this.mNoNetworkCrouton.setConfiguration(croutonConfiguration);
-        this.mNoNetworkCrouton.show();
+    private void showNoNetworkSnackbar() {
+        String msg = getResources().getString(R.string.no_network_error);
+        Snackbar.make(getActivity().findViewById(R.id.drawer_layout), msg, Snackbar.LENGTH_LONG)
+                .setAction(getResources().getString(R.string.no_network_retry), this.snackBarClickListener)
+                .show();
     }
 
     public AuthorsAdapter getAdapter() {
@@ -456,22 +450,8 @@ public class AuthorsFragment extends BaseListFragment implements
     }
 
     @Override
-    public void setContentTopClearance(int clearance) {
-        super.setContentTopClearance(clearance);
-        if (list != null) {
-            list.setPadding(list.getPaddingLeft(), clearance,
-                    list.getPaddingRight(), list.getPaddingBottom());
-            adapter.notifyDataSetChanged();
-        }
-    }
-
-    @Override
     public boolean canSwipeRefreshChildScrollUp() {
         return ViewCompat.canScrollVertically(list, -1);
     }
 
-    @Override
-    public int getSelfNavDrawerItem() {
-        return NavDrawerManager.NAVDRAWER_ITEM_MY_AUTHORS;
-    }
 }

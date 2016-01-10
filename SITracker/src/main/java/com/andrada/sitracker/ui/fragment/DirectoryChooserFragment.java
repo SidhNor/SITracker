@@ -16,6 +16,7 @@
 
 package com.andrada.sitracker.ui.fragment;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.ui.components.FileFolderView;
@@ -34,6 +35,8 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.FileObserver;
+import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -55,9 +58,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
-import de.keyboardsurfer.android.widget.crouton.Crouton;
-import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.andrada.sitracker.util.LogUtils.LOGD;
 
@@ -397,18 +397,17 @@ public class DirectoryChooserFragment extends DialogFragment {
                 .content(String.format(getString(R.string.fp_create_folder_msg), mNewDirectoryName))
                 .positiveText(R.string.fp_confirm_label)
                 .negativeText(R.string.fp_cancel_label)
-                .callback(new MaterialDialog.ButtonCallback() {
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
-                    public void onPositive(MaterialDialog dialog) {
-                        super.onPositive(dialog);
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         dialog.dismiss();
                         int msg = createFolder();
-                        Crouton.makeText(getActivity(), msg, Style.INFO).show();
+                        Snackbar.make(getView(), msg, Snackbar.LENGTH_SHORT);
                     }
-
+                })
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
                     @Override
-                    public void onNegative(MaterialDialog dialog) {
-                        super.onNegative(dialog);
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         dialog.dismiss();
                     }
                 }).show();

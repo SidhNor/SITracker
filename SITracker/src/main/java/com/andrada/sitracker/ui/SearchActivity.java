@@ -32,7 +32,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Spinner;
 
@@ -40,9 +39,7 @@ import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.AppUriContract;
 import com.andrada.sitracker.ui.fragment.RemoteAuthorsFragment;
-import com.andrada.sitracker.ui.widget.DrawShadowFrameLayout;
 import com.andrada.sitracker.util.AnalyticsHelper;
-import com.andrada.sitracker.util.UIUtils;
 import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
 
@@ -51,7 +48,6 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.FragmentById;
 import org.androidannotations.annotations.InstanceState;
 import org.androidannotations.annotations.OptionsMenu;
-import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,9 +65,6 @@ public class SearchActivity extends BaseActivity {
 
     @FragmentById(R.id.remote_authors_fragment)
     RemoteAuthorsFragment mAuthorsFragment;
-
-    @ViewById(R.id.main_content)
-    DrawShadowFrameLayout mDrawShadowFrameLayout;
 
     SearchView mSearchView = null;
 
@@ -111,11 +104,6 @@ public class SearchActivity extends BaseActivity {
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        ListView collectionView = (ListView) findViewById(R.id.list);
-        if (collectionView != null) {
-            getActionBarUtil().enableActionBarAutoHide(collectionView);
-        }
-        getActionBarUtil().registerHideableHeaderView(findViewById(R.id.headerbar));
         populateSearchVariants();
     }
 
@@ -172,18 +160,6 @@ public class SearchActivity extends BaseActivity {
             }
         }
         return true;
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (mAuthorsFragment != null) {
-            int actionBarSize = UIUtils.calculateActionBarSize(this);
-            int filterBarSize = getResources().getDimensionPixelSize(R.dimen.filterbar_height);
-            mDrawShadowFrameLayout.setShadowTopOffset(actionBarSize + filterBarSize);
-            mAuthorsFragment.setContentTopClearance(actionBarSize + filterBarSize
-                    + getResources().getDimensionPixelSize(R.dimen.search_grid_padding));
-        }
     }
 
     @Override

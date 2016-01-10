@@ -17,21 +17,24 @@
 package com.andrada.sitracker.ui.fragment;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.LoaderManager;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
+import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.widget.BaseAdapter;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.AppUriContract;
@@ -45,7 +48,6 @@ import com.andrada.sitracker.ui.BaseActivity;
 import com.andrada.sitracker.ui.components.CollectionView;
 import com.andrada.sitracker.ui.fragment.adapters.SearchResultsAdapter;
 import com.andrada.sitracker.util.AnalyticsHelper;
-import com.andrada.sitracker.util.UIUtils;
 
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
@@ -56,9 +58,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
-import de.keyboardsurfer.android.widget.crouton.Configuration;
-import de.keyboardsurfer.android.widget.crouton.Crouton;
-import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.andrada.sitracker.util.LogUtils.LOGD;
 import static com.andrada.sitracker.util.LogUtils.makeLogTag;
@@ -107,23 +106,17 @@ public class RemoteAuthorsFragment extends Fragment implements
         if (getActivity() == null) {
             return;
         }
-        View view = LayoutInflater.from(getActivity()).inflate(R.layout.crouton_custom_pos_textview, null);
+
+        SpannableStringBuilder snackbarText = new SpannableStringBuilder();
         if (message.length() == 0) {
-            message = getString(R.string.author_add_success_crouton_message);
-            view.findViewById(android.R.id.background).setBackgroundColor(Style.holoGreenLight);
+            //This is success
+            snackbarText.append(getResources().getString(R.string.author_add_success_crouton_message));
         } else {
-            view.findViewById(android.R.id.background).setBackgroundColor(Style.holoRedLight);
+            snackbarText.append(message);
+            snackbarText.setSpan(new ForegroundColorSpan(0xFFFF0000), 0, snackbarText.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
 
-        int topPadding = UIUtils.calculateActionBarSize(getActivity());
-        view.setPadding(view.getPaddingLeft(), topPadding,
-                view.getPaddingRight(), view.getPaddingBottom());
-        TextView tv = (TextView) view.findViewById(android.R.id.text1);
-        tv.setText(message);
-        Crouton cr = Crouton.make(getActivity(), view);
-        cr.setConfiguration(new Configuration.Builder()
-                .setDuration(Configuration.DURATION_LONG).build());
-        cr.show();
+        Snackbar.make(getView(), snackbarText, Snackbar.LENGTH_LONG).show();
     }
 
     @Override
@@ -132,18 +125,18 @@ public class RemoteAuthorsFragment extends Fragment implements
         if (author.isAdded()) {
             return;
         }
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage(getString(R.string.add_author_confirmation))
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+        new MaterialDialog.Builder(getActivity())
+                .title(getString(R.string.add_author_confirmation))
+                .positiveText(android.R.string.yes)
+                .negativeText(android.R.string.no)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        //TODO make sure to run this in UI thread
+                    public void onClick(MaterialDialog dialog, DialogAction which) {
                         loading.setVisibility(View.VISIBLE);
                         new AddAuthorTask(getActivity()).execute(authorToAdd.getAuthorUrl());
                     }
                 })
-                .setNegativeButton(android.R.string.cancel, null);
-        builder.create().show();
+                .build().show();
     }
 
     @UiThread(delay = 100)
@@ -161,10 +154,6 @@ public class RemoteAuthorsFragment extends Fragment implements
             reloadFromArguments(BaseActivity.intentToFragmentArguments(
                     new Intent(Intent.ACTION_SEARCH, AppUriContract.buildSamlibSearchUri(query, searchType))));
         }
-    }
-
-    public void setContentTopClearance(int topClearance) {
-        list.setContentTopClearance(topClearance);
     }
 
     public void reloadFromArguments(Bundle arguments) {
@@ -330,11 +319,10 @@ public class RemoteAuthorsFragment extends Fragment implements
                         errorMsg = R.string.cannot_search_unknown;
                         break;
                 }
-                Style.Builder alertStyle = new Style.Builder()
-                        .setTextAppearance(android.R.attr.textAppearanceLarge)
-                        .setPaddingInPixels(25)
-                        .setBackgroundColorValue(Style.holoRedLight);
-                Crouton.makeText(getActivity(), getString(errorMsg), alertStyle.build()).show();
+                SpannableStringBuilder snackbarText = new SpannableStringBuilder();
+                snackbarText.append(getString(errorMsg));
+                snackbarText.setSpan(new ForegroundColorSpan(0xFFFF0000), 0, snackbarText.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                Snackbar.make(getView(), snackbarText, Snackbar.LENGTH_SHORT).show();
             }
             updateCollectionView(data.getResult());
         }
