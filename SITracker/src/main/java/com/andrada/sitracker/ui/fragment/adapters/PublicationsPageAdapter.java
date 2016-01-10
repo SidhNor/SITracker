@@ -48,8 +48,15 @@ public class PublicationsPageAdapter extends SmartFragmentStatePagerAdapter {
 
     List<Author> authors = new ArrayList<Author>();
 
+    private PublicationsPageAdapterListener listener;
+
     public PublicationsPageAdapter(Context context) {
         super(((Activity) context).getFragmentManager());
+    }
+
+
+    public void setListener(PublicationsPageAdapterListener listener) {
+        this.listener = listener;
     }
 
     @Background
@@ -87,6 +94,9 @@ public class PublicationsPageAdapter extends SmartFragmentStatePagerAdapter {
         authors.clear();
         authors.addAll(newAuthors);
         notifyDataSetChanged();
+        if (listener != null) {
+            listener.pagesLoaded();
+        }
     }
 
     @AfterInject
@@ -101,7 +111,17 @@ public class PublicationsPageAdapter extends SmartFragmentStatePagerAdapter {
     }
 
     @Override
+    public CharSequence getPageTitle(int position) {
+        Author auth = authors.get(position);
+        return auth.getName();
+    }
+
+    @Override
     public int getCount() {
         return authors.size();
+    }
+
+    public interface PublicationsPageAdapterListener {
+        void pagesLoaded();
     }
 }

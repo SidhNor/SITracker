@@ -15,6 +15,7 @@
  */
 apply plugin: 'com.android.application'
 apply plugin: 'android-apt'
+apply plugin: 'com.google.gms.google-services'
 
 configurations {
     compile
@@ -28,26 +29,27 @@ repositories {
 
 dependencies {
     compile 'org.jetbrains:annotations:13.0'
-    compile 'com.android.support:support-v13:21.0.3'
-    compile 'com.android.support:appcompat-v7:21.0.3'
-    compile 'com.android.support:recyclerview-v7:21.0.3'
-    compile 'com.google.android.gms:play-services-plus:6.5.87'
-    compile 'com.afollestad:material-dialogs:0.6.3.5'
+    compile 'com.android.support:design:23.1.1'
+    compile 'com.android.support:support-v13:23.1.1'
+    compile 'com.android.support:recyclerview-v7:23.1.1'
+    //noinspection GradleDependency
+    compile 'com.google.android.gms:play-services-analytics:8.3.0'
+    //noinspection GradleDependency
+    compile 'com.google.android.gms:play-services-plus:8.3.0'
+    compile('com.github.afollestad.material-dialogs:core:0.8.5.3@aar') {
+        transitive = true
+    }
     apt 'org.androidannotations:androidannotations:3.1'
     compile 'org.androidannotations:androidannotations-api:3.1'
     compile 'org.apache.commons:commons-lang3:3.0'
     compile 'com.j256.ormlite:ormlite-android:4.48'
-    compile 'com.github.kevinsawicki:http-request:4.2'
+    compile 'com.github.kevinsawicki:http-request:6.0'
     compile 'de.greenrobot:eventbus:2.4.0'
-    compile 'com.melnykov:floatingactionbutton:1.0.8'
-    compile 'com.github.amlcurran.showcaseview:library:5.0.0'
-    compile('com.github.bumptech.glide:glide:3.4.+') {
+    compile 'com.github.amlcurran.showcaseview:library:5.4.0'
+    compile('com.github.bumptech.glide:glide:3.6.+') {
         exclude group: 'com.google.android', module: 'support-v4'
     }
     compile('com.viewpagerindicator:library:2.4.1@aar') {
-        exclude group: 'com.google.android', module: 'support-v4'
-    }
-    compile('de.keyboardsurfer.android.widget:crouton:1.8.4@aar') {
         exclude group: 'com.google.android', module: 'support-v4'
     }
     androidTestCompile 'com.squareup:fest-android:1.0.5'
@@ -58,8 +60,8 @@ tasks.withType(JavaCompile) {
 }
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion '21.1.2'
+    compileSdkVersion 23
+    buildToolsVersion '23.0.2'
 
 
     def versionPropsFile = file('version.properties')
@@ -89,8 +91,8 @@ android {
         defaultConfig {
             versionCode version_Code
             versionName "${versionMajor}.${versionMinor}.${versionPatch}.${versionBuild}"
-            minSdkVersion 15
-            targetSdkVersion 21
+            minSdkVersion 17
+            targetSdkVersion 23
             applicationId 'com.andrada.sitracker'
             testInstrumentationRunner 'android.test.InstrumentationTestRunner'
             testApplicationId 'com.andrada.sitracker.test'

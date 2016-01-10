@@ -21,15 +21,12 @@
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
     -->
-    <style name="FrameworkRoot.Base" parent="@style/Theme.AppCompat.Light" />
+    <style name="FrameworkRoot.Base" parent="@style/Theme.AppCompat.Light.NoActionBar" />
 
     <style name="FrameworkRoot.Widget" parent="@style/Theme.AppCompat" />
 
     <!-- Immediate parent theme to specify base values for custom attributes -->
     <style name="Theme" parent="FrameworkRoot.Base">
-        <!-- Only needed for pre-L -->
-        <item name="android:editTextBackground">@drawable/edit_text</item>
-        <item name="android:editTextStyle">@style/Widget.SiTracker.EditText</item>
     </style>
 
     <!-- Application theme. -->
@@ -51,7 +48,7 @@
 
         <item name="android:textColorLink">@color/theme_accent_1</item>
         <item name="windowActionBar">false</item>
-        <item name="android:windowNoTitle">true</item>
+        <item name="windowNoTitle">true</item>
 
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowBackground">@android:color/white</item>
@@ -83,10 +80,12 @@
         <item name="android:dropDownSelector">?android:selectableItemBackground</item>
         <item name="android:divider">@null</item>
         <item name="android:dividerHeight">0dp</item>
-        <item name="android:overlapAnchor" tools:ignore="NewApi">true</item>
+        <item name="overlapAnchor">true</item>
     </style>
 
-    <style name="Widget.SiTracker.HeaderBar.Spinner" parent="Widget.SiTracker.HeaderBar.Spinner.Base" />
+    <style name="Widget.SiTracker.HeaderBar.Spinner" parent="Widget.SiTracker.HeaderBar.Spinner.Base">
+        <item name="android:theme">@style/ActionBarThemeOverlay</item>
+    </style>
 
     <style name="Widget.SiTracker.PopupMenu" parent="Widget.AppCompat.Light.PopupMenu">
         <item name="android:dropDownSelector">?popupItemBackground</item>
@@ -198,12 +197,6 @@
     <style name="Widget.WhiteBody.Title" parent="Widget.WhiteBody.Text">
         <item name="android:textSize">@dimen/text_size_large</item>
     </style>
-
-    <style name="Widget.WhiteBody.Button" parent="@android:style/Widget.Button.Small">
-        <item name="android:textColor">@color/body_text_1_inverse</item>
-        <item name="android:textStyle">bold</item>
-    </style>
-
 
     <style name="EmptyText">
         <item name="android:gravity">center</item>

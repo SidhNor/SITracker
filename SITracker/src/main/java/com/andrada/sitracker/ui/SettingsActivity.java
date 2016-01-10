@@ -39,7 +39,6 @@ import org.jetbrains.annotations.Nullable;
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -47,7 +46,6 @@ import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
-import android.support.v4.content.IntentCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
@@ -76,8 +74,7 @@ public class SettingsActivity extends BaseActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                supportNavigateUpTo(IntentCompat.makeMainActivity(new ComponentName(SettingsActivity.this,
-                                SiMainActivity_.class)));
+                navigateUpOrBack(SettingsActivity.this, SiMainActivity_.class);
             }
         });
     }

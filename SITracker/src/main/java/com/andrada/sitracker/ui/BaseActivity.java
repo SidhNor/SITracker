@@ -16,32 +16,37 @@
 
 package com.andrada.sitracker.ui;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.widget.DrawerLayout;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.NavUtils;
+import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.style.ForegroundColorSpan;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.andrada.sitracker.BuildConfig;
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
+import com.andrada.sitracker.events.AuthorsExported;
 import com.andrada.sitracker.ui.debug.DebugActionRunnerActivity;
 import com.andrada.sitracker.ui.fragment.AboutDialog;
 import com.andrada.sitracker.ui.fragment.AuthorsFragment;
 import com.andrada.sitracker.ui.fragment.AuthorsFragment_;
-import com.andrada.sitracker.ui.fragment.ExploreAuthorsFragment;
-import com.andrada.sitracker.ui.fragment.ExploreAuthorsFragment_;
 import com.andrada.sitracker.ui.fragment.NewPublicationsFragment;
 import com.andrada.sitracker.ui.fragment.NewPublicationsFragment_;
-import com.andrada.sitracker.ui.widget.DrawShadowFrameLayout;
-import com.andrada.sitracker.util.ActionBarUtil;
 import com.andrada.sitracker.util.ActivityFragmentNavigator;
 import com.andrada.sitracker.util.AnalyticsHelper;
 import com.andrada.sitracker.util.NavDrawerManager;
@@ -57,29 +62,22 @@ import static com.andrada.sitracker.util.LogUtils.makeLogTag;
 /**
  * A base activity that handles common functionality in the app.
  */
-public abstract class BaseActivity extends ActionBarActivity implements
-        ActionBarUtil.ActionBarShowHideListener,
-        NavDrawerManager.NavDrawerListener/*,
-        NavDrawerManager.NavDrawerItemAware*/ {
+public abstract class BaseActivity extends AppCompatActivity implements
+        NavDrawerManager.NavDrawerListener {
 
     private static final String TAG = makeLogTag(BaseActivity.class);
 
     // fade in and fade out durations for the main content when switching between
     // different Activities of the app through the Nav Drawer
     private static final int MAIN_CONTENT_FADEIN_DURATION = 250;
-    protected NavDrawerManager.NavDrawerItemAware mCurrentNavigationElement;
-    private ActionBarUtil mABUtil;
+
     private NavDrawerManager mDrawerManager;
     // Navigation drawer:
     private DrawerLayout mDrawerLayout;
     // Primary toolbar and drawer toggle
     private Toolbar mActionBarToolbar;
 
-    //ShadowFrameLayout for setting toolbar shadow
-    private DrawShadowFrameLayout mDrawShadowFrameLayout;
     private ExportAuthorsController mExportCtrl;
-
-    protected boolean shouldSkipOnePop = false;
 
     /**
      * Converts an intent into a {@link Bundle} suitable for use as fragment arguments.
@@ -140,18 +138,6 @@ public abstract class BaseActivity extends ActionBarActivity implements
         }
 
         mExportCtrl = new ExportAuthorsController(this);
-
-        getFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
-            @Override
-            public void onBackStackChanged() {
-                Fragment frag = getFragmentManager().findFragmentById(R.id.fragment_holder);
-                if (frag instanceof NavDrawerManager.NavDrawerItemAware && mDrawerManager != null) {
-                    mCurrentNavigationElement = (NavDrawerManager.NavDrawerItemAware) frag;
-                    setContentTopClearance();
-                    mDrawerManager.setSelectedNavDrawerItem(mCurrentNavigationElement.getSelfNavDrawerItem());
-                }
-            }
-        });
     }
 
     @Override
@@ -167,10 +153,6 @@ public abstract class BaseActivity extends ActionBarActivity implements
             // Verifies the proper version of Google Play Services exists on the device.
             PlayServicesUtils.checkGooglePlaySevices(this);
         }
-        //Show the action bar back
-        if (mABUtil != null) {
-            mABUtil.autoShowOrHideActionBar(true);
-        }
     }
 
     @Override
@@ -180,16 +162,14 @@ public abstract class BaseActivity extends ActionBarActivity implements
     }
 
     protected void afterViews() {
-        mABUtil = new ActionBarUtil(this, this);
         mDrawerManager = new NavDrawerManager(this);
-        mDrawShadowFrameLayout = (DrawShadowFrameLayout) findViewById(R.id.main_content);
     }
 
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        if (mABUtil == null || mDrawerManager == null) {
+        if (mDrawerManager == null) {
             afterViews();
         }
     }
@@ -203,6 +183,9 @@ public abstract class BaseActivity extends ActionBarActivity implements
                 if (BuildConfig.DEBUG) {
                     startActivity(new Intent(this, DebugActionRunnerActivity.class));
                 }
+                return true;
+            case android.R.id.home:
+                getDrawerManager().openNavDrawer();
                 return true;
         }
         //Handle default options
@@ -219,71 +202,34 @@ public abstract class BaseActivity extends ActionBarActivity implements
         return result;
     }
 
-    /**
-     * Returns the navigation drawer item that corresponds to this Activity. Subclasses
-     * of BaseActivity override this to indicate what nav drawer item corresponds to them
-     * Return NAVDRAWER_ITEM_INVALID to mean that this Activity should not have a Nav Drawer.
-     */
-    @Override
-    public int getSelfNavDrawerItem() {
-        if (mCurrentNavigationElement != null) {
-            return mCurrentNavigationElement.getSelfNavDrawerItem();
-        }
-        return NavDrawerManager.NAVDRAWER_ITEM_INVALID;
-    }
-
-    public void setContentTopClearance() {
-    }
-
-    protected void setContentTopClearance(int top) {
-        if (mDrawShadowFrameLayout != null) {
-            mDrawShadowFrameLayout.setShadowTopOffset(top);
-        }
-    }
-
     @Override
     public void setContentView(int layoutResID) {
         super.setContentView(layoutResID);
         getActionBarToolbar();
     }
 
-    // Subclasses can override this for custom behavior
-    @Override
-    public void onNavDrawerStateChanged(boolean isOpen, boolean isAnimating) {
-        if (mABUtil.isActionBarAutoHideEnabled() && isOpen) {
-            mABUtil.autoShowOrHideActionBar(true);
-        }
-    }
 
     @Override
     public void goToNavDrawerItem(int item) {
-        mABUtil.autoShowOrHideActionBar(true);
         switch (item) {
-            case NavDrawerManager.NAVDRAWER_ITEM_MY_AUTHORS:
+            case R.id.navigation_item_my_authors:
                 AuthorsFragment authFrag = AuthorsFragment_.builder().build();
                 ActivityFragmentNavigator.switchMainFragmentInMainActivity(this, authFrag);
-                mCurrentNavigationElement = authFrag;
                 break;
-            case NavDrawerManager.NAVDRAWER_ITEM_EXPLORE:
-                ExploreAuthorsFragment exploreFrag = ExploreAuthorsFragment_.builder().build();
-                ActivityFragmentNavigator.switchMainFragmentInMainActivity(this, exploreFrag);
-                mCurrentNavigationElement = exploreFrag;
-                break;
-            case NavDrawerManager.NAVDRAWER_ITEM_NEW_PUBS:
+            case R.id.navigation_item_new_pubs:
                 NewPublicationsFragment newPubsFrag = NewPublicationsFragment_.builder().build();
                 ActivityFragmentNavigator.switchMainFragmentInMainActivity(this, newPubsFrag);
-                mCurrentNavigationElement = newPubsFrag;
                 break;
-            case NavDrawerManager.NAVDRAWER_ITEM_EXPORT:
+            case R.id.navigation_item_export:
                 mExportCtrl.showDialog();
                 break;
-            case NavDrawerManager.NAVDRAWER_ITEM_IMPORT:
+            case R.id.navigation_item_import:
                 ImportAuthorsActivity_.intent(this).start();
                 break;
-            case NavDrawerManager.NAVDRAWER_ITEM_SETTINGS:
+            case R.id.navigation_item_settings:
                 SettingsActivity_.intent(this).start();
                 break;
-            case NavDrawerManager.NAVDRAWER_ITEM_ABOUT:
+            case R.id.navigation_item_about:
                 AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_ABOUT_DIALOG);
                 FragmentManager fm = this.getFragmentManager();
                 FragmentTransaction ft = fm.beginTransaction();
@@ -297,25 +243,6 @@ public abstract class BaseActivity extends ActionBarActivity implements
         }
     }
 
-    public void setProgressBarTopWhenActionBarShown(int progressBarTopWhenActionBarShown) {
-        if (mDrawShadowFrameLayout != null) {
-            mDrawShadowFrameLayout.setShadowTopOffset(progressBarTopWhenActionBarShown);
-        }
-        if (mCurrentNavigationElement != null) {
-            mCurrentNavigationElement.updateSwipeRefreshProgressBarTop();
-        }
-
-    }
-
-    @Override
-    public void actionBarVisibilityChanged(boolean shown) {
-        mDrawerManager.adjustStatusBarBasedOnActionBarVisibility(shown);
-        mDrawShadowFrameLayout.setShadowVisible(shown, shown);
-        if (mCurrentNavigationElement != null) {
-            mCurrentNavigationElement.updateSwipeRefreshProgressBarTop();
-        }
-    }
-
     public Toolbar getActionBarToolbar() {
         if (mActionBarToolbar == null) {
             mActionBarToolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
@@ -326,32 +253,82 @@ public abstract class BaseActivity extends ActionBarActivity implements
         return mActionBarToolbar;
     }
 
-    public ActionBarUtil getActionBarUtil() {
-        return mABUtil;
-    }
-
     public NavDrawerManager getDrawerManager() {
         return mDrawerManager;
     }
 
     @Override
     public void onBackPressed() {
-        if (mDrawerManager == null) {
-            if (!getFragmentManager().popBackStackImmediate()) {
-                super.onBackPressed();
-            }
-        } else if (mDrawerManager.isNavDrawerOpen()) {
+        if (mDrawerManager != null && mDrawerManager.isNavDrawerOpen()) {
             mDrawerManager.closeNavDrawer();
         } else {
-            mDrawerManager.popNavigationState();
-            //As we are using SupportActivity and native FragmentManager -
-            //we need to query it instead of default ActionBarActivity implementation
-            if (shouldSkipOnePop) {
-                shouldSkipOnePop = false;
-                return;
+            super.onBackPressed();
+        }
+    }
+
+    public void onEvent(@NotNull AuthorsExported event) {
+        String message = event.getMessage();
+
+        SpannableStringBuilder snackbarText = new SpannableStringBuilder();
+        if (message.length() == 0) {
+            //This is success
+            snackbarText.append(getResources().getString(R.string.author_export_success_crouton_message));
+        } else {
+            snackbarText.append(message);
+            snackbarText.setSpan(new ForegroundColorSpan(0xFFFF0000), 0, snackbarText.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+
+        Snackbar.make(findViewById(R.id.drawer_layout), snackbarText, Snackbar.LENGTH_LONG).show();
+    }
+
+    /**
+     * This utility method handles Up navigation intents by searching for a parent activity and
+     * navigating there if defined. When using this for an activity make sure to define both the
+     * native parentActivity as well as the AppCompat one when supporting API levels less than 16.
+     * when the activity has a single parent activity. If the activity doesn't have a single parent
+     * activity then don't define one and this method will use back button functionality. If "Up"
+     * functionality is still desired for activities without parents then use
+     * {@code syntheticParentActivity} to define one dynamically.
+     *
+     * Note: Up navigation intents are represented by a back arrow in the top left of the Toolbar
+     *       in Material Design guidelines.
+     *
+     * @param currentActivity Activity in use when navigate Up action occurred.
+     * @param syntheticParentActivity Parent activity to use when one is not already configured.
+     */
+    public static void navigateUpOrBack(Activity currentActivity,
+                                        Class<? extends Activity> syntheticParentActivity) {
+        // Retrieve parent activity from AndroidManifest.
+        Intent intent = NavUtils.getParentActivityIntent(currentActivity);
+
+        // Synthesize the parent activity when a natural one doesn't exist.
+        if (intent == null && syntheticParentActivity != null) {
+            try {
+                intent = NavUtils.getParentActivityIntent(currentActivity, syntheticParentActivity);
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
             }
-            if (!getFragmentManager().popBackStackImmediate()) {
-                super.onBackPressed();
+        }
+
+        if (intent == null) {
+            // No parent defined in manifest. This indicates the activity may be used by
+            // in multiple flows throughout the app and doesn't have a strict parent. In
+            // this case the navigation up button should act in the same manner as the
+            // back button. This will result in users being forwarded back to other
+            // applications if currentActivity was invoked from another application.
+            currentActivity.onBackPressed();
+        } else {
+            if (NavUtils.shouldUpRecreateTask(currentActivity, intent)) {
+                // Need to synthesize a backstack since currentActivity was probably invoked by a
+                // different app. The preserves the "Up" functionality within the app according to
+                // the activity hierarchy defined in AndroidManifest.xml via parentActivity
+                // attributes.
+                TaskStackBuilder builder = TaskStackBuilder.create(currentActivity);
+                builder.addNextIntentWithParentStack(intent);
+                builder.startActivities();
+            } else {
+                // Navigate normally to the manifest defined "Up" activity.
+                NavUtils.navigateUpTo(currentActivity, intent);
             }
         }
     }

@@ -16,47 +16,37 @@
 
 package com.andrada.sitracker.ui;
 
+import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.view.ViewPager;
+import android.support.v4.app.ActivityCompat;
 import android.view.View;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.andrada.sitracker.R;
+import com.andrada.sitracker.contracts.AppUriContract;
 import com.andrada.sitracker.events.AuthorSelectedEvent;
 import com.andrada.sitracker.ui.fragment.AuthorsFragment;
 import com.andrada.sitracker.ui.fragment.AuthorsFragment_;
-import com.andrada.sitracker.ui.fragment.adapters.PublicationsPageAdapter;
-import com.andrada.sitracker.util.NavDrawerManager;
 import com.andrada.sitracker.util.UIUtils;
 
 import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
-import org.androidannotations.annotations.InstanceState;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
 import org.jetbrains.annotations.NotNull;
 
 import de.greenrobot.event.EventBus;
-import de.keyboardsurfer.android.widget.crouton.Configuration;
-import de.keyboardsurfer.android.widget.crouton.Crouton;
 
 @EActivity
 @OptionsMenu(R.menu.main_menu)
 public class SiMainActivity extends BaseActivity {
 
-
-    @ViewById(R.id.details_pager)
-    ViewPager pager;
-
     @ViewById(R.id.fragment_holder)
     View fragmentHolder;
-
-    @Bean
-    PublicationsPageAdapter pageAdapter;
 
     public static final String AUTHORS_PROCESSED_EXTRA = "authors_total_processed";
     public static final String AUTHORS_SUCCESSFULLY_IMPORTED_EXTRA = "authors_successfully_imported";
@@ -65,26 +55,6 @@ public class SiMainActivity extends BaseActivity {
     @Extra(AUTHORS_SUCCESSFULLY_IMPORTED_EXTRA)
     int authorsSuccessfullyImported = -1;
 
-    @InstanceState
-    boolean pagerShown = false;
-    @InstanceState
-    long selectedId;
-
-    private final ViewPager.OnPageChangeListener mPageListener = new ViewPager.OnPageChangeListener() {
-        @Override
-        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-        }
-
-        @Override
-        public void onPageSelected(int position) {
-            selectedId = pageAdapter.getItemDSForPosition(position).getId();
-            getActionBarToolbar().setTitle(pageAdapter.getItemDSForPosition(position).getName());
-        }
-
-        @Override
-        public void onPageScrollStateChanged(int state) {
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,22 +62,16 @@ public class SiMainActivity extends BaseActivity {
         int priority = 1;
         EventBus.getDefault().register(this, priority);
 
-        /*
-        if (UIUtils.isTablet(this) && UIUtils.isLandscape(this)) {
-            setContentView(R.layout.activity_si_main_two_pane);
-        }
-        */
         setContentView(R.layout.activity_si_main);
     }
 
     @AfterViews
     protected void afterViews() {
-        mCurrentNavigationElement = (NavDrawerManager.NavDrawerItemAware) getFragmentManager().findFragmentByTag("currentFrag");
-        if (mCurrentNavigationElement == null) {
+        Fragment fragment = getFragmentManager().findFragmentByTag("currentFrag");
+        if (fragment == null) {
             //Bootstrap app with initial fragment
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
             AuthorsFragment authFrag = AuthorsFragment_.builder().build();
-            mCurrentNavigationElement = authFrag;
             transaction.replace(R.id.fragment_holder, authFrag, "currentFrag");
             transaction.setCustomAnimations(0, 0);
             transaction.commit();
@@ -121,68 +85,12 @@ public class SiMainActivity extends BaseActivity {
         EventBus.getDefault().unregister(this);
     }
 
-    public void onEvent(AuthorSelectedEvent event) {
-        shouldSkipOnePop = true;
-        pager.setAdapter(pageAdapter);
-        pager.setVisibility(View.VISIBLE);
-        pagerShown = true;
-        fragmentHolder.setVisibility(View.GONE);
-
-        getDrawerManager().pushNavigationalState(event.authorName, false);
-
-        selectedId = event.authorId;
-        int positionToSelect = pageAdapter.getItemPositionForId(event.authorId);
-        pager.setCurrentItem(positionToSelect);
-        //getActionBarToolbar().setTitle(event.authorName);
-        getActionBarUtil().autoShowOrHideActionBar(true);
-    }
 
     @Override
     protected void onResume() {
         super.onResume();
-        pageAdapter.reloadAuthors();
-        /*if (pagerShown) {
-            shouldSkipOnePop = true;
-            pager.setAdapter(pageAdapter);
-            pager.setVisibility(View.VISIBLE);
-            pagerShown = true;
-            fragmentHolder.setVisibility(View.GONE);
-            int positionToSelect = pageAdapter.getItemPositionForId(selectedId);
-            pager.setCurrentItem(positionToSelect);
-            getActionBarUtil().autoShowOrHideActionBar(true);
-        }*/
-        pager.setOnPageChangeListener(mPageListener);
         invalidateOptionsMenu();
-        setContentTopClearance();
         attemptToShowImportProgress();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        pager.setOnPageChangeListener(null);
-    }
-
-    public void setContentTopClearance() {
-        if (mCurrentNavigationElement != null) {
-            // configure fragment's top clearance to take our overlaid controls (Action Bar) into account.
-            int actionBarSize = UIUtils.calculateActionBarSize(this);
-            setContentTopClearance(actionBarSize);
-            mCurrentNavigationElement.setContentTopClearance(actionBarSize);
-            pager.setPadding(pager.getPaddingLeft(), actionBarSize,
-                    pager.getPaddingRight(), pager.getPaddingBottom());
-            setProgressBarTopWhenActionBarShown(actionBarSize);
-        }
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (shouldSkipOnePop) {
-            pager.setVisibility(View.GONE);
-            pagerShown = false;
-            fragmentHolder.setVisibility(View.VISIBLE);
-        }
-        super.onBackPressed();
     }
 
     @Override
@@ -199,10 +107,17 @@ public class SiMainActivity extends BaseActivity {
         }
     }
 
+    public void onEvent(AuthorSelectedEvent event) {
+        Intent intent = new Intent(Intent.ACTION_VIEW,
+                AppUriContract.buildAuthorUri(event.authorId, event.authorName), this,
+                AuthorDetailsActivity_.class);
+        ActivityCompat.startActivity(this, intent, null);
+    }
+
 
     private void attemptToShowImportProgress() {
         if (authorsProcessed != -1 && authorsSuccessfullyImported != -1) {
-            View view = getLayoutInflater().inflate(R.layout.crouton_import_result, null);
+            View view = getLayoutInflater().inflate(R.layout.widget_import_result, null);
             TextView totalTextV = (TextView) view.findViewById(R.id.totalAuthorsText);
             totalTextV.setText(getResources().getString(R.string.author_import_total_crouton_message,
                     authorsProcessed));
@@ -212,11 +127,12 @@ public class SiMainActivity extends BaseActivity {
             TextView failedTextV = (TextView) view.findViewById(R.id.failedAuthorsText);
             failedTextV.setText(getResources().getString(R.string.author_import_failed_crouton_message,
                     authorsProcessed - authorsSuccessfullyImported));
-            Configuration croutonConfiguration = new Configuration.Builder()
-                    .setDuration(Configuration.DURATION_LONG).build();
-            Crouton mNoNetworkCrouton = Crouton.make(this, view);
-            mNoNetworkCrouton.setConfiguration(croutonConfiguration);
-            mNoNetworkCrouton.show();
+
+            new MaterialDialog.Builder(this)
+                    .customView(view, false)
+                    .positiveText(R.string.ok)
+                    .autoDismiss(true)
+                    .show();
 
             //Remove extras to avoid reinitialization on config change
             getIntent().removeExtra(AUTHORS_PROCESSED_EXTRA);

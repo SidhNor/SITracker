@@ -16,6 +16,7 @@
 
 package com.andrada.sitracker.ui.fragment;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.ui.components.AboutDialogView;
@@ -30,6 +31,7 @@ import android.app.FragmentTransaction;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.style.ClickableSpan;
@@ -84,10 +86,9 @@ public class AboutDialog extends DialogFragment {
                 .title(R.string.action_about)
                 .customView(aboutBodyView, true)
                 .positiveText(android.R.string.ok)
-                .callback(new MaterialDialog.ButtonCallback() {
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
-                    public void onPositive(MaterialDialog dialog) {
-                        super.onPositive(dialog);
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         dialog.dismiss();
                     }
                 })
@@ -132,10 +133,9 @@ public class AboutDialog extends DialogFragment {
                     .title(R.string.whats_new)
                     .customView(webView, true)
                     .positiveText(android.R.string.ok)
-                    .callback(new MaterialDialog.ButtonCallback() {
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
                         @Override
-                        public void onPositive(MaterialDialog dialog) {
-                            super.onPositive(dialog);
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                             dialog.dismiss();
                         }
                     })
@@ -158,10 +158,9 @@ public class AboutDialog extends DialogFragment {
                     .title(R.string.about_licenses)
                     .customView(webView, false)
                     .positiveText(android.R.string.ok)
-                    .callback(new MaterialDialog.ButtonCallback() {
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
                         @Override
-                        public void onPositive(MaterialDialog dialog) {
-                            super.onPositive(dialog);
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                             dialog.dismiss();
                         }
                     })

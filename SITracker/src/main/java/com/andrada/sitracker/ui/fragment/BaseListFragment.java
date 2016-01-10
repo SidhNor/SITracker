@@ -31,16 +31,15 @@ import com.andrada.sitracker.util.NavDrawerManager;
 public abstract class BaseListFragment extends Fragment
         implements MultiSwipeRefreshLayout.CanChildScrollUpCallback,
         NavDrawerManager.NavDrawerItemAware {
+
     // SwipeRefreshLayout allows the user to swipe the screen down to trigger a manual refresh
 
     protected SwipeRefreshLayout mSwipeRefreshLayout;
-    private int mProgressBarTopWhenActionBarShown;
 
     @Override
     public void onResume() {
         super.onResume();
         trySetupSwipeRefresh();
-        updateSwipeRefreshProgressBarTop();
     }
 
     @Override
@@ -86,12 +85,6 @@ public abstract class BaseListFragment extends Fragment
         //Stub - should be implemented in subclass
     }
 
-    /**
-     * `
-     * Should be used to access action bar utils
-     *
-     * @return
-     */
     protected BaseActivity getBaseActivity() {
         return (BaseActivity) getActivity();
     }
@@ -99,19 +92,6 @@ public abstract class BaseListFragment extends Fragment
     @Override
     public boolean canSwipeRefreshChildScrollUp() {
         return false;
-    }
-
-    public void updateSwipeRefreshProgressBarTop() {
-        if (mSwipeRefreshLayout == null) {
-            return;
-        }
-        int progressBarStartMargin = getResources().getDimensionPixelSize(
-                R.dimen.swipe_refresh_progress_bar_start_margin);
-        int progressBarEndMargin = getResources().getDimensionPixelSize(
-                R.dimen.swipe_refresh_progress_bar_end_margin);
-        int top = getBaseActivity().getActionBarUtil().isActionBarShown() ? mProgressBarTopWhenActionBarShown : 0;
-        mSwipeRefreshLayout.setProgressViewOffset(false,
-                top + progressBarStartMargin, top + progressBarEndMargin);
     }
 
     protected void onRefreshingStateChanged(boolean refreshing) {
@@ -126,15 +106,6 @@ public abstract class BaseListFragment extends Fragment
         }
     }
 
-    @Override
-    public int getSelfNavDrawerItem() {
-        return NavDrawerManager.NAVDRAWER_ITEM_INVALID;
-    }
-
-    @Override
-    public void setContentTopClearance(int top) {
-        mProgressBarTopWhenActionBarShown = top;
-    }
 
     @Override
     public ViewGroup getScrollingView() {

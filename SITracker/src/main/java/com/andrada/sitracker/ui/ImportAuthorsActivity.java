@@ -26,7 +26,7 @@ import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.v4.content.IntentCompat;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,8 +61,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
-import de.keyboardsurfer.android.widget.crouton.Crouton;
-import de.keyboardsurfer.android.widget.crouton.Style;
 
 @SuppressLint("Registered")
 @EActivity(R.layout.activity_import)
@@ -205,8 +203,7 @@ public class ImportAuthorsActivity extends BaseActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                supportNavigateUpTo(IntentCompat.makeMainActivity(new ComponentName(ImportAuthorsActivity.this,
-                                SiMainActivity_.class)));
+                navigateUpOrBack(ImportAuthorsActivity.this, SiMainActivity_.class);
             }
         });
     }
@@ -272,7 +269,10 @@ public class ImportAuthorsActivity extends BaseActivity {
             list.setAdapter(null);
             authorsToImport.clear();
             performImportButton.setEnabled(false);
-            Crouton.makeText(this, getResources().getString(R.string.cannot_import_authors_from_file), Style.ALERT).show();
+            Snackbar.make(findViewById(R.id.importRootContainer),
+                    getResources().getString(R.string.cannot_import_authors_from_file),
+                    Snackbar.LENGTH_LONG)
+                    .show();
         }
         progressBar.setVisibility(View.GONE);
     }
