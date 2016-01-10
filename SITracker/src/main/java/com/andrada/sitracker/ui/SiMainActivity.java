@@ -30,12 +30,10 @@ import com.andrada.sitracker.contracts.AppUriContract;
 import com.andrada.sitracker.events.AuthorSelectedEvent;
 import com.andrada.sitracker.ui.fragment.AuthorsFragment;
 import com.andrada.sitracker.ui.fragment.AuthorsFragment_;
-import com.andrada.sitracker.util.UIUtils;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
-import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
 import org.jetbrains.annotations.NotNull;
 

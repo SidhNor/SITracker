@@ -25,18 +25,20 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -51,7 +53,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -68,9 +69,7 @@ import com.andrada.sitracker.events.RatingResultEvent;
 import com.andrada.sitracker.exceptions.SharePublicationException;
 import com.andrada.sitracker.reader.SamlibPublicationPageReader;
 import com.andrada.sitracker.ui.BaseActivity;
-import com.andrada.sitracker.ui.widget.CheckableFrameLayout;
 import com.andrada.sitracker.ui.widget.MessageCardView;
-import com.andrada.sitracker.ui.widget.ObservableScrollView;
 import com.andrada.sitracker.util.AnalyticsHelper;
 import com.andrada.sitracker.util.SamlibPageHelper;
 import com.andrada.sitracker.util.ShareHelper;
@@ -112,8 +111,7 @@ import static com.andrada.sitracker.util.LogUtils.LOGI;
 
 @EFragment(R.layout.fragment_pub_details)
 @OptionsMenu(R.menu.publication_info_menu)
-public class PublicationInfoFragment extends Fragment implements
-        ObservableScrollView.Callbacks {
+public class PublicationInfoFragment extends Fragment {
 
     private static final float PHOTO_ASPECT_RATIO = 1.7777777f;
 
@@ -124,14 +122,12 @@ public class PublicationInfoFragment extends Fragment implements
     @Pref
     SIPrefs_ prefs;
 
-    @ViewById(R.id.scroll_view_child)
-    View mScrollViewChild;
     @ViewById(R.id.pub_title)
     TextView mTitle;
+
     @ViewById(R.id.pub_subtitle)
     TextView mSubtitle;
-    @ViewById(R.id.scroll_view)
-    ObservableScrollView mScrollView;
+
     @ViewById(R.id.pub_abstract)
     TextView mAbstract;
     @ViewById(R.id.publication_rating_block)
@@ -144,8 +140,7 @@ public class PublicationInfoFragment extends Fragment implements
     RatingBar mRatingBar;
     @ViewById(R.id.voted_on_field)
     TextView mVotedOnField;
-    @ViewById(R.id.header_pub)
-    View mHeaderBox;
+
     @ViewById(R.id.details_container)
     View mDetailsContainer;
     @ViewById(R.id.pub_photo_container)
@@ -154,8 +149,10 @@ public class PublicationInfoFragment extends Fragment implements
     ViewPager pager;
     @ViewById(R.id.pagerIndicators)
     CirclePageIndicator pagerIndicators;
+
     @ViewById(R.id.read_pub_button)
-    CheckableFrameLayout mReadPubButton;
+    FloatingActionButton mReadPubButton;
+
     @ViewById(R.id.plus_one_button)
     PlusOneButton mPlusOneButton;
     @OptionsMenuItem(R.id.action_mark_read)
@@ -168,25 +165,9 @@ public class PublicationInfoFragment extends Fragment implements
     private boolean mDownloaded;
     private ViewGroup mRootView;
     private Handler mHandler = new Handler();
-    private Uri mPublicationUri;
     private long mPublicationId;
-    private boolean mHasPhoto;
-    private float newTop;
-    private int mPhotoHeightPixels;
-    private int mHeaderHeightPixels;
-    private int mReadPubButtonHeightPixels;
-    private ViewTreeObserver.OnGlobalLayoutListener mGlobalLayoutListener
-            = new ViewTreeObserver.OnGlobalLayoutListener() {
-        @Override
-        public void onGlobalLayout() {
-            mReadPubButtonHeightPixels = mReadPubButton.getHeight();
-            recomputePhotoAndScrollingMetrics();
-        }
-    };
 
-    private float mMaxHeaderElevation;
-    private float mFABElevation;
-    private boolean delayedScrollCheck;
+    private boolean mHasPhoto;
     private boolean rateShowcaseShown;
     private boolean mRatingVisible;
 
@@ -195,7 +176,7 @@ public class PublicationInfoFragment extends Fragment implements
         super.onCreate(savedInstanceState);
         LOGI("SITracker", "PublicationInfoFragment - onCreate");
         final Intent intent = BaseActivity.fragmentArgumentsToIntent(getArguments());
-        mPublicationUri = intent.getData();
+        Uri mPublicationUri = intent.getData();
 
         if (mPublicationUri == null) {
             return;
@@ -203,10 +184,6 @@ public class PublicationInfoFragment extends Fragment implements
         mPublicationId = AppUriContract.getPublicationId(mPublicationUri);
         mHandler = new Handler();
         rateShowcaseShown = prefs.ratingShowcaseShotDone().get();
-        mFABElevation = getResources().getDimensionPixelSize(R.dimen.fab_elevation);
-        mMaxHeaderElevation = getResources().getDimensionPixelSize(
-                R.dimen.publication_detail_max_header_elevation);
-
     }
 
     @Override
@@ -229,18 +206,6 @@ public class PublicationInfoFragment extends Fragment implements
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        if (mScrollView == null) {
-            return;
-        }
-        ViewTreeObserver vto = mScrollView.getViewTreeObserver();
-        if (vto.isAlive()) {
-            vto.removeOnGlobalLayoutListener(mGlobalLayoutListener);
-        }
-    }
-
-    @Override
     public void onDestroy() {
         OpenHelperManager.releaseHelper();
         BackgroundExecutor.cancelAll("publicationDownload", true);
@@ -259,11 +224,9 @@ public class PublicationInfoFragment extends Fragment implements
 
     @AfterViews
     public void afterViews() {
-        mScrollViewChild.setVisibility(View.INVISIBLE);
         pager.setAdapter(new PublicationImagesAdapter(getActivity()));
         pagerIndicators.setViewPager(pager);
         pagerIndicators.setSnap(true);
-        setupCustomScrolling();
     }
 
     @Background
@@ -326,7 +289,7 @@ public class PublicationInfoFragment extends Fragment implements
                     showPublicationState(PublicationState.WAITING_REFRESH, false);
                     SpannableStringBuilder snackbarText = new SpannableStringBuilder();
                     snackbarText.append(msg);
-                    snackbarText.setSpan(new ForegroundColorSpan(0xFFFF0000), 0, snackbarText.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    snackbarText.setSpan(new ForegroundColorSpan(Color.RED), 0, snackbarText.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                     Snackbar.make(getView(), snackbarText, Snackbar.LENGTH_SHORT).show();
                 }
             });
@@ -351,7 +314,6 @@ public class PublicationInfoFragment extends Fragment implements
         mTitle.setText(mTitleString);
         mSubtitle.setText(subtitle);
 
-        mReadPubButton.setVisibility(View.VISIBLE);
         mPhotoViewContainer.setBackgroundColor(UIUtils.scaleColor(0xe8552c, 0.65f, false));
 
         updatePlusOneButton();
@@ -374,8 +336,7 @@ public class PublicationInfoFragment extends Fragment implements
             //Add image view to pager.
         } else {
             mHasPhoto = false;
-            delayedScrollCheck = true;
-            recomputePhotoAndScrollingMetrics();
+            recomputePhotoMetrics();
         }
 
         //Check if file is new version of pub is loaded.
@@ -405,8 +366,6 @@ public class PublicationInfoFragment extends Fragment implements
         mHandler.post(new Runnable() {
             @Override
             public void run() {
-                onScrollChanged(0, 0); // trigger scroll handling
-                mScrollViewChild.setVisibility(View.VISIBLE);
                 ActivityCompat.startPostponedEnterTransition(getActivity());
             }
         });
@@ -525,7 +484,7 @@ public class PublicationInfoFragment extends Fragment implements
             }
             attemptToShowShowcaseForImageSettings();
         }
-        recomputePhotoAndScrollingMetrics();
+        recomputePhotoMetrics();
     }
 
     @UiThread(delay = 500)
@@ -546,6 +505,7 @@ public class PublicationInfoFragment extends Fragment implements
         }
     }
 
+    //TODO decide when to show this
     @UiThread(delay = 500)
     void attemptToShowShowcaseForRatings() {
         if (!rateShowcaseShown && mRatingVisible) {
@@ -695,70 +655,16 @@ public class PublicationInfoFragment extends Fragment implements
     private void showPublicationState(PublicationState state, boolean allowAnimate) {
         if (!isDetached()) {
             mDownloaded = state.equals(PublicationState.READY_FOR_READING);
-            if (!mIsDownloading) {
-                mReadPubButton.setChecked(mDownloaded, allowAnimate);
+            if (!mIsDownloading && mDownloaded) {
+                mReadPubButton.setBackgroundTintList(ColorStateList.valueOf(Color.WHITE));
             }
-            ImageView iconView = (ImageView) mReadPubButton.findViewById(R.id.read_pub_icon);
-            setOrAnimateReadPubIcon(iconView, state, allowAnimate);
+            setOrAnimateReadPubIcon(mReadPubButton, state, allowAnimate);
         }
     }
 
-    private void setupCustomScrolling() {
-        mScrollView.addCallbacks(this);
-        ViewTreeObserver vto = mScrollView.getViewTreeObserver();
-        if (vto.isAlive()) {
-            vto.addOnGlobalLayoutListener(mGlobalLayoutListener);
-        }
-    }
+    private void recomputePhotoMetrics() {
 
-    @Override
-    public void onScrollChanged(int deltaX, int deltaY) {
-        final BaseActivity activity = (BaseActivity) getActivity();
-        if (activity == null) {
-            return;
-        }
-
-        // Reposition the header bar -- it's normally anchored to the top of the content,
-        // but locks to the top of the screen on scroll
-        int scrollY = mScrollView.getScrollY();
-
-
-        if (!rateShowcaseShown && mRatingVisible && delayedScrollCheck) {
-            //Check for bottom scroll
-            //Showcase if bottom
-            View view = mScrollView.getChildAt(mScrollView.getChildCount() - 1);
-            int diff = (view.getBottom() - (mScrollView.getHeight() + mScrollView.getScrollY()));
-            if (diff <= 0) {
-                attemptToShowShowcaseForRatings();
-            }
-        }
-
-        newTop = Math.max(mPhotoHeightPixels, scrollY);
-
-        mHeaderBox.setTranslationY(newTop);
-        mReadPubButton.setTranslationY(newTop + mHeaderHeightPixels
-                - mReadPubButtonHeightPixels / 2);
-
-        float gapFillProgress = 1;
-        if (mHasPhoto) {
-            gapFillProgress = Math.min(Math.max(UIUtils.getProgress(scrollY,
-                    0,
-                    mPhotoHeightPixels), 0), 1);
-        }
-        ViewCompat.setElevation(mHeaderBox, gapFillProgress * mMaxHeaderElevation);
-        ViewCompat.setElevation(mReadPubButton, gapFillProgress * mMaxHeaderElevation
-                + mFABElevation);
-
-        // Move background photo (parallax effect)
-        mPhotoViewContainer.setTranslationY(scrollY * 0.3f);
-
-    }
-
-
-    private void recomputePhotoAndScrollingMetrics() {
-        mHeaderHeightPixels = mHeaderBox.getHeight();
-
-        mPhotoHeightPixels = 0;
+        int mPhotoHeightPixels = 0;
         if (mHasPhoto) {
             mPhotoHeightPixels = (int) (mPhotoViewContainer.getWidth() / PHOTO_ASPECT_RATIO);
             mPhotoHeightPixels = Math.min(mPhotoHeightPixels, mRootView.getHeight() * 2 / 3);
@@ -771,13 +677,6 @@ public class PublicationInfoFragment extends Fragment implements
             mPhotoViewContainer.setLayoutParams(lp);
         }
 
-        ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams)
-                mDetailsContainer.getLayoutParams();
-        if (mlp.topMargin != mHeaderHeightPixels + mPhotoHeightPixels) {
-            mlp.topMargin = mHeaderHeightPixels + mPhotoHeightPixels;
-            mDetailsContainer.setLayoutParams(mlp);
-        }
-        onScrollChanged(0, 0); // trigger scroll handling
     }
 
     private void setOrAnimateReadPubIcon(final ImageView imageView, PublicationState currentState,
@@ -794,12 +693,6 @@ public class PublicationInfoFragment extends Fragment implements
                 imageView.setAlpha(1f);
             }
         }
-        /*
-        if (imageView.getBackground() instanceof AnimationDrawable) {
-            AnimationDrawable frameAnimation = (AnimationDrawable) imageView.getBackground();
-            frameAnimation.stop();
-            imageView.setBackgroundResource(0);
-        }*/
 
         if (allowAnimate && currentState.equals(PublicationState.DOWNLOADING)) {
             int duration = getResources().getInteger(android.R.integer.config_shortAnimTime);
@@ -808,9 +701,8 @@ public class PublicationInfoFragment extends Fragment implements
             outAnimator.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    imageView.setImageDrawable(null);
-                    imageView.setBackgroundResource(imageResId);
-                    Drawable frameAnimation = imageView.getBackground();
+                    Drawable frameAnimation = ContextCompat.getDrawable(getActivity(), imageResId);
+                    imageView.setImageDrawable(frameAnimation);
                     if (frameAnimation instanceof AnimationDrawable) {
                         ((AnimationDrawable) frameAnimation).start();
                     }
@@ -837,7 +729,6 @@ public class PublicationInfoFragment extends Fragment implements
             outAnimator.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    imageView.setBackgroundResource(0);
                     imageView.setImageResource(imageResId);
                 }
             });
@@ -857,17 +748,18 @@ public class PublicationInfoFragment extends Fragment implements
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    imageView.setImageDrawable(null);
-                    imageView.setBackgroundResource(imageResId);
-                    AnimationDrawable frameAnimation = (AnimationDrawable) imageView.getBackground();
-                    frameAnimation.start();
+                    Drawable frameAnimation = ContextCompat.getDrawable(getActivity(), imageResId);
+                    imageView.setImageDrawable(frameAnimation);
+
+                    if (frameAnimation instanceof AnimationDrawable) {
+                        ((AnimationDrawable) frameAnimation).start();
+                    }
                 }
             });
         } else {
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    imageView.setBackgroundResource(0);
                     imageView.setImageResource(imageResId);
                 }
             });
@@ -887,7 +779,7 @@ public class PublicationInfoFragment extends Fragment implements
 
         public PublicationImagesAdapter(Context context) {
             this.context = context;
-            mImages = new ArrayList<ImageView>();
+            mImages = new ArrayList<>();
         }
 
         public void addImage(String url) {
@@ -913,7 +805,7 @@ public class PublicationInfoFragment extends Fragment implements
                                 mHandler.post(new Runnable() {
                                     @Override
                                     public void run() {
-                                        recomputePhotoAndScrollingMetrics();
+                                        recomputePhotoMetrics();
                                     }
                                 });
                                 return false;

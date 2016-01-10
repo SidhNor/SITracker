@@ -1,5 +1,12 @@
 package com.andrada.sitracker.ui.components;
 
+import android.content.Context;
+import android.util.AttributeSet;
+import android.view.View;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
+
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.IsNewItemTappedListener;
 import com.andrada.sitracker.db.beans.Publication;
@@ -13,13 +20,6 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
 import org.jetbrains.annotations.NotNull;
-
-import android.content.Context;
-import android.util.AttributeSet;
-import android.view.View;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 
 //TODO Make an abstract class that implements new item handling to reuse PublicationItemView
