@@ -1,17 +1,18 @@
 <!--
-  Copyright 2014 Gleb Godonoga.
-
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-
-      http://www.apache.org/licenses/LICENSE-2.0
-
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
+  ~
+  ~ Copyright 2016 Gleb Godonoga.
+  ~
+  ~  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~  distributed under the License is distributed on an "AS IS" BASIS,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  See the License for the specific language governing permissions and
+  ~  limitations under the License.
   -->
 
 <resources>
@@ -63,10 +64,8 @@
     <dimen name="publication_details_floating_width">500dp</dimen>
     <dimen name="publication_details_floating_height">650dp</dimen>
     <dimen name="publication_details_extra_space_bottom">48dp</dimen>
+    <dimen name="fab_margin">@dimen/keyline_1</dimen>
     <dimen name="keyline_2_pub_detail">@dimen/keyline_2</dimen>
-    <dimen name="read_pub_button_height">56dp</dimen>
-    <!-- including padding -->
-    <dimen name="read_pub_button_height_no_padding">40dp</dimen>
 
     <!-- Action Bar auto-hide-on-scroll behavior parameters -->
     <dimen name="action_bar_elevation">2dp</dimen>
