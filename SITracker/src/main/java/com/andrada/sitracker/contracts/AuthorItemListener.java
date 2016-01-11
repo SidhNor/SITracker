@@ -17,10 +17,11 @@
 
 package com.andrada.sitracker.contracts;
 
-public interface AuthorUpdateStatusListener {
-    void onAuthorsUpdated();
+import com.andrada.sitracker.ui.fragment.adapters.AuthorsAdapter;
 
-    void onAuthorsUpdateFailed();
+public interface AuthorItemListener {
 
-    void onAuthorsUpToDate();
+    void onAuthorItemClick();
+
+    void onAuthorItemLongClick(AuthorsAdapter.ViewHolder viewHolder);
 }

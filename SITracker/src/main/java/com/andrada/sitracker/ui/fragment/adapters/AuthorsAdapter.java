@@ -1,39 +1,44 @@
 /*
- * Copyright 2014 Gleb Godonoga.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Copyright 2016 Gleb Godonoga.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package com.andrada.sitracker.ui.fragment.adapters;
 
 import android.content.Context;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 
+import com.andrada.sitracker.contracts.AuthorItemListener;
 import com.andrada.sitracker.contracts.IsNewItemTappedListener;
 import com.andrada.sitracker.contracts.SIPrefs_;
 import com.andrada.sitracker.db.beans.Author;
 import com.andrada.sitracker.db.dao.AuthorDao;
 import com.andrada.sitracker.db.manager.SiDBHelper;
 import com.andrada.sitracker.events.AuthorMarkedAsReadEvent;
+import com.andrada.sitracker.events.AuthorSelectedEvent;
 import com.andrada.sitracker.ui.components.AuthorItemView;
 import com.andrada.sitracker.ui.components.AuthorItemView_;
+import com.andrada.sitracker.ui.widget.AuthorMultiSelector;
 import com.andrada.sitracker.util.AnalyticsHelper;
-import com.andrada.sitracker.util.UIUtils;
+import com.bignerdranch.android.multiselector.MultiSelectorBindingHolder;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Background;
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.OrmLiteDao;
 import org.androidannotations.annotations.RootContext;
@@ -42,6 +47,7 @@ import org.androidannotations.annotations.sharedpreferences.Pref;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.ref.WeakReference;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +56,7 @@ import java.util.concurrent.Callable;
 import de.greenrobot.event.EventBus;
 
 @EBean
-public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListener {
+public class AuthorsAdapter extends RecyclerView.Adapter<AuthorsAdapter.ViewHolder> implements IsNewItemTappedListener {
 
     List<Author> authors = new ArrayList<Author>();
     long mNewAuthors;
@@ -63,22 +69,29 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
 
     @RootContext
     Context context;
-    private int mSelectedItem = 0;
 
-    private long mSelectedAuthorId = -1;
+    /**
+     * This is a singletone bean
+     */
+    @Bean
+    AuthorMultiSelector mMultiSelector;
 
-    private boolean isTablet = false;
+    WeakReference<AuthorItemListener> mAuthorItemListener;
 
     @AfterInject
     void initAdapter() {
+        setHasStableIds(true);
         reloadAuthors();
-        isTablet = UIUtils.isTablet(context);
     }
 
     public void updateContext(Context context) {
         this.context = context;
     }
 
+    public void setAuthorItemListener(AuthorItemListener mAuthorItemListener) {
+        this.mAuthorItemListener = new WeakReference<>(mAuthorItemListener);
+        ;
+    }
 
     /**
      * Reloads authors in background posting change set notification to UI Thread
@@ -94,9 +107,6 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
                 newList = authorDao.getAllAuthorsSortedNew();
             }
             mNewAuthors = authorDao.getNewAuthorsCount();
-            if (mSelectedAuthorId >= 0) {
-                setSelectedItem(mSelectedAuthorId);
-            }
             postDataSetChanged(newList);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -110,36 +120,35 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
         notifyDataSetChanged();
     }
 
-
-    @Override
-    public int getCount() {
-        return authors.size();
-    }
-
-    @Override
-    public Object getItem(int position) {
+    public Author getItem(int position) {
         return authors.get(position);
     }
 
     @Override
-    public long getItemId(int position) {
-        return authors.get(position).getId();
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        ViewHolder vh = new ViewHolder(AuthorItemView_.build(context));
+        vh.view.setListener(this);
+        return vh;
     }
 
-    @Nullable
     @Override
-    public View getView(int position, @Nullable View convertView, ViewGroup parent) {
-        AuthorItemView authorsItemView;
-        if (convertView == null) {
-            authorsItemView = AuthorItemView_.build(context);
-            authorsItemView.setListener(this);
-        } else {
-            authorsItemView = (AuthorItemView) convertView;
-        }
+    public void onBindViewHolder(ViewHolder holder, int position) {
         if (position < authors.size()) {
-            authorsItemView.bind(authors.get(position), isTablet && position == mSelectedItem);
+            holder.view.bind(authors.get(position));
         }
-        return authorsItemView;
+    }
+
+    @Override
+    public int getItemCount() {
+        return authors.size();
+    }
+
+    @Override
+    public long getItemId(int position) {
+        if (position > authors.size() - 1) {
+            return -1;
+        }
+        return authors.get(position).getId();
     }
 
     @Override
@@ -190,50 +199,11 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
             AnalyticsHelper.getInstance().sendException("Author Remove thread: ", e);
         }
 
-        boolean removingCurrentlySelected = false;
         List<Author> authorCopy = new ArrayList<Author>(authors);
         for (Long anAuthorToRemove : authorsToRemove) {
-            if (anAuthorToRemove == mSelectedAuthorId) {
-                removingCurrentlySelected = true;
-            }
             authorCopy.remove(getAuthorById(anAuthorToRemove));
         }
-        if (removingCurrentlySelected) {
-            //Try select the first one
-            setSelectedItem(getFirstAuthorId());
-        } else {
-            setSelectedItem(mSelectedAuthorId);
-        }
         postDataSetChanged(authorCopy);
-    }
-
-    public long getFirstAuthorId() {
-        if (authors.size() > 0) {
-            return authors.get(0).getId();
-        }
-        return -1;
-    }
-
-    public void setSelectedItem(long selectedItemId) {
-        int potentialSelectedItem = getItemPositionByAuthorId(selectedItemId);
-        long potentialAuthorId = selectedItemId;
-        if (potentialSelectedItem == -1) {
-            potentialSelectedItem = 0;
-            potentialAuthorId = getFirstAuthorId();
-        }
-        this.mSelectedAuthorId = potentialAuthorId;
-        this.mSelectedItem = potentialSelectedItem;
-    }
-
-    public long getSelectedAuthorId() {
-        return this.mSelectedAuthorId;
-    }
-
-    @Nullable
-    public Author getCurrentlySelectedAuthor() {
-        if (mSelectedItem < authors.size() && mSelectedItem >= 0)
-            return authors.get(mSelectedItem);
-        return null;
     }
 
     @Nullable
@@ -246,12 +216,84 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
         return null;
     }
 
-    private int getItemPositionByAuthorId(long authorId) {
+    public int getItemPositionByAuthorId(long authorId) {
         for (int i = 0; i < authors.size(); i++) {
             if (authors.get(i).getId() == authorId) {
                 return i;
             }
         }
         return -1;
+    }
+
+    public class ViewHolder extends MultiSelectorBindingHolder implements View.OnClickListener, View.OnLongClickListener {
+
+        private boolean mIsSelectable;
+
+        public AuthorItemView getView() {
+            return view;
+        }
+
+        final AuthorItemView view;
+
+        public ViewHolder(AuthorItemView itemView) {
+            super(itemView, mMultiSelector);
+            view = itemView;
+            itemView.setOnClickListener(this);
+            itemView.setLongClickable(true);
+            itemView.setOnLongClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+
+            if (mMultiSelector.tapSelection(this)) {
+                if (mAuthorItemListener != null && mAuthorItemListener.get() != null) {
+                    mAuthorItemListener.get().onAuthorItemClick();
+                }
+                // Selection is on, so tapSelection() toggled item selection.
+            } else {
+                // Selection is off; handle normal item click here.
+                Author auth = getItem(getAdapterPosition());
+                EventBus.getDefault().post(new AuthorSelectedEvent(auth.getId(), auth.getName()));
+            }
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            if (mAuthorItemListener != null && mAuthorItemListener.get() != null) {
+                mAuthorItemListener.get().onAuthorItemLongClick(this);
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public void setSelectable(boolean isSelectable) {
+            boolean changed = isSelectable != this.mIsSelectable;
+            this.mIsSelectable = isSelectable;
+            if (changed && !isSelectable) {
+                view.setChecked(false);
+            }
+
+        }
+
+        @Override
+        public boolean isSelectable() {
+            return this.mIsSelectable;
+        }
+
+        @Override
+        public void setActivated(boolean activated) {
+            if (mIsSelectable) {
+                view.setChecked(activated);
+            } else if (!activated) {
+                view.setChecked(false);
+            }
+        }
+
+        @Override
+        public boolean isActivated() {
+            return view.isChecked();
+        }
     }
 }

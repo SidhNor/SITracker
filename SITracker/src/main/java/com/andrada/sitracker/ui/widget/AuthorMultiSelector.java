@@ -15,12 +15,13 @@
  *  limitations under the License.
  */
 
-package com.andrada.sitracker.contracts;
+package com.andrada.sitracker.ui.widget;
 
-public interface AuthorUpdateStatusListener {
-    void onAuthorsUpdated();
+import com.bignerdranch.android.multiselector.MultiSelector;
 
-    void onAuthorsUpdateFailed();
+import org.androidannotations.annotations.EBean;
 
-    void onAuthorsUpToDate();
+@EBean(scope = EBean.Scope.Singleton)
+public class AuthorMultiSelector extends MultiSelector {
+
 }

@@ -15,12 +15,22 @@
  *  limitations under the License.
  */
 
-package com.andrada.sitracker.contracts;
+package com.andrada.sitracker.tasks.messages;
 
-public interface AuthorUpdateStatusListener {
-    void onAuthorsUpdated();
+import org.jetbrains.annotations.NotNull;
 
-    void onAuthorsUpdateFailed();
+public class AuthorsUpToDateIntentMessage extends BaseIntentMessage {
 
-    void onAuthorsUpToDate();
+    public static final String UP_TO_DATE_MESSAGE = "com.andrada.sitracker.UP_TO_DATE_ACTION";
+
+    public AuthorsUpToDateIntentMessage() {
+        super();
+        this.setAction(UP_TO_DATE_MESSAGE);
+    }
+
+    @NotNull
+    public static String getMessageName() {
+        return UP_TO_DATE_MESSAGE;
+    }
+
 }
