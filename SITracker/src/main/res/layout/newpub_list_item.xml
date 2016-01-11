@@ -6,6 +6,7 @@
     android:baselineAligned="false"
     android:minHeight="72dp"
     android:orientation="horizontal"
+    android:background="?android:attr/selectableItemBackground"
     tools:context=".ui.SiMainActivity">
 
     <RelativeLayout

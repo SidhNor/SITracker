@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Gleb Godonoga.
+ * Copyright 2016 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,11 @@
 
 package com.andrada.sitracker.ui.fragment.adapters;
 
+import android.content.Context;
+import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.view.ViewGroup;
+
 import com.andrada.sitracker.contracts.IsNewItemTappedListener;
 import com.andrada.sitracker.contracts.SIPrefs_;
 import com.andrada.sitracker.db.beans.Publication;
@@ -31,17 +36,12 @@ import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.sharedpreferences.Pref;
 
-import android.content.Context;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 @EBean
-public class NewPubsAdapter extends BaseAdapter implements IsNewItemTappedListener {
+public class NewPubsAdapter extends RecyclerView.Adapter<NewPubsAdapter.ViewHolder> implements IsNewItemTappedListener {
 
     private List<Publication> publications = new ArrayList<Publication>();
 
@@ -78,16 +78,15 @@ public class NewPubsAdapter extends BaseAdapter implements IsNewItemTappedListen
     }
 
     @Override
-    public int getCount() {
-        return publications.size();
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        return new ViewHolder(NewPubItemView_.build(context));
     }
 
     @Override
-    public Object getItem(int position) {
-        if (position >= 0 && position < publications.size()) {
-            return publications.get(position);
+    public void onBindViewHolder(ViewHolder holder, int position) {
+        if (position < publications.size()) {
+            holder.view.bind(publications.get(position), shouldShowImages);
         }
-        return null;
     }
 
     @Override
@@ -100,27 +99,29 @@ public class NewPubsAdapter extends BaseAdapter implements IsNewItemTappedListen
     }
 
     @Override
-    public boolean hasStableIds() {
-        return true;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        NewPubItemView newPubItemView;
-        if (convertView == null) {
-            newPubItemView = NewPubItemView_.build(context);
-            newPubItemView.setListener(this);
-        } else {
-            newPubItemView = (NewPubItemView) convertView;
-        }
-        if (position < publications.size()) {
-            newPubItemView.bind(publications.get(position), shouldShowImages);
-        }
-        return newPubItemView;
+    public int getItemCount() {
+        return publications.size();
     }
 
     @Override
     public void onIsNewItemTapped(View checkBox) {
         //TODO make item not new, reload stuff
+    }
+
+    public Publication getItemAt(int position) {
+        if (position >= 0 && position < publications.size()) {
+            return publications.get(position);
+        }
+        return null;
+    }
+
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+
+        NewPubItemView view;
+
+        public ViewHolder(NewPubItemView itemView) {
+            super(itemView);
+            view = itemView;
+        }
     }
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <!--
-  Copyright 2014 Gleb Godonoga.
+  Copyright 2016 Gleb Godonoga.
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
   limitations under the License.
   -->
 
-<com.andrada.sitracker.ui.widget.ObservableScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:plus="http://schemas.android.com/apk/lib/com.google.android.gms.plus"
     xmlns:sitracker="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -29,11 +29,93 @@
     android:overScrollMode="never"
     tools:ignore="RtlHardcoded">
 
-    <FrameLayout
-        android:id="@+id/scroll_view_child"
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:clipChildren="false">
+        android:theme="@style/ActionBarThemeOverlay"
+        android:fitsSystemWindows="true">
+
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/collapsing_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            sitracker:layout_scrollFlags="scroll|exitUntilCollapsed"
+            android:fitsSystemWindows="true"
+            sitracker:contentScrim="?attr/colorPrimary"
+            sitracker:expandedTitleMarginStart="48dp"
+            sitracker:expandedTitleMarginEnd="64dp">
+
+            <!-- Background photo -->
+            <FrameLayout
+                android:id="@+id/pub_photo_container"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:foreground="@drawable/photo_banner_scrim"
+                sitracker:layout_collapseMode="parallax">
+
+                <android.support.v4.view.ViewPager
+                    android:id="@+id/pager"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <com.viewpagerindicator.CirclePageIndicator
+                    android:id="@+id/pagerIndicators"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginBottom="@dimen/content_padding_normal"
+                    android:padding="2dp" />
+            </FrameLayout>
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar_actionbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                sitracker:popupTheme="@style/ActionBarPopupThemeOverlay"
+                sitracker:layout_collapseMode="pin" />
+
+        </android.support.design.widget.CollapsingToolbarLayout>
+        <!-- Title/subtitle bar (floating; position determined at run time as the content view scrolls) -->
+        <LinearLayout
+            android:id="@+id/header_pub"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/theme_primary"
+            android:orientation="vertical"
+            android:paddingTop="@dimen/element_spacing_normal"
+            android:paddingBottom="@dimen/content_padding_normal"
+            sitracker:layout_collapseMode="pin">
+
+            <!-- Publication title -->
+            <TextView
+                android:id="@+id/pub_title"
+                style="@style/PublicationDetail.Title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/keyline_2_pub_detail"
+                android:paddingRight="@dimen/keyline_1"
+                android:text="@string/designtime_placeholder_short"
+                android:transitionName="publicationTitle" />
+
+            <!-- Publication subtitle -->
+            <TextView
+                android:id="@+id/pub_subtitle"
+                style="@style/PublicationDetail.SubTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/keyline_2_pub_detail"
+                android:paddingRight="@dimen/keyline_1"
+                android:text="@string/designtime_placeholder_medium" />
+        </LinearLayout>
+
+    </android.support.design.widget.AppBarLayout>
+
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        sitracker:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
             android:id="@+id/details_container"
@@ -84,67 +166,18 @@
             <include layout="@layout/include_rating_block" />
 
         </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
 
-        <!-- Background photo -->
-        <FrameLayout
-            android:id="@+id/pub_photo_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:foreground="@drawable/photo_banner_scrim">
+    <!-- FAB-->
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/read_pub_button"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_marginLeft="@dimen/keyline_1_minus_8dp"
+        android:contentDescription="@string/download_and_read"
+        sitracker:layout_anchor="@id/appbar"
+        sitracker:layout_anchorGravity="bottom|left|start"
+        sitracker:fabSize="@integer/fab_size"
+        android:src="@drawable/read_pub_button_icon_unchecked" />
 
-            <android.support.v4.view.ViewPager
-                android:id="@+id/pager"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-            <com.viewpagerindicator.CirclePageIndicator
-                android:id="@+id/pagerIndicators"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:layout_marginBottom="@dimen/content_padding_normal"
-                android:padding="2dp" />
-        </FrameLayout>
-
-        <!-- Title/subtitle bar (floating; position determined at run time as the content view scrolls) -->
-        <LinearLayout
-            android:id="@+id/header_pub"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clipChildren="false"
-            android:clipToPadding="false"
-            android:orientation="vertical"
-            android:background="@color/theme_primary"
-            android:paddingBottom="@dimen/content_padding_normal">
-
-            <include layout="@layout/toolbar_actionbar" />
-
-            <!-- Publication title -->
-            <TextView
-                android:id="@+id/pub_title"
-                style="@style/PublicationDetail.Title"
-                android:transitionName="publicationTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingLeft="@dimen/keyline_2_pub_detail"
-                android:paddingRight="@dimen/keyline_1"
-                android:text="@string/designtime_placeholder_short" />
-
-            <!-- Publication subtitle -->
-            <TextView
-                android:id="@+id/pub_subtitle"
-                style="@style/PublicationDetail.SubTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingLeft="@dimen/keyline_2_pub_detail"
-                android:paddingRight="@dimen/keyline_1"
-                android:text="@string/designtime_placeholder_medium" />
-
-
-        </LinearLayout>
-
-        <!-- FAB -->
-        <include layout="@layout/include_read_publication_fab" />
-
-    </FrameLayout>
-</com.andrada.sitracker.ui.widget.ObservableScrollView>
+</android.support.design.widget.CoordinatorLayout>

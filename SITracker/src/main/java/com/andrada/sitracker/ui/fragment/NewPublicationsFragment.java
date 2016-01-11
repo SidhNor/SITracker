@@ -17,31 +17,33 @@
 package com.andrada.sitracker.ui.fragment;
 
 
+import android.app.Fragment;
+import android.content.Intent;
+import android.support.v4.app.ActivityCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.view.ViewStub;
+
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.AppUriContract;
 import com.andrada.sitracker.db.beans.Publication;
 import com.andrada.sitracker.ui.BaseActivity;
 import com.andrada.sitracker.ui.PublicationDetailsActivity;
 import com.andrada.sitracker.ui.fragment.adapters.NewPubsAdapter;
-import com.andrada.sitracker.util.NavDrawerManager;
+import com.andrada.sitracker.ui.widget.DividerItemDecoration;
+import com.andrada.sitracker.ui.widget.ItemClickSupport;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.ItemClick;
 import org.androidannotations.annotations.ViewById;
 
-import android.content.Intent;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.view.ViewCompat;
-import android.view.ViewStub;
-import android.widget.ListView;
-
 @EFragment(R.layout.fragment_newpubs)
-public class NewPublicationsFragment extends BaseListFragment {
+public class NewPublicationsFragment extends Fragment {
 
     @ViewById(R.id.new_pubs_list)
-    ListView list;
+    RecyclerView recyclerView;
 
     @ViewById
     ViewStub empty;
@@ -54,31 +56,27 @@ public class NewPublicationsFragment extends BaseListFragment {
         super.onResume();
         ((BaseActivity)getActivity()).getActionBarToolbar().setTitle(getString(R.string.navdrawer_item_new_pubs));
         adapter.reloadNewPublications();
+        recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
+        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
         empty.setLayoutResource(R.layout.empty_new_pubs);
-        list.setEmptyView(empty);
+        //TODO update empty view
+        //list.setEmptyView(empty);
     }
 
     @AfterViews
     void bindAdapter() {
-        list.setAdapter(adapter);
+        recyclerView.setAdapter(adapter);
+        ItemClickSupport.addTo(recyclerView).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
+            @Override
+            public void onItemClick(RecyclerView parent, View view, int position, long id) {
+                Publication pub = adapter.getItemAt(position);
+                if (pub != null) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW,
+                            AppUriContract.buildPublicationUri(pub.getId()), getActivity(),
+                            PublicationDetailsActivity.class);
+                    ActivityCompat.startActivity(getActivity(), intent, null);
+                }
+            }
+        });
     }
-
-    @Override
-    public ListView getScrollingView() {
-        return list;
-    }
-
-    @ItemClick(R.id.new_pubs_list)
-    void listItemClick(Publication pub) {
-        Intent intent = new Intent(Intent.ACTION_VIEW,
-                AppUriContract.buildPublicationUri(pub.getId()), getActivity(),
-                PublicationDetailsActivity.class);
-        ActivityCompat.startActivity(getBaseActivity(), intent, null);
-    }
-
-    @Override
-    public boolean canSwipeRefreshChildScrollUp() {
-        return ViewCompat.canScrollVertically(list, -1);
-    }
-
 }

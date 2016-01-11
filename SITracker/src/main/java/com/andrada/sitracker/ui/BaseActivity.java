@@ -24,24 +24,23 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
-import android.support.v7.app.ActionBar;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
-import android.view.Menu;
 import android.view.MenuItem;
 
 import com.andrada.sitracker.BuildConfig;
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.events.AuthorsExported;
-import com.andrada.sitracker.ui.debug.DebugActionRunnerActivity;
 import com.andrada.sitracker.ui.fragment.AboutDialog;
 import com.andrada.sitracker.ui.fragment.AuthorsFragment;
 import com.andrada.sitracker.ui.fragment.AuthorsFragment_;
@@ -76,6 +75,9 @@ public abstract class BaseActivity extends AppCompatActivity implements
     private DrawerLayout mDrawerLayout;
     // Primary toolbar and drawer toggle
     private Toolbar mActionBarToolbar;
+
+    private AppBarLayout appBarLayout;
+
 
     private ExportAuthorsController mExportCtrl;
 
@@ -172,6 +174,9 @@ public abstract class BaseActivity extends AppCompatActivity implements
         if (mDrawerManager == null) {
             afterViews();
         }
+        if (appBarLayout == null) {
+            appBarLayout = (AppBarLayout) findViewById(R.id.appbar_layout);
+        }
     }
 
     @Override
@@ -199,10 +204,16 @@ public abstract class BaseActivity extends AppCompatActivity implements
         switch (item) {
             case R.id.navigation_item_my_authors:
                 AuthorsFragment authFrag = AuthorsFragment_.builder().build();
+                if (appBarLayout != null) {
+                    appBarLayout.setExpanded(true, true);
+                }
                 ActivityFragmentNavigator.switchMainFragmentInMainActivity(this, authFrag);
                 break;
             case R.id.navigation_item_new_pubs:
                 NewPublicationsFragment newPubsFrag = NewPublicationsFragment_.builder().build();
+                if (appBarLayout != null) {
+                    appBarLayout.setExpanded(true, true);
+                }
                 ActivityFragmentNavigator.switchMainFragmentInMainActivity(this, newPubsFrag);
                 break;
             case R.id.navigation_item_export:
