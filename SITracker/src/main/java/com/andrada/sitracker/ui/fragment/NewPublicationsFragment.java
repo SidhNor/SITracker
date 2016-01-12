@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Gleb Godonoga.
+ * Copyright 2016 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,11 +60,12 @@ public class NewPublicationsFragment extends Fragment {
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
         empty.setLayoutResource(R.layout.empty_new_pubs);
         //TODO update empty view
-        //list.setEmptyView(empty);
+        //recyclerView.setEmptyView(empty);
     }
 
     @AfterViews
     void bindAdapter() {
+        recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
         ItemClickSupport.addTo(recyclerView).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
             @Override

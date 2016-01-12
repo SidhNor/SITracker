@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Gleb Godonoga.
+ * Copyright 2016 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +17,17 @@
 package com.andrada.sitracker.ui;
 
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.IntentCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.Toolbar;
@@ -30,6 +35,10 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewAnimationUtils;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.SearchView;
@@ -82,9 +91,7 @@ public class SearchActivity extends BaseActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                navigateUpToFromChild(SearchActivity.this,
-                        IntentCompat.makeMainActivity(new ComponentName(SearchActivity.this,
-                                SiMainActivity_.class)));
+                dismiss(true);
             }
         });
 
@@ -98,8 +105,17 @@ public class SearchActivity extends BaseActivity {
         if (mSearchView != null) {
             mSearchView.setQuery(query, false);
         }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            doEnterAnim();
+        }
     }
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        overridePendingTransition(0, 0);
+    }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
@@ -142,7 +158,7 @@ public class SearchActivity extends BaseActivity {
                 view.setOnCloseListener(new SearchView.OnCloseListener() {
                     @Override
                     public boolean onClose() {
-                        finish();
+                        dismiss(false);
                         return false;
                     }
                 });
@@ -160,6 +176,107 @@ public class SearchActivity extends BaseActivity {
             }
         }
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        dismiss(true);
+    }
+
+    public void dismiss(boolean navigateUp) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            doExitAnim(navigateUp);
+        } else {
+            ActivityCompat.finishAfterTransition(this);
+        }
+    }
+
+    /**
+     * On Lollipop+ perform a circular reveal animation (an expanding circular mask) when showing
+     * the search panel.
+     */
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private void doEnterAnim() {
+        // Fade in a background scrim as this is a floating window. We could have used a
+        // translucent window background but this approach allows us to turn off window animation &
+        // overlap the fade with the reveal animation – making it feel snappier.
+        View scrim = findViewById(R.id.scrim);
+        scrim.animate()
+                .alpha(1f)
+                .setDuration(500L)
+                .setInterpolator(
+                        AnimationUtils.loadInterpolator(this, android.R.interpolator.fast_out_slow_in))
+                .start();
+
+        // Next perform the circular reveal on the search panel
+        final View searchPanel = findViewById(R.id.fragment_container);
+        if (searchPanel != null) {
+            // We use a view tree observer to set this up once the view is measured & laid out
+            searchPanel.getViewTreeObserver().addOnPreDrawListener(
+                    new ViewTreeObserver.OnPreDrawListener() {
+                        @Override
+                        public boolean onPreDraw() {
+                            searchPanel.getViewTreeObserver().removeOnPreDrawListener(this);
+                            // As the height will change once the initial suggestions are delivered by the
+                            // loader, we can't use the search panels height to calculate the final radius
+                            // so we fall back to it's parent to be safe
+                            int revealRadius = ((ViewGroup) searchPanel.getParent()).getHeight();
+                            // Center the animation on the top right of the panel i.e. near to the
+                            // search button which launched this screen.
+                            Animator show = ViewAnimationUtils.createCircularReveal(searchPanel,
+                                    searchPanel.getRight(), searchPanel.getTop(), 0f, revealRadius);
+                            show.setDuration(250L);
+                            show.setInterpolator(AnimationUtils.loadInterpolator(SearchActivity.this,
+                                    android.R.interpolator.fast_out_slow_in));
+                            show.start();
+                            return false;
+                        }
+                    });
+        }
+    }
+
+    /**
+     * On Lollipop+ perform a circular animation (a contracting circular mask) when hiding the
+     * search panel.
+     */
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private void doExitAnim(final boolean navigateUp) {
+        final View searchPanel = findViewById(R.id.fragment_container);
+        // Center the animation on the top right of the panel i.e. near to the search button which
+        // launched this screen. The starting radius therefore is the diagonal distance from the top
+        // right to the bottom left
+        int revealRadius = (int) Math.sqrt(Math.pow(searchPanel.getWidth(), 2)
+                + Math.pow(searchPanel.getHeight(), 2));
+        // Animating the radius to 0 produces the contracting effect
+        Animator shrink = ViewAnimationUtils.createCircularReveal(searchPanel,
+                searchPanel.getRight(), searchPanel.getTop(), revealRadius, 0f);
+        shrink.setDuration(200L);
+        shrink.setInterpolator(AnimationUtils.loadInterpolator(SearchActivity.this,
+                android.R.interpolator.fast_out_slow_in));
+        shrink.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                searchPanel.setVisibility(View.INVISIBLE);
+                if (navigateUp) {
+                    navigateUpToFromChild(SearchActivity.this,
+                            IntentCompat.makeMainActivity(new ComponentName(SearchActivity.this,
+                                    SiMainActivity_.class)));
+                } else {
+                    ActivityCompat.finishAfterTransition(SearchActivity.this);
+                }
+
+            }
+        });
+        shrink.start();
+
+        // We also animate out the translucent background at the same time.
+        findViewById(R.id.scrim).animate()
+                .alpha(0f)
+                .setDuration(200L)
+                .setInterpolator(
+                        AnimationUtils.loadInterpolator(SearchActivity.this,
+                                android.R.interpolator.fast_out_slow_in))
+                .start();
     }
 
     @Override

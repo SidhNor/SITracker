@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Gleb Godonoga.
+ * Copyright 2016 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -676,7 +676,6 @@ public class PublicationInfoFragment extends Fragment {
             lp.height = mPhotoHeightPixels;
             mPhotoViewContainer.setLayoutParams(lp);
         }
-
     }
 
     private void setOrAnimateReadPubIcon(final ImageView imageView, PublicationState currentState,

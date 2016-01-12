@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Gleb Godonoga.
+ * Copyright 2016 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -97,7 +97,7 @@ public class SamlibSeekSearchStrategyImpl implements SearchStrategy {
 
         Map<String, SearchedAuthor> hashAuthors = new HashMap<String, SearchedAuthor>();
 
-        long requestStart = new Date().getTime();
+        final long requestStart = new Date().getTime();
         final HttpRequest request = HttpRequest.get(new URL(url));
         //Tolerate 1 day
         request.getConnection().addRequestProperty("Cache-Control", "max-stale=" + MAX_STALE_CACHE);

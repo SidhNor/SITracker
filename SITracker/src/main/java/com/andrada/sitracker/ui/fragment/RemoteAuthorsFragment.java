@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Gleb Godonoga.
+ * Copyright 2016 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,12 +24,13 @@ import android.content.Loader;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.view.View;
-import android.widget.BaseAdapter;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -45,10 +46,11 @@ import com.andrada.sitracker.loader.AsyncTaskResult;
 import com.andrada.sitracker.loader.SamlibSearchLoader;
 import com.andrada.sitracker.tasks.AddAuthorTask;
 import com.andrada.sitracker.ui.BaseActivity;
-import com.andrada.sitracker.ui.components.CollectionView;
 import com.andrada.sitracker.ui.fragment.adapters.SearchResultsAdapter;
+import com.andrada.sitracker.ui.widget.GridSpacingItemDecoration;
 import com.andrada.sitracker.util.AnalyticsHelper;
 
+import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.UiThread;
@@ -74,7 +76,7 @@ public class RemoteAuthorsFragment extends Fragment implements
         }
     };
     @ViewById
-    CollectionView list;
+    RecyclerView recyclerView;
     @ViewById
     ProgressBar loading;
     @ViewById
@@ -89,10 +91,10 @@ public class RemoteAuthorsFragment extends Fragment implements
         EventBus.getDefault().cancelEventDelivery(event);
         if (event.authorUrl != null) {
             //Find author with this url
-            SearchedAuthor auth = adapter.getItemById(event.authorUrl);
-            if (auth != null) {
-                auth.setAdded(true);
-                ((BaseAdapter) list.getAdapter()).notifyDataSetChanged();
+            int pos = adapter.getItemPositionById(event.authorUrl);
+            if (pos != -1) {
+                adapter.getItem(pos).setAdded(true);
+                recyclerView.getAdapter().notifyItemChanged(pos);
             }
         }
         loading.setVisibility(View.GONE);
@@ -119,6 +121,14 @@ public class RemoteAuthorsFragment extends Fragment implements
         Snackbar.make(getView(), snackbarText, Snackbar.LENGTH_LONG).show();
     }
 
+    @AfterViews
+    public void addDecorators() {
+        final int displayCols = getResources().getInteger(R.integer.search_grid_columns);
+        final float padding = getResources().getDimension(R.dimen.search_grid_padding);
+        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), displayCols));
+        recyclerView.addItemDecoration(new GridSpacingItemDecoration(displayCols, (int) padding, true));
+    }
+
     @Override
     public void onAuthorSelected(SearchedAuthor author) {
         final SearchedAuthor authorToAdd = author;
@@ -140,8 +150,8 @@ public class RemoteAuthorsFragment extends Fragment implements
     }
 
     @UiThread(delay = 100)
-    void requestUpdateCollectionView(List<SearchedAuthor> data) {
-        updateCollectionView(data);
+    void requestUpdateRecyclerView(List<SearchedAuthor> data) {
+        updateRecyclerView(data);
     }
 
     public void requestQueryUpdate(String query, int searchType) {
@@ -178,50 +188,31 @@ public class RemoteAuthorsFragment extends Fragment implements
         LOGD(TAG, "Reloading search data");
         getLoaderManager().restartLoader(SamlibSearchLoader.SEARCH_TOKEN, mArguments, RemoteAuthorsFragment.this);
         emptyText.setVisibility(View.GONE);
-        list.setVisibility(View.GONE);
+        recyclerView.setVisibility(View.GONE);
         loading.setVisibility(View.VISIBLE);
     }
 
-    private void updateCollectionView(List<SearchedAuthor> data) {
+    private void updateRecyclerView(List<SearchedAuthor> data) {
         adapter.swapData(data);
-        LOGD(TAG, "Data has " + data.size() + " items. Will now update collection view.");
+        LOGD(TAG, "Data has " + data.size() + " items. Will now update recycler view.");
         int itemCount = data.size();
-        CollectionView.Inventory inv;
         if (itemCount == 0) {
             showEmptyView();
-            inv = new CollectionView.Inventory();
         } else {
             hideEmptyView();
-            inv = prepareInventory();
         }
-        list.setCollectionAdapter(adapter);
-        list.updateInventory(inv, true);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setAdapter(adapter);
 
-    }
-
-    private CollectionView.Inventory prepareInventory() {
-        LOGD(TAG, "Preparing collection view inventory.");
-        final int displayCols = getResources().getInteger(R.integer.search_grid_columns);
-        CollectionView.InventoryGroup group = new CollectionView.InventoryGroup(1000)
-                .setDisplayCols(displayCols)
-                .setShowHeader(false);
-        int dataIndex = -1;
-        while ((dataIndex + 1) < adapter.getCount()) {
-            ++dataIndex;
-            group.addItemWithCustomDataIndex(dataIndex);
-        }
-        CollectionView.Inventory inventory = new CollectionView.Inventory();
-        inventory.addGroup(group);
-        return inventory;
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Activity context) {
+        super.onAttach(context);
         if (adapter != null) {
             adapter.setCallbacks(this);
-            if (adapter.getCount() > 0) {
-                requestUpdateCollectionView(adapter.getData());
+            if (adapter.getItemCount() > 0) {
+                requestUpdateRecyclerView(adapter.getData());
             }
         }
     }
@@ -256,7 +247,7 @@ public class RemoteAuthorsFragment extends Fragment implements
     private void hideEmptyView() {
         emptyText.setVisibility(View.GONE);
         loading.setVisibility(View.GONE);
-        list.setVisibility(View.VISIBLE);
+        recyclerView.setVisibility(View.VISIBLE);
     }
 
     private void showEmptyView() {
@@ -269,13 +260,13 @@ public class RemoteAuthorsFragment extends Fragment implements
             // so don't show an empty view.
             emptyText.setText("");
             emptyText.setVisibility(View.VISIBLE);
-            list.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.VISIBLE);
             loading.setVisibility(View.GONE);
         } else {
             // Showing authors as a result of search. If blank - show no resuls
             emptyText.setText(R.string.empty_search_results);
             emptyText.setVisibility(View.VISIBLE);
-            list.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.VISIBLE);
             loading.setVisibility(View.GONE);
         }
     }
@@ -324,7 +315,7 @@ public class RemoteAuthorsFragment extends Fragment implements
                 snackbarText.setSpan(new ForegroundColorSpan(0xFFFF0000), 0, snackbarText.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 Snackbar.make(getView(), snackbarText, Snackbar.LENGTH_SHORT).show();
             }
-            updateCollectionView(data.getResult());
+            updateRecyclerView(data.getResult());
         }
     }
 

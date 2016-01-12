@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Gleb Godonoga.
+ * Copyright 2016 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,13 @@
 package com.andrada.sitracker.ui.fragment.adapters;
 
 import android.content.Context;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.andrada.sitracker.db.beans.SearchedAuthor;
 import com.andrada.sitracker.db.dao.AuthorDao;
 import com.andrada.sitracker.db.manager.SiDBHelper;
-import com.andrada.sitracker.ui.components.CollectionViewCallbacks;
 import com.andrada.sitracker.ui.components.SearchAuthorItemView;
 import com.andrada.sitracker.ui.components.SearchAuthorItemView_;
 import com.andrada.sitracker.util.SamlibPageHelper;
@@ -41,7 +41,7 @@ import java.util.List;
 import static com.andrada.sitracker.util.LogUtils.LOGW;
 
 @EBean
-public class SearchResultsAdapter implements CollectionViewCallbacks {
+public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdapter.ViewHolder> {
 
     @RootContext
     Context context;
@@ -49,7 +49,7 @@ public class SearchResultsAdapter implements CollectionViewCallbacks {
     @OrmLiteDao(helper = SiDBHelper.class)
     AuthorDao authorDao;
 
-    private List<SearchedAuthor> mData = new ArrayList<SearchedAuthor>();
+    private List<SearchedAuthor> mData = new ArrayList<>();
 
     private Callbacks mCallbacks = null;
 
@@ -75,49 +75,33 @@ public class SearchResultsAdapter implements CollectionViewCallbacks {
         }
     }
 
-    public int getCount() {
-        return mData.size();
-    }
-
-    public Object getItem(int position) {
+    public SearchedAuthor getItem(int position) {
         return mData.get(position);
     }
 
-    public SearchedAuthor getItemById(String id) {
-        for (SearchedAuthor auth : mData) {
-            if (auth.getAuthorUrl().equals(id)) {
-                return auth;
+    public int getItemPositionById(String id) {
+        for (int i = 0; i < mData.size(); i++) {
+            if (mData.get(i).getAuthorUrl().equals(id)) {
+                return i;
             }
         }
-        return null;
+        return -1;
     }
 
     public List<SearchedAuthor> getData() {
-        return new ArrayList<SearchedAuthor>(mData);
-    }
-
-
-    @Override
-    public View newCollectionHeaderView(Context context, ViewGroup parent) {
-        return null;
+        return new ArrayList<>(mData);
     }
 
     @Override
-    public void bindCollectionHeaderView(Context context, View view, int groupId, String groupLabel) {
-        //We don't have headers
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        return new ViewHolder(SearchAuthorItemView_.build(context));
     }
 
     @Override
-    public View newCollectionItemView(Context context, int groupId, ViewGroup parent) {
-        return SearchAuthorItemView_.build(context);
-    }
-
-    @Override
-    public void bindCollectionItemView(Context context, View view, int groupId, int indexInGroup, int dataIndex, Object tag) {
-        SearchAuthorItemView authView = (SearchAuthorItemView) view;
-        if (dataIndex < getCount()) {
-            final SearchedAuthor auth = (SearchedAuthor) getItem(dataIndex);
-            authView.bind(auth, new View.OnClickListener() {
+    public void onBindViewHolder(ViewHolder holder, int position) {
+        if (position < getItemCount()) {
+            final SearchedAuthor auth = getItem(position);
+            holder.view.bind(auth, new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     mCallbacks.onAuthorSelected(auth);
@@ -126,7 +110,22 @@ public class SearchResultsAdapter implements CollectionViewCallbacks {
         }
     }
 
+    @Override
+    public int getItemCount() {
+        return mData.size();
+    }
+
     public interface Callbacks {
-        public void onAuthorSelected(SearchedAuthor author);
+        void onAuthorSelected(SearchedAuthor author);
+    }
+
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+
+        SearchAuthorItemView view;
+
+        public ViewHolder(SearchAuthorItemView itemView) {
+            super(itemView);
+            view = itemView;
+        }
     }
 }
