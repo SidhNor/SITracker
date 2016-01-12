@@ -20,14 +20,12 @@
 
     <dimen name="divider_margin_top">4dp</dimen>
     <dimen name="divider_margin_bottom">4dp</dimen>
-    <dimen name="crouton_corner_radius">5dp</dimen>
     <dimen name="publication_pixel_size">56dp</dimen>
 
     <dimen name="default_grid_margin">8dp</dimen>
     <dimen name="text_vertical_spacing">4dp</dimen>
     <dimen name="element_spacing_normal">8dp</dimen>
     <dimen name="content_padding_normal">16dp</dimen>
-    <dimen name="author_fragment_width">300dp</dimen>
     <dimen name="publication_fragment_width">360dp</dimen>
     <dimen name="import_activity_spacing">0dp</dimen>
 
@@ -65,22 +63,12 @@
     <dimen name="fab_margin">@dimen/keyline_1</dimen>
     <dimen name="keyline_2_pub_detail">@dimen/keyline_2</dimen>
 
-    <!-- Action Bar auto-hide-on-scroll behavior parameters -->
-    <dimen name="action_bar_elevation">2dp</dimen>
-    <dimen name="action_bar_auto_hide_min_y">152dp</dimen>
-    <dimen name="action_bar_auto_hide_sensivity">48dp</dimen>
-
-    <dimen name="swipe_refresh_progress_bar_start_margin">-40dp</dimen>
-    <dimen name="swipe_refresh_progress_bar_end_margin">16dp</dimen>
-
-
     <!-- Showcase text dimensions -->
     <dimen name="showcase_title_size">24sp</dimen>
     <dimen name="showcase_detail_size">18sp</dimen>
     <dimen name="showcase_title_size_overlay">24sp</dimen>
     <dimen name="showcase_detail_size_overlay">18sp</dimen>
     <dimen name="text_padding">16dp</dimen>
-    <dimen name="navdrawer_width">260dp</dimen>
 
 
     <dimen name="filterbar_height">48dp</dimen>
@@ -91,8 +79,7 @@
 
     <dimen name="headerbar_elevation">2dp</dimen>
     <dimen name="floating_action_button_margin">16dp</dimen>
-    <dimen name="fab_elevation">8dp</dimen>
-    <dimen name="publication_detail_max_header_elevation">@dimen/headerbar_elevation</dimen>
+    <dimen name="fab_elevation">6dp</dimen>
 
 </resources>
 
