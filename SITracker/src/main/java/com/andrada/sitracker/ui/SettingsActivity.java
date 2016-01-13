@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Gleb Godonoga.
+ * Copyright 2016 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,26 +16,6 @@
 
 package com.andrada.sitracker.ui;
 
-import com.google.android.gms.analytics.GoogleAnalytics;
-
-import com.afollestad.materialdialogs.MaterialDialog;
-import com.andrada.sitracker.Constants;
-import com.andrada.sitracker.R;
-import com.andrada.sitracker.contracts.SIPrefs_;
-import com.andrada.sitracker.events.AuthorSortMethodChanged;
-import com.andrada.sitracker.tasks.ClearPublicationCacheTask;
-import com.andrada.sitracker.tasks.UpdateAuthorsTask_;
-import com.andrada.sitracker.util.AnalyticsHelper;
-import com.andrada.sitracker.util.ShareHelper;
-
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.SystemService;
-import org.androidannotations.annotations.sharedpreferences.Pref;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -48,6 +28,25 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.andrada.sitracker.Constants;
+import com.andrada.sitracker.R;
+import com.andrada.sitracker.contracts.SIPrefs_;
+import com.andrada.sitracker.events.AuthorSortMethodChanged;
+import com.andrada.sitracker.tasks.ClearPublicationCacheTask;
+import com.andrada.sitracker.tasks.UpdateAuthorsTask_;
+import com.andrada.sitracker.util.AnalyticsHelper;
+import com.andrada.sitracker.util.ShareHelper;
+import com.google.android.gms.analytics.GoogleAnalytics;
+
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.SystemService;
+import org.androidannotations.annotations.sharedpreferences.Pref;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import de.greenrobot.event.EventBus;
 
@@ -98,6 +97,7 @@ public class SettingsActivity extends BaseActivity {
         private final Preference.OnPreferenceClickListener dirChooserClickListener = new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
+                //TODO change to directory chooser fragment
                 final Intent chooserIntent = new Intent(getActivity().getApplicationContext(), DirectoryChooserActivity.class);
                 chooserIntent.putExtra(DirectoryChooserActivity.EXTRA_INITIAL_DIRECTORY, prefs.downloadFolder().get());
                 chooserIntent.putExtra(DirectoryChooserActivity.EXTRA_NEW_DIR_NAME, getResources().getString(R.string.book_folder_name));

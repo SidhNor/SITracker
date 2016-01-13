@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  ~
   ~ Copyright 2016 Gleb Godonoga.
   ~
-  ~  Licensed under the Apache License, Version 2.0 (the "License");
-  ~  you may not use this file except in compliance with the License.
-  ~  You may obtain a copy of the License at
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
   ~
   ~     http://www.apache.org/licenses/LICENSE-2.0
   ~
-  ~  Unless required by applicable law or agreed to in writing, software
-  ~  distributed under the License is distributed on an "AS IS" BASIS,
-  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~  See the License for the specific language governing permissions and
-  ~  limitations under the License.
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
   -->
 
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
@@ -156,7 +155,8 @@
     <string name="author_import_processed_crouton_message">Added: %1$d</string>
     <string name="author_import_failed_crouton_message">Duplicate or failed: %1$d</string>
     <string name="fp_cancel_label">Cancel</string>
-    <string name="fp_confirm_label">Confirm</string>
+    <string name="fp_confirm_label">SELECT</string>
+    <string name="fp_new_folder">New</string>
     <string name="fp_selected_folder_label">Selected folder:</string>
     <string name="fp_selected_file_label">Selected file:</string>
     <string name="fp_create_folder_label">Create folder</string>

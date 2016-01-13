@@ -1,11 +1,11 @@
 /*
- * Copyright 2014 Gleb Godonoga.
+ * Copyright 2016 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -129,6 +129,7 @@ public class ImportAuthorsActivity extends BaseActivity {
     @Click(R.id.chooseFileButton)
     void chooseFileClicked() {
         //Make sure the authors are opened
+        //TODO change to directory chooser fragment
         final Intent chooserIntent = new Intent(getApplicationContext(), DirectoryChooserActivity.class);
         chooserIntent.putExtra(DirectoryChooserActivity.EXTRA_NEW_DIR_NAME, "Books");
         chooserIntent.putExtra(DirectoryChooserActivity.EXTRA_IS_DIRECTORY_CHOOSER, false);

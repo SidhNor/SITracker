@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Gleb Godonoga.
+ * Copyright 2016 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,17 @@
 
 package com.andrada.sitracker.ui;
 
+import android.app.Activity;
+
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.tasks.ExportAuthorsTask;
 import com.andrada.sitracker.ui.fragment.DirectoryChooserFragment;
 import com.andrada.sitracker.util.AnalyticsHelper;
 
-import android.app.Activity;
-import android.app.DialogFragment;
-
 public class ExportAuthorsController implements DirectoryChooserFragment.OnFragmentInteractionListener {
 
-    private DialogFragment mDialog;
+    private DirectoryChooserFragment mDialog;
     private Activity mActivity;
 
     public ExportAuthorsController(Activity context) {
