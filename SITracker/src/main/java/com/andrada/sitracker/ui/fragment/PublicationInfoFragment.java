@@ -111,7 +111,7 @@ import static com.andrada.sitracker.util.LogUtils.LOGI;
 
 @EFragment(R.layout.fragment_pub_details)
 @OptionsMenu(R.menu.publication_info_menu)
-public class PublicationInfoFragment extends Fragment {
+public class PublicationInfoFragment extends BaseFragment {
 
     private static final float PHOTO_ASPECT_RATIO = 1.7777777f;
 

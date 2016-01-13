@@ -27,7 +27,6 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
@@ -38,27 +37,27 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewStub;
 
+import com.afollestad.materialcab.MaterialCab;
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.AuthorItemListener;
 import com.andrada.sitracker.contracts.AuthorUpdateStatusListener;
+import com.andrada.sitracker.contracts.OnBackAware;
+import com.andrada.sitracker.db.beans.Author;
 import com.andrada.sitracker.events.AuthorCheckedEvent;
+import com.andrada.sitracker.events.AuthorSelectedEvent;
 import com.andrada.sitracker.events.AuthorSortMethodChanged;
 import com.andrada.sitracker.events.BackUpRestoredEvent;
 import com.andrada.sitracker.events.PublicationMarkedAsReadEvent;
 import com.andrada.sitracker.tasks.UpdateAuthorsTask_;
 import com.andrada.sitracker.tasks.filters.UpdateStatusMessageFilter;
 import com.andrada.sitracker.tasks.receivers.UpdateStatusReceiver;
-import com.andrada.sitracker.ui.BaseActivity;
 import com.andrada.sitracker.ui.SearchActivity_;
 import com.andrada.sitracker.ui.fragment.adapters.AuthorsAdapter;
-import com.andrada.sitracker.ui.widget.AuthorMultiSelector;
 import com.andrada.sitracker.ui.widget.DividerItemDecoration;
 import com.andrada.sitracker.util.AnalyticsHelper;
 import com.andrada.sitracker.util.UpdateServiceHelper;
-import com.bignerdranch.android.multiselector.ModalMultiSelectorCallback;
 
-import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
@@ -70,6 +69,7 @@ import org.androidannotations.annotations.ViewById;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Field;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Timer;
@@ -82,7 +82,7 @@ import static com.andrada.sitracker.util.LogUtils.LOGI;
 @EFragment(R.layout.fragment_myauthors)
 @OptionsMenu(R.menu.authors_menu)
 public class AuthorsFragment extends BaseListFragment implements
-        AuthorUpdateStatusListener, AuthorItemListener {
+        AuthorUpdateStatusListener, AuthorItemListener, MaterialCab.Callback, OnBackAware {
 
     private static final String TAG = "authorListFragment";
 
@@ -102,16 +102,7 @@ public class AuthorsFragment extends BaseListFragment implements
 
     @Nullable
     private Snackbar mNoNetworkSnack;
-
-    /**
-     * This is a singletone bean
-     */
-    @Bean
-    AuthorMultiSelector mMultiSelector;
-
-    private ModalMultiSelectorCallback mDeleteMode;
-    private ActionMode currentActionMode;
-
+    MaterialCab mCab;
 
     private BroadcastReceiver updateStatusReceiver;
 
@@ -122,6 +113,10 @@ public class AuthorsFragment extends BaseListFragment implements
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         LOGI("SITracker", "AuthorsFragment - OnCreate");
+
+        if (savedInstanceState != null) {
+            mCab = MaterialCab.restoreState(savedInstanceState, (AppCompatActivity) this.getActivity(), this);
+        }
     }
 
     @Override
@@ -136,7 +131,7 @@ public class AuthorsFragment extends BaseListFragment implements
         super.onResume();
         EventBus.getDefault().register(this);
 
-        ((BaseActivity) getActivity()).getActionBarToolbar().setTitle(getString(R.string.navdrawer_item_my_authors));
+        getBaseActivity().getActionBarToolbar().setTitle(getString(R.string.navdrawer_item_my_authors));
 
         //Receiver registration
         mIsUpdating = UpdateServiceHelper.isServiceCurrentlyRunning(getActivity().getApplicationContext());
@@ -160,16 +155,18 @@ public class AuthorsFragment extends BaseListFragment implements
         super.onPause();
         EventBus.getDefault().unregister(this);
         getActivity().unregisterReceiver(updateStatusReceiver);
-        if (currentActionMode != null) {
-            currentActionMode.finish();
+        if (mCab != null && mCab.isActive()) {
+            cleanUpAfterCabAction();
         }
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putBundle(TAG, mMultiSelector.saveSelectionStates());
         super.onSaveInstanceState(outState);
+        if (mCab != null)
+            mCab.saveState(outState);
     }
+
 
     @Override
     @UiThread(delay = 100)
@@ -244,64 +241,6 @@ public class AuthorsFragment extends BaseListFragment implements
         }
     };
 
-    @AfterInject
-    void bindMultiSelect() {
-        mDeleteMode = new ModalMultiSelectorCallback(mMultiSelector) {
-
-            @Override
-            public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
-                super.onCreateActionMode(actionMode, menu);
-                getActivity().getMenuInflater().inflate(R.menu.context_authors, menu);
-                return true;
-            }
-
-            @Override
-            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-                mode.finish();
-                currentActionMode = null;
-                List<Long> selectedAuthors = new LinkedList<>();
-                for (Integer position : mMultiSelector.getSelectedPositions()) {
-                    selectedAuthors.add(adapter.getItemId(position));
-                }
-
-                if (item.getItemId() == R.id.action_remove) {
-                    AnalyticsHelper.getInstance().sendEvent(
-                            Constants.GA_ADMIN_CATEGORY,
-                            Constants.GA_EVENT_AUTHOR_REMOVED,
-                            Constants.GA_EVENT_AUTHOR_REMOVED, (long) selectedAuthors.size());
-
-                    //This stuff is on background thread
-                    adapter.removeAuthors(selectedAuthors);
-                    mMultiSelector.clearSelections();
-                    return true;
-                } else if (item.getItemId() == R.id.action_mark_read) {
-                    adapter.markAuthorsRead(selectedAuthors);
-                    AnalyticsHelper.getInstance().sendEvent(
-                            Constants.GA_ADMIN_CATEGORY,
-                            Constants.GA_EVENT_AUTHOR_MANUAL_READ,
-                            Constants.GA_EVENT_AUTHOR_MANUAL_READ, (long) selectedAuthors.size());
-
-                    BackupManager bm = new BackupManager(getActivity());
-                    bm.dataChanged();
-                    mMultiSelector.clearSelections();
-                    return true;
-                } else if (item.getItemId() == R.id.action_open_authors_browser) {
-                    for (int i = 0; i < adapter.getItemCount(); i++) {
-                        if (selectedAuthors.contains(adapter.getItemId(i))) {
-                            Intent intent = new Intent(Intent.ACTION_VIEW);
-                            intent.setData(Uri.parse(adapter.getItem(i).getUrl()));
-                            getActivity().startActivity(intent);
-                        }
-                    }
-                    mMultiSelector.clearSelections();
-                    return true;
-                }
-                return false;
-            }
-        };
-    }
-
-
     @AfterViews
     void bindAdapter() {
         adapter.updateContext(getBaseActivity());
@@ -316,13 +255,6 @@ public class AuthorsFragment extends BaseListFragment implements
         //TODO handle empty
         //empty.setLayoutResource(R.layout.empty_authors);
         //recyclerView.setEmptyView(empty);
-
-        if (mMultiSelector.isSelectable()) {
-            if (mDeleteMode != null) {
-                mDeleteMode.setClearOnPrepare(false);
-                currentActionMode = ((AppCompatActivity) getActivity()).startSupportActionMode(mDeleteMode);
-            }
-        }
     }
 
     private void toggleUpdatingState() {
@@ -384,13 +316,8 @@ public class AuthorsFragment extends BaseListFragment implements
     }
 
     public void onEvent(AuthorCheckedEvent event) {
-        if (!mMultiSelector.isSelectable()) {
-            currentActionMode = getBaseActivity().startSupportActionMode(mDeleteMode);
-        }
         final int currentPosition = adapter.getItemPositionByAuthorId(event.authorId);
-        final boolean currentlyState = mMultiSelector.isSelected(currentPosition, event.authorId);
-        mMultiSelector.setSelected(currentPosition, event.authorId, !currentlyState);
-        updateActionModeTitle();
+        startActionMode(currentPosition);
     }
 
     @UiThread
@@ -426,30 +353,117 @@ public class AuthorsFragment extends BaseListFragment implements
     }
 
     @Override
-    public void onAuthorItemClick() {
-        updateActionModeTitle();
+    public void onAuthorItemClick(AuthorsAdapter.ViewHolder viewHolder) {
+        if (mCab != null && mCab.isActive()) {
+            startActionMode(viewHolder.getAdapterPosition());
+            return;
+        }
+        Author auth = adapter.getItem(viewHolder.getAdapterPosition());
+        EventBus.getDefault().post(new AuthorSelectedEvent(auth.getId(), auth.getName()));
     }
 
     @Override
     public void onAuthorItemLongClick(AuthorsAdapter.ViewHolder viewHolder) {
-        if (!mMultiSelector.isSelectable()) {
-            currentActionMode = getBaseActivity().startSupportActionMode(mDeleteMode);
-        }
-        final boolean currentState = mMultiSelector.isSelected(viewHolder.getAdapterPosition(), viewHolder.getItemId());
-        mMultiSelector.setSelected(viewHolder, !currentState);
-        updateActionModeTitle();
+        startActionMode(viewHolder.getAdapterPosition());
     }
 
-    private void updateActionModeTitle() {
-        int numSelectedAuthors = mMultiSelector.getSelectedPositions().size();
-        if (currentActionMode != null) {
-            if (numSelectedAuthors == 0) {
-                currentActionMode.finish();
-            } else {
-                currentActionMode.setTitle(getResources().getQuantityString(
-                        R.plurals.authors_selected,
-                        numSelectedAuthors, numSelectedAuthors));
+    private void startActionMode(int position) {
+        adapter.toggleSelected(position);
+        if (adapter.getSelectedCount() == 0) {
+            mCab.finish();
+            return;
+        }
+        getBaseActivity().trySetToolbarScrollable(false);
+
+        if (mCab == null)
+            mCab = new MaterialCab(getBaseActivity(), R.id.cab_stub)
+                    .setMenu(R.menu.context_authors)
+                    .start(this);
+        else if (!mCab.isActive())
+            mCab.reset().start(this);
+        mCab.setTitle(getResources().getQuantityString(
+                R.plurals.authors_selected, adapter.getSelectedCount(), adapter.getSelectedCount()));
+    }
+
+    @Override
+    public boolean onCabCreated(MaterialCab materialCab, Menu menu) {
+        // Makes the icons in the overflow menu visible
+        if (menu.getClass().getSimpleName().equals("MenuBuilder")) {
+            try {
+                Field field = menu.getClass().
+                        getDeclaredField("mOptionalIconsVisible");
+                field.setAccessible(true);
+                field.setBoolean(menu, true);
+            } catch (Exception ignored) {
+                ignored.printStackTrace();
             }
         }
+        return true; // allow creation
+    }
+
+    @Override
+    public boolean onCabItemClicked(MenuItem item) {
+        List<Long> selectedAuthors = new LinkedList<>();
+        for (Integer position : adapter.getSelectedPositions()) {
+            selectedAuthors.add(adapter.getItemId(position));
+        }
+
+        if (item.getItemId() == R.id.action_remove) {
+            AnalyticsHelper.getInstance().sendEvent(
+                    Constants.GA_ADMIN_CATEGORY,
+                    Constants.GA_EVENT_AUTHOR_REMOVED,
+                    Constants.GA_EVENT_AUTHOR_REMOVED, (long) selectedAuthors.size());
+
+            //This stuff is on background thread
+            adapter.removeAuthors(selectedAuthors);
+            cleanUpAfterCabAction();
+            return true;
+        } else if (item.getItemId() == R.id.action_mark_read) {
+            adapter.markAuthorsRead(selectedAuthors);
+            AnalyticsHelper.getInstance().sendEvent(
+                    Constants.GA_ADMIN_CATEGORY,
+                    Constants.GA_EVENT_AUTHOR_MANUAL_READ,
+                    Constants.GA_EVENT_AUTHOR_MANUAL_READ, (long) selectedAuthors.size());
+
+            BackupManager bm = new BackupManager(getActivity());
+            bm.dataChanged();
+            cleanUpAfterCabAction();
+            return true;
+        } else if (item.getItemId() == R.id.action_open_authors_browser) {
+            for (int i = 0; i < adapter.getItemCount(); i++) {
+                if (selectedAuthors.contains(adapter.getItemId(i))) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setData(Uri.parse(adapter.getItem(i).getUrl()));
+                    getActivity().startActivity(intent);
+                }
+            }
+            cleanUpAfterCabAction();
+            return true;
+        }
+        return false;
+    }
+
+    private void cleanUpAfterCabAction() {
+        adapter.clearSelected();
+        if (mCab != null) {
+            mCab.finish();
+            mCab = null;
+        }
+    }
+
+    @Override
+    public boolean onCabFinished(MaterialCab materialCab) {
+        getBaseActivity().trySetToolbarScrollable(true);
+        adapter.clearSelected();
+        mCab = null;
+        return true; // allow destruction
+    }
+
+    public boolean onBackPressed() {
+        if (mCab != null && mCab.isActive()) {
+            cleanUpAfterCabAction();
+            return true;
+        }
+        return false;
     }
 }

@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package com.andrada.sitracker.contracts;
+package com.andrada.sitracker.ui.fragment;
 
-import com.andrada.sitracker.ui.fragment.adapters.AuthorsAdapter;
+import android.app.Fragment;
 
-public interface AuthorItemListener {
+import com.andrada.sitracker.ui.BaseActivity;
 
-    void onAuthorItemClick(AuthorsAdapter.ViewHolder viewHolder);
+public abstract class BaseFragment extends Fragment {
 
-    void onAuthorItemLongClick(AuthorsAdapter.ViewHolder viewHolder);
+    protected BaseActivity getBaseActivity() {
+        return (BaseActivity) this.getActivity();
+    }
 }

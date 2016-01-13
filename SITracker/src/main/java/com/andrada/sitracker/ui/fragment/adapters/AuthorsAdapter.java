@@ -28,16 +28,12 @@ import com.andrada.sitracker.db.beans.Author;
 import com.andrada.sitracker.db.dao.AuthorDao;
 import com.andrada.sitracker.db.manager.SiDBHelper;
 import com.andrada.sitracker.events.AuthorMarkedAsReadEvent;
-import com.andrada.sitracker.events.AuthorSelectedEvent;
 import com.andrada.sitracker.ui.components.AuthorItemView;
 import com.andrada.sitracker.ui.components.AuthorItemView_;
-import com.andrada.sitracker.ui.widget.AuthorMultiSelector;
 import com.andrada.sitracker.util.AnalyticsHelper;
-import com.bignerdranch.android.multiselector.MultiSelectorBindingHolder;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Background;
-import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.OrmLiteDao;
 import org.androidannotations.annotations.RootContext;
@@ -57,7 +53,8 @@ import de.greenrobot.event.EventBus;
 @EBean
 public class AuthorsAdapter extends RecyclerView.Adapter<AuthorsAdapter.ViewHolder> implements IsNewItemTappedListener {
 
-    List<Author> authors = new ArrayList<Author>();
+    private List<Integer> mSelected = new ArrayList<>();
+    List<Author> authors = new ArrayList<>();
     long mNewAuthors;
 
     @OrmLiteDao(helper = SiDBHelper.class)
@@ -68,12 +65,6 @@ public class AuthorsAdapter extends RecyclerView.Adapter<AuthorsAdapter.ViewHold
 
     @RootContext
     Context context;
-
-    /**
-     * This is a singletone bean
-     */
-    @Bean
-    AuthorMultiSelector mMultiSelector;
 
     WeakReference<AuthorItemListener> mAuthorItemListener;
 
@@ -132,6 +123,7 @@ public class AuthorsAdapter extends RecyclerView.Adapter<AuthorsAdapter.ViewHold
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         if (position < authors.size()) {
+            holder.view.setChecked(mSelected.contains(position));
             holder.view.bind(authors.get(position));
         }
     }
@@ -223,18 +215,34 @@ public class AuthorsAdapter extends RecyclerView.Adapter<AuthorsAdapter.ViewHold
         return -1;
     }
 
-    public class ViewHolder extends MultiSelectorBindingHolder implements View.OnClickListener, View.OnLongClickListener {
+    public void toggleSelected(int index) {
+        final boolean newState = !mSelected.contains(index);
+        if (newState)
+            mSelected.add(index);
+        else
+            mSelected.remove((Integer) index);
+        notifyItemChanged(index);
+    }
 
-        private boolean mIsSelectable;
+    public void clearSelected() {
+        mSelected.clear();
+        notifyDataSetChanged();
+    }
 
-        public AuthorItemView getView() {
-            return view;
-        }
+    public int getSelectedCount() {
+        return mSelected.size();
+    }
+
+    public List<Integer> getSelectedPositions() {
+        return mSelected;
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
         final AuthorItemView view;
 
         public ViewHolder(AuthorItemView itemView) {
-            super(itemView, mMultiSelector);
+            super(itemView);
             view = itemView;
             itemView.setOnClickListener(this);
             itemView.setLongClickable(true);
@@ -244,15 +252,8 @@ public class AuthorsAdapter extends RecyclerView.Adapter<AuthorsAdapter.ViewHold
         @Override
         public void onClick(View v) {
 
-            if (mMultiSelector.tapSelection(this)) {
-                if (mAuthorItemListener != null && mAuthorItemListener.get() != null) {
-                    mAuthorItemListener.get().onAuthorItemClick();
-                }
-                // Selection is on, so tapSelection() toggled item selection.
-            } else {
-                // Selection is off; handle normal item click here.
-                Author auth = getItem(getAdapterPosition());
-                EventBus.getDefault().post(new AuthorSelectedEvent(auth.getId(), auth.getName()));
+            if (mAuthorItemListener != null && mAuthorItemListener.get() != null) {
+                mAuthorItemListener.get().onAuthorItemClick(this);
             }
         }
 
@@ -263,35 +264,6 @@ public class AuthorsAdapter extends RecyclerView.Adapter<AuthorsAdapter.ViewHold
                 return true;
             }
             return false;
-        }
-
-        @Override
-        public void setSelectable(boolean isSelectable) {
-            boolean changed = isSelectable != this.mIsSelectable;
-            this.mIsSelectable = isSelectable;
-            if (changed && !isSelectable) {
-                view.setChecked(false);
-            }
-
-        }
-
-        @Override
-        public boolean isSelectable() {
-            return this.mIsSelectable;
-        }
-
-        @Override
-        public void setActivated(boolean activated) {
-            if (mIsSelectable) {
-                view.setChecked(activated);
-            } else if (!activated) {
-                view.setChecked(false);
-            }
-        }
-
-        @Override
-        public boolean isActivated() {
-            return view.isChecked();
         }
     }
 }

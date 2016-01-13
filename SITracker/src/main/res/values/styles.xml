@@ -127,12 +127,6 @@
 
     <!-- Activity theme styles -->
 
-    <style name="Theme.SiTracker.Home" parent="Theme.SiTracker">
-        <item name="actionBarInsetStart">@dimen/keyline_2_minus_16dp</item>
-        <item name="spinnerBarInsetStart">@dimen/keyline_2_minus_16dp</item>
-        <item name="android:windowBackground">@color/gray_background</item>
-    </style>
-
     <style name="Theme.SiTracker.Main" parent="Theme.SiTracker.WithNavDrawer">
         <item name="windowActionBarOverlay">true</item>
     </style>

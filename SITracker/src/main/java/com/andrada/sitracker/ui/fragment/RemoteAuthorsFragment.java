@@ -17,7 +17,6 @@
 package com.andrada.sitracker.ui.fragment;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.Intent;
 import android.content.Loader;
@@ -66,7 +65,7 @@ import static com.andrada.sitracker.util.LogUtils.makeLogTag;
 
 
 @EFragment(R.layout.fragment_search)
-public class RemoteAuthorsFragment extends Fragment implements
+public class RemoteAuthorsFragment extends BaseFragment implements
         LoaderManager.LoaderCallbacks<AsyncTaskResult<List<SearchedAuthor>>>, SearchResultsAdapter.Callbacks {
 
     private static final String TAG = makeLogTag(RemoteAuthorsFragment.class);

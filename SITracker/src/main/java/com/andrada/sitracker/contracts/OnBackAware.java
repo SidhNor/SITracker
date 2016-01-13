@@ -16,11 +16,9 @@
 
 package com.andrada.sitracker.contracts;
 
-import com.andrada.sitracker.ui.fragment.adapters.AuthorsAdapter;
-
-public interface AuthorItemListener {
-
-    void onAuthorItemClick(AuthorsAdapter.ViewHolder viewHolder);
-
-    void onAuthorItemLongClick(AuthorsAdapter.ViewHolder viewHolder);
+public interface OnBackAware {
+    /**
+     * @return true if back was handled, false otherwise
+     */
+    boolean onBackPressed();
 }

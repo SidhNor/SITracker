@@ -17,7 +17,6 @@
 package com.andrada.sitracker.ui.fragment;
 
 
-import android.app.Fragment;
 import android.content.Intent;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.LinearLayoutManager;
@@ -28,7 +27,6 @@ import android.view.ViewStub;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.AppUriContract;
 import com.andrada.sitracker.db.beans.Publication;
-import com.andrada.sitracker.ui.BaseActivity;
 import com.andrada.sitracker.ui.PublicationDetailsActivity;
 import com.andrada.sitracker.ui.fragment.adapters.NewPubsAdapter;
 import com.andrada.sitracker.ui.widget.DividerItemDecoration;
@@ -40,7 +38,7 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ViewById;
 
 @EFragment(R.layout.fragment_newpubs)
-public class NewPublicationsFragment extends Fragment {
+public class NewPublicationsFragment extends BaseFragment {
 
     @ViewById(R.id.new_pubs_list)
     RecyclerView recyclerView;
@@ -54,7 +52,7 @@ public class NewPublicationsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        ((BaseActivity)getActivity()).getActionBarToolbar().setTitle(getString(R.string.navdrawer_item_new_pubs));
+        getBaseActivity().getActionBarToolbar().setTitle(getString(R.string.navdrawer_item_new_pubs));
         adapter.reloadNewPublications();
         recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));

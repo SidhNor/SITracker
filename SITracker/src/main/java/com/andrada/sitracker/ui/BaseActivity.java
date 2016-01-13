@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Gleb Godonoga.
+ * Copyright 2016 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
@@ -36,10 +37,12 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.view.MenuItem;
+import android.widget.FrameLayout;
 
 import com.andrada.sitracker.BuildConfig;
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
+import com.andrada.sitracker.contracts.OnBackAware;
 import com.andrada.sitracker.events.AuthorsExported;
 import com.andrada.sitracker.ui.fragment.AboutDialog;
 import com.andrada.sitracker.ui.fragment.AuthorsFragment;
@@ -78,8 +81,11 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
     private AppBarLayout appBarLayout;
 
-
     private ExportAuthorsController mExportCtrl;
+
+    protected Fragment currentFragment;
+
+    private FrameLayout cabContainer;
 
     /**
      * Converts an intent into a {@link Bundle} suitable for use as fragment arguments.
@@ -177,6 +183,10 @@ public abstract class BaseActivity extends AppCompatActivity implements
         if (appBarLayout == null) {
             appBarLayout = (AppBarLayout) findViewById(R.id.appbar_layout);
         }
+
+        if (cabContainer == null) {
+            cabContainer = (FrameLayout) findViewById(R.id.si_cab_container);
+        }
     }
 
     @Override
@@ -198,22 +208,43 @@ public abstract class BaseActivity extends AppCompatActivity implements
         getActionBarToolbar();
     }
 
+    public void trySetToolbarScrollable(boolean scrollable) {
+        if (cabContainer != null) {
+            AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) cabContainer.getLayoutParams();
+            if (scrollable) {
+                params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP |
+                        AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS |
+                        AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL);
+            } else {
+                if (appBarLayout != null) {
+                    appBarLayout.setExpanded(true, true);
+                }
+                params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP);
+            }
+
+            cabContainer.setLayoutParams(params);
+        }
+    }
+
 
     @Override
     public void goToNavDrawerItem(int item) {
+        currentFragment = null;
         switch (item) {
             case R.id.navigation_item_my_authors:
                 AuthorsFragment authFrag = AuthorsFragment_.builder().build();
                 if (appBarLayout != null) {
-                    appBarLayout.setExpanded(true, true);
+                    appBarLayout.setExpanded(true, false);
                 }
+                currentFragment = authFrag;
                 ActivityFragmentNavigator.switchMainFragmentInMainActivity(this, authFrag);
                 break;
             case R.id.navigation_item_new_pubs:
                 NewPublicationsFragment newPubsFrag = NewPublicationsFragment_.builder().build();
                 if (appBarLayout != null) {
-                    appBarLayout.setExpanded(true, true);
+                    appBarLayout.setExpanded(true, false);
                 }
+                currentFragment = newPubsFrag;
                 ActivityFragmentNavigator.switchMainFragmentInMainActivity(this, newPubsFrag);
                 break;
             case R.id.navigation_item_export:
@@ -257,9 +288,13 @@ public abstract class BaseActivity extends AppCompatActivity implements
     public void onBackPressed() {
         if (mDrawerManager != null && mDrawerManager.isNavDrawerOpen()) {
             mDrawerManager.closeNavDrawer();
-        } else {
-            super.onBackPressed();
+        } else if (currentFragment != null && currentFragment instanceof OnBackAware) {
+            boolean handled = ((OnBackAware) currentFragment).onBackPressed();
+            if (handled) {
+                return;
+            }
         }
+        super.onBackPressed();
     }
 
     public void onEvent(@NotNull AuthorsExported event) {
@@ -271,7 +306,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
             snackbarText.append(getResources().getString(R.string.author_export_success_crouton_message));
         } else {
             snackbarText.append(message);
-            snackbarText.setSpan(new ForegroundColorSpan(0xFFFF0000), 0, snackbarText.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            snackbarText.setSpan(new ForegroundColorSpan(Color.RED), 0, snackbarText.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
 
         Snackbar.make(findViewById(R.id.drawer_layout), snackbarText, Snackbar.LENGTH_LONG).show();

@@ -71,6 +71,7 @@ public class SiMainActivity extends BaseActivity {
             //Bootstrap app with initial fragment
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
             AuthorsFragment authFrag = AuthorsFragment_.builder().build();
+            currentFragment = authFrag;
             transaction.replace(R.id.fragment_holder, authFrag, "currentFrag");
             transaction.setCustomAnimations(0, 0);
             transaction.commit();

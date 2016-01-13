@@ -22,6 +22,7 @@
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
     android:theme="@style/ActionBarThemeOverlay"
+    app:contentInsetStart="@dimen/mcab_default_content_inset"
     app:layout_scrollFlags="scroll|enterAlways|snap"
     app:popupTheme="@style/ActionBarPopupThemeOverlay"
     app:titleTextAppearance="@style/ActionBar.TitleText" />
