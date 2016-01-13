@@ -664,7 +664,7 @@ public class PublicationInfoFragment extends Fragment {
 
     private void recomputePhotoMetrics() {
 
-        int mPhotoHeightPixels = 0;
+        int mPhotoHeightPixels = 4;
         if (mHasPhoto) {
             mPhotoHeightPixels = (int) (mPhotoViewContainer.getWidth() / PHOTO_ASPECT_RATIO);
             mPhotoHeightPixels = Math.min(mPhotoHeightPixels, mRootView.getHeight() * 2 / 3);
@@ -674,7 +674,6 @@ public class PublicationInfoFragment extends Fragment {
         lp = mPhotoViewContainer.getLayoutParams();
         if (lp.height != mPhotoHeightPixels) {
             lp.height = mPhotoHeightPixels;
-            mPhotoViewContainer.setLayoutParams(lp);
         }
     }
 

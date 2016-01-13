@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Gleb Godonoga.
+ * Copyright 2016 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -86,6 +86,7 @@ public class MessageCardView extends FrameLayout implements View.OnClickListener
         String button2tag = a.getString(R.styleable.MessageCard_button2tag);
         int emphasisColor = a.getColor(R.styleable.MessageCard_emphasisColor,
                 getResources().getColor(R.color.theme_primary));
+        a.recycle();
 
         if (button1text != null) {
             setButton(0, button1text, button1tag, button1emphasis, 0);

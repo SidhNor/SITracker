@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Gleb Godonoga.
+ * Copyright 2016 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package com.andrada.sitracker.ui;
 
+import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
@@ -39,6 +40,7 @@ import org.jetbrains.annotations.NotNull;
 
 import de.greenrobot.event.EventBus;
 
+@SuppressLint("Registered")
 @EActivity
 public class SiMainActivity extends BaseActivity {
 

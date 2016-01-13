@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Gleb Godonoga.
+ * Copyright 2016 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ import java.util.Map;
 public class AnalyticsHelper {
 
     private static AnalyticsHelper instance;
-    private final Map<TrackerName, Tracker> mTrackers = new HashMap<TrackerName, Tracker>();
+    private final Map<TrackerName, Tracker> mTrackers = new HashMap<>();
     private final Context defaultContext;
 
     private AnalyticsHelper(Context context) {

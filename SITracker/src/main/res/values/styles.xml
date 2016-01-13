@@ -150,9 +150,9 @@
         <item name="isFloatingWindow">false</item>
     </style>
 
-    <style name="Theme.SiTracker.PublicationDetails" parent="Theme.SiTracker.PublicationDetails.Base"></style>
+    <style name="Theme.SiTracker.PublicationDetails" parent="Theme.SiTracker.PublicationDetails.Base" />
 
-    <style name="Theme.SiTracker.ImportAuthors" parent="Theme.SiTracker"></style>
+    <style name="Theme.SiTracker.ImportAuthors" parent="Theme.SiTracker" />
 
     <!-- END OF ACTIVITY THEME STYLES -->
 
