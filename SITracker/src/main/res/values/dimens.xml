@@ -77,6 +77,7 @@
     <dimen name="spinner_left_padding">16dp</dimen>
     <dimen name="search_dropdown_item_height">48dp</dimen>
 
+    <dimen name="drawer_header_height">124dp</dimen>
     <dimen name="headerbar_elevation">2dp</dimen>
     <dimen name="floating_action_button_margin">16dp</dimen>
     <dimen name="fab_elevation">6dp</dimen>
