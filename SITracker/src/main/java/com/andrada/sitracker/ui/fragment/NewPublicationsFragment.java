@@ -24,6 +24,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewStub;
 
+import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.AppUriContract;
 import com.andrada.sitracker.db.beans.Publication;
@@ -31,6 +32,7 @@ import com.andrada.sitracker.ui.PublicationDetailsActivity;
 import com.andrada.sitracker.ui.fragment.adapters.NewPubsAdapter;
 import com.andrada.sitracker.ui.widget.DividerItemDecoration;
 import com.andrada.sitracker.ui.widget.ItemClickSupport;
+import com.andrada.sitracker.util.AnalyticsHelper;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
@@ -59,6 +61,8 @@ public class NewPublicationsFragment extends BaseFragment {
         empty.setLayoutResource(R.layout.empty_new_pubs);
         //TODO update empty view
         //recyclerView.setEmptyView(empty);
+
+        AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_NEW_PUBLICATIONS);
     }
 
     @AfterViews

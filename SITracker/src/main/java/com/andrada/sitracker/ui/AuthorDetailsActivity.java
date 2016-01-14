@@ -27,10 +27,12 @@ import android.support.v4.content.IntentCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
+import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.AppUriContract;
 import com.andrada.sitracker.events.AuthorSelectedEvent;
 import com.andrada.sitracker.ui.fragment.PublicationsFragment_;
+import com.andrada.sitracker.util.AnalyticsHelper;
 
 import org.androidannotations.annotations.EActivity;
 
@@ -86,6 +88,8 @@ public class AuthorDetailsActivity extends BaseActivity {
                     .add(R.id.root_container, fragment, "single_pane")
                     .commit();
         }
+
+        AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_AUTHOR_PUBLICATIONS);
     }
 
     /*

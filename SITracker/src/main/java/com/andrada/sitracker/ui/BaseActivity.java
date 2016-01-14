@@ -20,6 +20,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.app.backup.BackupManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -29,7 +30,6 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -43,7 +43,9 @@ import com.andrada.sitracker.BuildConfig;
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.OnBackAware;
+import com.andrada.sitracker.events.AuthorMarkedAsReadEvent;
 import com.andrada.sitracker.events.AuthorsExported;
+import com.andrada.sitracker.events.PublicationMarkedAsReadEvent;
 import com.andrada.sitracker.ui.fragment.AboutDialog;
 import com.andrada.sitracker.ui.fragment.AuthorsFragment;
 import com.andrada.sitracker.ui.fragment.AuthorsFragment_;
@@ -59,6 +61,9 @@ import com.google.android.gms.analytics.GoogleAnalytics;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import static com.andrada.sitracker.util.LogUtils.makeLogTag;
 
 /**
@@ -68,14 +73,14 @@ public abstract class BaseActivity extends AppCompatActivity implements
         NavDrawerManager.NavDrawerListener {
 
     private static final String TAG = makeLogTag(BaseActivity.class);
+    private static final long BACK_UP_DELAY = 30000L;
 
     // fade in and fade out durations for the main content when switching between
     // different Activities of the app through the Nav Drawer
     private static final int MAIN_CONTENT_FADEIN_DURATION = 250;
 
     private NavDrawerManager mDrawerManager;
-    // Navigation drawer:
-    private DrawerLayout mDrawerLayout;
+
     // Primary toolbar and drawer toggle
     private Toolbar mActionBarToolbar;
 
@@ -86,6 +91,10 @@ public abstract class BaseActivity extends AppCompatActivity implements
     protected Fragment currentFragment;
 
     private FrameLayout cabContainer;
+
+    private TimerTask backUpTask;
+    @NotNull
+    private final Timer backUpTimer = new Timer();
 
     /**
      * Converts an intent into a {@link Bundle} suitable for use as fragment arguments.
@@ -310,6 +319,32 @@ public abstract class BaseActivity extends AppCompatActivity implements
         }
 
         Snackbar.make(findViewById(R.id.drawer_layout), snackbarText, Snackbar.LENGTH_LONG).show();
+    }
+
+    public void onEvent(AuthorMarkedAsReadEvent event) {
+        this.scheduleBackup();
+    }
+
+    public void onEvent(PublicationMarkedAsReadEvent event) {
+        AnalyticsHelper.getInstance().sendEvent(
+                Constants.GA_READ_CATEGORY,
+                Constants.GA_EVENT_AUTHOR_MANUAL_READ,
+                Constants.GA_EVENT_AUTHOR_MANUAL_READ);
+        this.scheduleBackup();
+    }
+
+    private void scheduleBackup() {
+        if (this.backUpTask != null) {
+            this.backUpTask.cancel();
+        }
+        this.backUpTask = new TimerTask() {
+            @Override
+            public void run() {
+                BackupManager bm = new BackupManager(getApplicationContext());
+                bm.dataChanged();
+            }
+        };
+        backUpTimer.schedule(this.backUpTask, BACK_UP_DELAY);
     }
 
     /**

@@ -28,14 +28,17 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.AppUriContract;
+import com.andrada.sitracker.contracts.SIPrefs_;
 import com.andrada.sitracker.events.AuthorSelectedEvent;
 import com.andrada.sitracker.ui.fragment.AuthorsFragment;
 import com.andrada.sitracker.ui.fragment.AuthorsFragment_;
+import com.andrada.sitracker.util.UpdateServiceHelper;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.ViewById;
+import org.androidannotations.annotations.sharedpreferences.Pref;
 import org.jetbrains.annotations.NotNull;
 
 import de.greenrobot.event.EventBus;
@@ -54,6 +57,9 @@ public class SiMainActivity extends BaseActivity {
     @Extra(AUTHORS_SUCCESSFULLY_IMPORTED_EXTRA)
     int authorsSuccessfullyImported = -1;
 
+    @Pref
+    SIPrefs_ prefs;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +68,7 @@ public class SiMainActivity extends BaseActivity {
         EventBus.getDefault().register(this, priority);
 
         setContentView(R.layout.activity_si_main);
+        ensureUpdatesAreRunningOnSchedule();
     }
 
     @AfterViews
@@ -114,6 +121,16 @@ public class SiMainActivity extends BaseActivity {
         ActivityCompat.startActivity(this, intent, null);
     }
 
+    public void ensureUpdatesAreRunningOnSchedule() {
+        boolean isSyncing = prefs.updatesEnabled().get();
+
+        boolean updateServiceUp = UpdateServiceHelper.isServiceScheduled(this);
+        if (isSyncing && !updateServiceUp) {
+            UpdateServiceHelper.scheduleUpdates(this);
+        } else if (!isSyncing && updateServiceUp) {
+            UpdateServiceHelper.cancelUpdates(this);
+        }
+    }
 
     private void attemptToShowImportProgress() {
         if (authorsProcessed != -1 && authorsSuccessfullyImported != -1) {

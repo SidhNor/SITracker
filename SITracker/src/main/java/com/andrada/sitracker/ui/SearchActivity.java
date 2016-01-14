@@ -115,6 +115,7 @@ public class SearchActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         overridePendingTransition(0, 0);
+        AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_SEARCH);
     }
 
     @Override

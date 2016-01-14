@@ -124,6 +124,7 @@ public class AuthorsFragment extends BaseListFragment implements
         super.onStart();
         getActivity().invalidateOptionsMenu();
         adapter.notifyDataSetChanged();
+        AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_AUTHORS);
     }
 
     @Override
@@ -299,10 +300,6 @@ public class AuthorsFragment extends BaseListFragment implements
 
     public void onEvent(@NotNull PublicationMarkedAsReadEvent event) {
         //ensure we update the new status of the author if he has no new publications
-        AnalyticsHelper.getInstance().sendEvent(
-                Constants.GA_READ_CATEGORY,
-                Constants.GA_EVENT_AUTHOR_MANUAL_READ,
-                Constants.GA_EVENT_AUTHOR_MANUAL_READ);
         if (event.refreshAuthor) {
             adapter.reloadAuthors();
         }

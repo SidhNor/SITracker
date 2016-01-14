@@ -65,6 +65,7 @@ import com.andrada.sitracker.contracts.SIPrefs_;
 import com.andrada.sitracker.db.beans.Publication;
 import com.andrada.sitracker.db.dao.PublicationDao;
 import com.andrada.sitracker.db.manager.SiDBHelper;
+import com.andrada.sitracker.events.PublicationMarkedAsReadEvent;
 import com.andrada.sitracker.events.RatingResultEvent;
 import com.andrada.sitracker.exceptions.SharePublicationException;
 import com.andrada.sitracker.reader.SamlibPublicationPageReader;
@@ -184,6 +185,8 @@ public class PublicationInfoFragment extends BaseFragment {
         mPublicationId = AppUriContract.getPublicationId(mPublicationUri);
         mHandler = new Handler();
         rateShowcaseShown = prefs.ratingShowcaseShotDone().get();
+
+        AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_PUBLICATION_INFO);
     }
 
     @Override
@@ -435,6 +438,7 @@ public class PublicationInfoFragment extends BaseFragment {
     void markCurrentPublicationRead() {
         try {
             publicationsDao.markPublicationRead(currentRecord);
+            EventBus.getDefault().post(new PublicationMarkedAsReadEvent(true));
         } catch (SQLException e) {
             AnalyticsHelper.getInstance().sendException(e);
         }

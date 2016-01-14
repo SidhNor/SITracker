@@ -63,6 +63,7 @@ public class SettingsActivity extends BaseActivity {
                     .add(R.id.container, SettingsActivity_.SettingsFragment_.builder().build())
                     .commit();
         }
+        AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_PREFERENCES);
     }
 
     @AfterViews
@@ -81,8 +82,9 @@ public class SettingsActivity extends BaseActivity {
 
     @EFragment
     public static class SettingsFragment extends PreferenceFragment
-            implements SharedPreferences.OnSharedPreferenceChangeListener {
+            implements SharedPreferences.OnSharedPreferenceChangeListener, DirectoryChooserController.DirectoryChooserResultListener {
 
+        private DirectoryChooserController dirChooserController;
         @NotNull
         public static final String PREF_NAME = "SIPrefs";
         @Nullable
@@ -97,13 +99,9 @@ public class SettingsActivity extends BaseActivity {
         private final Preference.OnPreferenceClickListener dirChooserClickListener = new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                //TODO change to directory chooser fragment
-                final Intent chooserIntent = new Intent(getActivity().getApplicationContext(), DirectoryChooserActivity.class);
-                chooserIntent.putExtra(DirectoryChooserActivity.EXTRA_INITIAL_DIRECTORY, prefs.downloadFolder().get());
-                chooserIntent.putExtra(DirectoryChooserActivity.EXTRA_NEW_DIR_NAME, getResources().getString(R.string.book_folder_name));
-                // REQUEST_DIRECTORY is a constant integer to identify the request, e.g. 0
-                startActivityForResult(chooserIntent, Constants.REQUEST_DIRECTORY);
+
                 AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_PREFS_DOWNLOAD_DIALOG);
+                dirChooserController.showDialog(SettingsFragment.this);
                 return true;
             }
         };
@@ -126,6 +124,9 @@ public class SettingsActivity extends BaseActivity {
             setUpdateIntervalSummary(prefs.updateInterval().get());
             setAuthorSortSummary(prefs.authorsSortType().get());
             setDownloadFolderSummary(prefs.downloadFolder().get());
+
+            dirChooserController = new DirectoryChooserController(getActivity(), prefs.downloadFolder().get(), true);
+            dirChooserController.setListener(this);
         }
 
         @Override
@@ -153,18 +154,14 @@ public class SettingsActivity extends BaseActivity {
             }
         }
 
-        @Override
-        public void onActivityResult(int requestCode, int resultCode, @NotNull Intent data) {
-            super.onActivityResult(requestCode, resultCode, data);
 
-            if (requestCode == Constants.REQUEST_DIRECTORY) {
-                if (resultCode == DirectoryChooserActivity.RESULT_CODE_DIR_SELECTED) {
-                    String absoluteDir = data.getStringExtra(DirectoryChooserActivity.RESULT_SELECTED_DIR);
-                    SharedPreferences.Editor editor = getPreferenceManager().getSharedPreferences().edit();
-                    editor.putString(Constants.CONTENT_DOWNLOAD_FOLDER_KEY, absoluteDir);
-                    editor.apply();
-                    setDownloadFolderSummary(absoluteDir);
-                }
+        @Override
+        public void onDirectoryChooserResult(int resultCode, String absoluteDir) {
+            if (resultCode == DirectoryChooserController.RESULT_CODE_DIR_SELECTED) {
+                SharedPreferences.Editor editor = getPreferenceManager().getSharedPreferences().edit();
+                editor.putString(Constants.CONTENT_DOWNLOAD_FOLDER_KEY, absoluteDir);
+                editor.apply();
+                setDownloadFolderSummary(absoluteDir);
             }
         }
 
@@ -232,6 +229,7 @@ public class SettingsActivity extends BaseActivity {
             int sortType = Integer.parseInt(newValue);
             authorsSortType.setSummary(authorsSortType.getEntries()[sortType]);
         }
+
     }
 
 

@@ -64,7 +64,7 @@ import de.greenrobot.event.EventBus;
 
 @SuppressLint("Registered")
 @EActivity(R.layout.activity_import)
-public class ImportAuthorsActivity extends BaseActivity {
+public class ImportAuthorsActivity extends BaseActivity implements DirectoryChooserController.DirectoryChooserResultListener {
 
     ImportProgressView progressPanel;
 
@@ -93,7 +93,9 @@ public class ImportAuthorsActivity extends BaseActivity {
     ImportAuthorsTask importTask;
     private boolean isBound = false;
     @NotNull
-    private List<String> authorsToImport = new ArrayList<String>();
+    private List<String> authorsToImport = new ArrayList<>();
+
+    private DirectoryChooserController dirChooserController;
 
     @NotNull
     private final ServiceConnection mConnection = new ServiceConnection() {
@@ -129,11 +131,7 @@ public class ImportAuthorsActivity extends BaseActivity {
     @Click(R.id.chooseFileButton)
     void chooseFileClicked() {
         //Make sure the authors are opened
-        //TODO change to directory chooser fragment
-        final Intent chooserIntent = new Intent(getApplicationContext(), DirectoryChooserActivity.class);
-        chooserIntent.putExtra(DirectoryChooserActivity.EXTRA_NEW_DIR_NAME, "Books");
-        chooserIntent.putExtra(DirectoryChooserActivity.EXTRA_IS_DIRECTORY_CHOOSER, false);
-        startActivityForResult(chooserIntent, Constants.REQUEST_DIRECTORY);
+        dirChooserController.showDialog(this);
     }
 
     @Click(R.id.performImportButton)
@@ -141,7 +139,7 @@ public class ImportAuthorsActivity extends BaseActivity {
         AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_IMPORT_PROGRESS);
         //Inflate
         Intent importSvc = ImportAuthorsTask_.intent(getApplicationContext()).get();
-        importSvc.putStringArrayListExtra(ImportAuthorsTask.AUTHOR_LIST_EXTRA, new ArrayList<String>(authorsToImport));
+        importSvc.putStringArrayListExtra(ImportAuthorsTask.AUTHOR_LIST_EXTRA, new ArrayList<>(authorsToImport));
         getApplicationContext().startService(importSvc);
         getApplicationContext().bindService(importSvc, mConnection, Context.BIND_AUTO_CREATE);
     }
@@ -163,15 +161,10 @@ public class ImportAuthorsActivity extends BaseActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @NotNull Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == Constants.REQUEST_DIRECTORY) {
-            if (resultCode == DirectoryChooserActivity.RESULT_CODE_DIR_SELECTED) {
-                String fileToImport = data.getStringExtra(DirectoryChooserActivity.RESULT_SELECTED_DIR);
-                tryParseOutTheChosenFile(fileToImport);
-                progressBar.setVisibility(View.VISIBLE);
-            }
+    public void onDirectoryChooserResult(int resultCode, String fileToImport) {
+        if (resultCode == DirectoryChooserController.RESULT_CODE_DIR_SELECTED) {
+            tryParseOutTheChosenFile(fileToImport);
+            progressBar.setVisibility(View.VISIBLE);
         }
     }
 
@@ -194,6 +187,11 @@ public class ImportAuthorsActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
+
+        dirChooserController = new DirectoryChooserController(this, null, false);
+        dirChooserController.setListener(this);
+
+        AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_IMPORT_AUTHORS);
     }
 
     @AfterViews

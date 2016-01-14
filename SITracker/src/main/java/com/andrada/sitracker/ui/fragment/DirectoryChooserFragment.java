@@ -30,7 +30,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
 import android.widget.ListView;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -45,6 +44,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -77,10 +77,7 @@ public class DirectoryChooserFragment extends DialogFragment {
 
     private Boolean mIsDirectoryChooser = true;
 
-    @NotNull
-    private OnFragmentInteractionListener mListener;
-
-    private ImageButton mBtnCreateFolder;
+    private WeakReference<OnFragmentInteractionListener> mListener;
 
     private FolderArrayAdapter mListDirectoriesAdapter;
 
@@ -99,8 +96,6 @@ public class DirectoryChooserFragment extends DialogFragment {
 
     @Nullable
     private FileObserver mFileObserver;
-
-    private boolean nonActivityListener = false;
 
     MaterialDialog mCurrentDialog;
 
@@ -125,20 +120,6 @@ public class DirectoryChooserFragment extends DialogFragment {
     public static DirectoryChooserFragment newInstance(
             final String newDirectoryName,
             final String initialDirectory,
-            final Boolean isDirectoryChooser) {
-        DirectoryChooserFragment fragment = new DirectoryChooserFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_NEW_DIRECTORY_NAME, newDirectoryName);
-        args.putString(ARG_INITIAL_DIRECTORY, initialDirectory);
-        args.putBoolean(ARG_IS_DIRECTORY_CHOOSER, isDirectoryChooser);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @NotNull
-    public static DirectoryChooserFragment newInstance(
-            final String newDirectoryName,
-            final String initialDirectory,
             final Boolean isDirectoryChooser,
             final OnFragmentInteractionListener listener) {
         DirectoryChooserFragment fragment = new DirectoryChooserFragment();
@@ -147,8 +128,7 @@ public class DirectoryChooserFragment extends DialogFragment {
         args.putString(ARG_INITIAL_DIRECTORY, initialDirectory);
         args.putBoolean(ARG_IS_DIRECTORY_CHOOSER, isDirectoryChooser);
         fragment.setArguments(args);
-        fragment.mListener = listener;
-        fragment.nonActivityListener = true;
+        fragment.mListener = new WeakReference<>(listener);
         return fragment;
     }
 
@@ -196,7 +176,8 @@ public class DirectoryChooserFragment extends DialogFragment {
                 .onNegative(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        mListener.onCancelChooser();
+                        if (mListener.get() != null)
+                            mListener.get().onCancelChooser();
                     }
                 });
 
@@ -261,26 +242,8 @@ public class DirectoryChooserFragment extends DialogFragment {
         return mCurrentDialog.getView();
     }
 
-
-    @Override
-    public void onAttach(@NotNull Activity activity) {
-        super.onAttach(activity);
-        try {
-            if (!nonActivityListener) {
-                mListener = (OnFragmentInteractionListener) activity;
-            }
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        if (!nonActivityListener) {
-            mListener = null;
-        }
+    public void setListener(@NotNull OnFragmentInteractionListener mListener) {
+        this.mListener = new WeakReference<>(mListener);
     }
 
     @Override
@@ -468,19 +431,23 @@ public class DirectoryChooserFragment extends DialogFragment {
      * selected folder can also be null.
      */
     private void returnSelectedFolder() {
+        if (mListener.get() == null)
+            return;
         if (mSelectedDir != null && mIsDirectoryChooser) {
             debug("Returning %s as result", mSelectedDir.getAbsolutePath());
-            mListener.onSelectDirectory(mSelectedDir.getAbsolutePath());
+            mListener.get().onSelectDirectory(mSelectedDir.getAbsolutePath());
         } else {
-            mListener.onCancelChooser();
+            mListener.get().onCancelChooser();
         }
     }
 
     private void returnSelectedFile() {
+        if (mListener.get() == null)
+            return;
         if (mSelectedFile != null && !mIsDirectoryChooser) {
-            mListener.onSelectDirectory(mSelectedFile.getAbsolutePath());
+            mListener.get().onSelectDirectory(mSelectedFile.getAbsolutePath());
         } else {
-            mListener.onCancelChooser();
+            mListener.get().onCancelChooser();
         }
     }
 
