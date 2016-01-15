@@ -46,10 +46,25 @@ public class NewPublicationsFragment extends BaseFragment {
     RecyclerView recyclerView;
 
     @ViewById
-    ViewStub empty;
+    View empty;
 
     @Bean
     NewPubsAdapter adapter;
+
+    RecyclerView.AdapterDataObserver dataObserver = new RecyclerView.AdapterDataObserver() {
+        @Override
+        public void onChanged() {
+            if (adapter != null && empty != null) {
+                if (adapter.getItemCount() > 0) {
+                    recyclerView.setVisibility(View.VISIBLE);
+                    empty.setVisibility(View.GONE);
+                } else {
+                    recyclerView.setVisibility(View.GONE);
+                    empty.setVisibility(View.VISIBLE);
+                }
+            }
+        }
+    };
 
     @Override
     public void onResume() {
@@ -58,9 +73,6 @@ public class NewPublicationsFragment extends BaseFragment {
         adapter.reloadNewPublications();
         recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
-        empty.setLayoutResource(R.layout.empty_new_pubs);
-        //TODO update empty view
-        //recyclerView.setEmptyView(empty);
 
         AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_NEW_PUBLICATIONS);
     }
@@ -68,6 +80,7 @@ public class NewPublicationsFragment extends BaseFragment {
     @AfterViews
     void bindAdapter() {
         recyclerView.setHasFixedSize(true);
+        adapter.registerAdapterDataObserver(dataObserver);
         recyclerView.setAdapter(adapter);
         ItemClickSupport.addTo(recyclerView).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
             @Override

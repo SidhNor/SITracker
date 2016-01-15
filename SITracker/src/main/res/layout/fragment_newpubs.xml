@@ -29,11 +29,6 @@
         android:layout_height="match_parent"
         android:clipToPadding="false" />
 
-    <ViewStub
-        android:id="@+id/empty"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center|center_vertical"
-        android:visibility="gone" />
+    <include layout="@layout/empty_new_pubs"/>
 
 </FrameLayout>

@@ -174,7 +174,7 @@ public class RemoteAuthorsFragment extends BaseFragment implements
             arguments = (Bundle) arguments.clone();
         }
 
-        // save arguments so we can reuse it when reloading from content observer events
+        // save arguments so we can reuse it when reloading from content dataObserver events
         mArguments = arguments;
 
         LOGD(TAG, "SessionsFragment reloading from arguments: " + arguments);
@@ -244,6 +244,7 @@ public class RemoteAuthorsFragment extends BaseFragment implements
     }
 
     private void hideEmptyView() {
+        getBaseActivity().trySetToolbarScrollable(true);
         emptyText.setVisibility(View.GONE);
         loading.setVisibility(View.GONE);
         recyclerView.setVisibility(View.VISIBLE);
@@ -253,6 +254,7 @@ public class RemoteAuthorsFragment extends BaseFragment implements
         final String searchQuery = AppUriContract.isSearchUri(mCurrentUri) ?
                 AppUriContract.getSearchQuery(mCurrentUri) : null;
 
+        getBaseActivity().trySetToolbarScrollable(false);
         if (AppUriContract.isSearchUri(mCurrentUri)
                 && (TextUtils.isEmpty(searchQuery) || "*".equals(searchQuery))) {
             // Empty search query (for example, user hasn't started to type the query yet),

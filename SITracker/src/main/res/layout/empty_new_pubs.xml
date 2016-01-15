@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2016 Gleb Godonoga.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,16 +14,33 @@
   ~ limitations under the License.
   -->
 
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content">
-    <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:drawableTop="@drawable/sad_no_new_pubs"
-            android:drawablePadding="@dimen/keyline_1"
-            android:layout_gravity="center"
-            android:gravity="center|center_vertical"
-            android:text="@string/no_new_pubs"/>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/empty"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:visibility="gone"
+    tools:visibility="visible">
 
-</FrameLayout>
+    <ImageView
+        android:id="@+id/emptyPubsImg"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/emptyText"
+        android:layout_centerHorizontal="true"
+        android:contentDescription="@null"
+        android:src="@drawable/sad_no_new_pubs" />
+
+    <TextView
+        android:id="@+id/emptyText"
+        style="@style/EmptyText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:text="@string/no_new_pubs" />
+
+</RelativeLayout>

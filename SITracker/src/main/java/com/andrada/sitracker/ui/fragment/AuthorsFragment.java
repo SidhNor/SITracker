@@ -35,7 +35,6 @@ import android.text.style.ForegroundColorSpan;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewStub;
 
 import com.afollestad.materialcab.MaterialCab;
 import com.andrada.sitracker.Constants;
@@ -90,7 +89,7 @@ public class AuthorsFragment extends BaseListFragment implements
     RecyclerView list;
 
     @ViewById
-    ViewStub empty;
+    View empty;
 
     @Bean
     AuthorsAdapter adapter;
@@ -105,6 +104,21 @@ public class AuthorsFragment extends BaseListFragment implements
     MaterialCab mCab;
 
     private BroadcastReceiver updateStatusReceiver;
+
+    RecyclerView.AdapterDataObserver dataObserver = new RecyclerView.AdapterDataObserver() {
+        @Override
+        public void onChanged() {
+            if (adapter != null && empty != null) {
+                if (adapter.getItemCount() > 0) {
+                    list.setVisibility(View.VISIBLE);
+                    empty.setVisibility(View.GONE);
+                } else {
+                    list.setVisibility(View.GONE);
+                    empty.setVisibility(View.VISIBLE);
+                }
+            }
+        }
+    };
 
     //region Fragment lifecycle overrides
 
@@ -245,6 +259,7 @@ public class AuthorsFragment extends BaseListFragment implements
     @AfterViews
     void bindAdapter() {
         adapter.updateContext(getBaseActivity());
+        adapter.registerAdapterDataObserver(dataObserver);
         adapter.setAuthorItemListener(this);
         list.setHasFixedSize(true);
         list.setLayoutManager(new LinearLayoutManager(list.getContext()));
@@ -253,8 +268,6 @@ public class AuthorsFragment extends BaseListFragment implements
 
         list.setBackgroundResource(R.drawable.authors_list_background);
 
-        //TODO handle empty
-        //empty.setLayoutResource(R.layout.empty_authors);
         //recyclerView.setEmptyView(empty);
     }
 

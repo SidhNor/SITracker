@@ -33,12 +33,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-        <ViewStub
-            android:id="@+id/empty"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:visibility="gone" />
+        <include layout="@layout/empty_authors"/>
+
     </FrameLayout>
 
 </com.andrada.sitracker.ui.widget.MultiSwipeRefreshLayout>
