@@ -18,28 +18,39 @@ package com.andrada.sitracker.util;
 
 import android.graphics.PorterDuff;
 import android.os.Handler;
-import android.support.design.widget.NavigationView;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.ui.BaseActivity;
+import com.mikepenz.materialdrawer.Drawer;
+import com.mikepenz.materialdrawer.DrawerBuilder;
+import com.mikepenz.materialdrawer.model.DividerDrawerItem;
+import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
+import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
 public class NavDrawerManager {
 
     // delay to launch nav drawer item, to allow close animation to play
     private static final int NAVDRAWER_LAUNCH_DELAY = 250;
+
+    // fade in and fade out durations for the main content when switching between
+    // different Activities of the app through the Nav Drawer
+    private static final int MAIN_CONTENT_FADEOUT_DURATION = 150;
+
+    private static final int MAIN_CONTENT_FADEIN_DURATION = 250;
+
     BaseActivity mActivity;
 
     // Navigation drawer:
-    private DrawerLayout mDrawerLayout;
-    private NavigationView mNavigationView;
+    //private DrawerLayout mDrawerLayout;
+    //private NavigationView mNavigationView;
     private Handler mHandler;
+
+    private Drawer result;
 
     private int mCurrentNavId = -1;
 
@@ -52,6 +63,7 @@ public class NavDrawerManager {
     private void setupNavDrawer() {
         // What nav drawer item should be selected?
 
+        /*
         mDrawerLayout = (DrawerLayout) mActivity.findViewById(R.id.drawer_layout);
         if (mDrawerLayout == null) {
             return;
@@ -64,15 +76,55 @@ public class NavDrawerManager {
         if (mNavigationView == null) {
             return;
         }
+
         ImageView drawerImage = (ImageView) mNavigationView.getHeaderView(0).findViewById(R.id.navdrawer_image);
         if (drawerImage != null) {
             drawerImage.setColorFilter(ContextCompat.getColor(mActivity, R.color.theme_primary),
                     PorterDuff.Mode.MULTIPLY);
         }
 
+        */
+
+        Drawer.OnDrawerItemClickListener listener = new Drawer.OnDrawerItemClickListener() {
+            @Override
+            public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                if (mActivity == null) {
+                    return false;
+                }
+                final int itemId = drawerItem.getIdentifier();
+                if (itemId == mCurrentNavId && !isSpecialItem(itemId)) {
+                    result.closeDrawer();
+                    return true;
+                }
+                if (isSpecialItem(itemId)) {
+                    mCurrentNavId = itemId;
+                    mActivity.goToNavDrawerItem(itemId);
+                    result.closeDrawer();
+                    return false;
+                } else {
+                    // launch the target Activity/Fragment after a short delay, to allow the close animation to play
+                    mHandler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mActivity.goToNavDrawerItem(itemId);
+                        }
+                    }, NAVDRAWER_LAUNCH_DELAY);
+                    mCurrentNavId = itemId;
+                    result.closeDrawer();
+                    // fade out the main content
+                    View mainContent = mActivity.findViewById(R.id.fragment_holder);
+                    if (mainContent != null) {
+                        mainContent.animate().alpha(0).setDuration(MAIN_CONTENT_FADEOUT_DURATION);
+                    }
+                    return true;
+                }
+            }
+        };
+
+        /*
         mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
-            public boolean onNavigationItemSelected(MenuItem item) {
+            public boolean onNavigationItemSelected(final MenuItem item) {
                 if (mActivity == null) {
                     return false;
                 }
@@ -89,7 +141,7 @@ public class NavDrawerManager {
                     mDrawerLayout.closeDrawer(GravityCompat.START);
                     return false;
                 } else {
-                    // launch the target Activity after a short delay, to allow the close animation to play
+                    // launch the target Activity/Fragment after a short delay, to allow the close animation to play
                     mHandler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -97,14 +149,44 @@ public class NavDrawerManager {
                         }
                     }, NAVDRAWER_LAUNCH_DELAY);
                     mCurrentNavId = itemId;
-                    mDrawerLayout.closeDrawer(GravityCompat.START);
+                    mDrawerLayout.closeDrawers();
+                    // fade out the main content
+                    View mainContent = mActivity.findViewById(R.id.fragment_holder);
+                    if (mainContent != null) {
+                        mainContent.animate().alpha(0).setDuration(MAIN_CONTENT_FADEOUT_DURATION);
+                    }
                     return true;
                 }
             }
         });
+        */
 
-        final Toolbar mActionBarToolbar = mActivity.getActionBarToolbar();
+        final Toolbar actionBarToolbar = mActivity.getActionBarToolbar();
+        result = new DrawerBuilder()
+                .withActivity(mActivity)
+                .withToolbar(actionBarToolbar)
+                .withFullscreen(false)
+                .withHeader(R.layout.navdrawer_header)
+                .withActionBarDrawerToggle(true)
+                .withHasStableIds(true)
+                .withOnDrawerItemClickListener(listener)
+                .addDrawerItems(
+                        new PrimaryDrawerItem().withName(R.string.navdrawer_item_my_authors).withIcon(R.drawable.ic_drawer_my_authors).withTextColorRes(R.color.body_text_1).withIdentifier(R.id.navigation_item_my_authors).withIconTintingEnabled(true).withSelectedIconColorRes(R.color.theme_primary).withSelectedTextColorRes(R.color.theme_primary),
+                        new PrimaryDrawerItem().withName(R.string.navdrawer_item_new_pubs).withIcon(R.drawable.ic_drawer_new_pubs).withTextColorRes(R.color.body_text_1).withIdentifier(R.id.navigation_item_new_pubs).withIconTintingEnabled(true).withSelectedIconColorRes(R.color.theme_primary).withSelectedTextColorRes(R.color.theme_primary),
+                        new PrimaryDrawerItem().withName(R.string.navdrawer_item_export).withIcon(R.drawable.ic_drawer_export).withTextColorRes(R.color.body_text_1).withIdentifier(R.id.navigation_item_export).withIconTintingEnabled(true).withSelectable(false).withSelectedIconColorRes(R.color.theme_primary).withSelectedTextColorRes(R.color.theme_primary),
+                        new PrimaryDrawerItem().withName(R.string.navdrawer_item_import).withIcon(R.drawable.ic_drawer_import).withTextColorRes(R.color.body_text_1).withIdentifier(R.id.navigation_item_import).withIconTintingEnabled(true).withSelectable(false).withSelectedIconColorRes(R.color.theme_primary).withSelectedTextColorRes(R.color.theme_primary),
+                        new DividerDrawerItem().withSelectable(false),
+                        new PrimaryDrawerItem().withName(R.string.navdrawer_item_settings).withIcon(R.drawable.ic_drawer_settings).withTextColorRes(R.color.body_text_1).withIdentifier(R.id.navigation_item_settings).withIconTintingEnabled(true).withSelectedIconColorRes(R.color.theme_primary).withSelectedTextColorRes(R.color.theme_primary),
+                        new PrimaryDrawerItem().withName(R.string.action_about).withIcon(R.drawable.ic_drawer_info).withTextColorRes(R.color.body_text_1).withIdentifier(R.id.navigation_item_about).withIconTintingEnabled(true).withSelectedIconColorRes(R.color.theme_primary).withSelectedTextColorRes(R.color.theme_primary)
+                )
+                .build();
 
+        ImageView drawerImage = (ImageView) result.getHeader().findViewById(R.id.navdrawer_image);
+        if (drawerImage != null) {
+            drawerImage.setColorFilter(ContextCompat.getColor(mActivity, R.color.theme_primary),
+                    PorterDuff.Mode.MULTIPLY);
+        }
+        /*
         if (mActionBarToolbar != null) {
             mActionBarToolbar.setNavigationIcon(R.drawable.ic_drawer);
             mActionBarToolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -116,31 +198,45 @@ public class NavDrawerManager {
         }
 
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+        */
+    }
 
+    public void tryFadeInMainContent() {
+        View mainContent = mActivity.findViewById(R.id.fragment_holder);
+        if (mainContent != null) {
+            mainContent.setAlpha(0);
+            mainContent.animate().alpha(1).setDuration(MAIN_CONTENT_FADEIN_DURATION);
+        }
     }
 
     public boolean isNavDrawerOpen() {
-        return mDrawerLayout != null && mDrawerLayout.isDrawerOpen(GravityCompat.START);
+        return result != null && result.isDrawerOpen();
+        //return mDrawerLayout != null && mDrawerLayout.isDrawerOpen(GravityCompat.START);
     }
 
     public void closeNavDrawer() {
-        if (mDrawerLayout != null) {
-            mDrawerLayout.closeDrawer(GravityCompat.START);
+        if (result != null) {
+            result.closeDrawer();
         }
+        /*if (mDrawerLayout != null) {
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+        }*/
     }
 
     public void openNavDrawer() {
-        if (mDrawerLayout != null) {
-            mDrawerLayout.openDrawer(GravityCompat.START);
+        if (result != null) {
+            result.openDrawer();
         }
+        /*if (mDrawerLayout != null) {
+            mDrawerLayout.openDrawer(GravityCompat.START);
+        }*/
     }
 
 
     private boolean isSpecialItem(int itemId) {
         return itemId == R.id.navigation_item_settings ||
                 itemId == R.id.navigation_item_export ||
-                itemId == R.id.navigation_item_import ||
-                itemId == R.id.navigation_item_about;
+                itemId == R.id.navigation_item_import;
     }
 
     public interface NavDrawerListener {

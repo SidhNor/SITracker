@@ -18,8 +18,6 @@ package com.andrada.sitracker.ui;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.app.backup.BackupManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -37,7 +35,7 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.view.MenuItem;
-import android.widget.FrameLayout;
+import android.view.ViewGroup;
 
 import com.andrada.sitracker.BuildConfig;
 import com.andrada.sitracker.Constants;
@@ -46,7 +44,8 @@ import com.andrada.sitracker.contracts.OnBackAware;
 import com.andrada.sitracker.events.AuthorMarkedAsReadEvent;
 import com.andrada.sitracker.events.AuthorsExported;
 import com.andrada.sitracker.events.PublicationMarkedAsReadEvent;
-import com.andrada.sitracker.ui.fragment.AboutDialog;
+import com.andrada.sitracker.ui.fragment.AboutFragment;
+import com.andrada.sitracker.ui.fragment.AboutFragment_;
 import com.andrada.sitracker.ui.fragment.AuthorsFragment;
 import com.andrada.sitracker.ui.fragment.AuthorsFragment_;
 import com.andrada.sitracker.ui.fragment.NewPublicationsFragment;
@@ -75,10 +74,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
     private static final String TAG = makeLogTag(BaseActivity.class);
     private static final long BACK_UP_DELAY = 30000L;
 
-    // fade in and fade out durations for the main content when switching between
-    // different Activities of the app through the Nav Drawer
-    private static final int MAIN_CONTENT_FADEIN_DURATION = 250;
-
     private NavDrawerManager mDrawerManager;
 
     // Primary toolbar and drawer toggle
@@ -90,7 +85,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
     protected Fragment currentFragment;
 
-    private FrameLayout cabContainer;
+    private ViewGroup cabContainer;
 
     private TimerTask backUpTask;
     @NotNull
@@ -186,15 +181,15 @@ public abstract class BaseActivity extends AppCompatActivity implements
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        if (mDrawerManager == null) {
+        /*if (mDrawerManager == null) {
             afterViews();
-        }
+        }*/
         if (appBarLayout == null) {
             appBarLayout = (AppBarLayout) findViewById(R.id.appbar_layout);
         }
 
         if (cabContainer == null) {
-            cabContainer = (FrameLayout) findViewById(R.id.si_cab_container);
+            cabContainer = (ViewGroup) findViewById(R.id.si_cab_container);
         }
     }
 
@@ -247,6 +242,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
                 }
                 currentFragment = authFrag;
                 ActivityFragmentNavigator.switchMainFragmentInMainActivity(this, authFrag);
+                mDrawerManager.tryFadeInMainContent();
                 break;
             case R.id.navigation_item_new_pubs:
                 NewPublicationsFragment newPubsFrag = NewPublicationsFragment_.builder().build();
@@ -255,6 +251,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
                 }
                 currentFragment = newPubsFrag;
                 ActivityFragmentNavigator.switchMainFragmentInMainActivity(this, newPubsFrag);
+                mDrawerManager.tryFadeInMainContent();
                 break;
             case R.id.navigation_item_export:
                 mExportCtrl.showDialog();
@@ -263,18 +260,23 @@ public abstract class BaseActivity extends AppCompatActivity implements
                 ImportAuthorsActivity_.intent(this).start();
                 break;
             case R.id.navigation_item_settings:
-                SettingsActivity_.intent(this).start();
+                SettingsActivity.SettingsFragment settingsFragment = SettingsActivity_.SettingsFragment_.builder().build();
+                if (appBarLayout != null) {
+                    appBarLayout.setExpanded(true, false);
+                }
+                currentFragment = settingsFragment;
+                ActivityFragmentNavigator.switchMainFragmentInMainActivity(this, settingsFragment);
+                mDrawerManager.tryFadeInMainContent();
+                //SettingsActivity_.intent(this).start();
                 break;
             case R.id.navigation_item_about:
-                AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_ABOUT_DIALOG);
-                FragmentManager fm = this.getFragmentManager();
-                FragmentTransaction ft = fm.beginTransaction();
-                Fragment prev = fm.findFragmentByTag(AboutDialog.FRAGMENT_TAG);
-                if (prev != null) {
-                    ft.remove(prev);
+                AboutFragment aboutFrag = AboutFragment_.builder().build();
+                if (appBarLayout != null) {
+                    appBarLayout.setExpanded(true, false);
                 }
-                ft.addToBackStack(null);
-                new AboutDialog().show(ft, AboutDialog.FRAGMENT_TAG);
+                currentFragment = aboutFrag;
+                ActivityFragmentNavigator.switchMainFragmentInMainActivity(this, aboutFrag);
+                mDrawerManager.tryFadeInMainContent();
                 break;
         }
     }
@@ -297,11 +299,15 @@ public abstract class BaseActivity extends AppCompatActivity implements
     public void onBackPressed() {
         if (mDrawerManager != null && mDrawerManager.isNavDrawerOpen()) {
             mDrawerManager.closeNavDrawer();
+            return;
         } else if (currentFragment != null && currentFragment instanceof OnBackAware) {
             boolean handled = ((OnBackAware) currentFragment).onBackPressed();
             if (handled) {
                 return;
             }
+        } else if (getFragmentManager().getBackStackEntryCount() > 0) {
+            getFragmentManager().popBackStack();
+            return;
         }
         super.onBackPressed();
     }
@@ -318,7 +324,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
             snackbarText.setSpan(new ForegroundColorSpan(Color.RED), 0, snackbarText.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
 
-        Snackbar.make(findViewById(R.id.drawer_layout), snackbarText, Snackbar.LENGTH_LONG).show();
+        Snackbar.make(findViewById(R.id.main_content), snackbarText, Snackbar.LENGTH_LONG).show();
     }
 
     public void onEvent(AuthorMarkedAsReadEvent event) {
@@ -355,11 +361,11 @@ public abstract class BaseActivity extends AppCompatActivity implements
      * activity then don't define one and this method will use back button functionality. If "Up"
      * functionality is still desired for activities without parents then use
      * {@code syntheticParentActivity} to define one dynamically.
-     *
+     * <p/>
      * Note: Up navigation intents are represented by a back arrow in the top left of the Toolbar
-     *       in Material Design guidelines.
+     * in Material Design guidelines.
      *
-     * @param currentActivity Activity in use when navigate Up action occurred.
+     * @param currentActivity         Activity in use when navigate Up action occurred.
      * @param syntheticParentActivity Parent activity to use when one is not already configured.
      */
     public static void navigateUpOrBack(Activity currentActivity,

@@ -35,19 +35,19 @@
             android:id="@+id/navigation_item_import"
             android:icon="@drawable/ic_drawer_import"
             android:title="@string/navdrawer_item_import"/>
-        <item
-            android:title=""
-            android:id="@+id/section">
-            <menu>
-                <item
-                    android:id="@+id/navigation_item_settings"
-                    android:icon="@drawable/ic_drawer_settings"
-                    android:title="@string/navdrawer_item_settings"/>
-                <item
-                    android:id="@+id/navigation_item_about"
-                    android:icon="@drawable/ic_drawer_info"
-                    android:title="@string/action_about"/>
-            </menu>
-        </item>
+
     </group>
+    <item android:title="">
+        <menu>
+            <item
+                android:id="@+id/navigation_item_settings"
+                android:icon="@drawable/ic_drawer_settings"
+                android:title="@string/navdrawer_item_settings"/>
+            <item
+                android:id="@+id/navigation_item_about"
+                android:icon="@drawable/ic_drawer_info"
+                android:title="@string/action_about"/>
+        </menu>
+    </item>
+
 </menu>
