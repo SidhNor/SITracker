@@ -170,6 +170,7 @@ public class AuthorsFragment extends BaseListFragment implements
         super.onPause();
         EventBus.getDefault().unregister(this);
         getActivity().unregisterReceiver(updateStatusReceiver);
+        adapter.unregisterAdapterDataObserver(dataObserver);
         if (mCab != null && mCab.isActive()) {
             cleanUpAfterCabAction();
         }
@@ -299,14 +300,14 @@ public class AuthorsFragment extends BaseListFragment implements
         snackbarText.append(getResources().getText(R.string.update_failed_crouton_message));
         snackbarText.setSpan(new ForegroundColorSpan(0xFFFF0000), 0, snackbarText.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-        Snackbar.make(getActivity().findViewById(R.id.drawer_layout), snackbarText, Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(getActivity().findViewById(R.id.main_content), snackbarText, Snackbar.LENGTH_SHORT).show();
 
     }
 
     @Override
     public void onAuthorsUpToDate() {
         toggleUpdatingState();
-        Snackbar.make(getActivity().findViewById(R.id.drawer_layout), R.string.authors_up_to_date, Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(getActivity().findViewById(R.id.main_content), R.string.authors_up_to_date, Snackbar.LENGTH_SHORT).show();
     }
     //endregion
 
@@ -333,7 +334,7 @@ public class AuthorsFragment extends BaseListFragment implements
     @UiThread
     protected void showSuccessfulRestore() {
         String message = getResources().getString(R.string.backup_restored_crouton_message);
-        Snackbar.make(getActivity().findViewById(R.id.drawer_layout), message, Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(getActivity().findViewById(R.id.main_content), message, Snackbar.LENGTH_SHORT).show();
     }
 
 
@@ -348,7 +349,7 @@ public class AuthorsFragment extends BaseListFragment implements
 
     private void showNoNetworkSnackbar() {
         String msg = getResources().getString(R.string.no_network_error);
-        Snackbar.make(getActivity().findViewById(R.id.drawer_layout), msg, Snackbar.LENGTH_LONG)
+        Snackbar.make(getActivity().findViewById(R.id.main_content), msg, Snackbar.LENGTH_LONG)
                 .setAction(getResources().getString(R.string.no_network_retry), this.snackBarClickListener)
                 .show();
     }

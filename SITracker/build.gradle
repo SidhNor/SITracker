@@ -36,6 +36,9 @@ dependencies {
     compile 'com.google.android.gms:play-services-analytics:8.3.0'
     //noinspection GradleDependency
     compile 'com.google.android.gms:play-services-plus:8.3.0'
+    compile('com.mikepenz:materialdrawer:4.6.4@aar') {
+        transitive = true
+    }
     compile('com.github.afollestad.material-dialogs:core:0.8.5.3@aar') {
         transitive = true
     }

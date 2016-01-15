@@ -95,4 +95,11 @@ public class NewPublicationsFragment extends BaseFragment {
             }
         });
     }
+
+
+    @Override
+    public void onPause() {
+        adapter.unregisterAdapterDataObserver(dataObserver);
+        super.onPause();
+    }
 }

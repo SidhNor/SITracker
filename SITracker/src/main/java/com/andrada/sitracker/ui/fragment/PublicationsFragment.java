@@ -136,7 +136,7 @@ public class PublicationsFragment extends BaseListFragment implements
             snackbarText.append(errorMessage);
             snackbarText.setSpan(new ForegroundColorSpan(0xFFFF0000), 0, snackbarText.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-            Snackbar.make(getActivity().findViewById(R.id.drawer_layout), snackbarText, Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(getActivity().findViewById(R.id.main_content), snackbarText, Snackbar.LENGTH_SHORT).show();
         }
     }
 
