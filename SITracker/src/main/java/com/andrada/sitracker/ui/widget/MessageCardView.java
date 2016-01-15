@@ -1,3 +1,19 @@
+/*
+ * Copyright 2016 Gleb Godonoga.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.andrada.sitracker.ui.widget;
 
 import android.animation.Animator;
@@ -14,7 +30,6 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.andrada.sitracker.R;
-import com.andrada.sitracker.util.UIUtils;
 
 import static com.andrada.sitracker.util.LogUtils.LOGW;
 import static com.andrada.sitracker.util.LogUtils.makeLogTag;
@@ -71,6 +86,7 @@ public class MessageCardView extends FrameLayout implements View.OnClickListener
         String button2tag = a.getString(R.styleable.MessageCard_button2tag);
         int emphasisColor = a.getColor(R.styleable.MessageCard_emphasisColor,
                 getResources().getColor(R.color.theme_primary));
+        a.recycle();
 
         if (button1text != null) {
             setButton(0, button1text, button1tag, button1emphasis, 0);
@@ -144,58 +160,30 @@ public class MessageCardView extends FrameLayout implements View.OnClickListener
         if (!animate) {
             setVisibility(View.GONE);
         } else {
-            if (UIUtils.hasICS()) {
-                animate()
-                        .scaleY(0.1f)
-                        .alpha(0.1f)
-                        .setDuration(ANIM_DURATION)
-                        .setListener(new Animator.AnimatorListener() {
-                            @Override
-                            public void onAnimationStart(Animator animator) { }
+            animate()
+                    .scaleY(0.1f)
+                    .alpha(0.1f)
+                    .setDuration(ANIM_DURATION)
+                    .setListener(new Animator.AnimatorListener() {
+                        @Override
+                        public void onAnimationStart(Animator animator) {
+                        }
 
-                            @Override
-                            public void onAnimationEnd(Animator animator) {
-                                setVisibility(View.GONE);
-                            }
+                        @Override
+                        public void onAnimationEnd(Animator animator) {
+                            setVisibility(View.GONE);
+                        }
 
-                            @Override
-                            public void onAnimationCancel(Animator animator) {
+                        @Override
+                        public void onAnimationCancel(Animator animator) {
 
-                            }
+                        }
 
-                            @Override
-                            public void onAnimationRepeat(Animator animator) {
+                        @Override
+                        public void onAnimationRepeat(Animator animator) {
 
-                            }
-                        });
-            } else {
-                //TODO get rid of this on next release with API 14
-                com.nineoldandroids.view.ViewPropertyAnimator.animate(this)
-                        .scaleY(0.1f)
-                        .alpha(0.1f)
-                        .setDuration(ANIM_DURATION)
-                        .setListener(new com.nineoldandroids.animation.Animator.AnimatorListener() {
-                            @Override
-                            public void onAnimationStart(com.nineoldandroids.animation.Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationEnd(com.nineoldandroids.animation.Animator animation) {
-                                setVisibility(View.GONE);
-                            }
-
-                            @Override
-                            public void onAnimationCancel(com.nineoldandroids.animation.Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationRepeat(com.nineoldandroids.animation.Animator animation) {
-
-                            }
-                        });
-            }
+                        }
+                    });
 
         }
     }

@@ -1,11 +1,11 @@
 /*
- * Copyright 2013 Gleb Godonoga.
+ * Copyright 2016 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,10 +18,10 @@ package com.andrada.sitracker.events;
 
 public class AuthorSelectedEvent {
     public final long authorId;
-    public final boolean isDefault;
+    public final String authorName;
 
-    public AuthorSelectedEvent(long authorId, boolean isDefault) {
+    public AuthorSelectedEvent(long authorId, String authorName) {
         this.authorId = authorId;
-        this.isDefault = isDefault;
+        this.authorName = authorName;
     }
 }

@@ -1,11 +1,11 @@
 /*
- * Copyright 2013 Gleb Godonoga.
+ * Copyright 2014 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,9 +16,9 @@
 
 package com.andrada.sitracker.ui;
 
+import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 
 import com.andrada.sitracker.R;
 
@@ -48,11 +48,11 @@ public abstract class SimpleSinglePaneActivity extends BaseActivity {
         if (savedInstanceState == null) {
             mFragment = onCreatePane();
             mFragment.setArguments(intentToFragmentArguments(getIntent()));
-            getSupportFragmentManager().beginTransaction()
+            getFragmentManager().beginTransaction()
                     .add(R.id.root_container, mFragment, "single_pane")
                     .commit();
         } else {
-            mFragment = getSupportFragmentManager().findFragmentByTag("single_pane");
+            mFragment = getFragmentManager().findFragmentByTag("single_pane");
         }
     }
 

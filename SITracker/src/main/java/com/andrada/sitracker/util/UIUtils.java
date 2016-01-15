@@ -41,14 +41,12 @@ import static com.andrada.sitracker.util.LogUtils.makeLogTag;
 
 public class UIUtils {
 
-    private static final String TAG = makeLogTag(UIUtils.class);
-
     public static final String TARGET_FORM_FACTOR_ACTIVITY_METADATA =
             "com.andrada.sitracker.meta.TARGET_FORM_FACTOR";
-
     public static final String TARGET_FORM_FACTOR_HANDSET = "handset";
     public static final String TARGET_FORM_FACTOR_TABLET = "tablet";
-
+    public static final int ANIMATION_FADE_IN_TIME = 250;
+    private static final String TAG = makeLogTag(UIUtils.class);
     /**
      * Regex to search for HTML escape sequences.
      * <p/>
@@ -56,7 +54,7 @@ public class UIUtils {
      * semicolon. (Example: &amp;amp;)
      */
     private static final Pattern REGEX_HTML_ESCAPE = Pattern.compile(".*&\\S;.*");
-    public static final int ANIMATION_FADE_IN_TIME = 250;
+    private static final int[] RES_IDS_ACTION_BAR_SIZE = {R.attr.actionBarSize};
 
     /**
      * Populate the given {@link android.widget.TextView} with the requested text, formatting
@@ -80,23 +78,6 @@ public class UIUtils {
         }
     }
 
-    //TODO remove on next release
-    public static boolean hasGingerbreadMR1() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD_MR1;
-    }
-
-    public static boolean hasHoneycomb() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
-    }
-
-    public static boolean hasHoneycombMR1() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1;
-    }
-
-    public static boolean hasICS() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH;
-    }
-
     public static boolean hasJellyBean() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
     }
@@ -107,11 +88,6 @@ public class UIUtils {
                 >= Configuration.SCREENLAYOUT_SIZE_LARGE;
     }
 
-    public static boolean isHoneycombTablet(@NotNull Context context) {
-        return hasHoneycomb() && isTablet(context);
-    }
-
-
     /**
      * Enables and disables {@linkplain android.app.Activity activities} based on their
      * {@link #TARGET_FORM_FACTOR_ACTIVITY_METADATA}" meta-data and the current device.
@@ -120,11 +96,11 @@ public class UIUtils {
      * <a href="http://stackoverflow.com/questions/13202805">Original code</a> by Dandre Allison.
      *
      * @param context the current context of the device
-     * @see #isHoneycombTablet(android.content.Context)
+     * @see #isTablet(android.content.Context)
      */
     public static void enableDisableActivitiesByFormFactor(@NotNull Context context) {
         final PackageManager pm = context.getPackageManager();
-        boolean isTablet = isHoneycombTablet(context);
+        boolean isTablet = isTablet(context);
 
         try {
             PackageInfo pi = pm.getPackageInfo(context.getPackageName(),
@@ -147,12 +123,14 @@ public class UIUtils {
                         && !(tabletActivity && !isTablet);
 
                 String className = info.name;
-                pm.setComponentEnabledSetting(
-                        new ComponentName(context, Class.forName(className)),
-                        enable
-                                ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED
-                                : PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-                        PackageManager.DONT_KILL_APP);
+                if (className.contains("andrada")) {
+                    pm.setComponentEnabledSetting(
+                            new ComponentName(context, Class.forName(className)),
+                            enable
+                                    ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED
+                                    : PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                            PackageManager.DONT_KILL_APP);
+                }
             }
         } catch (PackageManager.NameNotFoundException e) {
             LOGE(TAG, "No package info found for our own package.", e);
@@ -174,8 +152,6 @@ public class UIUtils {
         }
         return sb.toString();
     }
-
-    private static final int[] RES_IDS_ACTION_BAR_SIZE = {R.attr.actionBarOverlayTopOffset};
 
     /**
      * Calculates the Action Bar height in pixels.
@@ -214,4 +190,8 @@ public class UIUtils {
                 Math.round(Color.blue(color) * factor));
     }
 
+    public static boolean isLandscape(Context context) {
+        return context != null &&
+                context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
+    }
 }

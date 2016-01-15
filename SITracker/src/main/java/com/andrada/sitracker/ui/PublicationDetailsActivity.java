@@ -16,44 +16,50 @@
 
 package com.andrada.sitracker.ui;
 
-import android.annotation.SuppressLint;
+import android.app.Fragment;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.ActivityCompat;
+import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
 import android.view.MenuItem;
-import android.view.Window;
+import android.view.View;
 import android.view.WindowManager;
 
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.ui.fragment.PublicationInfoFragment_;
-import com.andrada.sitracker.util.UIUtils;
-
-import de.keyboardsurfer.android.widget.crouton.Crouton;
 
 public class PublicationDetailsActivity extends SimpleSinglePaneActivity {
 
-    @SuppressLint("AppCompatMethod")
+    private boolean shouldBeFloatingWindow = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //UIUtils.tryTranslateHttpIntent(this);
-        //BeamUtils.tryUpdateIntentFromBeam(this);
-        if (UIUtils.hasHoneycomb()) {
-            requestWindowFeature(Window.FEATURE_ACTION_BAR);
-        }
-
-        if (shouldBeFloatingWindow()) {
+        boolean shouldBeFloatingWindow = shouldBeFloatingWindow();
+        if (shouldBeFloatingWindow) {
             setupFloatingWindow();
         }
         super.onCreate(savedInstanceState);
 
-        if (savedInstanceState == null) {
-            Uri sessionUri = getIntent().getData();
-            //BeamUtils.setBeamSessionUri(this, sessionUri);
-        }
 
+        ActivityCompat.postponeEnterTransition(this);
         setTitle("");
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        final Toolbar toolbar = getActionBarToolbar();
+        toolbar.setNavigationIcon(shouldBeFloatingWindow
+                ? R.drawable.ic_ab_close : R.drawable.ic_up);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ActivityCompat.finishAfterTransition(PublicationDetailsActivity.this);
+            }
+        });
     }
 
     @Override
@@ -91,9 +97,4 @@ public class PublicationDetailsActivity extends SimpleSinglePaneActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Crouton.cancelAllCroutons();
-    }
 }

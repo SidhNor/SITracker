@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,7 +29,7 @@ import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.tasks.messages.UpdateFailedIntentMessage;
 import com.andrada.sitracker.tasks.messages.UpdateSuccessfulIntentMessage;
-import com.andrada.sitracker.ui.HomeActivity_;
+import com.andrada.sitracker.ui.SiMainActivity_;
 import com.andrada.sitracker.util.AnalyticsHelper;
 
 import org.jetbrains.annotations.NotNull;
@@ -41,6 +41,7 @@ public class UpdateStatusNotificationReceiver extends BroadcastReceiver {
 
     private final static int UPDATE_SUCCESS_NOTIFICATION_ID = 11987;
     private final static int UPDATE_FAIL_NOTIFICATION_ID = 2;
+
 
     @Override
     public void onReceive(@NotNull Context context, @NotNull Intent intent) {
@@ -57,7 +58,6 @@ public class UpdateStatusNotificationReceiver extends BroadcastReceiver {
             //Notify that update failed
             AnalyticsHelper.getInstance().sendException(UpdateFailedIntentMessage.FAILED_MESSAGE);
         }
-
     }
 
     private void sendNotification(int number, List<String> updatedAuthorNames, @NotNull Context context) {
@@ -76,7 +76,9 @@ public class UpdateStatusNotificationReceiver extends BroadcastReceiver {
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(context)
                         .setSmallIcon(R.drawable.notification)
+                        .setPriority(Notification.PRIORITY_LOW)
                         .setContentTitle(context.getResources().getString(R.string.notification_title))
+                        .setColor(context.getResources().getColor(R.color.theme_primary))
                         .setContentText(context.getResources().getQuantityString(R.plurals.authors_updated, number, number))
                         .setAutoCancel(true)
                         .setOnlyAlertOnce(true)
@@ -86,14 +88,14 @@ public class UpdateStatusNotificationReceiver extends BroadcastReceiver {
 
 
         // Creates an explicit intent for an Activity in your app
-        Intent resultIntent = new Intent(context, HomeActivity_.class);
+        Intent resultIntent = new Intent(context, SiMainActivity_.class);
         // The stack builder object will contain an artificial back stack for the
         // started Activity.
         // This ensures that navigating backward from the Activity leads out of
         // your application to the Home screen.
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
         // Adds the back stack for the Intent (but not the Intent itself)
-        stackBuilder.addParentStack(HomeActivity_.class);
+        stackBuilder.addParentStack(SiMainActivity_.class);
         // Adds the Intent that starts the Activity to the top of the stack
         stackBuilder.addNextIntent(resultIntent);
         PendingIntent resultPendingIntent =

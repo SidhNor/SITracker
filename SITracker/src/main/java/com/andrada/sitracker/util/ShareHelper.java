@@ -231,7 +231,7 @@ public final class ShareHelper {
      * Saves a file with specified html page content and character set.
      * If the page does not contain a meta Content-Type header, it is added and the files is saved as UTF-8
      *
-     * @param file    The file to save to
+     * @param file   The file to save to
      * @param reader Buffered reader of content to save
      * @return true if save was successful, false otherwise
      */

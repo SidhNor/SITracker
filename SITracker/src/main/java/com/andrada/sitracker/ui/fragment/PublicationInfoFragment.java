@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Gleb Godonoga.
+ * Copyright 2016 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,26 +16,36 @@
 
 package com.andrada.sitracker.ui.fragment;
 
-import android.annotation.TargetApi;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.MenuItemCompat;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
+import android.text.style.ForegroundColorSpan;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -43,8 +53,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -57,13 +65,12 @@ import com.andrada.sitracker.contracts.SIPrefs_;
 import com.andrada.sitracker.db.beans.Publication;
 import com.andrada.sitracker.db.dao.PublicationDao;
 import com.andrada.sitracker.db.manager.SiDBHelper;
+import com.andrada.sitracker.events.PublicationMarkedAsReadEvent;
 import com.andrada.sitracker.events.RatingResultEvent;
 import com.andrada.sitracker.exceptions.SharePublicationException;
 import com.andrada.sitracker.reader.SamlibPublicationPageReader;
 import com.andrada.sitracker.ui.BaseActivity;
-import com.andrada.sitracker.ui.widget.CheckableFrameLayout;
 import com.andrada.sitracker.ui.widget.MessageCardView;
-import com.andrada.sitracker.ui.widget.ObservableScrollView;
 import com.andrada.sitracker.util.AnalyticsHelper;
 import com.andrada.sitracker.util.SamlibPageHelper;
 import com.andrada.sitracker.util.ShareHelper;
@@ -78,11 +85,6 @@ import com.github.amlcurran.showcaseview.targets.ViewTarget;
 import com.github.kevinsawicki.http.HttpRequest;
 import com.google.android.gms.plus.PlusOneButton;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
-import com.nineoldandroids.animation.Animator;
-import com.nineoldandroids.animation.AnimatorListenerAdapter;
-import com.nineoldandroids.animation.AnimatorSet;
-import com.nineoldandroids.animation.ObjectAnimator;
-import com.nineoldandroids.view.ViewHelper;
 import com.viewpagerindicator.CirclePageIndicator;
 
 import org.androidannotations.annotations.AfterViews;
@@ -105,19 +107,14 @@ import java.util.Date;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
-import de.keyboardsurfer.android.widget.crouton.Configuration;
-import de.keyboardsurfer.android.widget.crouton.Crouton;
-import de.keyboardsurfer.android.widget.crouton.Style;
 
-import static com.nineoldandroids.view.ViewPropertyAnimator.animate;
+import static com.andrada.sitracker.util.LogUtils.LOGI;
 
 @EFragment(R.layout.fragment_pub_details)
 @OptionsMenu(R.menu.publication_info_menu)
-public class PublicationInfoFragment extends Fragment implements
-        ObservableScrollView.Callbacks {
+public class PublicationInfoFragment extends BaseFragment {
 
     private static final float PHOTO_ASPECT_RATIO = 1.7777777f;
-    private static final float GAP_FILL_DISTANCE_MULTIPLIER = 1.5f;
 
     @OrmLiteDao(helper = SiDBHelper.class)
     PublicationDao publicationsDao;
@@ -126,14 +123,12 @@ public class PublicationInfoFragment extends Fragment implements
     @Pref
     SIPrefs_ prefs;
 
-    @ViewById(R.id.scroll_view_child)
-    View mScrollViewChild;
     @ViewById(R.id.pub_title)
     TextView mTitle;
+
     @ViewById(R.id.pub_subtitle)
     TextView mSubtitle;
-    @ViewById(R.id.scroll_view)
-    ObservableScrollView mScrollView;
+
     @ViewById(R.id.pub_abstract)
     TextView mAbstract;
     @ViewById(R.id.publication_rating_block)
@@ -146,14 +141,7 @@ public class PublicationInfoFragment extends Fragment implements
     RatingBar mRatingBar;
     @ViewById(R.id.voted_on_field)
     TextView mVotedOnField;
-    @ViewById(R.id.header_pub)
-    View mHeaderBox;
-    @ViewById(R.id.header_pub_contents)
-    View mHeaderContentBox;
-    @ViewById(R.id.header_background)
-    View mHeaderBackgroundBox;
-    @ViewById(R.id.header_shadow)
-    View mHeaderShadow;
+
     @ViewById(R.id.details_container)
     View mDetailsContainer;
     @ViewById(R.id.pub_photo_container)
@@ -162,8 +150,10 @@ public class PublicationInfoFragment extends Fragment implements
     ViewPager pager;
     @ViewById(R.id.pagerIndicators)
     CirclePageIndicator pagerIndicators;
+
     @ViewById(R.id.read_pub_button)
-    CheckableFrameLayout mReadPubButton;
+    FloatingActionButton mReadPubButton;
+
     @ViewById(R.id.plus_one_button)
     PlusOneButton mPlusOneButton;
     @OptionsMenuItem(R.id.action_mark_read)
@@ -176,33 +166,18 @@ public class PublicationInfoFragment extends Fragment implements
     private boolean mDownloaded;
     private ViewGroup mRootView;
     private Handler mHandler = new Handler();
-    private Uri mPublicationUri;
     private long mPublicationId;
-    private boolean mHasPhoto;
-    private boolean mGapFillShown;
-    private float newTop;
-    private int mHeaderTopClearance;
-    private int mPhotoHeightPixels;
-    private int mHeaderHeightPixels;
-    private int mReadPubButtonHeightPixels;
-    private ViewTreeObserver.OnGlobalLayoutListener mGlobalLayoutListener
-            = new ViewTreeObserver.OnGlobalLayoutListener() {
-        @Override
-        public void onGlobalLayout() {
-            mReadPubButtonHeightPixels = mReadPubButton.getHeight();
-            recomputePhotoAndScrollingMetrics();
-        }
-    };
 
-    private boolean delayedScrollCheck;
+    private boolean mHasPhoto;
     private boolean rateShowcaseShown;
     private boolean mRatingVisible;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LOGI("SITracker", "PublicationInfoFragment - onCreate");
         final Intent intent = BaseActivity.fragmentArgumentsToIntent(getArguments());
-        mPublicationUri = intent.getData();
+        Uri mPublicationUri = intent.getData();
 
         if (mPublicationUri == null) {
             return;
@@ -210,6 +185,8 @@ public class PublicationInfoFragment extends Fragment implements
         mPublicationId = AppUriContract.getPublicationId(mPublicationUri);
         mHandler = new Handler();
         rateShowcaseShown = prefs.ratingShowcaseShotDone().get();
+
+        AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_PUBLICATION_INFO);
     }
 
     @Override
@@ -231,48 +208,28 @@ public class PublicationInfoFragment extends Fragment implements
         EventBus.getDefault().unregister(this);
     }
 
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        if (mScrollView == null) {
-            return;
-        }
-        ViewTreeObserver vto = mScrollView.getViewTreeObserver();
-        if (vto.isAlive()) {
-            //noinspection deprecation
-            if (UIUtils.hasJellyBean()) {
-                vto.removeOnGlobalLayoutListener(mGlobalLayoutListener);
-            } else {
-                vto.removeGlobalOnLayoutListener(mGlobalLayoutListener);
-            }
-
-        }
-    }
-
     @Override
     public void onDestroy() {
         OpenHelperManager.releaseHelper();
         BackgroundExecutor.cancelAll("publicationDownload", true);
         super.onDestroy();
+        LOGI("SITracker", "PublicationInfoFragment - onDestroy");
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         if (mIsDownloading) {
-            MenuItemCompat.setActionView(mForceDownloadAction, R.layout.ab_download_progress);
+            mForceDownloadAction.setActionView(R.layout.ab_download_progress);
         }
         mMarkAsReadAction.setVisible(currentRecord != null && currentRecord.getNew());
     }
 
     @AfterViews
     public void afterViews() {
-        mScrollViewChild.setVisibility(View.INVISIBLE);
         pager.setAdapter(new PublicationImagesAdapter(getActivity()));
         pagerIndicators.setViewPager(pager);
         pagerIndicators.setSnap(true);
-        setupCustomScrolling();
     }
 
     @Background
@@ -333,7 +290,10 @@ public class PublicationInfoFragment extends Fragment implements
                 @Override
                 public void run() {
                     showPublicationState(PublicationState.WAITING_REFRESH, false);
-                    showCustomPositionedCrouton(msg, false);
+                    SpannableStringBuilder snackbarText = new SpannableStringBuilder();
+                    snackbarText.append(msg);
+                    snackbarText.setSpan(new ForegroundColorSpan(Color.RED), 0, snackbarText.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    Snackbar.make(getView(), snackbarText, Snackbar.LENGTH_SHORT).show();
                 }
             });
         } finally {
@@ -342,7 +302,7 @@ public class PublicationInfoFragment extends Fragment implements
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        MenuItemCompat.setActionView(mForceDownloadAction, null);
+                        mForceDownloadAction.setActionView(null);
                     }
                 });
             }
@@ -357,7 +317,6 @@ public class PublicationInfoFragment extends Fragment implements
         mTitle.setText(mTitleString);
         mSubtitle.setText(subtitle);
 
-        mReadPubButton.setVisibility(View.VISIBLE);
         mPhotoViewContainer.setBackgroundColor(UIUtils.scaleColor(0xe8552c, 0.65f, false));
 
         updatePlusOneButton();
@@ -373,17 +332,14 @@ public class PublicationInfoFragment extends Fragment implements
         updateRating();
 
         String imagesUrl = currentRecord.getImagePageUrl();
-        if (!TextUtils.isEmpty(imagesUrl) && prefs.displayPubImages().get() &&
-                //TODO remove Gingerbread check on next release
-                UIUtils.hasGingerbreadMR1()) {
+        if (!TextUtils.isEmpty(imagesUrl) && prefs.displayPubImages().get()) {
             //Do a network request to detect number of images
             loadImageList(imagesUrl);
             //Add images
             //Add image view to pager.
         } else {
             mHasPhoto = false;
-            delayedScrollCheck = true;
-            recomputePhotoAndScrollingMetrics();
+            recomputePhotoMetrics();
         }
 
         //Check if file is new version of pub is loaded.
@@ -413,8 +369,7 @@ public class PublicationInfoFragment extends Fragment implements
         mHandler.post(new Runnable() {
             @Override
             public void run() {
-                onScrollChanged(0, 0); // trigger scroll handling
-                mScrollViewChild.setVisibility(View.VISIBLE);
+                ActivityCompat.startPostponedEnterTransition(getActivity());
             }
         });
     }
@@ -474,7 +429,7 @@ public class PublicationInfoFragment extends Fragment implements
             List<Pair<String, String>> results = new SamlibPublicationPageReader().readPublicationImageUrlsAndDescriptions(data);
             addImagesToList(results);
         } catch (HttpRequest.HttpRequestException e) {
-            AnalyticsHelper.getInstance().sendException("Could not load publication image list", e);
+            AnalyticsHelper.getInstance().sendException("Could not load publication image mRecyclerView", e);
             addImagesToList(new ArrayList<Pair<String, String>>());
         }
     }
@@ -483,6 +438,7 @@ public class PublicationInfoFragment extends Fragment implements
     void markCurrentPublicationRead() {
         try {
             publicationsDao.markPublicationRead(currentRecord);
+            EventBus.getDefault().post(new PublicationMarkedAsReadEvent(true));
         } catch (SQLException e) {
             AnalyticsHelper.getInstance().sendException(e);
         }
@@ -532,7 +488,7 @@ public class PublicationInfoFragment extends Fragment implements
             }
             attemptToShowShowcaseForImageSettings();
         }
-        recomputePhotoAndScrollingMetrics();
+        recomputePhotoMetrics();
     }
 
     @UiThread(delay = 500)
@@ -543,18 +499,17 @@ public class PublicationInfoFragment extends Fragment implements
             int x = (int) (pointOnImage.left + pointOnImage.right / 1.3);
             int y = pointOnImage.top + pointOnImage.bottom / 2;
 
-            ShowcaseView.Builder bldr = new ShowcaseView.Builder(getActivity())
+            new ShowcaseView.Builder(getActivity())
                     .setTarget(new PointTarget(x, y))
                     .setContentTitle(getString(R.string.showcase_pub_detail_image_title))
                     .setContentText(getString(R.string.showcase_pub_detail_image_detail))
-                    .setStyle(R.style.ShowcaseView_Base_Overlayed);
-            if (!BuildConfig.DEBUG) {
-                bldr.singleShot(Constants.SHOWCASE_PUBLICATION_DETAIL_IMAGES_SHOT_ID);
-            }
-            bldr.build();
+                    .setStyle(R.style.ShowcaseView_Base_Overlayed)
+                    .singleShot(Constants.SHOWCASE_PUBLICATION_DETAIL_IMAGES_SHOT_ID)
+                    .build();
         }
     }
 
+    //TODO decide when to show this
     @UiThread(delay = 500)
     void attemptToShowShowcaseForRatings() {
         if (!rateShowcaseShown && mRatingVisible) {
@@ -597,7 +552,7 @@ public class PublicationInfoFragment extends Fragment implements
         if (currentRecord != null && !mIsDownloading) {
             mIsDownloading = true;
             //Change action view
-            MenuItemCompat.setActionView(mForceDownloadAction, R.layout.ab_download_progress);
+            mForceDownloadAction.setActionView(R.layout.ab_download_progress);
             //Start downloading in a background thread
             //Do force, no activity start
             downloadPublication(true, false);
@@ -641,7 +596,7 @@ public class PublicationInfoFragment extends Fragment implements
     void voteForPubClicked() {
         if (currentRecord != null && getActivity() != null) {
             AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_RATING_DIALOG);
-            FragmentManager fm = this.getActivity().getSupportFragmentManager();
+            FragmentManager fm = this.getActivity().getFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
             Fragment prev = fm.findFragmentByTag(RatePublicationDialog.FRAGMENT_TAG);
             if (prev != null) {
@@ -673,8 +628,12 @@ public class PublicationInfoFragment extends Fragment implements
         } else {
             msg = getString(R.string.publication_rating_submit_error);
         }
-        showCustomPositionedCrouton(msg, result.ratingSubmissionResult);
-
+        SpannableStringBuilder snackbarText = new SpannableStringBuilder();
+        snackbarText.append(msg);
+        if (!result.ratingSubmissionResult) {
+            snackbarText.setSpan(new ForegroundColorSpan(0xFFFF0000), 0, snackbarText.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+        Snackbar.make(getView(), snackbarText, Snackbar.LENGTH_SHORT).show();
     }
 
     private void showEnableUpdatesBackCard() {
@@ -697,152 +656,19 @@ public class PublicationInfoFragment extends Fragment implements
         });
     }
 
-    private void showCustomPositionedCrouton(String message, boolean success) {
-        if (getActivity() == null) {
-            return;
-        }
-        View view = getLayoutInflater(null).inflate(R.layout.crouton_custom_pos_textview, null);
-        if (success) {
-            view.findViewById(android.R.id.background).setBackgroundColor(Style.holoGreenLight);
-        } else {
-            view.findViewById(android.R.id.background).setBackgroundColor(Style.holoRedLight);
-        }
-        int topPadding = UIUtils.calculateActionBarSize(getActivity());
-        if (!mHasPhoto) {
-            topPadding = (int) (newTop + mHeaderHeightPixels);
-        }
-        view.setPadding(view.getPaddingLeft(), topPadding,
-                view.getPaddingRight(), view.getPaddingBottom());
-        TextView tv = (TextView) view.findViewById(android.R.id.text1);
-        tv.setText(message);
-        Crouton cr = Crouton.make(getActivity(), view);
-        cr.setConfiguration(new Configuration.Builder()
-                .setDuration(Configuration.DURATION_LONG).build());
-        cr.show();
-    }
-
     private void showPublicationState(PublicationState state, boolean allowAnimate) {
         if (!isDetached()) {
             mDownloaded = state.equals(PublicationState.READY_FOR_READING);
-            if (!mIsDownloading) {
-                mReadPubButton.setChecked(mDownloaded, allowAnimate);
+            if (!mIsDownloading && mDownloaded) {
+                mReadPubButton.setBackgroundTintList(ColorStateList.valueOf(Color.WHITE));
             }
-            ImageView iconView = (ImageView) mReadPubButton.findViewById(R.id.read_pub_icon);
-            setOrAnimateReadPubIcon(iconView, state, allowAnimate);
+            setOrAnimateReadPubIcon(mReadPubButton, state, allowAnimate);
         }
     }
 
-    private void setupCustomScrolling() {
-        mScrollView.addCallbacks(this);
-        ViewTreeObserver vto = mScrollView.getViewTreeObserver();
-        if (vto.isAlive()) {
-            vto.addOnGlobalLayoutListener(mGlobalLayoutListener);
-        }
-    }
+    private void recomputePhotoMetrics() {
 
-    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-    @Override
-    public void onScrollChanged(int deltaX, int deltaY) {
-        final BaseActivity activity = (BaseActivity) getActivity();
-        if (activity == null) {
-            return;
-        }
-
-        // Reposition the header bar -- it's normally anchored to the top of the content,
-        // but locks to the top of the screen on scroll
-        int scrollY = mScrollView.getScrollY();
-
-
-        if (!rateShowcaseShown && mRatingVisible && delayedScrollCheck) {
-            //Check for bottom scroll
-            //Showcase if bottom
-            View view = mScrollView.getChildAt(mScrollView.getChildCount() - 1);
-            int diff = (view.getBottom() - (mScrollView.getHeight() + mScrollView.getScrollY()));
-            if (diff <= 0) {
-                attemptToShowShowcaseForRatings();
-            }
-        }
-
-        newTop = Math.max(mPhotoHeightPixels, scrollY + mHeaderTopClearance);
-
-        if (UIUtils.hasHoneycombMR1()) {
-            mHeaderBox.setTranslationY(newTop);
-            mReadPubButton.setTranslationY(newTop + mHeaderHeightPixels
-                    - mReadPubButtonHeightPixels / 2);
-            mHeaderBackgroundBox.setPivotY(mHeaderHeightPixels);
-        } else {
-            ViewHelper.setTranslationY(mHeaderBox, newTop);
-
-            //TODO get rid of this on next release with API 14
-            ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams)
-                    mReadPubButton.getLayoutParams();
-            if (mlp.topMargin != Math.round(newTop + mHeaderHeightPixels - mReadPubButtonHeightPixels / 2)) {
-                mlp.topMargin = Math.round(newTop + mHeaderHeightPixels - mReadPubButtonHeightPixels / 2);
-                mReadPubButton.setLayoutParams(mlp);
-            }
-            ViewHelper.setPivotY(mHeaderBackgroundBox, mHeaderHeightPixels);
-        }
-        int gapFillDistance = (int) (mHeaderTopClearance * GAP_FILL_DISTANCE_MULTIPLIER);
-        boolean showGapFill = !mHasPhoto || (scrollY > (mPhotoHeightPixels - gapFillDistance));
-        float desiredHeaderScaleY = showGapFill ?
-                ((mHeaderHeightPixels + gapFillDistance + 1) * 1f / mHeaderHeightPixels)
-                : 1f;
-
-        if (!mHasPhoto) {
-            if (UIUtils.hasHoneycombMR1()) {
-                mHeaderBackgroundBox.setScaleY(desiredHeaderScaleY);
-            } else {
-                ViewHelper.setScaleY(mHeaderBackgroundBox, desiredHeaderScaleY);
-            }
-        } else if (mGapFillShown != showGapFill) {
-            if (UIUtils.hasICS()) {
-                mHeaderBackgroundBox.animate()
-                        .scaleY(desiredHeaderScaleY)
-                        .setInterpolator(new DecelerateInterpolator(2f))
-                        .setDuration(250)
-                        .start();
-            } else {
-                //TODO get rid of this on next release with API 14
-                animate(mHeaderBackgroundBox)
-                        .scaleY(desiredHeaderScaleY)
-                        .setInterpolator(new DecelerateInterpolator(2f))
-                        .setDuration(250);
-            }
-        }
-        mGapFillShown = showGapFill;
-
-        mHeaderShadow.setVisibility(View.VISIBLE);
-
-        if (mHeaderTopClearance != 0) {
-            // Fill the gap between status bar and header bar with color
-            float gapFillProgress = Math.min(Math.max(UIUtils.getProgress(scrollY,
-                    mPhotoHeightPixels - mHeaderTopClearance * 2,
-                    mPhotoHeightPixels - mHeaderTopClearance), 0), 1);
-            if (UIUtils.hasHoneycombMR1()) {
-                mHeaderShadow.setAlpha(gapFillProgress);
-            } else {
-                ViewHelper.setAlpha(mHeaderShadow, gapFillProgress);
-            }
-        }
-
-        // Move background photo (parallax effect)
-        if (UIUtils.hasHoneycombMR1()) {
-            mPhotoViewContainer.setTranslationY(scrollY * 0.3f);
-        } else {
-            //TODO get rid of this on next release with API 14
-            ViewHelper.setTranslationY(mPhotoViewContainer, scrollY * 0.3f);
-        }
-
-
-    }
-
-
-    private void recomputePhotoAndScrollingMetrics() {
-        final int actionBarSize = UIUtils.calculateActionBarSize(getActivity());
-        mHeaderTopClearance = actionBarSize - mHeaderContentBox.getPaddingTop();
-        mHeaderHeightPixels = mHeaderContentBox.getHeight();
-
-        mPhotoHeightPixels = mHeaderTopClearance;
+        int mPhotoHeightPixels = 4;
         if (mHasPhoto) {
             mPhotoHeightPixels = (int) (mPhotoViewContainer.getWidth() / PHOTO_ASPECT_RATIO);
             mPhotoHeightPixels = Math.min(mPhotoHeightPixels, mRootView.getHeight() * 2 / 3);
@@ -852,35 +678,7 @@ public class PublicationInfoFragment extends Fragment implements
         lp = mPhotoViewContainer.getLayoutParams();
         if (lp.height != mPhotoHeightPixels) {
             lp.height = mPhotoHeightPixels;
-            mPhotoViewContainer.setLayoutParams(lp);
         }
-
-        lp = mHeaderBackgroundBox.getLayoutParams();
-        if (lp.height != mHeaderHeightPixels) {
-            lp.height = mHeaderHeightPixels;
-            mHeaderBackgroundBox.setLayoutParams(lp);
-        }
-
-        if (UIUtils.hasHoneycombMR1()) {
-            ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams)
-                    mDetailsContainer.getLayoutParams();
-            if (mlp.topMargin != mHeaderHeightPixels + mPhotoHeightPixels) {
-                mlp.topMargin = mHeaderHeightPixels + mPhotoHeightPixels;
-                mDetailsContainer.setLayoutParams(mlp);
-            }
-        } else {
-            //Set padding instead
-            int paddTop = mDetailsContainer.getPaddingTop();
-            if (paddTop != mHeaderHeightPixels + mPhotoHeightPixels + 16) {
-                mDetailsContainer.setPadding(mDetailsContainer.getPaddingLeft(),
-                        mHeaderHeightPixels + mPhotoHeightPixels + 16,
-                        mDetailsContainer.getPaddingRight(),
-                        mDetailsContainer.getPaddingBottom());
-            }
-
-        }
-
-        onScrollChanged(0, 0); // trigger scroll handling
     }
 
     private void setOrAnimateReadPubIcon(final ImageView imageView, PublicationState currentState,
@@ -894,15 +692,9 @@ public class PublicationInfoFragment extends Fragment implements
             if (imageView.getTag() instanceof Animator) {
                 Animator anim = (Animator) imageView.getTag();
                 anim.end();
-                ViewHelper.setAlpha(imageView, 1f);
+                imageView.setAlpha(1f);
             }
         }
-        /*
-        if (imageView.getBackground() instanceof AnimationDrawable) {
-            AnimationDrawable frameAnimation = (AnimationDrawable) imageView.getBackground();
-            frameAnimation.stop();
-            imageView.setBackgroundResource(0);
-        }*/
 
         if (allowAnimate && currentState.equals(PublicationState.DOWNLOADING)) {
             int duration = getResources().getInteger(android.R.integer.config_shortAnimTime);
@@ -911,9 +703,8 @@ public class PublicationInfoFragment extends Fragment implements
             outAnimator.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    imageView.setImageDrawable(null);
-                    imageView.setBackgroundResource(imageResId);
-                    Drawable frameAnimation = imageView.getBackground();
+                    Drawable frameAnimation = ContextCompat.getDrawable(getActivity(), imageResId);
+                    imageView.setImageDrawable(frameAnimation);
                     if (frameAnimation instanceof AnimationDrawable) {
                         ((AnimationDrawable) frameAnimation).start();
                     }
@@ -940,7 +731,6 @@ public class PublicationInfoFragment extends Fragment implements
             outAnimator.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    imageView.setBackgroundResource(0);
                     imageView.setImageResource(imageResId);
                 }
             });
@@ -960,17 +750,18 @@ public class PublicationInfoFragment extends Fragment implements
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    imageView.setImageDrawable(null);
-                    imageView.setBackgroundResource(imageResId);
-                    AnimationDrawable frameAnimation = (AnimationDrawable) imageView.getBackground();
-                    frameAnimation.start();
+                    Drawable frameAnimation = ContextCompat.getDrawable(getActivity(), imageResId);
+                    imageView.setImageDrawable(frameAnimation);
+
+                    if (frameAnimation instanceof AnimationDrawable) {
+                        ((AnimationDrawable) frameAnimation).start();
+                    }
                 }
             });
         } else {
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    imageView.setBackgroundResource(0);
                     imageView.setImageResource(imageResId);
                 }
             });
@@ -990,7 +781,7 @@ public class PublicationInfoFragment extends Fragment implements
 
         public PublicationImagesAdapter(Context context) {
             this.context = context;
-            mImages = new ArrayList<ImageView>();
+            mImages = new ArrayList<>();
         }
 
         public void addImage(String url) {
@@ -1016,7 +807,7 @@ public class PublicationInfoFragment extends Fragment implements
                                 mHandler.post(new Runnable() {
                                     @Override
                                     public void run() {
-                                        recomputePhotoAndScrollingMetrics();
+                                        recomputePhotoMetrics();
                                     }
                                 });
                                 return false;

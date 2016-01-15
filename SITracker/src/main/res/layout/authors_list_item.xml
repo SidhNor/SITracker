@@ -1,43 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
-       xmlns:tools="http://schemas.android.com/tools"
-       tools:context=".ui.widget.CheckedRelativeLayout">
 
-    <TextView
-        android:id="@+id/author_title"
-        style="@style/Authors.Title"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@+id/author_update_date"
-        android:layout_toStartOf="@+id/author_update_date"
-        android:minHeight="?android:attr/listPreferredItemHeight"
-        android:paddingLeft="@dimen/keyline_1"
-        android:text="@string/designtime_placeholder_medium"/>
+<!--
+  ~ Copyright 2016 Gleb Godonoga.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~  distributed under the License is distributed on an "AS IS" BASIS,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  See the License for the specific language governing permissions and
+  ~  limitations under the License.
+  -->
 
-    <TextView
-        android:id="@+id/author_update_date"
-        style="@style/Widget.UpdateDate.Text"
-        android:layout_width="wrap_content"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="@dimen/keyline_1"
+    android:paddingRight="@dimen/keyline_1"
+    android:baselineAligned="false"
+    android:minHeight="72dp"
+    android:orientation="horizontal"
+    android:background="?android:attr/selectableItemBackground"
+    tools:context=".ui.SiMainActivity">
+
+    <ImageView
+        android:id="@+id/author_image"
+        android:layout_width="@dimen/avatar_image_width"
+        android:layout_height="@dimen/avatar_image_height"
+        android:layout_marginRight="@dimen/keyline_1"
+        android:layout_marginTop="@dimen/keyline_1_vertical"
+        android:scaleType="centerCrop" />
+
+
+    <RelativeLayout
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:paddingRight="@dimen/keyline_1"
-        android:text="@string/designtime_placeholder_date"/>
+        android:layout_weight="1">
 
-    <ImageButton
-        android:id="@+id/author_updated"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:background="@null"
-        android:contentDescription="@string/notification_title"
-        android:paddingRight="@dimen/keyline_1"
-        android:src="@drawable/star_unselected"/>
-</merge>
+        <TextView
+            android:id="@+id/author_update_date"
+            style="@style/Widget.UpdateDate.Text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="@dimen/keyline_1_vertical"
+            tools:text="@string/designtime_placeholder_date" />
+
+        <ImageButton
+            android:id="@+id/author_updated"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:background="@null"
+            android:contentDescription="@string/notification_title"
+            android:cropToPadding="false"
+            android:paddingBottom="@dimen/keyline_1_vertical_minus_8dp"
+            android:scaleType="fitEnd"
+            android:src="@drawable/star_unselected" />
+
+        <TextView
+            android:id="@+id/author_title"
+            style="@style/Authors.Title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@id/author_update_date"
+            android:layout_toStartOf="@id/author_update_date"
+            android:minHeight="72dp"
+            tools:text="@string/designtime_placeholder_medium" />
+    </RelativeLayout>
+
+</LinearLayout>
 
 
 

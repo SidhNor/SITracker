@@ -13,5 +13,6 @@ build/
 *.iml
 
 SITracker/*.apk
+SITracker/keystore.jks
 
 device-screenshots

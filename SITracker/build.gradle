@@ -1,11 +1,11 @@
 /*
- * Copyright 2014 Gleb Godonoga.
+ * Copyright 2016 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,6 +15,7 @@
  */
 apply plugin: 'com.android.application'
 apply plugin: 'android-apt'
+apply plugin: 'com.google.gms.google-services'
 
 configurations {
     compile
@@ -28,26 +29,30 @@ repositories {
 
 dependencies {
     compile 'org.jetbrains:annotations:13.0'
-    compile 'com.android.support:support-v4:20.0.0'
-    compile 'com.android.support:appcompat-v7:20.0.0'
-    compile 'com.google.android.gms:play-services:5.0.89'
+    compile 'com.android.support:design:23.1.1'
+    compile 'com.android.support:support-v13:23.1.1'
+    compile 'com.android.support:recyclerview-v7:23.1.1'
+    //noinspection GradleDependency
+    compile 'com.google.android.gms:play-services-analytics:8.3.0'
+    //noinspection GradleDependency
+    compile 'com.google.android.gms:play-services-plus:8.3.0'
+    compile('com.github.afollestad.material-dialogs:core:0.8.5.3@aar') {
+        transitive = true
+    }
+    compile('com.afollestad:material-cab:0.1.8@aar') {
+        transitive = true
+    }
     apt 'org.androidannotations:androidannotations:3.1'
     compile 'org.androidannotations:androidannotations-api:3.1'
     compile 'org.apache.commons:commons-lang3:3.0'
-    compile 'com.nineoldandroids:library:2.4.0'
     compile 'com.j256.ormlite:ormlite-android:4.48'
-    compile 'com.github.kevinsawicki:http-request:4.2'
-    compile 'de.greenrobot:eventbus:2.2.1'
-    compile(name: 'showcaseView-library-50101', ext: 'aar') {
-        exclude group: 'com.nineoldandroids', module: 'library'
-    }
-    compile('com.github.bumptech.glide:glide:3.3.+') {
+    compile 'com.github.kevinsawicki:http-request:6.0'
+    compile 'de.greenrobot:eventbus:2.4.0'
+    compile 'com.github.amlcurran.showcaseview:library:5.4.0'
+    compile('com.github.bumptech.glide:glide:3.6.+') {
         exclude group: 'com.google.android', module: 'support-v4'
     }
     compile('com.viewpagerindicator:library:2.4.1@aar') {
-        exclude group: 'com.google.android', module: 'support-v4'
-    }
-    compile('de.keyboardsurfer.android.widget:crouton:1.8.4@aar') {
         exclude group: 'com.google.android', module: 'support-v4'
     }
     androidTestCompile 'com.squareup:fest-android:1.0.5'
@@ -57,9 +62,17 @@ tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
 }
 
+ext {
+    travisBuild = System.getenv("TRAVIS") == "true"
+    // allows for -Dpre-dex=false to be set
+    preDexEnabled = "true".equals(System.getProperty("pre-dex", "true"))
+}
+
+
 android {
-    compileSdkVersion 20
-    buildToolsVersion '20.0.0'
+    compileSdkVersion 23
+    buildToolsVersion '23.0.2'
+
 
     def versionPropsFile = file('version.properties')
     if (versionPropsFile.canRead()) {
@@ -76,21 +89,20 @@ android {
         def versionMajor = versionProps['VERSION_MAJOR'].toInteger()
         def versionMinor = versionProps['VERSION_MINOR'].toInteger()
         def versionPatch = versionProps['VERSION_PATCH'].toInteger() + value
-        def versionBuildLong = Long.parseLong(versionProps['VERSION_BUILD'].toString(), 16) + 1
-        def versionBuild = Long.toHexString(versionBuildLong)
+        def versionBuild = versionProps['VERSION_BUILD'].toLong() + 1
         def version_Code = versionProps['VERSION_CODE'].toInteger() + value
 
         versionProps['VERSION_PATCH'] = versionPatch.toString()
-        versionProps['VERSION_BUILD'] = versionBuild
+        versionProps['VERSION_BUILD'] = versionBuild.toString()
         versionProps['VERSION_CODE'] = version_Code.toString()
 
         versionProps.store(versionPropsFile.newWriter(), null)
 
         defaultConfig {
             versionCode version_Code
-            versionName "${versionMajor}.${versionMinor}.${versionPatch} (${versionBuild})"
-            minSdkVersion 9
-            targetSdkVersion 20
+            versionName "${versionMajor}.${versionMinor}.${versionPatch}.${versionBuild}"
+            minSdkVersion 17
+            targetSdkVersion 23
             applicationId 'com.andrada.sitracker'
             testInstrumentationRunner 'android.test.InstrumentationTestRunner'
             testApplicationId 'com.andrada.sitracker.test'
@@ -112,19 +124,28 @@ android {
     buildTypes {
         debug {
             debuggable true
-            runProguard false
+            minifyEnabled false
             signingConfig signingConfigs.debug
         }
         release {
-            runProguard true
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+    dexOptions {
+        // Skip pre-dexing when running on Travis CI or when disabled via -Dpre-dex=false.
+        preDexLibraries = preDexEnabled && !travisBuild
     }
 }
 
 apt {
     arguments {
         resourcePackageName android.defaultConfig.applicationId
-        androidManifestFile variant.processResources.manifestFile
+        androidManifestFile variant.outputs[0].processResources.manifestFile
     }
 }

@@ -1,11 +1,11 @@
 /*
- * Copyright 2014 Gleb Godonoga.
+ * Copyright 2016 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -33,7 +33,7 @@ import java.util.Map;
 public class AnalyticsHelper {
 
     private static AnalyticsHelper instance;
-    private final Map<TrackerName, Tracker> mTrackers = new HashMap<TrackerName, Tracker>();
+    private final Map<TrackerName, Tracker> mTrackers = new HashMap<>();
     private final Context defaultContext;
 
     private AnalyticsHelper(Context context) {
@@ -126,8 +126,7 @@ public class AnalyticsHelper {
     public synchronized Tracker getTracker(TrackerName trackerId) {
         if (!mTrackers.containsKey(trackerId)) {
             GoogleAnalytics analytics = GoogleAnalytics.getInstance(defaultContext);
-            Tracker t = (trackerId == TrackerName.APP_TRACKER) ? analytics.newTracker(R.xml.analytics)
-                    : analytics.newTracker(R.xml.global_tracker);
+            Tracker t = analytics.newTracker(R.xml.analytics);
             mTrackers.put(trackerId, t);
         }
         return mTrackers.get(trackerId);

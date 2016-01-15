@@ -1,25 +1,42 @@
+/*
+ * Copyright 2016 Gleb Godonoga.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.andrada.sitracker.ui.fragment;
 
-import android.app.AlertDialog;
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.andrada.sitracker.R;
+import com.andrada.sitracker.ui.components.AboutDialogView;
+import com.andrada.sitracker.ui.components.AboutDialogView_;
+
+import android.app.Activity;
 import android.app.Dialog;
-import android.content.DialogInterface;
+import android.app.DialogFragment;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
+import android.support.annotation.NonNull;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.style.ClickableSpan;
 import android.view.View;
 import android.webkit.WebView;
-
-import com.andrada.sitracker.R;
-import com.andrada.sitracker.ui.components.AboutDialogView;
-import com.andrada.sitracker.ui.components.AboutDialogView_;
 
 public class AboutDialog extends DialogFragment {
 
@@ -65,20 +82,21 @@ public class AboutDialog extends DialogFragment {
         AboutDialogView aboutBodyView = AboutDialogView_.build(getActivity());
         aboutBodyView.bindData(getString(R.string.app_version_format, versionName), aboutBody);
 
-        return new AlertDialog.Builder(getActivity())
-                .setTitle(R.string.action_about)
-                .setView(aboutBodyView)
-                .setPositiveButton(android.R.string.ok,
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                dialog.dismiss();
-                            }
-                        }
-                ).create();
+        return new MaterialDialog.Builder(getActivity())
+                .title(R.string.action_about)
+                .customView(aboutBodyView, true)
+                .positiveText(android.R.string.ok)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        dialog.dismiss();
+                    }
+                })
+                .show();
     }
 
-    public static void showWhatsNew(FragmentActivity activity) {
-        FragmentManager fm = activity.getSupportFragmentManager();
+    public static void showWhatsNew(Activity activity) {
+        FragmentManager fm = activity.getFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         Fragment prev = fm.findFragmentByTag(WhatsNewDialog.FRAGMENT_TAG);
         if (prev != null) {
@@ -89,8 +107,8 @@ public class AboutDialog extends DialogFragment {
         new WhatsNewDialog().show(ft, WhatsNewDialog.FRAGMENT_TAG);
     }
 
-    public static void showOpenSourceLicenses(FragmentActivity activity) {
-        FragmentManager fm = activity.getSupportFragmentManager();
+    public static void showOpenSourceLicenses(Activity activity) {
+        FragmentManager fm = activity.getFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         Fragment prev = fm.findFragmentByTag(OpenSourceLicensesDialog.FRAGMENT_TAG);
         if (prev != null) {
@@ -111,17 +129,17 @@ public class AboutDialog extends DialogFragment {
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             WebView webView = new WebView(getActivity());
             webView.loadData(getString(R.string.change_log), "text/html; charset=utf-8", "utf-8");
-            return new AlertDialog.Builder(getActivity())
-                    .setTitle(R.string.whats_new)
-                    .setView(webView)
-                    .setPositiveButton(android.R.string.ok,
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    dialog.dismiss();
-                                }
-                            }
-                    )
-                    .create();
+            return new MaterialDialog.Builder(getActivity())
+                    .title(R.string.whats_new)
+                    .customView(webView, true)
+                    .positiveText(android.R.string.ok)
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .show();
         }
     }
 
@@ -136,17 +154,17 @@ public class AboutDialog extends DialogFragment {
             WebView webView = new WebView(getActivity());
             webView.loadUrl("file:///android_asset/licenses.html");
 
-            return new AlertDialog.Builder(getActivity())
-                    .setTitle(R.string.about_licenses)
-                    .setView(webView)
-                    .setPositiveButton(android.R.string.ok,
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    dialog.dismiss();
-                                }
-                            }
-                    )
-                    .create();
+            return new MaterialDialog.Builder(getActivity())
+                    .title(R.string.about_licenses)
+                    .customView(webView, false)
+                    .positiveText(android.R.string.ok)
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .show();
         }
     }
 }

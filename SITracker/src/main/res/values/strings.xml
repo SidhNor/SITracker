@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  Copyright 2014 Gleb Godonoga.
-
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-
-      http://www.apache.org/licenses/LICENSE-2.0
-
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
+  ~ Copyright 2016 Gleb Godonoga.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
   -->
 
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
@@ -22,6 +22,20 @@
     <string name="no_network_retry">RETRY</string>
     <string name="backup_restored_crouton_message">Backup restored</string>
     <string name="crouton_image_desc">info</string>
+    <string name="description_debug" translatable="false">Debug and tests</string>
+    <string name="title_activity_debug_test_runner" translatable="false">Debug Test Runner</string>
+
+    <string name="navdrawer_item_my_authors">My Authors</string>
+    <string name="navdrawer_item_explore">Explore</string>
+    <string name="navdrawer_item_new_pubs">New publications</string>
+    <string name="navdrawer_item_export">Export authors</string>
+    <string name="navdrawer_item_import">Import authors</string>
+    <string name="navdrawer_item_settings">Settings</string>
+
+    <!-- Accessibility description saying that the app's navigation drawer has been closed -->
+    <string name="drawer_close">Close navigation drawer</string>
+    <!-- Accessibility description saying that the app's navigation drawer has been opened -->
+    <string name="drawer_open">Open navigation drawer</string>
 
     <!-- Home AB actions -->
     <string name="action_search">Search</string>
@@ -40,6 +54,8 @@
 
     <string name="update_failed_crouton_message">Update failed for an unexpected reason.</string>
     <string name="no_authors">You haven\'t added any authors yet</string>
+    <string name="no_new_pubs">No updates so far</string>
+    <string name="authors_up_to_date">Authors are up-to-date</string>
     <plurals name="authors_selected">
         <item quantity="one">1 selected</item>
         <item quantity="few">
@@ -139,11 +155,13 @@
     <string name="author_import_processed_crouton_message">Added: %1$d</string>
     <string name="author_import_failed_crouton_message">Duplicate or failed: %1$d</string>
     <string name="fp_cancel_label">Cancel</string>
-    <string name="fp_confirm_label">Confirm</string>
+    <string name="fp_confirm_label">SELECT</string>
+    <string name="fp_new_folder">New</string>
     <string name="fp_selected_folder_label">Selected folder:</string>
     <string name="fp_selected_file_label">Selected file:</string>
-    <string name="fp_create_folder_label">Create folder</string>
-    <string name="fp_create_folder_msg">Create new folder with name "%1$s"?</string>
+    <string name="fp_create_folder_label">Create a directory</string>
+    <string name="fp_create_folder_msg">Please enter new folder name</string>
+    <string name="fp_default_folder_name">Books</string>
     <string name="fp_create_folder_success">Created new folder</string>
     <string name="fp_create_folder_error_no_write_access">Cannot write to this folder</string>
     <string name="fp_create_folder_error_already_exists">Folder already exists</string>
@@ -151,11 +169,10 @@
     <string name="fp_up_label">Up</string>
     <string name="file_descriptor">File type descriptor</string>
     <string name="book_folder_name">Books</string>
-    <string name="export_folder_name">SiTrackerExport</string>
     <string name="cannot_write_export_file">Error writing to export file</string>
 
 
-    <!-- Publicaiton details activity -->
+    <!-- Publication details activity -->
     <string name="title_publications_details">Publication Details</string>
     <string name="action_open_pub_in_browser">Open in browser</string>
     <string name="action_force_download">Force download</string>
@@ -216,6 +233,14 @@
 
     <string name="change_log"><![CDATA[
         <section>
+            <header><h2>Version 1.4.0</h2></header>
+            <ul>
+                <li>Added material design</li>
+                <li>Android 5+ support</li>
+            </ul>
+        </section>
+
+        <section>
             <header><h2>Version 1.3.3</h2></header>
             <p>Small bugfix release.</p>
             <ul>
@@ -230,7 +255,7 @@
             <header><h2>Version 1.3.2</h2></header>
             <p>Small feature/bugfix release.</p>
             <ul>
-                <li>Search is now divided in 2 categories: by author name and by keyword. Keyword search looks at author name, publicaiton name, annotations, or any other entity on author page.</li>
+                <li>Search is now divided in 2 categories: by author name and by keyword. Keyword search looks at author name, publication name, annotations, or any other entity on author page.</li>
                 <li>Fixed typos in russian translation.</li>
                 <li>Restore author add confirmation message.</li>
                 <li>Changed the style of notifications. Now, for version &ge; 4.1 a list of update authors will show up directly in the notification view.</li>
@@ -254,8 +279,8 @@
                 <li>Small redesign</li>
                 <li>Enable updates when device starts/storage mounts</li>
                 <li>Added author search</li>
-                <li>Added publicaiton info screen with images</li>
-                <li>Ability to rate publicaitons and +1</li>
+                <li>Added publication info screen with images</li>
+                <li>Ability to rate publications and +1</li>
                 <li>Added indicator to group header if it contains a new publication</li>
                 <li>Added "ignore update" feature for marking a publication as ignored</li>
                 <li>Added tutorial showcase views to highlight less understandable in-app scenarios</li>
@@ -294,7 +319,7 @@
         <section>
             <header><h2>Version 1.1.1</h2></header>
             <ul>
-                <li>Added option of configuring download directory for publications. When files are saved to a custom filder - they have a meaningfull name</li>
+                <li>Added option of configuring download directory for publications. When files are saved to a custom folder - they have a meaningful name</li>
                 <li>Fixed several issues due to bad connection and samlib being unavailable.</li>
                 <li>Added option of clearing saved publications. (Clears only the default directory)</li>
                 <li>Added optional publication images when available</li>

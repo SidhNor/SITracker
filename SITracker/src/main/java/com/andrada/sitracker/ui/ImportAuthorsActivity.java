@@ -1,11 +1,11 @@
 /*
- * Copyright 2014 Gleb Godonoga.
+ * Copyright 2016 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,6 +26,8 @@ import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.design.widget.Snackbar;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -45,6 +47,7 @@ import com.andrada.sitracker.ui.components.ImportProgressView;
 import com.andrada.sitracker.ui.components.ImportProgressView_;
 import com.andrada.sitracker.util.AnalyticsHelper;
 
+import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
@@ -58,12 +61,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
-import de.keyboardsurfer.android.widget.crouton.Crouton;
-import de.keyboardsurfer.android.widget.crouton.Style;
 
 @SuppressLint("Registered")
 @EActivity(R.layout.activity_import)
-public class ImportAuthorsActivity extends BaseActivity {
+public class ImportAuthorsActivity extends BaseActivity implements DirectoryChooserController.DirectoryChooserResultListener {
 
     ImportProgressView progressPanel;
 
@@ -92,7 +93,9 @@ public class ImportAuthorsActivity extends BaseActivity {
     ImportAuthorsTask importTask;
     private boolean isBound = false;
     @NotNull
-    private List<String> authorsToImport = new ArrayList<String>();
+    private List<String> authorsToImport = new ArrayList<>();
+
+    private DirectoryChooserController dirChooserController;
 
     @NotNull
     private final ServiceConnection mConnection = new ServiceConnection() {
@@ -128,10 +131,7 @@ public class ImportAuthorsActivity extends BaseActivity {
     @Click(R.id.chooseFileButton)
     void chooseFileClicked() {
         //Make sure the authors are opened
-        final Intent chooserIntent = new Intent(getApplicationContext(), DirectoryChooserActivity.class);
-        chooserIntent.putExtra(DirectoryChooserActivity.EXTRA_NEW_DIR_NAME, "Books");
-        chooserIntent.putExtra(DirectoryChooserActivity.EXTRA_IS_DIRECTORY_CHOOSER, false);
-        startActivityForResult(chooserIntent, Constants.REQUEST_DIRECTORY);
+        dirChooserController.showDialog(this);
     }
 
     @Click(R.id.performImportButton)
@@ -139,7 +139,7 @@ public class ImportAuthorsActivity extends BaseActivity {
         AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_IMPORT_PROGRESS);
         //Inflate
         Intent importSvc = ImportAuthorsTask_.intent(getApplicationContext()).get();
-        importSvc.putStringArrayListExtra(ImportAuthorsTask.AUTHOR_LIST_EXTRA, new ArrayList<String>(authorsToImport));
+        importSvc.putStringArrayListExtra(ImportAuthorsTask.AUTHOR_LIST_EXTRA, new ArrayList<>(authorsToImport));
         getApplicationContext().startService(importSvc);
         getApplicationContext().bindService(importSvc, mConnection, Context.BIND_AUTO_CREATE);
     }
@@ -161,15 +161,10 @@ public class ImportAuthorsActivity extends BaseActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @NotNull Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == Constants.REQUEST_DIRECTORY) {
-            if (resultCode == DirectoryChooserActivity.RESULT_CODE_DIR_SELECTED) {
-                String fileToImport = data.getStringExtra(DirectoryChooserActivity.RESULT_SELECTED_DIR);
-                tryParseOutTheChosenFile(fileToImport);
-                progressBar.setVisibility(View.VISIBLE);
-            }
+    public void onDirectoryChooserResult(int resultCode, String fileToImport) {
+        if (resultCode == DirectoryChooserController.RESULT_CODE_DIR_SELECTED) {
+            tryParseOutTheChosenFile(fileToImport);
+            progressBar.setVisibility(View.VISIBLE);
         }
     }
 
@@ -192,6 +187,24 @@ public class ImportAuthorsActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
+
+        dirChooserController = new DirectoryChooserController(this, null, false);
+        dirChooserController.setListener(this);
+
+        AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_IMPORT_AUTHORS);
+    }
+
+    @AfterViews
+    protected void afterViews() {
+        Toolbar toolbar = getActionBarToolbar();
+        toolbar.setTitle(R.string.title_import);
+        toolbar.setNavigationIcon(R.drawable.ic_up);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                navigateUpOrBack(ImportAuthorsActivity.this, SiMainActivity_.class);
+            }
+        });
     }
 
     @Override
@@ -210,11 +223,12 @@ public class ImportAuthorsActivity extends BaseActivity {
 
     public void onEventMainThread(@NotNull ImportUpdates event) {
         if (event.isFinished()) {
-            toggleButtonAndProgressPanels(false);
-            HomeActivity_.intent(this)
+            //toggleButtonAndProgressPanels(false);
+            SiMainActivity_.intent(this)
                     .authorsProcessed(event.getImportProgress().getTotalAuthors())
                     .authorsSuccessfullyImported(event.getImportProgress().getSuccessfullyImported())
                     .start();
+            this.finish();
         } else if (progressPanel != null) {
             //Update progress
             progressPanel.updateProgress(event.getImportProgress());
@@ -254,7 +268,10 @@ public class ImportAuthorsActivity extends BaseActivity {
             list.setAdapter(null);
             authorsToImport.clear();
             performImportButton.setEnabled(false);
-            Crouton.makeText(this, getResources().getString(R.string.cannot_import_authors_from_file), Style.ALERT).show();
+            Snackbar.make(findViewById(R.id.main_content),
+                    getResources().getString(R.string.cannot_import_authors_from_file),
+                    Snackbar.LENGTH_LONG)
+                    .show();
         }
         progressBar.setVisibility(View.GONE);
     }

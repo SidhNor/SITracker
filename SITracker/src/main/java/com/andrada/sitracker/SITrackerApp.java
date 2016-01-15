@@ -17,10 +17,10 @@
 package com.andrada.sitracker;
 
 import android.app.Application;
+import android.net.http.HttpResponseCache;
 
 import com.andrada.sitracker.util.AnalyticsExceptionParser;
 import com.andrada.sitracker.util.AnalyticsHelper;
-import com.andrada.sitracker.util.UIUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.GlideBuilder;
 import com.bumptech.glide.load.engine.cache.DiskLruCacheWrapper;
@@ -28,7 +28,10 @@ import com.google.android.gms.analytics.ExceptionReporter;
 
 import java.io.File;
 
+import de.greenrobot.event.EventBus;
+
 import static com.andrada.sitracker.util.LogUtils.LOGD;
+import static com.andrada.sitracker.util.LogUtils.LOGE;
 
 public class SITrackerApp extends Application {
 
@@ -36,20 +39,23 @@ public class SITrackerApp extends Application {
       * (non-Javadoc)
       * @see android.app.Application#onCreate()
       */
+    @Override
     public void onCreate() {
-
+        super.onCreate();
         //Setup cache if possible
         try {
             File httpCacheDir = new File(this.getCacheDir(), "http");
-            long httpCacheSize = 1 * 1024 * 1024; // 1 MiB
-            Class.forName("android.net.http.HttpResponseCache")
-                    .getMethod("install", File.class, long.class)
-                    .invoke(null, httpCacheDir, httpCacheSize);
+            long httpCacheSize = 1024 * 1024; // 1 MiB
+            HttpResponseCache.install(httpCacheDir, httpCacheSize);
             LOGD("SiTracker", "Cache installed");
 
         } catch (Exception ignored) {
-            //Ignore everything
+            LOGE("SiTracker", "Cache installed failed");
         }
+
+        EventBus.builder()
+                .throwSubscriberException(BuildConfig.DEBUG)
+                .installDefaultEventBus();
 
         AnalyticsHelper.initHelper(this);
         ExceptionReporter myReporter = new ExceptionReporter(
@@ -62,13 +68,10 @@ public class SITrackerApp extends Application {
         myReporter.setExceptionParser(new AnalyticsExceptionParser());
         Thread.setDefaultUncaughtExceptionHandler(myReporter);
 
-        //TODO remove Gingerbread check on next release
-        if (UIUtils.hasGingerbreadMR1()) {
-            if (!Glide.isSetup()) {
-                Glide.setup(new GlideBuilder(this)
-                                .setDiskCache(DiskLruCacheWrapper.get(Glide.getPhotoCacheDir(this), 250 * 1024 * 1024))
-                );
-            }
+        if (!Glide.isSetup()) {
+            Glide.setup(new GlideBuilder(this)
+                            .setDiskCache(DiskLruCacheWrapper.get(Glide.getPhotoCacheDir(this), 250 * 1024 * 1024))
+            );
         }
 
     }

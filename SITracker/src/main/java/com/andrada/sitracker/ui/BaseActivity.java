@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Gleb Godonoga.
+ * Copyright 2016 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,21 +16,44 @@
 
 package com.andrada.sitracker.ui;
 
-
-import android.annotation.TargetApi;
+import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
+import android.app.backup.BackupManager;
 import android.content.Intent;
-import android.content.res.Configuration;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
-import android.view.View;
-import android.view.animation.DecelerateInterpolator;
-import android.widget.AbsListView;
-import android.widget.ListView;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.NavUtils;
+import android.support.v4.app.TaskStackBuilder;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.style.ForegroundColorSpan;
+import android.view.MenuItem;
+import android.view.ViewGroup;
 
 import com.andrada.sitracker.BuildConfig;
+import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
+import com.andrada.sitracker.contracts.OnBackAware;
+import com.andrada.sitracker.events.AuthorMarkedAsReadEvent;
+import com.andrada.sitracker.events.AuthorsExported;
+import com.andrada.sitracker.events.PublicationMarkedAsReadEvent;
+import com.andrada.sitracker.ui.fragment.AboutDialog;
+import com.andrada.sitracker.ui.fragment.AuthorsFragment;
+import com.andrada.sitracker.ui.fragment.AuthorsFragment_;
+import com.andrada.sitracker.ui.fragment.NewPublicationsFragment;
+import com.andrada.sitracker.ui.fragment.NewPublicationsFragment_;
+import com.andrada.sitracker.util.ActivityFragmentNavigator;
+import com.andrada.sitracker.util.AnalyticsHelper;
+import com.andrada.sitracker.util.NavDrawerManager;
 import com.andrada.sitracker.util.PlayServicesUtils;
 import com.andrada.sitracker.util.UIUtils;
 import com.google.android.gms.analytics.GoogleAnalytics;
@@ -38,30 +61,36 @@ import com.google.android.gms.analytics.GoogleAnalytics;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static com.andrada.sitracker.util.LogUtils.makeLogTag;
-import static com.nineoldandroids.view.ViewPropertyAnimator.animate;
 
 /**
  * A base activity that handles common functionality in the app.
  */
-public abstract class BaseActivity extends ActionBarActivity {
+public abstract class BaseActivity extends AppCompatActivity implements
+        NavDrawerManager.NavDrawerListener {
 
     private static final String TAG = makeLogTag(BaseActivity.class);
-    private static final int HEADER_HIDE_ANIM_DURATION = 300;
+    private static final long BACK_UP_DELAY = 30000L;
 
-    // When set, these components will be shown/hidden in sync with the action bar
-    // to implement the "quick recall" effect (the Action Bar and the header views disappear
-    // when you scroll down a list, and reappear quickly when you scroll up).
-    private ArrayList<View> mHideableHeaderViews = new ArrayList<View>();
+    private NavDrawerManager mDrawerManager;
 
-    // variables that control the Action Bar auto hide behavior (aka "quick recall")
-    private boolean mActionBarAutoHideEnabled = false;
-    private int mActionBarAutoHideSensivity = 0;
-    private int mActionBarAutoHideMinY = 0;
-    private int mActionBarAutoHideSignal = 0;
-    private boolean mActionBarShown = true;
+    // Primary toolbar and drawer toggle
+    private Toolbar mActionBarToolbar;
+
+    private AppBarLayout appBarLayout;
+
+    private ExportAuthorsController mExportCtrl;
+
+    protected Fragment currentFragment;
+
+    private ViewGroup cabContainer;
+
+    private TimerTask backUpTask;
+    @NotNull
+    private final Timer backUpTimer = new Timer();
 
     /**
      * Converts an intent into a {@link Bundle} suitable for use as fragment arguments.
@@ -107,12 +136,21 @@ public abstract class BaseActivity extends ActionBarActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        if (!BuildConfig.DEBUG) {
-            // Verifies the proper version of Google Play Services exists on the device.
-            PlayServicesUtils.checkGooglePlaySevices(this);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // Enable or disable each Activity depending on the form factor. This is necessary
+        // because this app uses many implicit intents where we don't name the exact Activity
+        // in the Intent, so there should only be one enabled Activity that handles each
+        // Intent in the app.
+        UIUtils.enableDisableActivitiesByFormFactor(this);
+
+        ActionBar ab = getSupportActionBar();
+        if (ab != null) {
+            ab.setDisplayHomeAsUpEnabled(true);
         }
+
+        mExportCtrl = new ExportAuthorsController(this);
     }
 
     @Override
@@ -122,8 +160,12 @@ public abstract class BaseActivity extends ActionBarActivity {
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void onResume() {
+        super.onResume();
+        if (!BuildConfig.DEBUG) {
+            // Verifies the proper version of Google Play Services exists on the device.
+            PlayServicesUtils.checkGooglePlaySevices(this);
+        }
     }
 
     @Override
@@ -132,140 +174,231 @@ public abstract class BaseActivity extends ActionBarActivity {
         GoogleAnalytics.getInstance(this).reportActivityStart(this);
     }
 
-    protected void setHasTabs() {
-        if (!UIUtils.isTablet(this)
-                && getResources().getConfiguration().orientation
-                != Configuration.ORIENTATION_LANDSCAPE) {
-            // Only show the tab bar's shadow
-            getSupportActionBar().setBackgroundDrawable(getResources().getDrawable(
-                    R.drawable.actionbar_background_noshadow));
+    protected void afterViews() {
+        mDrawerManager = new NavDrawerManager(this);
+    }
+
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        if (mDrawerManager == null) {
+            afterViews();
+        }
+        if (appBarLayout == null) {
+            appBarLayout = (AppBarLayout) findViewById(R.id.appbar_layout);
+        }
+
+        if (cabContainer == null) {
+            cabContainer = (ViewGroup) findViewById(R.id.si_cab_container);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        switch (id) {
+            case android.R.id.home:
+                getDrawerManager().openNavDrawer();
+                return true;
+        }
+        //Handle default options
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void setContentView(int layoutResID) {
+        super.setContentView(layoutResID);
+        getActionBarToolbar();
+    }
+
+    public void trySetToolbarScrollable(boolean scrollable) {
+        if (cabContainer != null) {
+            AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) cabContainer.getLayoutParams();
+            if (scrollable) {
+                params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP |
+                        AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS |
+                        AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL);
+            } else {
+                if (appBarLayout != null) {
+                    appBarLayout.setExpanded(true, true);
+                }
+                params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP);
+            }
+
+            cabContainer.setLayoutParams(params);
         }
     }
 
 
-    protected void registerHideableHeaderView(View hideableHeaderView) {
-        if (!mHideableHeaderViews.contains(hideableHeaderView)) {
-            mHideableHeaderViews.add(hideableHeaderView);
+    @Override
+    public void goToNavDrawerItem(int item) {
+        currentFragment = null;
+        switch (item) {
+            case R.id.navigation_item_my_authors:
+                AuthorsFragment authFrag = AuthorsFragment_.builder().build();
+                if (appBarLayout != null) {
+                    appBarLayout.setExpanded(true, false);
+                }
+                currentFragment = authFrag;
+                ActivityFragmentNavigator.switchMainFragmentInMainActivity(this, authFrag);
+                mDrawerManager.tryFadeInMainContent();
+                break;
+            case R.id.navigation_item_new_pubs:
+                NewPublicationsFragment newPubsFrag = NewPublicationsFragment_.builder().build();
+                if (appBarLayout != null) {
+                    appBarLayout.setExpanded(true, false);
+                }
+                currentFragment = newPubsFrag;
+                ActivityFragmentNavigator.switchMainFragmentInMainActivity(this, newPubsFrag);
+                mDrawerManager.tryFadeInMainContent();
+                break;
+            case R.id.navigation_item_export:
+                mExportCtrl.showDialog();
+                break;
+            case R.id.navigation_item_import:
+                ImportAuthorsActivity_.intent(this).start();
+                break;
+            case R.id.navigation_item_settings:
+                SettingsActivity_.intent(this).start();
+                break;
+            case R.id.navigation_item_about:
+                AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_ABOUT_DIALOG);
+                FragmentManager fm = this.getFragmentManager();
+                FragmentTransaction ft = fm.beginTransaction();
+                Fragment prev = fm.findFragmentByTag(AboutDialog.FRAGMENT_TAG);
+                if (prev != null) {
+                    ft.remove(prev);
+                }
+                ft.addToBackStack(null);
+                new AboutDialog().show(ft, AboutDialog.FRAGMENT_TAG);
+                break;
         }
     }
 
-    protected void deregisterHideableHeaderView(View hideableHeaderView) {
-        if (mHideableHeaderViews.contains(hideableHeaderView)) {
-            mHideableHeaderViews.remove(hideableHeaderView);
+    public Toolbar getActionBarToolbar() {
+        if (mActionBarToolbar == null) {
+            mActionBarToolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
+            if (mActionBarToolbar != null) {
+                setSupportActionBar(mActionBarToolbar);
+            }
         }
+        return mActionBarToolbar;
     }
 
-    /**
-     * Initializes the Action Bar auto-hide (aka Quick Recall) effect.
-     */
-    private void initActionBarAutoHide() {
-        mActionBarAutoHideEnabled = true;
-        mActionBarAutoHideMinY = getResources().getDimensionPixelSize(
-                R.dimen.action_bar_auto_hide_min_y);
-        mActionBarAutoHideSensivity = getResources().getDimensionPixelSize(
-                R.dimen.action_bar_auto_hide_sensivity);
+    public NavDrawerManager getDrawerManager() {
+        return mDrawerManager;
     }
 
-    /**
-     * Indicates that the main content has scrolled (for the purposes of showing/hiding
-     * the action bar for the "action bar auto hide" effect). currentY and deltaY may be exact
-     * (if the underlying view supports it) or may be approximate indications:
-     * deltaY may be INT_MAX to mean "scrolled forward indeterminately" and INT_MIN to mean
-     * "scrolled backward indeterminately".  currentY may be 0 to mean "somewhere close to the
-     * start of the list" and INT_MAX to mean "we don't know, but not at the start of the list"
-     */
-    private void onMainContentScrolled(int currentY, int deltaY) {
-        if (deltaY > mActionBarAutoHideSensivity) {
-            deltaY = mActionBarAutoHideSensivity;
-        } else if (deltaY < -mActionBarAutoHideSensivity) {
-            deltaY = -mActionBarAutoHideSensivity;
-        }
-
-        if (Math.signum(deltaY) * Math.signum(mActionBarAutoHideSignal) < 0) {
-            // deltaY is a motion opposite to the accumulated signal, so reset signal
-            mActionBarAutoHideSignal = deltaY;
-        } else {
-            // add to accumulated signal
-            mActionBarAutoHideSignal += deltaY;
-        }
-
-        boolean shouldShow = currentY < mActionBarAutoHideMinY ||
-                (mActionBarAutoHideSignal <= -mActionBarAutoHideSensivity);
-        autoShowOrHideActionBar(shouldShow);
-    }
-
-    protected void autoShowOrHideActionBar(boolean show) {
-        if (show == mActionBarShown) {
+    @Override
+    public void onBackPressed() {
+        if (mDrawerManager != null && mDrawerManager.isNavDrawerOpen()) {
+            mDrawerManager.closeNavDrawer();
+            return;
+        } else if (currentFragment != null && currentFragment instanceof OnBackAware) {
+            boolean handled = ((OnBackAware) currentFragment).onBackPressed();
+            if (handled) {
+                return;
+            }
+        } else if (getFragmentManager().getBackStackEntryCount() > 0) {
+            getFragmentManager().popBackStack();
             return;
         }
-
-        mActionBarShown = show;
-        onActionBarAutoShowOrHide(show);
+        super.onBackPressed();
     }
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
-    protected void onActionBarAutoShowOrHide(boolean shown) {
-        if (shown) {
-            getSupportActionBar().show();
+    public void onEvent(@NotNull AuthorsExported event) {
+        String message = event.getMessage();
+
+        SpannableStringBuilder snackbarText = new SpannableStringBuilder();
+        if (message.length() == 0) {
+            //This is success
+            snackbarText.append(getResources().getString(R.string.author_export_success_crouton_message));
         } else {
-            getSupportActionBar().hide();
+            snackbarText.append(message);
+            snackbarText.setSpan(new ForegroundColorSpan(Color.RED), 0, snackbarText.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
 
-        for (View view : mHideableHeaderViews) {
-            if (shown) {
-                //TODO remove these checks during merge to develop
-                if (UIUtils.hasHoneycombMR1()) {
-                    view.animate()
-                            .translationY(0)
-                            .alpha(1)
-                            .setDuration(HEADER_HIDE_ANIM_DURATION)
-                            .setInterpolator(new DecelerateInterpolator());
-                } else {
-                    animate(view)
-                            .translationY(0)
-                            .alpha(1)
-                            .setDuration(HEADER_HIDE_ANIM_DURATION)
-                            .setInterpolator(new DecelerateInterpolator());
-                }
+        Snackbar.make(findViewById(R.id.drawer_layout), snackbarText, Snackbar.LENGTH_LONG).show();
+    }
 
+    public void onEvent(AuthorMarkedAsReadEvent event) {
+        this.scheduleBackup();
+    }
+
+    public void onEvent(PublicationMarkedAsReadEvent event) {
+        AnalyticsHelper.getInstance().sendEvent(
+                Constants.GA_READ_CATEGORY,
+                Constants.GA_EVENT_AUTHOR_MANUAL_READ,
+                Constants.GA_EVENT_AUTHOR_MANUAL_READ);
+        this.scheduleBackup();
+    }
+
+    private void scheduleBackup() {
+        if (this.backUpTask != null) {
+            this.backUpTask.cancel();
+        }
+        this.backUpTask = new TimerTask() {
+            @Override
+            public void run() {
+                BackupManager bm = new BackupManager(getApplicationContext());
+                bm.dataChanged();
+            }
+        };
+        backUpTimer.schedule(this.backUpTask, BACK_UP_DELAY);
+    }
+
+    /**
+     * This utility method handles Up navigation intents by searching for a parent activity and
+     * navigating there if defined. When using this for an activity make sure to define both the
+     * native parentActivity as well as the AppCompat one when supporting API levels less than 16.
+     * when the activity has a single parent activity. If the activity doesn't have a single parent
+     * activity then don't define one and this method will use back button functionality. If "Up"
+     * functionality is still desired for activities without parents then use
+     * {@code syntheticParentActivity} to define one dynamically.
+     *
+     * Note: Up navigation intents are represented by a back arrow in the top left of the Toolbar
+     *       in Material Design guidelines.
+     *
+     * @param currentActivity Activity in use when navigate Up action occurred.
+     * @param syntheticParentActivity Parent activity to use when one is not already configured.
+     */
+    public static void navigateUpOrBack(Activity currentActivity,
+                                        Class<? extends Activity> syntheticParentActivity) {
+        // Retrieve parent activity from AndroidManifest.
+        Intent intent = NavUtils.getParentActivityIntent(currentActivity);
+
+        // Synthesize the parent activity when a natural one doesn't exist.
+        if (intent == null && syntheticParentActivity != null) {
+            try {
+                intent = NavUtils.getParentActivityIntent(currentActivity, syntheticParentActivity);
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (intent == null) {
+            // No parent defined in manifest. This indicates the activity may be used by
+            // in multiple flows throughout the app and doesn't have a strict parent. In
+            // this case the navigation up button should act in the same manner as the
+            // back button. This will result in users being forwarded back to other
+            // applications if currentActivity was invoked from another application.
+            currentActivity.onBackPressed();
+        } else {
+            if (NavUtils.shouldUpRecreateTask(currentActivity, intent)) {
+                // Need to synthesize a backstack since currentActivity was probably invoked by a
+                // different app. The preserves the "Up" functionality within the app according to
+                // the activity hierarchy defined in AndroidManifest.xml via parentActivity
+                // attributes.
+                TaskStackBuilder builder = TaskStackBuilder.create(currentActivity);
+                builder.addNextIntentWithParentStack(intent);
+                builder.startActivities();
             } else {
-                if (UIUtils.hasHoneycombMR1()) {
-                    view.animate()
-                            .translationY(-view.getBottom())
-                            .alpha(0)
-                            .setDuration(HEADER_HIDE_ANIM_DURATION)
-                            .setInterpolator(new DecelerateInterpolator());
-                } else {
-                    animate(view)
-                            .translationY(-view.getBottom())
-                            .alpha(0)
-                            .setDuration(HEADER_HIDE_ANIM_DURATION)
-                            .setInterpolator(new DecelerateInterpolator());
-                }
-
+                // Navigate normally to the manifest defined "Up" activity.
+                NavUtils.navigateUpTo(currentActivity, intent);
             }
         }
     }
 
-
-    protected void enableActionBarAutoHide(final ListView listView) {
-        initActionBarAutoHide();
-        listView.setOnScrollListener(new AbsListView.OnScrollListener() {
-            final static int ITEMS_THRESHOLD = 3;
-            int lastFvi = 0;
-
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
-            }
-
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                onMainContentScrolled(firstVisibleItem <= ITEMS_THRESHOLD ? 0 : Integer.MAX_VALUE,
-                        lastFvi - firstVisibleItem > 0 ? Integer.MIN_VALUE :
-                                lastFvi == firstVisibleItem ? 0 : Integer.MAX_VALUE
-                );
-                lastFvi = firstVisibleItem;
-            }
-        });
-    }
 }

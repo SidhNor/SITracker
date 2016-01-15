@@ -18,16 +18,20 @@ package com.andrada.sitracker.ui.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.util.Pair;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.widget.ExpandableListView;
-
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.AppUriContract;
 import com.andrada.sitracker.contracts.SIPrefs_;
 import com.andrada.sitracker.db.beans.Publication;
 import com.andrada.sitracker.events.AuthorMarkedAsReadEvent;
-import com.andrada.sitracker.events.AuthorSelectedEvent;
 import com.andrada.sitracker.exceptions.SharePublicationException;
 import com.andrada.sitracker.ui.PublicationDetailsActivity;
 import com.andrada.sitracker.ui.fragment.adapters.PublicationsAdapter;
@@ -38,6 +42,7 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.InstanceState;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.UiThread;
@@ -46,12 +51,12 @@ import org.androidannotations.annotations.sharedpreferences.Pref;
 import org.jetbrains.annotations.NotNull;
 
 import de.greenrobot.event.EventBus;
-import de.keyboardsurfer.android.widget.crouton.Crouton;
-import de.keyboardsurfer.android.widget.crouton.Style;
+
+import static com.andrada.sitracker.util.LogUtils.LOGI;
 
 @EFragment(R.layout.fragment_publications)
 @OptionsMenu(R.menu.publications_menu)
-public class PublicationsFragment extends Fragment implements
+public class PublicationsFragment extends BaseListFragment implements
         ExpandableListView.OnChildClickListener,
         PublicationsAdapter.PublicationShareAttemptListener {
 
@@ -61,8 +66,12 @@ public class PublicationsFragment extends Fragment implements
     @ViewById(R.id.publication_list)
     ExpandableListView mListView;
 
+    @FragmentArg("currentAuthorId")
     @InstanceState
-    long mCurrentId = -1;
+    long activeAuthorId = -1;
+
+    @FragmentArg("authorName")
+    String authorName = "";
 
     @Pref
     SIPrefs_ prefs;
@@ -70,14 +79,29 @@ public class PublicationsFragment extends Fragment implements
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LOGI("SITracker", "PublicationsFragment - OnCreate");
         setRetainInstance(true);
-        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getBaseActivity().getActionBarToolbar().setTitle(authorName);
+        int priority = 3;
+        //PublicationsFragment has a higher priority then SiMainActivity
+        EventBus.getDefault().register(this, priority);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        EventBus.getDefault().unregister(this);
+        LOGI("SITracker", "PublicationsFragment - OnDestroy");
     }
 
     @AfterViews
@@ -87,16 +111,16 @@ public class PublicationsFragment extends Fragment implements
         adapter.setShareListener(this);
         mListView.setOnChildClickListener(this);
         mListView.setOnItemLongClickListener(adapter);
-        updatePublicationsView(mCurrentId);
+        updatePublicationsView(activeAuthorId);
     }
 
     public void updatePublicationsView(long id) {
-        mCurrentId = id;
+        activeAuthorId = id;
         adapter.reloadPublicationsForAuthorId(id);
     }
 
     public void onEvent(@NotNull AuthorMarkedAsReadEvent event) {
-        if (mCurrentId == event.author.getId()) {
+        if (activeAuthorId == event.author.getId()) {
             //That means that we are viewing the current author
             //Just do a reload.
             updatePublicationsView(event.author.getId());
@@ -108,18 +132,20 @@ public class PublicationsFragment extends Fragment implements
         //Stop loading progress in adapter
         adapter.stopProgressOnPublication(id, success);
         if (!success) {
-            Style.Builder alertStyle = new Style.Builder()
-                    .setTextAppearance(android.R.attr.textAppearanceLarge)
-                    .setPaddingInPixels(25);
-            alertStyle.setBackgroundColorValue(Style.holoRedLight);
-            Crouton.makeText(getActivity(), errorMessage, alertStyle.build()).show();
+            SpannableStringBuilder snackbarText = new SpannableStringBuilder();
+            snackbarText.append(errorMessage);
+            snackbarText.setSpan(new ForegroundColorSpan(0xFFFF0000), 0, snackbarText.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+            Snackbar.make(getActivity().findViewById(R.id.drawer_layout), snackbarText, Snackbar.LENGTH_SHORT).show();
         }
     }
 
-    public void onEvent(@NotNull AuthorSelectedEvent event) {
-        updatePublicationsView(event.authorId);
-    }
-
+    /*
+        public void onEvent(@NotNull AuthorSelectedEvent event) {
+            EventBus.getDefault().cancelEventDelivery(event);
+            updatePublicationsView(event.authorId);
+        }
+    */
     @Override
     public boolean onChildClick(ExpandableListView expandableListView,
                                 View view, int groupPosition, int childPosition, long l) {
@@ -127,7 +153,10 @@ public class PublicationsFragment extends Fragment implements
 
         Intent intent = new Intent(Intent.ACTION_VIEW,
                 AppUriContract.buildPublicationUri(pub.getId()), getActivity(), PublicationDetailsActivity.class);
-        getActivity().startActivity(intent);
+        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getBaseActivity(),
+                new Pair<>(view.findViewById(R.id.item_title), "publicationTitle"),
+                new Pair<>(view.findViewById(R.id.item_description), "publicationAbstract"));
+        ActivityCompat.startActivity(getBaseActivity(), intent, options.toBundle());
         return true;
     }
 
@@ -171,4 +200,5 @@ public class PublicationsFragment extends Fragment implements
 
         }
     }
+
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Gleb Godonoga.
+ * Copyright 2016 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,8 @@ public class Constants {
     public final static String APP_TAG = "sitracker";
 
     public final static long STARTUP_UPDATE_DELAY = 600000L;
+
+    public final static long MIN_UPDATE_SPAN = 10 * 60 * 60 * 1000L;
 
     public final static String PUBLICATIONS_REGEX =
             "<DL><DT><li>(?:<font.*?>.*?</font>)?\\s*(<b>(.*?)\\s*</b>\\s*)?<A HREF=(.*?)><b>\\s*(.*?)\\s*</b></A>.*?<b>(\\d+)k</b>.*?<small>(?:Оценка:<b>((\\d+(?:\\.\\d+)?).*?)</b>.*?)?\\s*\\\"(.*?)\\\"\\s*(.*?)?\\s*(?:<A HREF=\\\"(.*?)\\\">Комментарии:\\s*((\\d+).*?)</A>\\s*)?</small>.*?(?:<br><DD>(.*?)(?:<small><a href=(.*?)>Иллюстрации/приложения.*?</a></small>)?)?</DL>";
@@ -79,10 +81,15 @@ public class Constants {
     public static final String GA_ADMIN_CATEGORY = "admin_action";
 
     //Analytics screen names
-    public static final String GA_SCREEN_PUBLICATIONS = "Publications";
-    public static final String GA_SCREEN_AUTHORS = "Authors";
+    public static final String GA_SCREEN_AUTHORS = "My Authors";
+    public static final String GA_SCREEN_AUTHOR_PUBLICATIONS = "Author Details";
+    public static final String GA_SCREEN_SEARCH = "Search";
+    public static final String GA_SCREEN_NEW_PUBLICATIONS = "New Publications";
+    public static final String GA_SCREEN_IMPORT_AUTHORS = "Import Authors";
     public static final String GA_SCREEN_IMPORT_PROGRESS = "Import progress";
     public static final String GA_SCREEN_EXPORT_DIALOG = "Export authors dialog";
+    public static final String GA_SCREEN_PREFERENCES = "Settings";
+    public static final String GA_SCREEN_PUBLICATION_INFO = "Publication details";
     public static final String GA_SCREEN_PREFS_DOWNLOAD_DIALOG = "Download folder setting dialog";
     public static final String GA_SCREEN_RATING_DIALOG = "Publication Rating";
     public static final String GA_SCREEN_ABOUT_DIALOG = "About";

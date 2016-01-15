@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Gleb Godonoga.
+ * Copyright 2016 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,9 +22,26 @@ import java.util.List;
 
 public class AppUriContract {
 
+    public static class Authors {
+
+        public static final String CONTENT_TYPE =
+                "vnd.android.cursor.dir/vnd.sitracker.author";
+        public static final String CONTENT_ITEM_TYPE =
+                "vnd.android.cursor.item/vnd.sitracker.author";
+    }
+
+    public static class Publications {
+
+        public static final String CONTENT_TYPE =
+                "vnd.android.cursor.dir/vnd.sitracker.publication";
+        public static final String CONTENT_ITEM_TYPE =
+                "vnd.android.cursor.item/vnd.sitracker.publication";
+    }
+
+
     private static final String PATH_SEARCH_SAMLIB = "search";
     private static final String PATH_AUTHORS = "authors";
-    private static final String PATH_PUBLICATIONS = "publicaitons";
+    private static final String PATH_PUBLICATIONS = "publications";
 
     public static final String CONTENT_AUTHORITY = "com.andrada.sitracker";
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
@@ -43,8 +60,21 @@ public class AppUriContract {
                 .appendQueryParameter("type", String.valueOf(searchType)).build();
     }
 
+    public static Uri buildAuthorUri(long authorId, String authorName) {
+        return AUTHOR_CONTENT_URI.buildUpon().appendPath(String.valueOf(authorId)).appendPath(authorName).build();
+    }
+
     public static Uri buildPublicationUri(long publicationId) {
         return PUBLICATION_CONTENT_URI.buildUpon().appendPath(String.valueOf(publicationId)).build();
+    }
+
+    public static long getAuthorId(Uri uri) {
+        return Long.valueOf(uri.getPathSegments().get(1));
+    }
+
+
+    public static String getAuthorName(Uri uri) {
+        return uri.getPathSegments().get(2);
     }
 
     public static long getPublicationId(Uri uri) {

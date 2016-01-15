@@ -1,19 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 
 <!--
-  Copyright 2014 Gleb Godonoga.
-
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-
-      http://www.apache.org/licenses/LICENSE-2.0
-
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
+  ~ Copyright 2016 Gleb Godonoga.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
   -->
 
 <resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
@@ -25,6 +25,16 @@
     <string name="backup_restored_crouton_message">Бэк-ап данных восстановлен</string>
     <string name="crouton_image_desc">информация</string>
 
+    <string name="navdrawer_item_my_authors">Мои авторы</string>
+    <string name="navdrawer_item_explore">Ознакомиться</string>
+    <string name="navdrawer_item_new_pubs">Обновления</string>
+    <string name="navdrawer_item_export">Экспорт авторов</string>
+    <string name="navdrawer_item_import">Импорт авторов</string>
+    <string name="navdrawer_item_settings">Настройки</string>
+    <!-- Accessibility description saying that the app's navigation drawer has been closed -->
+    <string name="drawer_close">Панель навигации закрыта</string>
+    <!-- Accessibility description saying that the app's navigation drawer has been opened -->
+    <string name="drawer_open">Панель навигации открыта</string>
 
     <!-- Home AB actions -->
     <string name="action_search">Поиск</string>
@@ -43,6 +53,8 @@
 
     <string name="update_failed_crouton_message">Не удалось обновить авторов.</string>
     <string name="no_authors">Вы пока не добавили никаких авторов</string>
+    <string name="no_new_pubs">Проды нет</string>
+    <string name="authors_up_to_date">Авторы обновлены</string>
     <plurals name="authors_selected">
         <item quantity="one">%d выбранный</item>
         <item quantity="few">
@@ -120,7 +132,7 @@
     <string name="pref_updates_check">Автоматическое обновление</string>
     <string name="pref_updates_check_summ">Автоматическое обновление авторов с заданным интервалом</string>
     <string name="pref_update_wifi_only">Обновления только по Wi-Fi</string>
-    <string name="pref_update_wifi_only_summ">Не обновлять через мобильные интернет соединения дабы уменьшить потребление траффика</string>
+    <string name="pref_update_wifi_only_summ">Не обновлять через мобильные интернет соединения дабы уменьшить потребление трафика</string>
     <string name="pref_update_interval">Интервал обновлений</string>
     <!--Statistics-->
     <string name="pref_usage_category_title">Статистика использования</string>
@@ -141,12 +153,14 @@
     <string name="author_import_total_crouton_message">Всего: %1$d</string>
     <string name="author_import_processed_crouton_message">Добавлены: %1$d</string>
     <string name="author_import_failed_crouton_message">Ошибки или дубликаты: %1$d</string>
-    <string name="fp_cancel_label">Отменить</string>
-    <string name="fp_confirm_label">Подтвердить</string>
+    <string name="fp_cancel_label">ОТМЕНИТЬ</string>
+    <string name="fp_new_folder">Новая</string>
+    <string name="fp_confirm_label">ВЫБРАТЬ</string>
     <string name="fp_selected_folder_label">Выбранная папка:</string>
     <string name="fp_selected_file_label">Выбранный файл:</string>
     <string name="fp_create_folder_label">Создать папку</string>
-    <string name="fp_create_folder_msg">Создать папку с именем "%1$s"?</string>
+    <string name="fp_create_folder_msg">Введите название новой папки</string>
+    <string name="fp_default_folder_name">Книги</string>
     <string name="fp_create_folder_success">Создать новую папку</string>
     <string name="fp_create_folder_error_no_write_access">Невозможно записать в эту папку</string>
     <string name="fp_create_folder_error_already_exists">Папка уже существует</string>
@@ -154,7 +168,6 @@
     <string name="fp_up_label">Вверх</string>
     <string name="file_descriptor">File type descriptor</string>
     <string name="book_folder_name">Книги</string>
-    <string name="export_folder_name">СиТрекерЭкспорт</string>
     <string name="cannot_write_export_file">Не удалось экспортировать авторов. Ошибка при записи файла.</string>
 
 
@@ -219,6 +232,14 @@
     <string name="showcase_pub_detail_ratings_detail">Вы можете оценить произведение и результат отобразится на samlib. Вы так же можете обновить свою оценку просто проголосовав заново.</string>
 
     <string name="change_log"><![CDATA[
+        <section>
+            <header><h2>Версия 1.4.0</h2></header>
+            <ul>
+                <li>Material Design</li>
+                <li>Поддержка Android 5+</li>
+                <li>Юзабилити для планшетов пока хуже чем был, надеюсь доделать в скором времени.</li>
+            </ul>
+        </section>
 
         <section>
             <header><h2>Версия 1.3.3</h2></header>
@@ -332,6 +353,5 @@
             </ul>
         </section>
     ]]></string>
-
 
 </resources>

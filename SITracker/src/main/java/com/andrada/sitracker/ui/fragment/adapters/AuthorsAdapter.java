@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Gleb Godonoga.
+ * Copyright 2016 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,17 +17,17 @@
 package com.andrada.sitracker.ui.fragment.adapters;
 
 import android.content.Context;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 
+import com.andrada.sitracker.contracts.AuthorItemListener;
 import com.andrada.sitracker.contracts.IsNewItemTappedListener;
 import com.andrada.sitracker.contracts.SIPrefs_;
 import com.andrada.sitracker.db.beans.Author;
 import com.andrada.sitracker.db.dao.AuthorDao;
 import com.andrada.sitracker.db.manager.SiDBHelper;
 import com.andrada.sitracker.events.AuthorMarkedAsReadEvent;
-import com.andrada.sitracker.events.AuthorSelectedEvent;
 import com.andrada.sitracker.ui.components.AuthorItemView;
 import com.andrada.sitracker.ui.components.AuthorItemView_;
 import com.andrada.sitracker.util.AnalyticsHelper;
@@ -42,6 +42,7 @@ import org.androidannotations.annotations.sharedpreferences.Pref;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.ref.WeakReference;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,9 +51,10 @@ import java.util.concurrent.Callable;
 import de.greenrobot.event.EventBus;
 
 @EBean
-public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListener {
+public class AuthorsAdapter extends RecyclerView.Adapter<AuthorsAdapter.ViewHolder> implements IsNewItemTappedListener {
 
-    List<Author> authors = new ArrayList<Author>();
+    private List<Integer> mSelected = new ArrayList<>();
+    List<Author> authors = new ArrayList<>();
     long mNewAuthors;
 
     @OrmLiteDao(helper = SiDBHelper.class)
@@ -63,13 +65,21 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
 
     @RootContext
     Context context;
-    private int mSelectedItem = 0;
 
-    private long mSelectedAuthorId = 0;
+    WeakReference<AuthorItemListener> mAuthorItemListener;
 
     @AfterInject
     void initAdapter() {
+        setHasStableIds(true);
         reloadAuthors();
+    }
+
+    public void updateContext(Context context) {
+        this.context = context;
+    }
+
+    public void setAuthorItemListener(AuthorItemListener mAuthorItemListener) {
+        this.mAuthorItemListener = new WeakReference<>(mAuthorItemListener);
     }
 
     /**
@@ -86,7 +96,6 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
                 newList = authorDao.getAllAuthorsSortedNew();
             }
             mNewAuthors = authorDao.getNewAuthorsCount();
-            setSelectedItem(mSelectedAuthorId);
             postDataSetChanged(newList);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -100,36 +109,36 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
         notifyDataSetChanged();
     }
 
-
-    @Override
-    public int getCount() {
-        return authors.size();
-    }
-
-    @Override
-    public Object getItem(int position) {
+    public Author getItem(int position) {
         return authors.get(position);
     }
 
     @Override
-    public long getItemId(int position) {
-        return authors.get(position).getId();
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        ViewHolder vh = new ViewHolder(AuthorItemView_.build(context));
+        vh.view.setListener(this);
+        return vh;
     }
 
-    @Nullable
     @Override
-    public View getView(int position, @Nullable View convertView, ViewGroup parent) {
-        AuthorItemView authorsItemView;
-        if (convertView == null) {
-            authorsItemView = AuthorItemView_.build(context);
-            authorsItemView.setListener(this);
-        } else {
-            authorsItemView = (AuthorItemView) convertView;
-        }
+    public void onBindViewHolder(ViewHolder holder, int position) {
         if (position < authors.size()) {
-            authorsItemView.bind(authors.get(position), position == mSelectedItem);
+            holder.view.setChecked(mSelected.contains(position));
+            holder.view.bind(authors.get(position));
         }
-        return authorsItemView;
+    }
+
+    @Override
+    public int getItemCount() {
+        return authors.size();
+    }
+
+    @Override
+    public long getItemId(int position) {
+        if (position > authors.size() - 1) {
+            return -1;
+        }
+        return authors.get(position).getId();
     }
 
     @Override
@@ -180,51 +189,11 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
             AnalyticsHelper.getInstance().sendException("Author Remove thread: ", e);
         }
 
-        boolean removingCurrentlySelected = false;
         List<Author> authorCopy = new ArrayList<Author>(authors);
         for (Long anAuthorToRemove : authorsToRemove) {
-            if (anAuthorToRemove == mSelectedAuthorId) {
-                removingCurrentlySelected = true;
-            }
             authorCopy.remove(getAuthorById(anAuthorToRemove));
         }
-        if (removingCurrentlySelected) {
-            //Try select the first one
-            setSelectedItem(getFirstAuthorId());
-        } else {
-            setSelectedItem(mSelectedAuthorId);
-        }
         postDataSetChanged(authorCopy);
-    }
-
-    public long getFirstAuthorId() {
-        if (authors.size() > 0) {
-            return authors.get(0).getId();
-        }
-        return -1;
-    }
-
-    public void setSelectedItem(long selectedItemId) {
-        int potentialSelectedItem = getItemPositionByAuthorId(selectedItemId);
-        long potentialAuthorId = selectedItemId;
-        if (potentialSelectedItem == -1) {
-            potentialSelectedItem = 0;
-            potentialAuthorId = getFirstAuthorId();
-        }
-        this.mSelectedAuthorId = potentialAuthorId;
-        EventBus.getDefault().post(new AuthorSelectedEvent(mSelectedAuthorId, potentialSelectedItem == 0));
-        this.mSelectedItem = potentialSelectedItem;
-    }
-
-    public long getSelectedAuthorId() {
-        return this.mSelectedAuthorId;
-    }
-
-    @Nullable
-    public Author getCurrentlySelectedAuthor() {
-        if (mSelectedItem < authors.size() && mSelectedItem >= 0)
-            return authors.get(mSelectedItem);
-        return null;
     }
 
     @Nullable
@@ -237,12 +206,64 @@ public class AuthorsAdapter extends BaseAdapter implements IsNewItemTappedListen
         return null;
     }
 
-    private int getItemPositionByAuthorId(long authorId) {
+    public int getItemPositionByAuthorId(long authorId) {
         for (int i = 0; i < authors.size(); i++) {
             if (authors.get(i).getId() == authorId) {
                 return i;
             }
         }
         return -1;
+    }
+
+    public void toggleSelected(int index) {
+        final boolean newState = !mSelected.contains(index);
+        if (newState)
+            mSelected.add(index);
+        else
+            mSelected.remove((Integer) index);
+        notifyItemChanged(index);
+    }
+
+    public void clearSelected() {
+        mSelected.clear();
+        notifyDataSetChanged();
+    }
+
+    public int getSelectedCount() {
+        return mSelected.size();
+    }
+
+    public List<Integer> getSelectedPositions() {
+        return mSelected;
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
+
+        final AuthorItemView view;
+
+        public ViewHolder(AuthorItemView itemView) {
+            super(itemView);
+            view = itemView;
+            itemView.setOnClickListener(this);
+            itemView.setLongClickable(true);
+            itemView.setOnLongClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+
+            if (mAuthorItemListener != null && mAuthorItemListener.get() != null) {
+                mAuthorItemListener.get().onAuthorItemClick(this);
+            }
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            if (mAuthorItemListener != null && mAuthorItemListener.get() != null) {
+                mAuthorItemListener.get().onAuthorItemLongClick(this);
+                return true;
+            }
+            return false;
+        }
     }
 }
