@@ -29,7 +29,6 @@ import android.view.WindowManager;
 
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.ui.fragment.PublicationInfoFragment_;
-import com.andrada.sitracker.util.BeamUtils;
 
 public class PublicationDetailsActivity extends SimpleSinglePaneActivity {
 
@@ -38,18 +37,12 @@ public class PublicationDetailsActivity extends SimpleSinglePaneActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //UIUtils.tryTranslateHttpIntent(this);
-        BeamUtils.tryUpdateIntentFromBeam(this);
-
         boolean shouldBeFloatingWindow = shouldBeFloatingWindow();
         if (shouldBeFloatingWindow) {
             setupFloatingWindow();
         }
         super.onCreate(savedInstanceState);
 
-        if (savedInstanceState == null) {
-            Uri publicationUri = getIntent().getData();
-            BeamUtils.setBeamPublicationUri(this, publicationUri);
-        }
 
         ActivityCompat.postponeEnterTransition(this);
         setTitle("");
