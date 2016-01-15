@@ -22,7 +22,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.view.ViewStub;
 
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
@@ -73,14 +72,19 @@ public class NewPublicationsFragment extends BaseFragment {
         adapter.reloadNewPublications();
         recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
-
+        adapter.registerAdapterDataObserver(dataObserver);
         AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_NEW_PUBLICATIONS);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        adapter.unregisterAdapterDataObserver(dataObserver);
     }
 
     @AfterViews
     void bindAdapter() {
         recyclerView.setHasFixedSize(true);
-        adapter.registerAdapterDataObserver(dataObserver);
         recyclerView.setAdapter(adapter);
         ItemClickSupport.addTo(recyclerView).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
             @Override

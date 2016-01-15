@@ -37,7 +37,7 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.view.MenuItem;
-import android.widget.FrameLayout;
+import android.view.ViewGroup;
 
 import com.andrada.sitracker.BuildConfig;
 import com.andrada.sitracker.Constants;
@@ -75,10 +75,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
     private static final String TAG = makeLogTag(BaseActivity.class);
     private static final long BACK_UP_DELAY = 30000L;
 
-    // fade in and fade out durations for the main content when switching between
-    // different Activities of the app through the Nav Drawer
-    private static final int MAIN_CONTENT_FADEIN_DURATION = 250;
-
     private NavDrawerManager mDrawerManager;
 
     // Primary toolbar and drawer toggle
@@ -90,7 +86,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
     protected Fragment currentFragment;
 
-    private FrameLayout cabContainer;
+    private ViewGroup cabContainer;
 
     private TimerTask backUpTask;
     @NotNull
@@ -194,7 +190,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
         }
 
         if (cabContainer == null) {
-            cabContainer = (FrameLayout) findViewById(R.id.si_cab_container);
+            cabContainer = (ViewGroup) findViewById(R.id.si_cab_container);
         }
     }
 
@@ -247,6 +243,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
                 }
                 currentFragment = authFrag;
                 ActivityFragmentNavigator.switchMainFragmentInMainActivity(this, authFrag);
+                mDrawerManager.tryFadeInMainContent();
                 break;
             case R.id.navigation_item_new_pubs:
                 NewPublicationsFragment newPubsFrag = NewPublicationsFragment_.builder().build();
@@ -255,6 +252,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
                 }
                 currentFragment = newPubsFrag;
                 ActivityFragmentNavigator.switchMainFragmentInMainActivity(this, newPubsFrag);
+                mDrawerManager.tryFadeInMainContent();
                 break;
             case R.id.navigation_item_export:
                 mExportCtrl.showDialog();
@@ -297,11 +295,15 @@ public abstract class BaseActivity extends AppCompatActivity implements
     public void onBackPressed() {
         if (mDrawerManager != null && mDrawerManager.isNavDrawerOpen()) {
             mDrawerManager.closeNavDrawer();
+            return;
         } else if (currentFragment != null && currentFragment instanceof OnBackAware) {
             boolean handled = ((OnBackAware) currentFragment).onBackPressed();
             if (handled) {
                 return;
             }
+        } else if (getFragmentManager().getBackStackEntryCount() > 0) {
+            getFragmentManager().popBackStack();
+            return;
         }
         super.onBackPressed();
     }

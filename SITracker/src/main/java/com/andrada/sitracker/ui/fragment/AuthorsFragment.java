@@ -159,6 +159,8 @@ public class AuthorsFragment extends BaseListFragment implements
         filter.setPriority(1);
         getActivity().registerReceiver(updateStatusReceiver, filter);
 
+        adapter.registerAdapterDataObserver(dataObserver);
+
         //Reload authors
         adapter.reloadAuthors();
 
@@ -170,6 +172,7 @@ public class AuthorsFragment extends BaseListFragment implements
         super.onPause();
         EventBus.getDefault().unregister(this);
         getActivity().unregisterReceiver(updateStatusReceiver);
+        adapter.unregisterAdapterDataObserver(dataObserver);
         if (mCab != null && mCab.isActive()) {
             cleanUpAfterCabAction();
         }
@@ -259,7 +262,6 @@ public class AuthorsFragment extends BaseListFragment implements
     @AfterViews
     void bindAdapter() {
         adapter.updateContext(getBaseActivity());
-        adapter.registerAdapterDataObserver(dataObserver);
         adapter.setAuthorItemListener(this);
         list.setHasFixedSize(true);
         list.setLayoutManager(new LinearLayoutManager(list.getContext()));

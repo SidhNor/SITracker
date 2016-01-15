@@ -34,12 +34,20 @@ public class NavDrawerManager {
 
     // delay to launch nav drawer item, to allow close animation to play
     private static final int NAVDRAWER_LAUNCH_DELAY = 250;
+
+    // fade in and fade out durations for the main content when switching between
+    // different Activities of the app through the Nav Drawer
+    private static final int MAIN_CONTENT_FADEOUT_DURATION = 150;
+
+    private static final int MAIN_CONTENT_FADEIN_DURATION = 250;
+
     BaseActivity mActivity;
 
     // Navigation drawer:
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
     private Handler mHandler;
+
 
     private int mCurrentNavId = -1;
 
@@ -98,6 +106,11 @@ public class NavDrawerManager {
                     }, NAVDRAWER_LAUNCH_DELAY);
                     mCurrentNavId = itemId;
                     mDrawerLayout.closeDrawer(GravityCompat.START);
+                    // fade out the main content
+                    View mainContent = mActivity.findViewById(R.id.fragment_holder);
+                    if (mainContent != null) {
+                        mainContent.animate().alpha(0).setDuration(MAIN_CONTENT_FADEOUT_DURATION);
+                    }
                     return true;
                 }
             }
@@ -117,6 +130,14 @@ public class NavDrawerManager {
 
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
 
+    }
+
+    public void tryFadeInMainContent() {
+        View mainContent = mActivity.findViewById(R.id.fragment_holder);
+        if (mainContent != null) {
+            mainContent.setAlpha(0);
+            mainContent.animate().alpha(1).setDuration(MAIN_CONTENT_FADEIN_DURATION);
+        }
     }
 
     public boolean isNavDrawerOpen() {
