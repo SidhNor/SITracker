@@ -148,6 +148,12 @@
 
     <style name="Theme.SiTracker.ImportAuthors" parent="Theme.SiTracker" />
 
+    <style name="Theme.SiTracker.Settings" parent="Theme.SiTracker">
+        <item name="android:textColor">@color/body_text_1</item>
+        <item name="android:textColorSecondary">@color/body_text_2</item>
+    </style>
+
+
     <!-- END OF ACTIVITY THEME STYLES -->
 
 

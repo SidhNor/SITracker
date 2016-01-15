@@ -86,6 +86,7 @@
         <activity
             android:name=".ui.SettingsActivity_"
             android:label="@string/title_settings"
+            android:theme="@style/Theme.SiTracker.Settings"
             android:parentActivityName=".ui.SiMainActivity_">
         </activity>
 
