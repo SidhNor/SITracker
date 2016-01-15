@@ -21,6 +21,8 @@
     <dimen name="divider_margin_top">8dp</dimen>
     <dimen name="divider_margin_bottom">8dp</dimen>
 
+
+    <dimen name="publication_item_height">116dp</dimen>
     <dimen name="publication_fragment_width">440dp</dimen>
     <dimen name="keyline_2_pub_detail">104dp</dimen>
     <dimen name="fab_margin">@dimen/keyline_1_minus_8dp</dimen>
@@ -30,6 +32,12 @@
     <dimen name="keyline_1_minus_8dp">16dp</dimen>
     <dimen name="keyline_2">80dp</dimen>
     <dimen name="keyline_2_minus_16dp">64dp</dimen>
+
+    <!--Text Sizes -->
+    <dimen name="text_size_small">14sp</dimen>
+    <dimen name="text_size_medium">16sp</dimen>
+    <dimen name="text_size_large">20sp</dimen>
+    <dimen name="text_size_xlarge">22sp</dimen>
 
     <!-- Showcase text dimensions -->
     <dimen name="showcase_title_size">34sp</dimen>

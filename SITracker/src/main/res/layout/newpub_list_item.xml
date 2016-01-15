@@ -53,7 +53,7 @@
         android:layout_toLeftOf="@+id/actions_view"
         android:layout_toRightOf="@+id/pub_img_container"
         android:paddingLeft="@dimen/keyline_1"
-        android:text="@string/designtime_placeholder_short"/>
+        tools:text="@string/designtime_placeholder_short"/>
 
     <com.andrada.sitracker.ui.widget.EllipsizedTextView
         android:id="@+id/author_name"
@@ -64,7 +64,7 @@
         android:layout_toLeftOf="@+id/actions_view"
         android:layout_toRightOf="@+id/pub_img_container"
         android:paddingLeft="@dimen/keyline_1"
-        android:text="@string/designtime_placeholder_long" android:textStyle="bold"/>
+        tools:text="@string/designtime_placeholder_long" android:textStyle="bold"/>
 
     <com.andrada.sitracker.ui.widget.EllipsizedTextView
         android:id="@+id/item_description"
@@ -76,7 +76,7 @@
         android:layout_toRightOf="@+id/pub_img_container"
         android:paddingLeft="@dimen/keyline_1"
         android:paddingBottom="@dimen/keyline_1"
-        android:text="@string/designtime_placeholder_long"/>
+        tools:text="@string/designtime_placeholder_long"/>
 
     <LinearLayout
         android:id="@+id/actions_view"
@@ -95,7 +95,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/text_vertical_spacing"
-            android:text="@string/designtime_placeholder_date"/>
+            tools:text="@string/designtime_placeholder_date"/>
 
         <TextView
             android:id="@+id/itemSize"
@@ -103,7 +103,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:layout_marginBottom="@dimen/text_vertical_spacing"
-            android:text="@string/designtime_placeholder_size"
+            tools:text="@string/designtime_placeholder_size"
             android:textAlignment="viewEnd"
             android:textSize="@dimen/text_size_medium"/>
 
