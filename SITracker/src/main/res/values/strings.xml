@@ -159,8 +159,9 @@
     <string name="fp_new_folder">New</string>
     <string name="fp_selected_folder_label">Selected folder:</string>
     <string name="fp_selected_file_label">Selected file:</string>
-    <string name="fp_create_folder_label">Create folder</string>
-    <string name="fp_create_folder_msg">Create new folder with name "%1$s"?</string>
+    <string name="fp_create_folder_label">Create a directory</string>
+    <string name="fp_create_folder_msg">Please enter new folder name</string>
+    <string name="fp_default_folder_name">Books</string>
     <string name="fp_create_folder_success">Created new folder</string>
     <string name="fp_create_folder_error_no_write_access">Cannot write to this folder</string>
     <string name="fp_create_folder_error_already_exists">Folder already exists</string>
@@ -168,7 +169,6 @@
     <string name="fp_up_label">Up</string>
     <string name="file_descriptor">File type descriptor</string>
     <string name="book_folder_name">Books</string>
-    <string name="export_folder_name">SiTrackerExport</string>
     <string name="cannot_write_export_file">Error writing to export file</string>
 
 

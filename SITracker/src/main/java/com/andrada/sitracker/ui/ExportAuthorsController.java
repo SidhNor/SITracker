@@ -19,7 +19,6 @@ package com.andrada.sitracker.ui;
 import android.app.Activity;
 
 import com.andrada.sitracker.Constants;
-import com.andrada.sitracker.R;
 import com.andrada.sitracker.tasks.ExportAuthorsTask;
 import com.andrada.sitracker.ui.fragment.DirectoryChooserFragment;
 import com.andrada.sitracker.util.AnalyticsHelper;
@@ -32,8 +31,7 @@ public class ExportAuthorsController implements DirectoryChooserFragment.OnFragm
     public ExportAuthorsController(Activity context) {
         this.mActivity = context;
         mDialog = DirectoryChooserFragment
-                .newInstance(context.getResources().getString(R.string.export_folder_name), null,
-                        true, this);
+                .newInstance(null, true, this);
     }
 
 

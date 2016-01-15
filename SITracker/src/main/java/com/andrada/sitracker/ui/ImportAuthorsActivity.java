@@ -268,7 +268,7 @@ public class ImportAuthorsActivity extends BaseActivity implements DirectoryChoo
             list.setAdapter(null);
             authorsToImport.clear();
             performImportButton.setEnabled(false);
-            Snackbar.make(findViewById(R.id.importRootContainer),
+            Snackbar.make(findViewById(R.id.main_content),
                     getResources().getString(R.string.cannot_import_authors_from_file),
                     Snackbar.LENGTH_LONG)
                     .show();

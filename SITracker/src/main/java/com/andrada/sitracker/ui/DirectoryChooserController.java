@@ -35,7 +35,7 @@ public class DirectoryChooserController implements DirectoryChooserFragment.OnFr
         mDialog = (DirectoryChooserFragment) mActivity.getFragmentManager().findFragmentByTag(TAG);
         if (mDialog == null) {
             mDialog = DirectoryChooserFragment
-                    .newInstance("", initialDir, isDirectoryChooser, this);
+                    .newInstance(initialDir, isDirectoryChooser, this);
         }
         mDialog.setListener(this);
     }
@@ -50,7 +50,6 @@ public class DirectoryChooserController implements DirectoryChooserFragment.OnFr
             mDialog.show(mActivity.getFragmentManager(), TAG);
         }
     }
-
 
     @Override
     public void onSelectDirectory(String path) {
@@ -67,7 +66,6 @@ public class DirectoryChooserController implements DirectoryChooserFragment.OnFr
             mListener.onDirectoryChooserResult(Activity.RESULT_CANCELED, null);
         }
     }
-
 
     public interface DirectoryChooserResultListener {
         void onDirectoryChooserResult(int resultCode, String dirOrFileChosen);

@@ -159,7 +159,8 @@
     <string name="fp_selected_folder_label">Выбранная папка:</string>
     <string name="fp_selected_file_label">Выбранный файл:</string>
     <string name="fp_create_folder_label">Создать папку</string>
-    <string name="fp_create_folder_msg">Создать папку с именем "%1$s"?</string>
+    <string name="fp_create_folder_msg">Введите название новой папки</string>
+    <string name="fp_default_folder_name">Книги</string>
     <string name="fp_create_folder_success">Создать новую папку</string>
     <string name="fp_create_folder_error_no_write_access">Невозможно записать в эту папку</string>
     <string name="fp_create_folder_error_already_exists">Папка уже существует</string>
@@ -167,7 +168,6 @@
     <string name="fp_up_label">Вверх</string>
     <string name="file_descriptor">File type descriptor</string>
     <string name="book_folder_name">Книги</string>
-    <string name="export_folder_name">СиТрекерЭкспорт</string>
     <string name="cannot_write_export_file">Не удалось экспортировать авторов. Ошибка при записи файла.</string>
 
 

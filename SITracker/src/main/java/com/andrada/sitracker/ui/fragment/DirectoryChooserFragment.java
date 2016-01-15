@@ -24,7 +24,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.FileObserver;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,13 +64,9 @@ public class DirectoryChooserFragment extends DialogFragment {
 
     private static final String ARG_IS_DIRECTORY_CHOOSER = "DIRECTORY_CHOOSER_SETTING";
 
-    private static final String ARG_NEW_DIRECTORY_NAME = "NEW_DIRECTORY_NAME";
-
     private static final String ARG_INITIAL_DIRECTORY = "INITIAL_DIRECTORY";
 
     private static final String TAG = LogUtils.makeLogTag(DirectoryChooserFragment.class);
-
-    private String mNewDirectoryName;
 
     private String mInitialDirectory;
 
@@ -107,7 +102,6 @@ public class DirectoryChooserFragment extends DialogFragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param newDirectoryName Name of the directory to create.
      * @param initialDirectory Optional argument to define the path of the directory
      *                         that will be shown first.
      *                         If it is not sent or if path denotes a non readable/writable
@@ -118,13 +112,11 @@ public class DirectoryChooserFragment extends DialogFragment {
      */
     @NotNull
     public static DirectoryChooserFragment newInstance(
-            final String newDirectoryName,
             final String initialDirectory,
             final Boolean isDirectoryChooser,
             final OnFragmentInteractionListener listener) {
         DirectoryChooserFragment fragment = new DirectoryChooserFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_NEW_DIRECTORY_NAME, newDirectoryName);
         args.putString(ARG_INITIAL_DIRECTORY, initialDirectory);
         args.putBoolean(ARG_IS_DIRECTORY_CHOOSER, isDirectoryChooser);
         fragment.setArguments(args);
@@ -149,7 +141,6 @@ public class DirectoryChooserFragment extends DialogFragment {
             throw new IllegalArgumentException(
                     "You must create DirectoryChooserFragment via newInstance().");
         } else {
-            mNewDirectoryName = getArguments().getString(ARG_NEW_DIRECTORY_NAME);
             mInitialDirectory = getArguments().getString(ARG_INITIAL_DIRECTORY);
             mIsDirectoryChooser = getArguments().getBoolean(ARG_IS_DIRECTORY_CHOOSER, true);
         }
@@ -269,17 +260,20 @@ public class DirectoryChooserFragment extends DialogFragment {
     private void openNewFolderDialog() {
         new MaterialDialog.Builder(getActivity())
                 .title(R.string.fp_create_folder_label)
-                .content(String.format(getString(R.string.fp_create_folder_msg), mNewDirectoryName))
-                .positiveText(R.string.fp_confirm_label)
-                .negativeText(R.string.fp_cancel_label)
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                .inputRangeRes(2, 20, R.color.md_edittext_error)
+                .input(R.string.fp_create_folder_msg, R.string.fp_default_folder_name, new MaterialDialog.InputCallback() {
                     @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        dialog.dismiss();
-                        int msg = createFolder();
-                        Snackbar.make(getView(), msg, Snackbar.LENGTH_SHORT);
+                    public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+                        int msg = createFolder(input);
+                        if (msg != R.string.fp_create_folder_success) {
+                            new MaterialDialog.Builder(getActivity()).content(msg)
+                                    .positiveText(android.R.string.ok)
+                                    .show();
+                        }
                     }
                 })
+                .positiveText(R.string.fp_confirm_label)
+                .negativeText(R.string.fp_cancel_label)
                 .onNegative(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
@@ -454,11 +448,13 @@ public class DirectoryChooserFragment extends DialogFragment {
     /**
      * Creates a new folder in the current directory with the name
      * CREATE_DIRECTORY_NAME.
+     *
+     * @param input
      */
-    private int createFolder() {
-        if (mNewDirectoryName != null && mSelectedDir != null
+    private int createFolder(CharSequence input) {
+        if (input != null && mSelectedDir != null
                 && mSelectedDir.canWrite()) {
-            File newDir = new File(mSelectedDir, mNewDirectoryName);
+            File newDir = new File(mSelectedDir, input.toString());
             if (!newDir.exists()) {
                 boolean result = newDir.mkdir();
                 if (result) {
