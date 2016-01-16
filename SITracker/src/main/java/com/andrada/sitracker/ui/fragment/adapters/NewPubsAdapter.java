@@ -38,6 +38,7 @@ import org.androidannotations.annotations.sharedpreferences.Pref;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 @EBean
@@ -62,6 +63,12 @@ public class NewPubsAdapter extends RecyclerView.Adapter<NewPubsAdapter.ViewHold
         shouldShowImages = prefs.displayPubImages().get();
         try {
             pubs = publicationsDao.getNewPublications();
+            Iterator<Publication> iter = pubs.iterator();
+            while (iter.hasNext()) {
+                if (iter.next().getAuthor() == null) {
+                    iter.remove();
+                }
+            }
             postDataChanged(pubs);
         } catch (SQLException e) {
             //TODO do something about this error
