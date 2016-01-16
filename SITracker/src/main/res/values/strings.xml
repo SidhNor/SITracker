@@ -233,6 +233,14 @@
 
     <string name="change_log"><![CDATA[
         <section>
+            <header><h2>Version 1.4.0</h2></header>
+            <ul>
+                <li>Added material design</li>
+                <li>Android 5+ support</li>
+            </ul>
+        </section>
+
+        <section>
             <header><h2>Version 1.3.3</h2></header>
             <p>Small bugfix release.</p>
             <ul>
