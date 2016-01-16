@@ -80,6 +80,7 @@ class Samlib implements SiteStrategy {
             }
             AuthorPageReader reader = new SamlibAuthorPageReader(request.body());
             author = reader.getAuthor(url);
+            author.setUpdateDate(new Date());
             helper.getAuthorDao().create(author);
             final List<Publication> items = reader.getPublications(author);
             if (items.size() == 0) {
