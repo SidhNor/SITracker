@@ -98,9 +98,12 @@ android {
 
         versionProps.store(versionPropsFile.newWriter(), null)
 
+        def versionNameString = "${versionMajor}.${versionMinor}.${versionPatch}"
+        versionNameString += " (${Long.toHexString(versionBuild)})";
+
         defaultConfig {
             versionCode version_Code
-            versionName "${versionMajor}.${versionMinor}.${versionPatch}.${versionBuild}"
+            versionName versionNameString
             minSdkVersion 17
             targetSdkVersion 23
             applicationId 'com.andrada.sitracker'

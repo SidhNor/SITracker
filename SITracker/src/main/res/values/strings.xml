@@ -239,6 +239,18 @@
 
     <string name="change_log"><![CDATA[
         <section>
+            <header><h2>Version 1.4.1</h2></header>
+            <p>Small bugfix release.</p>
+            <ul>
+                <li>New authors are added to the beginning of the list</li>
+                <li>Added "Mark all as read" with undo on New Publications</li>
+                <li>Fixed crash on New Publications in case of dirty database</li>
+                <li>Fixed crash on author import</li>
+                <li>Fixed crash when failing to download publication</li>
+            </ul>
+        </section>
+
+        <section>
             <header><h2>Version 1.4.0</h2></header>
             <ul>
                 <li>Added material design</li>
