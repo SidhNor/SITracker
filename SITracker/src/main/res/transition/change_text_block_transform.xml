@@ -16,7 +16,34 @@
   limitations under the License.
   -->
 
-<transitionSet>
-    <changeBounds />
-    <changeTransform />
+<transitionSet
+    android:transitionOrdering="together"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <transitionSet android:transitionOrdering="sequential">
+        <transitionSet android:transitionOrdering="together">
+            <transition class="com.andrada.sitracker.ui.transition.Fold">
+                <targets>
+                    <target android:targetId="@id/header_pub" />
+                </targets>
+            </transition>
+            <fade>
+                <targets>
+                    <target android:targetId="@id/pub_title" />
+                    <target android:targetId="@id/pub_subtitle" />
+                </targets>
+            </fade>
+        </transitionSet>
+        <transition class="com.andrada.sitracker.ui.transition.Fold">
+            <targets>
+                <target android:targetId="@id/details_container" />
+            </targets>
+        </transition>
+    </transitionSet>
+    <transition
+        class="com.andrada.sitracker.ui.transition.Scale"
+        android:startDelay="500">
+        <targets>
+            <target android:targetId="@id/read_pub_button" />
+        </targets>
+    </transition>
 </transitionSet>
