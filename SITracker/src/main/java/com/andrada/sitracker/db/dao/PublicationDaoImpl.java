@@ -66,7 +66,10 @@ public class PublicationDaoImpl extends BaseDaoImpl<Publication, Long>
         return this.queryBuilder()
                 .orderBy("updateDate", false)
                 .where()
-                .eq("isNew", true).query();
+                .eq("isNew", true)
+                .and()
+                .isNotNull("author_id")
+                .query();
     }
 
 

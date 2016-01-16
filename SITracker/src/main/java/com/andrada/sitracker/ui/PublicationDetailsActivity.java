@@ -29,20 +29,18 @@ import android.view.WindowManager;
 
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.ui.fragment.PublicationInfoFragment_;
-
 public class PublicationDetailsActivity extends SimpleSinglePaneActivity {
 
     private boolean shouldBeFloatingWindow = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        //UIUtils.tryTranslateHttpIntent(this);
-        boolean shouldBeFloatingWindow = shouldBeFloatingWindow();
+
+        shouldBeFloatingWindow = shouldBeFloatingWindow();
         if (shouldBeFloatingWindow) {
             setupFloatingWindow();
         }
         super.onCreate(savedInstanceState);
-
 
         ActivityCompat.postponeEnterTransition(this);
         setTitle("");

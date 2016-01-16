@@ -45,11 +45,16 @@
     <string name="action_about">О приложении</string>
     <string name="check_for_updates">Проверка обновлений</string>
 
+    <!-- New Pubs fragment -->
+    <string name="action_sweep_all">Отметить все как прочитанное</string>
+    <string name="action_undo">Отменить</string>
+    <string name="all_read">Все прочитано</string>
+
 
     <!-- Authors fragment -->
     <string name="action_open_in_browser">Открыть выбранных в браузере</string>
     <string name="action_delete">Удалить автора</string>
-    <string name="action_markread">Отметить как просчитанное</string>
+    <string name="action_markread">Отметить как прочитанное</string>
 
     <string name="update_failed_crouton_message">Не удалось обновить авторов.</string>
     <string name="no_authors">Вы пока не добавили никаких авторов</string>
@@ -232,6 +237,19 @@
     <string name="showcase_pub_detail_ratings_detail">Вы можете оценить произведение и результат отобразится на samlib. Вы так же можете обновить свою оценку просто проголосовав заново.</string>
 
     <string name="change_log"><![CDATA[
+
+        <section>
+            <header><h2>Version 1.4.1</h2></header>
+            <p>Мелкий релиз баг-фиксов.</p>
+            <ul>
+                <li>Новые авторы добавляются в начало списка</li>
+                <li>Добавлено "Отметить всё как прочитано" с возможностью отмены в секции Обновления</li>
+                <li>Исправлена ошибка при грязной базе данных в секции Обновления</li>
+                <li>Исправлена ошибка при импорте авторов</li>
+                <li>Исправлена редкая ошибка при скачивании произведения</li>
+            </ul>
+        </section>
+
         <section>
             <header><h2>Версия 1.4.0</h2></header>
             <ul>

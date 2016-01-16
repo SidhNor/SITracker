@@ -18,6 +18,7 @@ package com.andrada.sitracker.ui.fragment;
 
 
 import android.content.Intent;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -36,9 +37,12 @@ import com.andrada.sitracker.util.AnalyticsHelper;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.OptionsItem;
+import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
 
 @EFragment(R.layout.fragment_newpubs)
+@OptionsMenu(R.menu.new_pubs_menu)
 public class NewPublicationsFragment extends BaseFragment {
 
     @ViewById(R.id.new_pubs_list)
@@ -53,26 +57,40 @@ public class NewPublicationsFragment extends BaseFragment {
     RecyclerView.AdapterDataObserver dataObserver = new RecyclerView.AdapterDataObserver() {
         @Override
         public void onChanged() {
-            if (adapter != null && empty != null) {
-                if (adapter.getItemCount() > 0) {
-                    recyclerView.setVisibility(View.VISIBLE);
-                    empty.setVisibility(View.GONE);
-                } else {
-                    recyclerView.setVisibility(View.GONE);
-                    empty.setVisibility(View.VISIBLE);
-                }
-            }
+            handleEmptyView();
+        }
+
+        @Override
+        public void onItemRangeInserted(int positionStart, int itemCount) {
+            handleEmptyView();
+        }
+
+        @Override
+        public void onItemRangeRemoved(int positionStart, int itemCount) {
+            handleEmptyView();
         }
     };
+
+    private void handleEmptyView() {
+        if (adapter != null && empty != null) {
+            if (adapter.getItemCount() > 0) {
+                recyclerView.setVisibility(View.VISIBLE);
+                empty.setVisibility(View.GONE);
+            } else {
+                recyclerView.setVisibility(View.GONE);
+                empty.setVisibility(View.VISIBLE);
+            }
+        }
+    }
 
     @Override
     public void onResume() {
         super.onResume();
         getBaseActivity().getActionBarToolbar().setTitle(getString(R.string.navdrawer_item_new_pubs));
-        adapter.reloadNewPublications();
         recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
         adapter.registerAdapterDataObserver(dataObserver);
+        adapter.reloadNewPublications();
         AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_NEW_PUBLICATIONS);
     }
 
@@ -99,4 +117,37 @@ public class NewPublicationsFragment extends BaseFragment {
             }
         });
     }
+
+
+    //region Menu item tap handlers
+    @OptionsItem(R.id.action_sweep_all)
+    void menuSweepAlSelected() {
+        if (adapter.getItemCount() == 0) {
+            return;
+        }
+        adapter.clearAll();
+        Snackbar.make(getActivity().findViewById(R.id.main_content), R.string.all_read, Snackbar.LENGTH_LONG)
+                .setCallback(new Snackbar.Callback() {
+                    @Override
+                    public void onDismissed(Snackbar snackbar, int event) {
+                        switch (event) {
+                            case Snackbar.Callback.DISMISS_EVENT_ACTION:
+                                adapter.reloadNewPublications();
+                                break;
+                            case Snackbar.Callback.DISMISS_EVENT_TIMEOUT:
+                                adapter.markAllPublicationsAsRead();
+                                break;
+                        }
+                    }
+                })
+                .setAction(R.string.action_undo, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //UNDO stuff
+                        //Handled in another callback
+                    }
+                }).show();
+    }
+
+    //endregion
 }

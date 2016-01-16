@@ -29,7 +29,6 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
-
     <application
         android:name=".SITrackerApp"
         android:allowBackup="true"
@@ -59,11 +58,6 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.nfc.action.NDEF_DISCOVERED" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="vnd.android.cursor.item/vnd.sitracker.author" />
             </intent-filter>
         </activity>
 
@@ -111,12 +105,6 @@
             android:label="@string/title_publications_details"
             android:parentActivityName=".ui.SiMainActivity_"
             android:theme="@style/Theme.SiTracker.PublicationDetails">
-            <!-- Android Beam for publication adding -->
-            <intent-filter>
-                <action android:name="android.nfc.action.NDEF_DISCOVERED" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="vnd.android.cursor.item/vnd.sitracker.publication" />
-            </intent-filter>
         </activity>
 
         <!-- Phone-only activities -->

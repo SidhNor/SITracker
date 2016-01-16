@@ -47,6 +47,12 @@
     <string name="check_for_updates">Checking for updates</string>
 
 
+    <!-- New Pubs fragment -->
+    <string name="action_sweep_all">Mark all as read</string>
+    <string name="action_undo">Undo</string>
+    <string name="all_read">All marked as read</string>
+
+
     <!-- Authors fragment -->
     <string name="action_open_in_browser">Open selected in browser</string>
     <string name="action_delete">Delete author</string>
@@ -232,6 +238,18 @@
     <string name="showcase_pub_detail_ratings_detail">You can rate the publication and the result will be submitted to samlib. Later on, you will be able to update your mark.</string>
 
     <string name="change_log"><![CDATA[
+        <section>
+            <header><h2>Version 1.4.1</h2></header>
+            <p>Small bugfix release.</p>
+            <ul>
+                <li>New authors are added to the beginning of the list</li>
+                <li>Added "Mark all as read" with undo on New Publications</li>
+                <li>Fixed crash on New Publications in case of dirty database</li>
+                <li>Fixed crash on author import</li>
+                <li>Fixed crash when failing to download publication</li>
+            </ul>
+        </section>
+
         <section>
             <header><h2>Version 1.4.0</h2></header>
             <ul>
