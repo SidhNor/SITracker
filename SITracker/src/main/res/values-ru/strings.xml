@@ -45,11 +45,16 @@
     <string name="action_about">О приложении</string>
     <string name="check_for_updates">Проверка обновлений</string>
 
+    <!-- New Pubs fragment -->
+    <string name="action_sweep_all">Отметить все как прочитанное</string>
+    <string name="action_undo">Отменить</string>
+    <string name="all_read">Все прочитано</string>
+
 
     <!-- Authors fragment -->
     <string name="action_open_in_browser">Открыть выбранных в браузере</string>
     <string name="action_delete">Удалить автора</string>
-    <string name="action_markread">Отметить как просчитанное</string>
+    <string name="action_markread">Отметить как прочитанное</string>
 
     <string name="update_failed_crouton_message">Не удалось обновить авторов.</string>
     <string name="no_authors">Вы пока не добавили никаких авторов</string>

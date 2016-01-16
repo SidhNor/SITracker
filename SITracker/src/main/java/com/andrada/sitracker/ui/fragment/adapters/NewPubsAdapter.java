@@ -77,6 +77,23 @@ public class NewPubsAdapter extends RecyclerView.Adapter<NewPubsAdapter.ViewHold
 
     }
 
+    @Background
+    public void markAllPublicationsAsRead() {
+        try {
+            List<Publication> pubs = publicationsDao.getNewPublications();
+            for (Publication pub : pubs) {
+                publicationsDao.markPublicationRead(pub);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void clearAll() {
+        publications.clear();
+        notifyDataSetChanged();
+    }
+
     @UiThread
     protected void postDataChanged(List<Publication> newPubs) {
         publications.clear();

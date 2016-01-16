@@ -47,6 +47,12 @@
     <string name="check_for_updates">Checking for updates</string>
 
 
+    <!-- New Pubs fragment -->
+    <string name="action_sweep_all">Mark all as read</string>
+    <string name="action_undo">Undo</string>
+    <string name="all_read">All marked as read</string>
+
+
     <!-- Authors fragment -->
     <string name="action_open_in_browser">Open selected in browser</string>
     <string name="action_delete">Delete author</string>
