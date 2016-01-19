@@ -22,7 +22,7 @@ public class Constants {
 
     public final static long STARTUP_UPDATE_DELAY = 600000L;
 
-    public final static long MIN_UPDATE_SPAN = 10 * 60 * 60 * 1000L;
+    public final static long MIN_UPDATE_SPAN = 10 * 60 * 1000L;
 
     public final static String PUBLICATIONS_REGEX =
             "<DL><DT><li>(?:<font.*?>.*?</font>)?\\s*(<b>(.*?)\\s*</b>\\s*)?<A HREF=(.*?)><b>\\s*(.*?)\\s*</b></A>.*?<b>(\\d+)k</b>.*?<small>(?:Оценка:<b>((\\d+(?:\\.\\d+)?).*?)</b>.*?)?\\s*\\\"(.*?)\\\"\\s*(.*?)?\\s*(?:<A HREF=\\\"(.*?)\\\">Комментарии:\\s*((\\d+).*?)</A>\\s*)?</small>.*?(?:<br><DD>(.*?)(?:<small><a href=(.*?)>Иллюстрации/приложения.*?</a></small>)?)?</DL>";
