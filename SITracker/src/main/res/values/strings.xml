@@ -239,6 +239,16 @@
 
     <string name="change_log"><![CDATA[
         <section>
+            <header><h2>Version 1.4.2</h2></header>
+            <p>Small bugfix release.</p>
+            <ul>
+                <li>Fixed interval between forced author updates that was accidentally set to 10 hours instead of 10 minutes.</li>
+                <li>Fixed several rare crashes when switching screens quickly</li>
+                <li>Fixed a crash when publication description contained lists</li>
+            </ul>
+        </section>
+
+        <section>
             <header><h2>Version 1.4.1</h2></header>
             <p>Small bugfix release.</p>
             <ul>
