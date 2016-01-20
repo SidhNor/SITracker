@@ -110,7 +110,10 @@ public class AuthorsAdapter extends RecyclerView.Adapter<AuthorsAdapter.ViewHold
     }
 
     public Author getItem(int position) {
-        return authors.get(position);
+        if (position >= 0 && position < authors.size()) {
+            return authors.get(position);
+        }
+        return null;
     }
 
     @Override

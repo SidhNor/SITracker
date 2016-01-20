@@ -371,7 +371,9 @@ public class AuthorsFragment extends BaseListFragment implements
             return;
         }
         Author auth = adapter.getItem(viewHolder.getAdapterPosition());
-        EventBus.getDefault().post(new AuthorSelectedEvent(auth.getId(), auth.getName()));
+        if (auth != null)
+            EventBus.getDefault().post(new AuthorSelectedEvent(auth.getId(), auth.getName()));
+
     }
 
     @Override

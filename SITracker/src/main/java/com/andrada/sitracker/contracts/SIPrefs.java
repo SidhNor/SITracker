@@ -54,4 +54,6 @@ public interface SIPrefs {
 
     long lastUpdateDateTime();
 
+    int lastVersionViewed();
+
 }
