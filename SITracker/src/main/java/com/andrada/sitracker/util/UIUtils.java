@@ -26,6 +26,7 @@ import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.os.Build;
+import android.text.Editable;
 import android.text.Html;
 import android.text.TextUtils;
 import android.widget.TextView;
@@ -33,6 +34,7 @@ import android.widget.TextView;
 import com.andrada.sitracker.R;
 
 import org.jetbrains.annotations.NotNull;
+import org.xml.sax.XMLReader;
 
 import java.util.regex.Pattern;
 
@@ -70,7 +72,7 @@ public class UIUtils {
             //Sanitize urls in hrefs:
             text = text.replace("<a href=\" ", "<a href=\"");
             text = text.replace("<a href=' ", "<a href='");
-            view.setText(Html.fromHtml(text));
+            view.setText(Html.fromHtml(text, null, new ListTagHandler()));
             //Commented movement method to make the textview focusable.
             //view.setMovementMethod(LinkMovementMethod.getInstance());
         } else {
@@ -198,5 +200,36 @@ public class UIUtils {
     public static boolean isLandscape(Context context) {
         return context != null &&
                 context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
+    }
+
+    public static class ListTagHandler implements Html.TagHandler {
+
+        boolean first = true;
+        String parent = null;
+        int index = 1;
+
+        @Override
+        public void handleTag(boolean opening, String tag, Editable output, XMLReader xmlReader) {
+            if (tag.equals("ul")) parent = "ul";
+            else if (tag.equals("ol")) parent = "ol";
+            if (tag.equals("li")) {
+                if (parent.equals("ul")) {
+                    if (first) {
+                        output.append("\n\t•");
+                        first = false;
+                    } else {
+                        first = true;
+                    }
+                } else {
+                    if (first) {
+                        output.append("\n\t").append(String.valueOf(index)).append(". ");
+                        first = false;
+                        index++;
+                    } else {
+                        first = true;
+                    }
+                }
+            }
+        }
     }
 }

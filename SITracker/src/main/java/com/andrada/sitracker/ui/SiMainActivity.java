@@ -20,6 +20,8 @@ import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.view.View;
@@ -30,6 +32,7 @@ import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.AppUriContract;
 import com.andrada.sitracker.contracts.SIPrefs_;
 import com.andrada.sitracker.events.AuthorSelectedEvent;
+import com.andrada.sitracker.ui.fragment.AboutDialog;
 import com.andrada.sitracker.ui.fragment.AuthorsFragment;
 import com.andrada.sitracker.ui.fragment.AuthorsFragment_;
 import com.andrada.sitracker.util.UpdateServiceHelper;
@@ -84,6 +87,7 @@ public class SiMainActivity extends BaseActivity {
             transaction.commit();
         }
         super.afterViews();
+        attemptToShowWhatsNew();
     }
 
     @Override
@@ -129,6 +133,23 @@ public class SiMainActivity extends BaseActivity {
             UpdateServiceHelper.scheduleUpdates(this);
         } else if (!isSyncing && updateServiceUp) {
             UpdateServiceHelper.cancelUpdates(this);
+        }
+    }
+
+    private void attemptToShowWhatsNew() {
+        PackageManager pm = getPackageManager();
+        String packageName = getPackageName();
+        try {
+            PackageInfo info = pm.getPackageInfo(packageName, 0);
+            int currentVersionCode = info.versionCode;
+            if (currentVersionCode > prefs.lastVersionViewed().get()) {
+                //Show dialog
+                AboutDialog.showWhatsNew(this);
+                //Update last version viewed
+                prefs.lastVersionViewed().put(currentVersionCode);
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            //Ignore
         }
     }
 

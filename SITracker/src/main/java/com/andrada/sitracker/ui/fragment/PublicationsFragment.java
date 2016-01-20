@@ -135,8 +135,8 @@ public class PublicationsFragment extends BaseListFragment implements
             SpannableStringBuilder snackbarText = new SpannableStringBuilder();
             snackbarText.append(errorMessage);
             snackbarText.setSpan(new ForegroundColorSpan(0xFFFF0000), 0, snackbarText.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-            Snackbar.make(getActivity().findViewById(R.id.main_content), snackbarText, Snackbar.LENGTH_SHORT).show();
+            if (getActivity() != null && !getActivity().isFinishing())
+                Snackbar.make(getActivity().findViewById(R.id.main_content), snackbarText, Snackbar.LENGTH_SHORT).show();
         }
     }
 

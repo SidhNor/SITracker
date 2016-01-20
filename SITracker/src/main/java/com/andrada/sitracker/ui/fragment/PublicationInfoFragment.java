@@ -369,7 +369,8 @@ public class PublicationInfoFragment extends BaseFragment {
         mHandler.post(new Runnable() {
             @Override
             public void run() {
-                ActivityCompat.startPostponedEnterTransition(getActivity());
+                if (getActivity() != null && !getActivity().isFinishing())
+                    ActivityCompat.startPostponedEnterTransition(getActivity());
             }
         });
     }
@@ -750,6 +751,8 @@ public class PublicationInfoFragment extends BaseFragment {
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
+                    if (getActivity() == null || getActivity().isFinishing())
+                        return;
                     Drawable frameAnimation = ContextCompat.getDrawable(getActivity(), imageResId);
                     imageView.setImageDrawable(frameAnimation);
 
