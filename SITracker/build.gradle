@@ -70,8 +70,8 @@ ext {
 
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion '23.0.2'
+    compileSdkVersion 24
+    buildToolsVersion '24.0.2'
 
 
     def versionPropsFile = file('version.properties')
@@ -105,7 +105,7 @@ android {
             versionCode version_Code
             versionName versionNameString
             minSdkVersion 17
-            targetSdkVersion 23
+            targetSdkVersion 24
             applicationId 'com.andrada.sitracker'
             testInstrumentationRunner 'android.test.InstrumentationTestRunner'
             testApplicationId 'com.andrada.sitracker.test'
@@ -129,6 +129,7 @@ android {
             debuggable true
             minifyEnabled false
             signingConfig signingConfigs.debug
+            applicationIdSuffix ".debug"
         }
         release {
             minifyEnabled true
