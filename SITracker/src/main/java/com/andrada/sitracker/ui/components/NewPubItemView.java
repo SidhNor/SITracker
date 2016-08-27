@@ -47,6 +47,12 @@ public class NewPubItemView extends TouchDelegateRelativeLayout {
     @ViewById
     TextView itemSize;
 
+    private Long currentPublicationId;
+
+    public Long getCurrentPublicationId() {
+        return currentPublicationId;
+    }
+
     private boolean mIsNew = false;
 
     private IsNewItemTappedListener mListener;
@@ -76,6 +82,7 @@ public class NewPubItemView extends TouchDelegateRelativeLayout {
     }
 
     public void bind(Publication publication, boolean loadImages) {
+        currentPublicationId = publication.getId();
         mIsNew = publication.getNew();
         item_title.setText(publication.getName());
         author_name.setText(publication.getAuthor().getName());

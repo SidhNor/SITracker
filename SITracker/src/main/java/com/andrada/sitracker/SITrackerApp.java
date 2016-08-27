@@ -21,14 +21,13 @@ import android.net.http.HttpResponseCache;
 
 import com.andrada.sitracker.util.AnalyticsExceptionParser;
 import com.andrada.sitracker.util.AnalyticsHelper;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.GlideBuilder;
-import com.bumptech.glide.load.engine.cache.DiskLruCacheWrapper;
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.analytics.ExceptionReporter;
 
 import java.io.File;
 
 import de.greenrobot.event.EventBus;
+import io.fabric.sdk.android.Fabric;
 
 import static com.andrada.sitracker.util.LogUtils.LOGD;
 import static com.andrada.sitracker.util.LogUtils.LOGE;
@@ -41,7 +40,14 @@ public class SITrackerApp extends Application {
       */
     @Override
     public void onCreate() {
+
         super.onCreate();
+
+        //Fabric
+        if (!BuildConfig.DEBUG) {
+            Fabric.with(this, new Crashlytics());
+        }
+
         //Setup cache if possible
         try {
             File httpCacheDir = new File(this.getCacheDir(), "http");
@@ -67,12 +73,5 @@ public class SITrackerApp extends Application {
                 this.getApplicationContext());
         myReporter.setExceptionParser(new AnalyticsExceptionParser());
         Thread.setDefaultUncaughtExceptionHandler(myReporter);
-
-        if (!Glide.isSetup()) {
-            Glide.setup(new GlideBuilder(this)
-                            .setDiskCache(DiskLruCacheWrapper.get(Glide.getPhotoCacheDir(this), 250 * 1024 * 1024))
-            );
-        }
-
     }
 }

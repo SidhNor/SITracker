@@ -43,10 +43,10 @@ import com.github.amlcurran.showcaseview.targets.ViewTarget;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.OrmLiteDao;
 import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.sharedpreferences.Pref;
+import org.androidannotations.ormlite.annotations.OrmLiteDao;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -54,6 +54,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.greenrobot.event.EventBus;
 
@@ -64,7 +65,7 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
         IsNewItemTappedListener, AdapterView.OnItemLongClickListener {
 
 
-    private final HashMap<Long, Publication> mDownloadingPublications = new HashMap<Long, Publication>();
+    private final Map<Long, Publication> mDownloadingPublications = new HashMap<Long, Publication>();
     List<CategoryValue> mCategories = new ArrayList<CategoryValue>();
     List<List<Publication>> mChildren = new ArrayList<List<Publication>>();
     @OrmLiteDao(helper = SiDBHelper.class)

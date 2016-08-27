@@ -12,6 +12,7 @@ build/
 .gradle/
 *.iml
 
+crashlytics.properties
 SITracker/*.apk
 SITracker/keystore.jks
 

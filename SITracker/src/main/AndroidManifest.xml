@@ -13,9 +13,8 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<manifest
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.andrada.sitracker"
-    xmlns:android="http://schemas.android.com/apk/res/android"
     android:installLocation="auto">
 
     <supports-screens
@@ -51,9 +50,9 @@
         <!-- Activities for both phones and tablets -->
         <activity
             android:name=".ui.SiMainActivity_"
+            android:configChanges="orientation|screenSize|keyboard"
             android:label="@string/app_name"
             android:launchMode="singleTop"
-            android:configChanges="orientation|screenSize|keyboard"
             android:theme="@style/Theme.SiTracker.Main">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -78,9 +77,8 @@
         <activity
             android:name=".ui.SettingsActivity_"
             android:label="@string/title_settings"
-            android:theme="@style/Theme.SiTracker.Settings"
-            android:parentActivityName=".ui.SiMainActivity_">
-        </activity>
+            android:parentActivityName=".ui.SiMainActivity_"
+            android:theme="@style/Theme.SiTracker.Settings"/>
 
         <activity
             android:name=".ui.ImportAuthorsActivity_"
@@ -97,15 +95,13 @@
             android:name=".ui.AuthorDetailsActivity_"
             android:label="@string/title_publications_details"
             android:parentActivityName=".ui.SiMainActivity_"
-            android:theme="@style/Theme.SiTracker.PublicationDetails">
-        </activity>
+            android:theme="@style/Theme.SiTracker.PublicationDetails"/>
 
         <activity
             android:name=".ui.PublicationDetailsActivity"
             android:label="@string/title_publications_details"
             android:parentActivityName=".ui.SiMainActivity_"
-            android:theme="@style/Theme.SiTracker.PublicationDetails">
-        </activity>
+            android:theme="@style/Theme.SiTracker.PublicationDetails"/>
 
         <!-- Phone-only activities -->
         <!-- Example of phone only activity
@@ -180,15 +176,24 @@
             android:name="android.app.default_searchable"
             android:value=".ui.SearchActivity_" />
 
-        <receiver android:name="com.google.android.gms.analytics.AnalyticsReceiver"
+        <receiver
+            android:name="com.google.android.gms.analytics.AnalyticsReceiver"
             android:enabled="true">
             <intent-filter>
                 <action android:name="com.google.android.gms.analytics.ANALYTICS_DISPATCH" />
             </intent-filter>
         </receiver>
-        <service android:name="com.google.android.gms.analytics.AnalyticsService"
+        <service
+            android:name="com.google.android.gms.analytics.AnalyticsService"
             android:enabled="true"
-            android:exported="false"/>
+            android:exported="false" />
+
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="c0ca714e29c8a32a47ba1972629d3f59f9e6d38b" />
+        <meta-data
+            android:name="com.andrada.sitracker.SiGlideModule"
+            android:value="GlideModule" />
 
     </application>
 

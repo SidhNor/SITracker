@@ -33,6 +33,7 @@
 
 -keepattributes Signature
 
+-keepnames class com.andrada.sitracker.SiGlideModule
 
 -dontwarn com.viewpagerindicator.LinePageIndicator
 
