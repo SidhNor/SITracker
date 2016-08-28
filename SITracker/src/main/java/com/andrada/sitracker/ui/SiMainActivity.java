@@ -84,7 +84,6 @@ public class SiMainActivity extends BaseActivity implements RuntimePermissionsIn
         ensureUpdatesAreRunningOnSchedule();
 
         permissionsUtils.requestPermissionIfNeed(Permissions.WRITE_PERMISSION, this);
-        permissionsUtils.requestPermissionIfNeed(Permissions.READ_PERMISSION, this);
     }
 
     @AfterViews

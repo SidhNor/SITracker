@@ -65,13 +65,6 @@ public class RuntimePermissionsUtils {
                 runtimePermissionsInteraction.permissionRevoked();
             }
         }
-        if (requestCode == Permissions.READ_PERMISSION.requestCode) {
-            if (data.length > 0 && data[0] == PackageManager.PERMISSION_GRANTED) {
-                runtimePermissionsInteraction.permissionGranted();
-            } else {
-                runtimePermissionsInteraction.permissionRevoked();
-            }
-        }
         return false;
     }
 

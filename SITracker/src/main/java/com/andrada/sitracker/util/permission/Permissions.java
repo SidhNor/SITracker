@@ -22,7 +22,6 @@ import com.andrada.sitracker.R;
 
 public enum Permissions {
 
-    READ_PERMISSION(Manifest.permission.READ_EXTERNAL_STORAGE, 102, R.string.read_storage_permissions),
     WRITE_PERMISSION(Manifest.permission.WRITE_EXTERNAL_STORAGE, 103, R.string.write_storage_permissions);
 
     public final String permissionCode;
