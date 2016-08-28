@@ -238,6 +238,16 @@
     <string name="showcase_pub_detail_ratings_detail">You can rate the publication and the result will be submitted to samlib. Later on, you will be able to update your mark.</string>
 
     <string name="change_log"><![CDATA[
+
+        <section>
+            <header><h2>Version 1.4.3</h2></header>
+            <p>Small bugfix release.</p>
+            <ul>
+                <li>Android 7 target support.</li>
+                <li>Android 6 runtime permissions</li>
+                <li>Fixes during folder selection in settings and during export</li>
+            </ul>
+        </section>
         <section>
             <header><h2>Version 1.4.2</h2></header>
             <p>Small bugfix release.</p>
