@@ -9,7 +9,6 @@
 
 # Add any project specific keep options here:
 
--dontobfuscate
 -optimizations !code/simplification/arithmetic,!code/simplification/cast,!field/*,!class/merging/*,!code/allocation/variable
 
 -dontwarn org.springframework.**
@@ -32,7 +31,6 @@
 }
 
 -keepattributes Signature
-
 
 -dontwarn com.viewpagerindicator.LinePageIndicator
 

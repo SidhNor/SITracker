@@ -19,12 +19,8 @@ package com.andrada.sitracker;
 import android.app.Application;
 import android.net.http.HttpResponseCache;
 
-import com.andrada.sitracker.util.AnalyticsExceptionParser;
-import com.andrada.sitracker.util.AnalyticsHelper;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.GlideBuilder;
-import com.bumptech.glide.load.engine.cache.DiskLruCacheWrapper;
-import com.google.android.gms.analytics.ExceptionReporter;
+import com.andrada.sitracker.analytics.AnalyticsManager;
+import com.google.firebase.FirebaseApp;
 
 import java.io.File;
 
@@ -41,38 +37,29 @@ public class SITrackerApp extends Application {
       */
     @Override
     public void onCreate() {
+
         super.onCreate();
-        //Setup cache if possible
-        try {
-            File httpCacheDir = new File(this.getCacheDir(), "http");
-            long httpCacheSize = 1024 * 1024; // 1 MiB
-            HttpResponseCache.install(httpCacheDir, httpCacheSize);
-            LOGD("SiTracker", "Cache installed");
 
-        } catch (Exception ignored) {
-            LOGE("SiTracker", "Cache installed failed");
+        if (!FirebaseApp.getApps(this).isEmpty()) {
+
+            //Setup cache if possible
+            try {
+                File httpCacheDir = new File(this.getCacheDir(), "http");
+                long httpCacheSize = 1024 * 1024; // 1 MiB
+                HttpResponseCache.install(httpCacheDir, httpCacheSize);
+                LOGD("SiTracker", "Cache installed");
+
+            } catch (Exception ignored) {
+                LOGE("SiTracker", "Cache installed failed");
+            }
+
+            EventBus.builder()
+                    .throwSubscriberException(BuildConfig.DEBUG)
+                    .installDefaultEventBus();
+
+            AnalyticsManager.initHelper(this);
         }
 
-        EventBus.builder()
-                .throwSubscriberException(BuildConfig.DEBUG)
-                .installDefaultEventBus();
-
-        AnalyticsHelper.initHelper(this);
-        ExceptionReporter myReporter = new ExceptionReporter(
-                // Currently used Tracker.
-                AnalyticsHelper.getInstance().getTracker(AnalyticsHelper.TrackerName.APP_TRACKER),
-                // Current default uncaught exception handler.
-                Thread.getDefaultUncaughtExceptionHandler(),
-                // Context of the application.
-                this.getApplicationContext());
-        myReporter.setExceptionParser(new AnalyticsExceptionParser());
-        Thread.setDefaultUncaughtExceptionHandler(myReporter);
-
-        if (!Glide.isSetup()) {
-            Glide.setup(new GlideBuilder(this)
-                            .setDiskCache(DiskLruCacheWrapper.get(Glide.getPhotoCacheDir(this), 250 * 1024 * 1024))
-            );
-        }
 
     }
 }

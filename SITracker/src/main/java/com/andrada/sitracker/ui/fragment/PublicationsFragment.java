@@ -28,6 +28,8 @@ import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.widget.ExpandableListView;
 import com.andrada.sitracker.R;
+import com.andrada.sitracker.analytics.AnalyticsManager;
+import com.andrada.sitracker.analytics.ViewCategoryEvent;
 import com.andrada.sitracker.contracts.AppUriContract;
 import com.andrada.sitracker.contracts.SIPrefs_;
 import com.andrada.sitracker.db.beans.Publication;
@@ -58,6 +60,7 @@ import static com.andrada.sitracker.util.LogUtils.LOGI;
 @OptionsMenu(R.menu.publications_menu)
 public class PublicationsFragment extends BaseListFragment implements
         ExpandableListView.OnChildClickListener,
+        ExpandableListView.OnGroupExpandListener,
         PublicationsAdapter.PublicationShareAttemptListener {
 
     @Bean
@@ -110,6 +113,7 @@ public class PublicationsFragment extends BaseListFragment implements
         mListView.setAdapter(adapter);
         adapter.setShareListener(this);
         mListView.setOnChildClickListener(this);
+        mListView.setOnGroupExpandListener(this);
         mListView.setOnItemLongClickListener(adapter);
         updatePublicationsView(activeAuthorId);
     }
@@ -161,6 +165,14 @@ public class PublicationsFragment extends BaseListFragment implements
     }
 
     @Override
+    public void onGroupExpand(int groupPosition) {
+        PublicationsAdapter.CategoryValue category = (PublicationsAdapter.CategoryValue) adapter.getGroup(groupPosition);
+        if (category != null) {
+            AnalyticsManager.getInstance().logEvent(new ViewCategoryEvent(category.categoryName));
+        }
+    }
+
+    @Override
     @Background
     public void publicationShare(@NotNull Publication pub, boolean forceDownload) {
 
@@ -200,5 +212,4 @@ public class PublicationsFragment extends BaseListFragment implements
 
         }
     }
-
 }

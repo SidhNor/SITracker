@@ -32,13 +32,14 @@ import android.view.View;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
+import com.andrada.sitracker.analytics.AnalyticsManager;
+import com.andrada.sitracker.analytics.FBAEvent;
 import com.andrada.sitracker.contracts.SIPrefs_;
 import com.andrada.sitracker.events.AuthorSortMethodChanged;
 import com.andrada.sitracker.tasks.ClearPublicationCacheTask;
 import com.andrada.sitracker.tasks.UpdateAuthorsTask_;
-import com.andrada.sitracker.util.AnalyticsHelper;
 import com.andrada.sitracker.util.ShareHelper;
-import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
@@ -63,7 +64,6 @@ public class SettingsActivity extends BaseActivity {
                     .add(R.id.container, SettingsActivity_.SettingsFragment_.builder().build())
                     .commit();
         }
-        AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_PREFERENCES);
     }
 
     @AfterViews
@@ -100,7 +100,6 @@ public class SettingsActivity extends BaseActivity {
             @Override
             public boolean onPreferenceClick(Preference preference) {
 
-                AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_PREFS_DOWNLOAD_DIALOG);
                 dirChooserController.showDialog(SettingsFragment.this);
                 return true;
             }
@@ -182,10 +181,10 @@ public class SettingsActivity extends BaseActivity {
                 long updateInterval = Long.parseLong(prefs.updateInterval().get());
                 alarmManager.setInexactRepeating(AlarmManager.RTC, System.currentTimeMillis(), updateInterval, pi);
                 setUpdateIntervalSummary(prefs.updateInterval().get());
-                AnalyticsHelper.getInstance().sendEvent(
-                        Constants.GA_ADMIN_CATEGORY,
-                        Constants.GA_EVENT_CHANGED_UPDATE_INTERVAL,
-                        Constants.GA_EVENT_CHANGED_UPDATE_INTERVAL, updateInterval);
+
+                FBAEvent event = new FBAEvent(Constants.GA_EVENT_CHANGED_UPDATE_INTERVAL);
+                event.getParamMap().put(FirebaseAnalytics.Param.VALUE, prefs.updateInterval().get());
+                AnalyticsManager.getInstance().logEvent(event);
             } else if (Constants.AUTHOR_SORT_TYPE_KEY.equals(key)) {
                 EventBus.getDefault().post(new AuthorSortMethodChanged());
                 setAuthorSortSummary(prefs.authorsSortType().get());
@@ -203,7 +202,7 @@ public class SettingsActivity extends BaseActivity {
                     builder.show();
                 }
             } else if (Constants.PREF_USAGE_OPT_OUT_KEY.equals(key)) {
-                GoogleAnalytics.getInstance(this.getActivity()).setAppOptOut(prefs.optOutUsageStatistics().get());
+                AnalyticsManager.getInstance().setOptOut(prefs.optOutUsageStatistics().get());
             }
         }
 

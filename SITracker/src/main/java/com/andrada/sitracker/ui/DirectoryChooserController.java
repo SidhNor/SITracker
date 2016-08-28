@@ -17,8 +17,18 @@
 package com.andrada.sitracker.ui;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.andrada.sitracker.R;
 import com.andrada.sitracker.ui.fragment.DirectoryChooserFragment;
+import com.andrada.sitracker.util.permission.Permissions;
+import com.andrada.sitracker.util.permission.RuntimePermissionsInteraction;
+import com.andrada.sitracker.util.permission.RuntimePermissionsUtils;
 
 public class DirectoryChooserController implements DirectoryChooserFragment.OnFragmentInteractionListener {
 
@@ -30,6 +40,8 @@ public class DirectoryChooserController implements DirectoryChooserFragment.OnFr
     private Activity mActivity;
     private DirectoryChooserResultListener mListener;
 
+    private RuntimePermissionsUtils permissionsUtils;
+
     public DirectoryChooserController(Activity activity, String initialDir, boolean isDirectoryChooser) {
         this.mActivity = activity;
         mDialog = (DirectoryChooserFragment) mActivity.getFragmentManager().findFragmentByTag(TAG);
@@ -38,6 +50,7 @@ public class DirectoryChooserController implements DirectoryChooserFragment.OnFr
                     .newInstance(initialDir, isDirectoryChooser, this);
         }
         mDialog.setListener(this);
+        permissionsUtils = new RuntimePermissionsUtils();
     }
 
     public void setListener(DirectoryChooserResultListener listener) {

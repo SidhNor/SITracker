@@ -60,6 +60,9 @@ import android.widget.TextView;
 import com.andrada.sitracker.BuildConfig;
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
+import com.andrada.sitracker.analytics.FBAEvent;
+import com.andrada.sitracker.analytics.PublicationOpenedEvent;
+import com.andrada.sitracker.analytics.ViewPublicationEvent;
 import com.andrada.sitracker.contracts.AppUriContract;
 import com.andrada.sitracker.contracts.SIPrefs_;
 import com.andrada.sitracker.db.beans.Publication;
@@ -71,7 +74,7 @@ import com.andrada.sitracker.exceptions.SharePublicationException;
 import com.andrada.sitracker.reader.SamlibPublicationPageReader;
 import com.andrada.sitracker.ui.BaseActivity;
 import com.andrada.sitracker.ui.widget.MessageCardView;
-import com.andrada.sitracker.util.AnalyticsHelper;
+import com.andrada.sitracker.analytics.AnalyticsManager;
 import com.andrada.sitracker.util.SamlibPageHelper;
 import com.andrada.sitracker.util.ShareHelper;
 import com.andrada.sitracker.util.UIUtils;
@@ -186,7 +189,7 @@ public class PublicationInfoFragment extends BaseFragment {
         mHandler = new Handler();
         rateShowcaseShown = prefs.ratingShowcaseShotDone().get();
 
-        AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_PUBLICATION_INFO);
+
     }
 
     @Override
@@ -311,6 +314,9 @@ public class PublicationInfoFragment extends BaseFragment {
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     void bindData() {
+
+        AnalyticsManager.getInstance().logEvent(new ViewPublicationEvent(currentRecord.getName(), currentRecord.getUrl()));
+
         String mTitleString = currentRecord.getName();
         String subtitle = currentRecord.getCategory();
 
@@ -430,7 +436,7 @@ public class PublicationInfoFragment extends BaseFragment {
             List<Pair<String, String>> results = new SamlibPublicationPageReader().readPublicationImageUrlsAndDescriptions(data);
             addImagesToList(results);
         } catch (HttpRequest.HttpRequestException e) {
-            AnalyticsHelper.getInstance().sendException("Could not load publication image mRecyclerView", e);
+            AnalyticsManager.getInstance().sendException("Could not load publication image mRecyclerView", e);
             addImagesToList(new ArrayList<Pair<String, String>>());
         }
     }
@@ -441,7 +447,7 @@ public class PublicationInfoFragment extends BaseFragment {
             publicationsDao.markPublicationRead(currentRecord);
             EventBus.getDefault().post(new PublicationMarkedAsReadEvent(true));
         } catch (SQLException e) {
-            AnalyticsHelper.getInstance().sendException(e);
+            AnalyticsManager.getInstance().sendException(e);
         }
     }
 
@@ -453,7 +459,7 @@ public class PublicationInfoFragment extends BaseFragment {
                 publicationsDao.update(currentRecord);
                 bindData();
             } catch (SQLException e) {
-                AnalyticsHelper.getInstance().sendException(e);
+                AnalyticsManager.getInstance().sendException(e);
             }
         }
     }
@@ -467,7 +473,7 @@ public class PublicationInfoFragment extends BaseFragment {
             publicationsDao.update(currentRecord);
             bindData();
         } catch (SQLException e) {
-            AnalyticsHelper.getInstance().sendException(e);
+            AnalyticsManager.getInstance().sendException(e);
         }
     }
 
@@ -557,18 +563,15 @@ public class PublicationInfoFragment extends BaseFragment {
             //Start downloading in a background thread
             //Do force, no activity start
             downloadPublication(true, false);
-            AnalyticsHelper.getInstance().sendEvent(
-                    Constants.GA_ADMIN_CATEGORY,
-                    Constants.GA_EVENT_PUB_MANUAL_REFRESH,
-                    Constants.GA_EVENT_AUTHOR_PUB_OPEN);
+
+            AnalyticsManager.getInstance().logEvent(new PublicationOpenedEvent(currentRecord.getName(), true));
         }
     }
 
     @OptionsItem(R.id.action_ignore_updates)
     void ignoreUpdatesSelected() {
-        AnalyticsHelper.getInstance().sendEvent(Constants.GA_ADMIN_CATEGORY,
-                Constants.GA_EVENT_PUB_IGNORED,
-                Constants.GA_EVENT_PUB_IGNORED);
+
+        AnalyticsManager.getInstance().logEvent(new FBAEvent(Constants.GA_EVENT_PUB_IGNORED));
         markPublicationAsIgnored(true);
     }
 
@@ -577,10 +580,8 @@ public class PublicationInfoFragment extends BaseFragment {
         if (mIsDownloading) {
             return;
         }
-        AnalyticsHelper.getInstance().sendEvent(
-                Constants.GA_READ_CATEGORY,
-                Constants.GA_EVENT_FAB_CLICK,
-                Constants.GA_EVENT_AUTHOR_PUB_OPEN);
+
+        AnalyticsManager.getInstance().logEvent(new PublicationOpenedEvent(currentRecord.getName(), false));
         if (!mDownloaded) {
             //Start download here
             mIsDownloading = true;
@@ -596,7 +597,6 @@ public class PublicationInfoFragment extends BaseFragment {
     @Click(R.id.publication_rating_block)
     void voteForPubClicked() {
         if (currentRecord != null && getActivity() != null) {
-            AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_RATING_DIALOG);
             FragmentManager fm = this.getActivity().getFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
             Fragment prev = fm.findFragmentByTag(RatePublicationDialog.FRAGMENT_TAG);
@@ -645,10 +645,7 @@ public class PublicationInfoFragment extends BaseFragment {
             @Override
             public void onMessageCardButtonClicked(String tag) {
                 if ("ENABLE_UPDATES_BACK".equals(tag)) {
-                    AnalyticsHelper.getInstance().sendEvent(
-                            Constants.GA_ADMIN_CATEGORY,
-                            Constants.GA_EVENT_ENABLE_UPDATES_BACK,
-                            Constants.GA_EVENT_ENABLE_UPDATES_BACK);
+                    AnalyticsManager.getInstance().logEvent(new FBAEvent(Constants.GA_EVENT_ENABLE_UPDATES_BACK));
                     markPublicationAsIgnored(false);
                 } else {
                     messageCardView.dismiss(true);

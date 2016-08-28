@@ -87,7 +87,6 @@ public class Constants {
     public static final String GA_SCREEN_NEW_PUBLICATIONS = "New Publications";
     public static final String GA_SCREEN_IMPORT_AUTHORS = "Import Authors";
     public static final String GA_SCREEN_IMPORT_PROGRESS = "Import progress";
-    public static final String GA_SCREEN_EXPORT_DIALOG = "Export authors dialog";
     public static final String GA_SCREEN_PREFERENCES = "Settings";
     public static final String GA_SCREEN_PUBLICATION_INFO = "Publication details";
     public static final String GA_SCREEN_PREFS_DOWNLOAD_DIALOG = "Download folder setting dialog";
@@ -95,12 +94,14 @@ public class Constants {
     public static final String GA_SCREEN_ABOUT_DIALOG = "About";
 
     //Analytics event names
+
+    public static final String GA_EVENT_EXPORT_AUTHORS = "export";
+    public static final String GA_EVENT_IMPORT_AUTHORS = "import";
     public static final String GA_EVENT_AUTHOR_ADDED = "author_added";
     public static final String GA_EVENT_AUTHOR_UPDATE = "author_update";
     public static final String GA_EVENT_AUTHORS_MANUAL_REFRESH = "author_manual_refresh";
     public static final String GA_EVENT_PUB_MANUAL_REFRESH = "pub_manual_refresh";
-    public static final String GA_EVENT_SEARCH_TYPE_CHANGED = "search_type_changed";
-    public static final String GA_EVENT_PUB_RATED = "pub_rated";
+    public static final String GA_EVENT_PUB_RATED = "rate";
     public static final String GA_EVENT_PUB_IGNORED = "pub_updates_ignored";
     public static final String GA_EVENT_ENABLE_UPDATES_BACK = "pub_updates_reenabled";
     public static final String GA_EVENT_FAB_CLICK = "fab_used";

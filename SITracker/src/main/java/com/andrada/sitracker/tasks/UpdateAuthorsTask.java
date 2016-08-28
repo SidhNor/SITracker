@@ -34,7 +34,7 @@ import com.andrada.sitracker.reader.SiteStrategy;
 import com.andrada.sitracker.tasks.messages.AuthorsUpToDateIntentMessage;
 import com.andrada.sitracker.tasks.messages.UpdateFailedIntentMessage;
 import com.andrada.sitracker.tasks.messages.UpdateSuccessfulIntentMessage;
-import com.andrada.sitracker.util.AnalyticsHelper;
+import com.andrada.sitracker.analytics.AnalyticsManager;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 
 import org.androidannotations.annotations.EService;
@@ -164,7 +164,7 @@ public class UpdateAuthorsTask extends IntentService {
     }
 
     private void trackException(String message) {
-        AnalyticsHelper.getInstance().sendException(message);
+        AnalyticsManager.getInstance().sendException(message);
     }
 
 }

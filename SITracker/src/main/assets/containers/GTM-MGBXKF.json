@@ -1,0 +1,52 @@
+{
+
+"fingerprint":"MQ$0",
+
+"resource": {
+  "version":"1",
+  "macros":[
+    {
+      "function":"__c",
+      "instance_name":"analytics tracker id",
+      "vendor_template_version":"1",
+      "vtp_value":"UA-42708820-1"
+    },
+    {
+      "function":"__e",
+      "instance_name":"Event Name",
+      "vendor_template_version":"1"
+    },
+    {
+      "function":"__ai",
+      "instance_name":"App ID",
+      "vendor_template_version":"1"
+    },
+    {
+      "function":"__an",
+      "instance_name":"App Name",
+      "vendor_template_version":"1"
+    },
+    {
+      "function":"__av",
+      "instance_name":"App Version Code",
+      "vendor_template_version":"1"
+    }
+  ],
+  "tags":[
+    
+  ],
+  "predicates":[
+    
+  ],
+  "rules":[
+    
+  ]
+},
+"runtime":
+[[50,"__ai_main",[46],[36,[2,[17,[15,"gtmUtils"],"mobile"],"applicationId",[7]]]],[50,"__ai",[46,"data"],[36,["__ai_main",[15,"data"]]]],
+[50,"__an_main",[46],[36,[2,[17,[15,"gtmUtils"],"mobile"],"applicationName",[7]]]],[50,"__an",[46,"data"],[36,["__an_main",[15,"data"]]]],
+[50,"__av_main",[46],[36,[2,[17,[15,"gtmUtils"],"mobile"],"applicationVersion",[7]]]],[50,"__av",[46,"data"],[36,["__av_main",[15,"data"]]]],
+[50,"__c_main",[46,"a"],[36,[17,[15,"a"],"value"]]],[50,"__c",[46,"data"],[36,["__c_main",[15,"data"]]]],
+[50,"__e_main",[46],[36,[2,[17,[15,"gtmUtils"],"mobile"],"event",[7]]]],[50,"__e",[46,"data"],[36,["__e_main",[15,"data"]]]],
+[50,"main",[46,"a"],[43,[17,[15,"a"],"common"],"tableToMap",[15,"tableToMap"]],[43,[17,[15,"a"],"common"],"stringify",[15,"stringify"]]],[50,"tableToMap",[46,"a","b","c"],[41,"d","e","f"],[3,"d",[8]],[3,"e",false],[3,"f",0],[42,[1,[15,"a"],[23,[15,"f"],[17,[15,"a"],"length"]]],[33,[15,"f"],[3,"f",[0,[15,"f"],1]]],false,[46,[22,[1,[1,[16,[15,"a"],[15,"f"]],[2,[16,[15,"a"],[15,"f"]],"hasOwnProperty",[7,[15,"b"]]]],[2,[16,[15,"a"],[15,"f"]],"hasOwnProperty",[7,[15,"c"]]]],[46,[43,[15,"d"],[16,[16,[15,"a"],[15,"f"]],[15,"b"]],[16,[16,[15,"a"],[15,"f"]],[15,"c"]]],[3,"e",true]]]]],[36,[39,[15,"e"],[15,"d"],[45]]]],[50,"stringify",[46,"a"],[41,"b","c","d","e"],[22,[20,[15,"a"],[45]],[46,[36,"null"]]],[22,[20,[15,"a"],[44]],[46,[36,[44]]]],[22,[30,[12,[40,[15,"a"]],"number"],[12,[40,[15,"a"]],"boolean"]],[46,[36,[2,[15,"a"],"toString",[7]]]]],[22,[12,[40,[15,"a"]],"string"],[46,[36,[0,[0,"\"",[2,[2,[15,"a"],"split",[7,"\""]],"join",[7,"\\\""]]],"\""]]]],[22,[2,[17,[15,"gtmUtils"],"common"],"isArray",[7,[15,"a"]]],[46,[3,"b",[7]],[3,"c",0],[42,[23,[15,"c"],[17,[15,"a"],"length"]],[33,[15,"c"],[3,"c",[0,[15,"c"],1]]],false,[46,[3,"d",["stringify",[16,[15,"a"],[15,"c"]]]],[22,[12,[15,"d"],[44]],[46,[2,[15,"b"],"push",[7,"null"]]],[46,[2,[15,"b"],"push",[7,[15,"d"]]]]]]],[36,[0,[0,"[",[2,[15,"b"],"join",[7,","]]],"]"]]]],[22,[12,[40,[15,"a"]],"object"],[46,[3,"b",[7]],[47,"e",[15,"a"],[46,[3,"d",["stringify",[16,[15,"a"],[15,"e"]]]],[22,[29,[15,"d"],[44]],[46,[2,[15,"b"],"push",[7,[0,[0,[0,"\"",[15,"e"]],"\":"],[15,"d"]]]]]]]],[36,[0,[0,"{",[2,[15,"b"],"join",[7,","]]],"}"]]]],[2,[17,[15,"gtmUtils"],"common"],"log",[7,"e","Attempting to stringify unknown type!"]],[36,[44]]]]
+}

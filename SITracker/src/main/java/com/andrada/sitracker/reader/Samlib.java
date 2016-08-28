@@ -26,10 +26,11 @@ import com.andrada.sitracker.db.dao.AuthorDao;
 import com.andrada.sitracker.db.dao.PublicationDao;
 import com.andrada.sitracker.db.manager.SiDBHelper;
 import com.andrada.sitracker.exceptions.AddAuthorException;
-import com.andrada.sitracker.util.AnalyticsHelper;
+import com.andrada.sitracker.analytics.AnalyticsManager;
 import com.andrada.sitracker.util.LogUtils;
 import com.andrada.sitracker.util.SamlibPageHelper;
 import com.github.kevinsawicki.http.HttpRequest;
+import com.google.firebase.crash.FirebaseCrash;
 import com.j256.ormlite.dao.ForeignCollection;
 
 import org.apache.commons.lang3.StringUtils;
@@ -266,6 +267,6 @@ class Samlib implements SiteStrategy {
     }
 
     private void trackException(String message) {
-        AnalyticsHelper.getInstance().sendException(message);
+        FirebaseCrash.log(message);
     }
 }

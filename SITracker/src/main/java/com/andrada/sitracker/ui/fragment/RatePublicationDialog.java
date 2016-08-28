@@ -25,9 +25,10 @@ import android.widget.TextView;
 
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
+import com.andrada.sitracker.analytics.RatePublicationEvent;
 import com.andrada.sitracker.events.RatingResultEvent;
 import com.andrada.sitracker.exceptions.RatingException;
-import com.andrada.sitracker.util.AnalyticsHelper;
+import com.andrada.sitracker.analytics.AnalyticsManager;
 import com.andrada.sitracker.util.RatingUtil;
 
 import org.androidannotations.annotations.Background;
@@ -127,13 +128,10 @@ public class RatePublicationDialog extends DialogFragment implements RatingBar.O
                 EventBus.getDefault().post(new RatingResultEvent(true, ratingToSubmit, votingCookie));
             }
             //Vote submitted successfully
-            AnalyticsHelper.getInstance().sendEvent(
-                    Constants.GA_EXPLORE_CATEGORY,
-                    Constants.GA_EVENT_PUB_RATED,
-                    Constants.GA_EVENT_PUB_RATED);
+            AnalyticsManager.getInstance().logEvent(new RatePublicationEvent(publicationUrl, ratingToSubmit));
         } catch (RatingException e) {
             LOGE("SiTracker", "Could not submit rating", e);
-            AnalyticsHelper.getInstance().sendException(e.getMessage());
+            AnalyticsManager.getInstance().sendException(e.getMessage());
             EventBus.getDefault().post(new RatingResultEvent(false, -1, ""));
         }
     }

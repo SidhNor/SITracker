@@ -38,6 +38,8 @@ import android.widget.TextView;
 
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
+import com.andrada.sitracker.analytics.ImportAuthorsEvent;
+import com.andrada.sitracker.analytics.ImportEvent;
 import com.andrada.sitracker.events.CancelImportEvent;
 import com.andrada.sitracker.events.ImportUpdates;
 import com.andrada.sitracker.tasks.ImportAuthorsTask;
@@ -45,7 +47,7 @@ import com.andrada.sitracker.tasks.ImportAuthorsTask_;
 import com.andrada.sitracker.tasks.io.AuthorFileImportContext;
 import com.andrada.sitracker.ui.components.ImportProgressView;
 import com.andrada.sitracker.ui.components.ImportProgressView_;
-import com.andrada.sitracker.util.AnalyticsHelper;
+import com.andrada.sitracker.analytics.AnalyticsManager;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -136,7 +138,8 @@ public class ImportAuthorsActivity extends BaseActivity implements DirectoryChoo
 
     @Click(R.id.performImportButton)
     void importParsedAuthors() {
-        AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_IMPORT_PROGRESS);
+
+        AnalyticsManager.getInstance().logEvent(new ImportAuthorsEvent());
         //Inflate
         Intent importSvc = ImportAuthorsTask_.intent(getApplicationContext()).get();
         importSvc.putStringArrayListExtra(ImportAuthorsTask.AUTHOR_LIST_EXTRA, new ArrayList<>(authorsToImport));
@@ -152,10 +155,7 @@ public class ImportAuthorsActivity extends BaseActivity implements DirectoryChoo
             getApplicationContext().unbindService(mConnection);
             isBound = false;
         }
-        AnalyticsHelper.getInstance().sendEvent(
-                Constants.GA_ADMIN_CATEGORY,
-                Constants.GA_EVENT_AUTHOR_IMPORT,
-                Constants.GA_EVENT_IMPORT_CANCELED);
+        AnalyticsManager.getInstance().logEvent(new ImportEvent(true, null));
         getApplicationContext().stopService(ImportAuthorsTask_.intent(getApplicationContext()).get());
         toggleButtonAndProgressPanels(false);
     }
@@ -190,8 +190,6 @@ public class ImportAuthorsActivity extends BaseActivity implements DirectoryChoo
 
         dirChooserController = new DirectoryChooserController(this, null, false);
         dirChooserController.setListener(this);
-
-        AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_IMPORT_AUTHORS);
     }
 
     @AfterViews

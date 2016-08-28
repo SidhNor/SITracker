@@ -239,6 +239,16 @@
     <string name="change_log"><![CDATA[
 
         <section>
+            <header><h2>Версия 1.4.3</h2></header>
+            <p>Мелкий релиз баг-фиксов.</p>
+            <ul>
+                <li>Драфт поддержка Android 7.</li>
+                <li>Android 6 runtime разрешения.</li>
+                <li>Исправлен выбор папки в настройках и во время экспорта авторов.</li>
+            </ul>
+        </section>
+
+        <section>
             <header><h2>Версия 1.4.2</h2></header>
             <p>Мелкий релиз баг-фиксов.</p>
             <ul>
@@ -381,5 +391,6 @@
             </ul>
         </section>
     ]]></string>
+    <string name="write_storage_permissions">Чтобы сохранять произведения или экспортировать авторов, нужен доступ записи на внешней карте памяти.</string>
 
 </resources>

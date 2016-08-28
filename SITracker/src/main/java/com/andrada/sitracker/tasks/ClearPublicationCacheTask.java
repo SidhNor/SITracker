@@ -20,8 +20,8 @@ import android.app.IntentService;
 import android.content.Intent;
 
 import com.andrada.sitracker.R;
+import com.andrada.sitracker.analytics.AnalyticsManager;
 import com.andrada.sitracker.exceptions.SharePublicationException;
-import com.andrada.sitracker.util.AnalyticsHelper;
 import com.andrada.sitracker.util.ShareHelper;
 
 import java.io.File;
@@ -51,7 +51,7 @@ public class ClearPublicationCacheTask extends IntentService {
             errorMessage = this.getResources().getString(R.string.publication_error_storage);
         }
         if (!errorMessage.equals("")) {
-            AnalyticsHelper.getInstance().sendException("Failed to remove files.");
+            AnalyticsManager.getInstance().sendException("Failed to remove files in publication cache.");
         }
     }
 }

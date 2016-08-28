@@ -1,11 +1,11 @@
 /*
- * Copyright 2013 Gleb Godonoga.
+ * Copyright 2016 Gleb Godonoga.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,4 +14,15 @@
  * limitations under the License.
  */
 
-include ':SITracker'
+package com.andrada.sitracker.analytics;
+
+import com.google.firebase.analytics.FirebaseAnalytics;
+
+public class ViewCategoryEvent extends FBAEvent {
+
+    public ViewCategoryEvent(String categoryName) {
+        super(FirebaseAnalytics.Event.VIEW_ITEM_LIST);
+        getParamMap().put(FirebaseAnalytics.Param.ITEM_CATEGORY, categoryName);
+        getParamMap().put(FirebaseAnalytics.Param.CONTENT_TYPE, "publication");
+    }
+}

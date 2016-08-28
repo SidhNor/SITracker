@@ -46,9 +46,9 @@ import android.widget.Spinner;
 
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
+import com.andrada.sitracker.analytics.AnalyticsManager;
 import com.andrada.sitracker.contracts.AppUriContract;
 import com.andrada.sitracker.ui.fragment.RemoteAuthorsFragment;
-import com.andrada.sitracker.util.AnalyticsHelper;
 import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
 
@@ -115,7 +115,6 @@ public class SearchActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         overridePendingTransition(0, 0);
-        AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_SEARCH);
     }
 
     @Override
@@ -326,10 +325,6 @@ public class SearchActivity extends BaseActivity {
             return;
         }
         mCurrentSearchType = position;
-        AnalyticsHelper.getInstance().sendEvent(
-                Constants.GA_EXPLORE_CATEGORY,
-                Constants.GA_EVENT_SEARCH_TYPE_CHANGED,
-                Constants.GA_EVENT_SEARCH_TYPE_CHANGED);
         if (mAuthorsFragment != null && !TextUtils.isEmpty(mQuery)) {
             if (mSearchView != null) {
                 mSearchView.clearFocus();

@@ -30,7 +30,7 @@ import com.andrada.sitracker.R;
 import com.andrada.sitracker.tasks.messages.UpdateFailedIntentMessage;
 import com.andrada.sitracker.tasks.messages.UpdateSuccessfulIntentMessage;
 import com.andrada.sitracker.ui.SiMainActivity_;
-import com.andrada.sitracker.util.AnalyticsHelper;
+import com.andrada.sitracker.analytics.AnalyticsManager;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -56,7 +56,7 @@ public class UpdateStatusNotificationReceiver extends BroadcastReceiver {
 
         } else if (intent.getAction().equals(UpdateFailedIntentMessage.FAILED_MESSAGE)) {
             //Notify that update failed
-            AnalyticsHelper.getInstance().sendException(UpdateFailedIntentMessage.FAILED_MESSAGE);
+            AnalyticsManager.getInstance().sendException(UpdateFailedIntentMessage.FAILED_MESSAGE);
         }
     }
 

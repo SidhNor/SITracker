@@ -57,6 +57,8 @@ public class NewPubsAdapter extends RecyclerView.Adapter<NewPubsAdapter.ViewHold
 
     boolean shouldShowImages;
 
+    private OnItemClickListener listener;
+
     @Background
     public void reloadNewPublications() {
         List<Publication> pubs;
@@ -101,9 +103,10 @@ public class NewPubsAdapter extends RecyclerView.Adapter<NewPubsAdapter.ViewHold
         notifyDataSetChanged();
     }
 
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new ViewHolder(NewPubItemView_.build(context));
+        return new ViewHolder(NewPubItemView_.build(context), listener);
     }
 
     @Override
@@ -132,6 +135,10 @@ public class NewPubsAdapter extends RecyclerView.Adapter<NewPubsAdapter.ViewHold
         //TODO make item not new, reload stuff
     }
 
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.listener = listener;
+    }
+
     public Publication getItemAt(int position) {
         if (position >= 0 && position < publications.size()) {
             return publications.get(position);
@@ -143,9 +150,19 @@ public class NewPubsAdapter extends RecyclerView.Adapter<NewPubsAdapter.ViewHold
 
         NewPubItemView view;
 
-        public ViewHolder(NewPubItemView itemView) {
+        public ViewHolder(final NewPubItemView itemView, final OnItemClickListener listener) {
             super(itemView);
             view = itemView;
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    listener.onItemClick(itemView.getCurrentPublicationId());
+                }
+            });
         }
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(Long publicationId);
     }
 }

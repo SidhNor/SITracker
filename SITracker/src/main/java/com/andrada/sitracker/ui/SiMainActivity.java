@@ -17,16 +17,21 @@
 package com.andrada.sitracker.ui;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.view.View;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.andrada.sitracker.R;
 import com.andrada.sitracker.contracts.AppUriContract;
@@ -36,6 +41,9 @@ import com.andrada.sitracker.ui.fragment.AboutDialog;
 import com.andrada.sitracker.ui.fragment.AuthorsFragment;
 import com.andrada.sitracker.ui.fragment.AuthorsFragment_;
 import com.andrada.sitracker.util.UpdateServiceHelper;
+import com.andrada.sitracker.util.permission.Permissions;
+import com.andrada.sitracker.util.permission.RuntimePermissionsInteraction;
+import com.andrada.sitracker.util.permission.RuntimePermissionsUtils;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
@@ -48,7 +56,7 @@ import de.greenrobot.event.EventBus;
 
 @SuppressLint("Registered")
 @EActivity
-public class SiMainActivity extends BaseActivity {
+public class SiMainActivity extends BaseActivity implements RuntimePermissionsInteraction {
 
     @ViewById(R.id.fragment_holder)
     View fragmentHolder;
@@ -63,6 +71,8 @@ public class SiMainActivity extends BaseActivity {
     @Pref
     SIPrefs_ prefs;
 
+    RuntimePermissionsUtils permissionsUtils = new RuntimePermissionsUtils();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +82,8 @@ public class SiMainActivity extends BaseActivity {
 
         setContentView(R.layout.activity_si_main);
         ensureUpdatesAreRunningOnSchedule();
+
+        permissionsUtils.requestPermissionIfNeed(Permissions.WRITE_PERMISSION, this);
     }
 
     @AfterViews
@@ -178,5 +190,36 @@ public class SiMainActivity extends BaseActivity {
             authorsSuccessfullyImported = -1;
             authorsProcessed = -1;
         }
+    }
+
+    @Override
+    public Activity getActivity() {
+        return this;
+    }
+
+    @Override
+    public void showExplanationDialog(Permissions permission) {
+        new MaterialDialog.Builder(this)
+                .content(permission.explanationMessageResourceId)
+                .negativeText(android.R.string.cancel)
+                .positiveText(R.string.action_settings)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        getActivity().startActivity(new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                Uri.fromParts("package", getPackageName(), null)));
+                    }
+                })
+                .build().show();
+    }
+
+    @Override
+    public void permissionGranted() {
+
+    }
+
+    @Override
+    public void permissionRevoked() {
+
     }
 }

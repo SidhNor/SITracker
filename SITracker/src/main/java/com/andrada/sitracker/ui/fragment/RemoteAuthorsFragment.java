@@ -37,6 +37,8 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
+import com.andrada.sitracker.analytics.AddAuthorEvent;
+import com.andrada.sitracker.analytics.SearchAuthorEvent;
 import com.andrada.sitracker.contracts.AppUriContract;
 import com.andrada.sitracker.db.beans.SearchedAuthor;
 import com.andrada.sitracker.events.AuthorAddedEvent;
@@ -47,7 +49,7 @@ import com.andrada.sitracker.tasks.AddAuthorTask;
 import com.andrada.sitracker.ui.BaseActivity;
 import com.andrada.sitracker.ui.fragment.adapters.SearchResultsAdapter;
 import com.andrada.sitracker.ui.widget.GridSpacingItemDecoration;
-import com.andrada.sitracker.util.AnalyticsHelper;
+import com.andrada.sitracker.analytics.AnalyticsManager;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
@@ -92,17 +94,14 @@ public class RemoteAuthorsFragment extends BaseFragment implements
             //Find author with this url
             int pos = adapter.getItemPositionById(event.authorUrl);
             if (pos != -1) {
+                AnalyticsManager.getInstance().logEvent(new AddAuthorEvent(
+                        adapter.getItem(pos).getAuthorName(), adapter.getItem(pos).getAuthorUrl()));
                 adapter.getItem(pos).setAdded(true);
                 recyclerView.getAdapter().notifyItemChanged(pos);
             }
         }
         loading.setVisibility(View.GONE);
         String message = event.message;
-
-        AnalyticsHelper.getInstance().sendEvent(
-                Constants.GA_EXPLORE_CATEGORY,
-                Constants.GA_EVENT_AUTHOR_ADDED,
-                Constants.GA_EVENT_AUTHOR_ADDED);
 
         if (getActivity() == null) {
             return;
@@ -154,6 +153,8 @@ public class RemoteAuthorsFragment extends BaseFragment implements
     }
 
     public void requestQueryUpdate(String query, int searchType) {
+        AnalyticsManager.getInstance().logEvent(new SearchAuthorEvent(query, String.valueOf(searchType)));
+
         //Test query for URL
         if (query.matches(Constants.SIMPLE_URL_REGEX) && query.startsWith(Constants.HTTP_PROTOCOL)) {
             //This looks like an url
