@@ -1,21 +1,41 @@
 {
   "project_info": {
-    "project_id": "sitracker-40f85",
     "project_number": "686961793601",
-    "name": "SITracker"
+    "firebase_url": "https://sitracker-40f85.firebaseio.com",
+    "project_id": "sitracker-40f85",
+    "storage_bucket": "sitracker-40f85.appspot.com"
   },
   "client": [
     {
       "client_info": {
         "mobilesdk_app_id": "1:686961793601:android:ab59d4a2cf478709",
-        "client_id": "android:com.andrada.sitracker",
-        "client_type": 1,
         "android_client_info": {
           "package_name": "com.andrada.sitracker"
         }
       },
-      "oauth_client": [],
-      "api_key": [],
+      "oauth_client": [
+        {
+          "client_id": "686961793601-9559m77tuehs2a1tl60b9o12naq4sgvo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.andrada.sitracker",
+            "certificate_hash": "3C5853B2ED81A92420911F787349B3028AA880D9"
+          }
+        },
+        {
+          "client_id": "686961793601-efrll28gegvneg6eu87slng0lcl1t565.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "686961793601-df4nfs72ba4abjk5030u9k77159a2i73.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD1to3XpNETEDUpIfRi4dLAYS_8wAYWQJY"
+        }
+      ],
       "services": {
         "analytics_service": {
           "status": 2,
@@ -23,23 +43,50 @@
             "tracking_id": "UA-42708820-1"
           }
         },
-        "cloud_messaging_service": {
+        "appinvite_service": {
           "status": 1,
-          "apns_config": []
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:686961793601:android:2f06fd8339741fa0",
+        "android_client_info": {
+          "package_name": "com.andrada.sitracker.debug"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "686961793601-efrll28gegvneg6eu87slng0lcl1t565.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "686961793601-df4nfs72ba4abjk5030u9k77159a2i73.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD1to3XpNETEDUpIfRi4dLAYS_8wAYWQJY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
         },
         "appinvite_service": {
           "status": 1,
           "other_platform_oauth_client": []
         },
-        "google_signin_service": {
-          "status": 1
-        },
         "ads_service": {
-          "status": 1
+          "status": 2
         }
       }
     }
   ],
-  "client_info": [],
-  "ARTIFACT_VERSION": "1"
+  "configuration_version": "1"
 }

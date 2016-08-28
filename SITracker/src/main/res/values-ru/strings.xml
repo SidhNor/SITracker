@@ -381,5 +381,7 @@
             </ul>
         </section>
     ]]></string>
+    <string name="read_storage_permissions">This action requires access to read from external storage</string>
+    <string name="write_storage_permissions">This action requires access to write to external storage</string>
 
 </resources>

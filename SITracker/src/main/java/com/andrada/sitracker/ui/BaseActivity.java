@@ -42,6 +42,8 @@ import android.view.ViewGroup;
 import com.andrada.sitracker.BuildConfig;
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
+import com.andrada.sitracker.analytics.AnalyticsManager;
+import com.andrada.sitracker.analytics.MarkAsReadEvent;
 import com.andrada.sitracker.contracts.OnBackAware;
 import com.andrada.sitracker.events.AuthorMarkedAsReadEvent;
 import com.andrada.sitracker.events.AuthorsExported;
@@ -52,11 +54,9 @@ import com.andrada.sitracker.ui.fragment.AuthorsFragment_;
 import com.andrada.sitracker.ui.fragment.NewPublicationsFragment;
 import com.andrada.sitracker.ui.fragment.NewPublicationsFragment_;
 import com.andrada.sitracker.util.ActivityFragmentNavigator;
-import com.andrada.sitracker.util.AnalyticsHelper;
 import com.andrada.sitracker.util.NavDrawerManager;
 import com.andrada.sitracker.util.PlayServicesUtils;
 import com.andrada.sitracker.util.UIUtils;
-import com.google.android.gms.analytics.GoogleAnalytics;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -154,12 +154,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        GoogleAnalytics.getInstance(this).reportActivityStart(this);
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
         if (!BuildConfig.DEBUG) {
@@ -168,16 +162,9 @@ public abstract class BaseActivity extends AppCompatActivity implements
         }
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        GoogleAnalytics.getInstance(this).reportActivityStart(this);
-    }
-
     protected void afterViews() {
         mDrawerManager = new NavDrawerManager(this);
     }
-
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
@@ -264,7 +251,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
                 SettingsActivity_.intent(this).start();
                 break;
             case R.id.navigation_item_about:
-                AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_ABOUT_DIALOG);
                 FragmentManager fm = this.getFragmentManager();
                 FragmentTransaction ft = fm.beginTransaction();
                 Fragment prev = fm.findFragmentByTag(AboutDialog.FRAGMENT_TAG);
@@ -328,10 +314,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
     }
 
     public void onEvent(PublicationMarkedAsReadEvent event) {
-        AnalyticsHelper.getInstance().sendEvent(
-                Constants.GA_READ_CATEGORY,
-                Constants.GA_EVENT_AUTHOR_MANUAL_READ,
-                Constants.GA_EVENT_AUTHOR_MANUAL_READ);
+        AnalyticsManager.getInstance().logEvent(new MarkAsReadEvent());
         this.scheduleBackup();
     }
 
@@ -357,11 +340,11 @@ public abstract class BaseActivity extends AppCompatActivity implements
      * activity then don't define one and this method will use back button functionality. If "Up"
      * functionality is still desired for activities without parents then use
      * {@code syntheticParentActivity} to define one dynamically.
-     *
+     * <p/>
      * Note: Up navigation intents are represented by a back arrow in the top left of the Toolbar
-     *       in Material Design guidelines.
+     * in Material Design guidelines.
      *
-     * @param currentActivity Activity in use when navigate Up action occurred.
+     * @param currentActivity         Activity in use when navigate Up action occurred.
      * @param syntheticParentActivity Parent activity to use when one is not already configured.
      */
     public static void navigateUpOrBack(Activity currentActivity,

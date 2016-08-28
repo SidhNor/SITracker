@@ -26,11 +26,12 @@ import android.view.View;
 
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
+import com.andrada.sitracker.analytics.ViewNewPublications;
 import com.andrada.sitracker.contracts.AppUriContract;
 import com.andrada.sitracker.ui.PublicationDetailsActivity;
 import com.andrada.sitracker.ui.fragment.adapters.NewPubsAdapter;
 import com.andrada.sitracker.ui.widget.DividerItemDecoration;
-import com.andrada.sitracker.util.AnalyticsHelper;
+import com.andrada.sitracker.analytics.AnalyticsManager;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
@@ -89,7 +90,7 @@ public class NewPublicationsFragment extends BaseFragment implements NewPubsAdap
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
         adapter.registerAdapterDataObserver(dataObserver);
         adapter.reloadNewPublications();
-        AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_NEW_PUBLICATIONS);
+        AnalyticsManager.getInstance().logEvent(new ViewNewPublications());
     }
 
     @Override

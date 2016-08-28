@@ -29,10 +29,11 @@ import android.view.View;
 
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
+import com.andrada.sitracker.analytics.ViewAuthorEvent;
 import com.andrada.sitracker.contracts.AppUriContract;
 import com.andrada.sitracker.events.AuthorSelectedEvent;
 import com.andrada.sitracker.ui.fragment.PublicationsFragment_;
-import com.andrada.sitracker.util.AnalyticsHelper;
+import com.andrada.sitracker.analytics.AnalyticsManager;
 
 import org.androidannotations.annotations.EActivity;
 
@@ -87,9 +88,9 @@ public class AuthorDetailsActivity extends BaseActivity {
             getFragmentManager().beginTransaction()
                     .add(R.id.root_container, fragment, "single_pane")
                     .commit();
-        }
 
-        AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_AUTHOR_PUBLICATIONS);
+            AnalyticsManager.getInstance().logEvent(new ViewAuthorEvent(authorName));
+        }
     }
 
     /*

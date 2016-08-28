@@ -31,10 +31,10 @@ import com.andrada.sitracker.ui.components.NewPubItemView_;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
+import org.androidannotations.annotations.OrmLiteDao;
 import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.sharedpreferences.Pref;
-import org.androidannotations.ormlite.annotations.OrmLiteDao;
 
 import java.sql.SQLException;
 import java.util.ArrayList;

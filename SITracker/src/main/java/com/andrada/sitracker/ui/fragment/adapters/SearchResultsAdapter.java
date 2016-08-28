@@ -30,8 +30,8 @@ import com.andrada.sitracker.util.SamlibPageHelper;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
+import org.androidannotations.annotations.OrmLiteDao;
 import org.androidannotations.annotations.RootContext;
-import org.androidannotations.ormlite.annotations.OrmLiteDao;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;

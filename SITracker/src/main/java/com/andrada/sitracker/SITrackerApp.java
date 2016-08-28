@@ -19,15 +19,12 @@ package com.andrada.sitracker;
 import android.app.Application;
 import android.net.http.HttpResponseCache;
 
-import com.andrada.sitracker.util.AnalyticsExceptionParser;
-import com.andrada.sitracker.util.AnalyticsHelper;
-import com.crashlytics.android.Crashlytics;
-import com.google.android.gms.analytics.ExceptionReporter;
+import com.andrada.sitracker.analytics.AnalyticsManager;
+import com.google.firebase.FirebaseApp;
 
 import java.io.File;
 
 import de.greenrobot.event.EventBus;
-import io.fabric.sdk.android.Fabric;
 
 import static com.andrada.sitracker.util.LogUtils.LOGD;
 import static com.andrada.sitracker.util.LogUtils.LOGE;
@@ -43,35 +40,26 @@ public class SITrackerApp extends Application {
 
         super.onCreate();
 
-        //Fabric
-        if (!BuildConfig.DEBUG) {
-            Fabric.with(this, new Crashlytics());
+        if (!FirebaseApp.getApps(this).isEmpty()) {
+
+            //Setup cache if possible
+            try {
+                File httpCacheDir = new File(this.getCacheDir(), "http");
+                long httpCacheSize = 1024 * 1024; // 1 MiB
+                HttpResponseCache.install(httpCacheDir, httpCacheSize);
+                LOGD("SiTracker", "Cache installed");
+
+            } catch (Exception ignored) {
+                LOGE("SiTracker", "Cache installed failed");
+            }
+
+            EventBus.builder()
+                    .throwSubscriberException(BuildConfig.DEBUG)
+                    .installDefaultEventBus();
+
+            AnalyticsManager.initHelper(this);
         }
 
-        //Setup cache if possible
-        try {
-            File httpCacheDir = new File(this.getCacheDir(), "http");
-            long httpCacheSize = 1024 * 1024; // 1 MiB
-            HttpResponseCache.install(httpCacheDir, httpCacheSize);
-            LOGD("SiTracker", "Cache installed");
 
-        } catch (Exception ignored) {
-            LOGE("SiTracker", "Cache installed failed");
-        }
-
-        EventBus.builder()
-                .throwSubscriberException(BuildConfig.DEBUG)
-                .installDefaultEventBus();
-
-        AnalyticsHelper.initHelper(this);
-        ExceptionReporter myReporter = new ExceptionReporter(
-                // Currently used Tracker.
-                AnalyticsHelper.getInstance().getTracker(AnalyticsHelper.TrackerName.APP_TRACKER),
-                // Current default uncaught exception handler.
-                Thread.getDefaultUncaughtExceptionHandler(),
-                // Context of the application.
-                this.getApplicationContext());
-        myReporter.setExceptionParser(new AnalyticsExceptionParser());
-        Thread.setDefaultUncaughtExceptionHandler(myReporter);
     }
 }

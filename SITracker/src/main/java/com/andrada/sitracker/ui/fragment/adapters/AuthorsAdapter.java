@@ -30,15 +30,15 @@ import com.andrada.sitracker.db.manager.SiDBHelper;
 import com.andrada.sitracker.events.AuthorMarkedAsReadEvent;
 import com.andrada.sitracker.ui.components.AuthorItemView;
 import com.andrada.sitracker.ui.components.AuthorItemView_;
-import com.andrada.sitracker.util.AnalyticsHelper;
+import com.andrada.sitracker.analytics.AnalyticsManager;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
+import org.androidannotations.annotations.OrmLiteDao;
 import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.sharedpreferences.Pref;
-import org.androidannotations.ormlite.annotations.OrmLiteDao;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -170,7 +170,7 @@ public class AuthorsAdapter extends RecyclerView.Adapter<AuthorsAdapter.ViewHold
                 authorDao.update(auth);
                 EventBus.getDefault().post(new AuthorMarkedAsReadEvent(auth));
             } catch (SQLException e) {
-                AnalyticsHelper.getInstance().sendException("Author mark as read: ", e);
+                AnalyticsManager.getInstance().sendException("Author mark as read: ", e);
             }
         }
     }
@@ -189,7 +189,7 @@ public class AuthorsAdapter extends RecyclerView.Adapter<AuthorsAdapter.ViewHold
                 }
             });
         } catch (Exception e) {
-            AnalyticsHelper.getInstance().sendException("Author Remove thread: ", e);
+            AnalyticsManager.getInstance().sendException("Author Remove thread: ", e);
         }
 
         List<Author> authorCopy = new ArrayList<Author>(authors);

@@ -27,6 +27,7 @@ import android.widget.ListView;
 
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
+import com.andrada.sitracker.analytics.PublicationOpenedEvent;
 import com.andrada.sitracker.contracts.IsNewItemTappedListener;
 import com.andrada.sitracker.contracts.SIPrefs_;
 import com.andrada.sitracker.db.beans.Publication;
@@ -37,16 +38,16 @@ import com.andrada.sitracker.ui.components.PublicationCategoryItemView;
 import com.andrada.sitracker.ui.components.PublicationCategoryItemView_;
 import com.andrada.sitracker.ui.components.PublicationItemView;
 import com.andrada.sitracker.ui.components.PublicationItemView_;
-import com.andrada.sitracker.util.AnalyticsHelper;
+import com.andrada.sitracker.analytics.AnalyticsManager;
 import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
+import org.androidannotations.annotations.OrmLiteDao;
 import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.sharedpreferences.Pref;
-import org.androidannotations.ormlite.annotations.OrmLiteDao;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -262,7 +263,7 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
                 boolean authorNewChanged = publicationsDao.markPublicationRead(pub);
                 EventBus.getDefault().post(new PublicationMarkedAsReadEvent(authorNewChanged));
             } catch (SQLException e) {
-                AnalyticsHelper.getInstance().sendException("Publication Set update", e);
+                AnalyticsManager.getInstance().sendException("Publication Set update", e);
             }
             postDataSetChanged();
         }
@@ -289,10 +290,8 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
 
                 //Attempt to open or download publication
                 listener.publicationShare(pub, pub.getNew());
-                AnalyticsHelper.getInstance().sendEvent(
-                        Constants.GA_READ_CATEGORY,
-                        Constants.GA_EVENT_LONG_TAP,
-                        Constants.GA_EVENT_AUTHOR_PUB_OPEN);
+
+                AnalyticsManager.getInstance().logEvent(new PublicationOpenedEvent(pub.getName(), false));
             }
             // Return true as we are handling the event.
             return true;
@@ -305,7 +304,7 @@ public class PublicationsAdapter extends BaseExpandableListAdapter implements
         void publicationShare(Publication pub, boolean forceDownload);
     }
 
-    class CategoryValue {
+    public class CategoryValue {
         public final String categoryName;
         private int newCount;
 

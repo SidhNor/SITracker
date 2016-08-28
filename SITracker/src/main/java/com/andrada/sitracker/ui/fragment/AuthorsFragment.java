@@ -39,6 +39,10 @@ import android.view.View;
 import com.afollestad.materialcab.MaterialCab;
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.R;
+import com.andrada.sitracker.analytics.FBAEvent;
+import com.andrada.sitracker.analytics.MarkAsReadEvent;
+import com.andrada.sitracker.analytics.RemoveAuthorEvent;
+import com.andrada.sitracker.analytics.SelectAuthorEvent;
 import com.andrada.sitracker.contracts.AuthorItemListener;
 import com.andrada.sitracker.contracts.AuthorUpdateStatusListener;
 import com.andrada.sitracker.contracts.OnBackAware;
@@ -54,7 +58,7 @@ import com.andrada.sitracker.tasks.receivers.UpdateStatusReceiver;
 import com.andrada.sitracker.ui.SearchActivity_;
 import com.andrada.sitracker.ui.fragment.adapters.AuthorsAdapter;
 import com.andrada.sitracker.ui.widget.DividerItemDecoration;
-import com.andrada.sitracker.util.AnalyticsHelper;
+import com.andrada.sitracker.analytics.AnalyticsManager;
 import com.andrada.sitracker.util.UpdateServiceHelper;
 
 import org.androidannotations.annotations.AfterViews;
@@ -138,7 +142,6 @@ public class AuthorsFragment extends BaseListFragment implements
         super.onStart();
         getActivity().invalidateOptionsMenu();
         adapter.notifyDataSetChanged();
-        AnalyticsHelper.getInstance().sendView(Constants.GA_SCREEN_AUTHORS);
     }
 
     @Override
@@ -197,7 +200,6 @@ public class AuthorsFragment extends BaseListFragment implements
     //region Menu item tap handlers
     @OptionsItem(R.id.action_search)
     void menuSearchSelected() {
-        AnalyticsHelper.getInstance().sendEvent(Constants.GA_EXPLORE_CATEGORY, "launchsearch", "");
         SearchActivity_.intent(this.getActivity()).start();
     }
 
@@ -215,10 +217,8 @@ public class AuthorsFragment extends BaseListFragment implements
                 Intent updateIntent = new Intent(getActivity(), UpdateAuthorsTask_.class);
                 updateIntent.putExtra(Constants.UPDATE_IGNORES_NETWORK, true);
                 getActivity().startService(updateIntent);
-                AnalyticsHelper.getInstance().sendEvent(
-                        Constants.GA_READ_CATEGORY,
-                        Constants.GA_EVENT_AUTHORS_MANUAL_REFRESH,
-                        Constants.GA_EVENT_AUTHORS_MANUAL_REFRESH);
+
+                AnalyticsManager.getInstance().logEvent(new FBAEvent(Constants.GA_EVENT_AUTHORS_MANUAL_REFRESH));
 
                 //Start refreshing
                 toggleUpdatingState();
@@ -312,7 +312,6 @@ public class AuthorsFragment extends BaseListFragment implements
     }
     //endregion
 
-
     public void onEvent(@NotNull PublicationMarkedAsReadEvent event) {
         //ensure we update the new status of the author if he has no new publications
         if (event.refreshAuthor) {
@@ -371,9 +370,10 @@ public class AuthorsFragment extends BaseListFragment implements
             return;
         }
         Author auth = adapter.getItem(viewHolder.getAdapterPosition());
-        if (auth != null)
+        if (auth != null) {
+            AnalyticsManager.getInstance().logEvent(new SelectAuthorEvent(auth.getName(), auth.getUrl()));
             EventBus.getDefault().post(new AuthorSelectedEvent(auth.getId(), auth.getName()));
-
+        }
     }
 
     @Override
@@ -423,10 +423,8 @@ public class AuthorsFragment extends BaseListFragment implements
         }
 
         if (item.getItemId() == R.id.action_remove) {
-            AnalyticsHelper.getInstance().sendEvent(
-                    Constants.GA_ADMIN_CATEGORY,
-                    Constants.GA_EVENT_AUTHOR_REMOVED,
-                    Constants.GA_EVENT_AUTHOR_REMOVED, (long) selectedAuthors.size());
+
+            AnalyticsManager.getInstance().logEvent(new RemoveAuthorEvent(selectedAuthors.size()));
 
             //This stuff is on background thread
             adapter.removeAuthors(selectedAuthors);
@@ -434,10 +432,8 @@ public class AuthorsFragment extends BaseListFragment implements
             return true;
         } else if (item.getItemId() == R.id.action_mark_read) {
             adapter.markAuthorsRead(selectedAuthors);
-            AnalyticsHelper.getInstance().sendEvent(
-                    Constants.GA_ADMIN_CATEGORY,
-                    Constants.GA_EVENT_AUTHOR_MANUAL_READ,
-                    Constants.GA_EVENT_AUTHOR_MANUAL_READ, (long) selectedAuthors.size());
+
+            AnalyticsManager.getInstance().logEvent(new MarkAsReadEvent(selectedAuthors.size()));
 
             BackupManager bm = new BackupManager(getActivity());
             bm.dataChanged();

@@ -14,20 +14,35 @@
  * limitations under the License.
  */
 
-package com.andrada.sitracker.util;
+package com.andrada.sitracker.analytics;
 
-import com.google.android.gms.analytics.ExceptionParser;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.jetbrains.annotations.NotNull;
+public class FBAEvent {
 
-public class AnalyticsExceptionParser implements ExceptionParser {
-    /*
-     * (non-Javadoc)
-     * @see com.google.analytics.tracking.android.ExceptionParser#getDescription(java.lang.String, java.lang.Throwable)
-     */
-    @NotNull
-    public String getDescription(String p_thread, Throwable p_throwable) {
-        return "Thread: " + p_thread + ", Exception: " + ExceptionUtils.getStackTrace(p_throwable);
+    protected String name;
+    private final Map<String, String> paramMap;
+
+    public FBAEvent() {
+        this(new HashMap<String, String>());
     }
+
+    public FBAEvent(String eventName) {
+        this(new HashMap<String, String>());
+        name = eventName;
+    }
+
+    public FBAEvent(Map<String, String> paramMap) {
+        this.paramMap = paramMap;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Map<String, String> getParamMap() {
+        return paramMap;
+    }
+
 }
