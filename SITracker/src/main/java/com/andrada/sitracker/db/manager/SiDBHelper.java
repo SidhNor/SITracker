@@ -37,7 +37,7 @@ import java.util.concurrent.Callable;
 public class SiDBHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "siinformer.db";
-    private static final int DATABASE_VERSION = 11;
+    private static final int DATABASE_VERSION = 12;
 
     @Nullable
     private PublicationDao publicationDao;
@@ -160,6 +160,11 @@ public class SiDBHelper extends OrmLiteSqliteOpenHelper {
                         break;
                     }
                     case 11: {
+                        getPublicationDao().queryRaw("DELETE FROM publications WHERE author_id NOT IN " +
+                                "(SELECT _id FROM authors) OR author_id IS NULL");
+                        break;
+                    }
+                    case 12: {
                         getPublicationDao().queryRaw("DELETE FROM publications WHERE author_id NOT IN " +
                                 "(SELECT _id FROM authors) OR author_id IS NULL");
                         break;
