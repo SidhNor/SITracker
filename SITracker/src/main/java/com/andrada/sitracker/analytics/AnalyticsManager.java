@@ -45,7 +45,14 @@ public class AnalyticsManager {
     private Bundle toBundle(Map<String, String> map) {
         Bundle bundle = new Bundle();
         for (Map.Entry<String, String> entry : map.entrySet()) {
-            bundle.putString(StringUtils.left(entry.getKey(), 24), StringUtils.left(entry.getValue(), 36));
+            String value = "";
+            if (entry.getValue() != null) {
+                value = StringUtils.left(value
+                        .replaceFirst("http://", "")
+                        .replaceAll("budclub.ru/", "")
+                        .replaceAll("samlib.ru/", ""), 36);
+            }
+            bundle.putString(StringUtils.left(entry.getKey(), 24), value);
         }
         return bundle;
     }
