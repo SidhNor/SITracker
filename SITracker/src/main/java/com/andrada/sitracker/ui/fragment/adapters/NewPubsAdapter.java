@@ -84,7 +84,12 @@ public class NewPubsAdapter extends RecyclerView.Adapter<NewPubsAdapter.ViewHold
         try {
             List<Publication> pubs = publicationsDao.getNewPublications();
             for (Publication pub : pubs) {
-                publicationsDao.markPublicationRead(pub);
+                if (pub.getAuthor() == null) {
+                    publicationsDao.delete(pub);
+                } else {
+                    publicationsDao.markPublicationRead(pub);
+                }
+
             }
         } catch (SQLException e) {
             e.printStackTrace();

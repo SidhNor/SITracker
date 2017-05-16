@@ -18,10 +18,15 @@ package com.andrada.sitracker.util;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
+import android.support.v4.content.FileProvider;
 import android.text.TextUtils;
 
+import com.andrada.sitracker.BuildConfig;
 import com.andrada.sitracker.Constants;
 import com.andrada.sitracker.db.beans.Publication;
 import com.andrada.sitracker.exceptions.SharePublicationException;
@@ -40,6 +45,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -48,10 +54,17 @@ import static com.andrada.sitracker.util.LogUtils.LOGW;
 public final class ShareHelper {
 
     @NotNull
-    public static Intent getSharePublicationIntent(Uri file) {
+    public static Intent getSharePublicationIntent(Uri file, Context context) {
         Intent share = new Intent(Intent.ACTION_VIEW);
-        share.addCategory(Intent.CATEGORY_DEFAULT);
-        share.setDataAndType(file, "text/html");
+        share.addCategory(Intent.CATEGORY_DEFAULT)
+                .setDataAndType(file, "text/html")
+                .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+        List<ResolveInfo> resInfoList = context.getPackageManager().queryIntentActivities(share, PackageManager.MATCH_DEFAULT_ONLY);
+        for (ResolveInfo resolveInfo : resInfoList) {
+            String packageName = resolveInfo.activityInfo.packageName;
+            context.grantUriPermission(packageName, file, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        }
         return share;
     }
 
@@ -110,7 +123,13 @@ public final class ShareHelper {
                         SharePublicationException.SharePublicationErrors.COULD_NOT_LOAD);
             }
         }
-        return getSharePublicationIntent(Uri.fromFile(file));
+        Uri uri;
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+            uri = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".provider", file);
+        } else{
+            uri = Uri.fromFile(file);
+        }
+        return getSharePublicationIntent(uri, context);
     }
 
     public static boolean shouldRefreshPublication(Context context, @NotNull Publication pub,
