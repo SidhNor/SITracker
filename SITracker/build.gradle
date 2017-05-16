@@ -15,6 +15,7 @@
  */
 apply plugin: 'com.android.application'
 apply plugin: 'android-apt'
+apply plugin: 'com.google.firebase.firebase-crash'
 
 configurations {
     compile
