@@ -18,3 +18,5 @@ SITracker/keystore.jks
 
 device-screenshots
 proguardTools/
+
+*firebase-crashreporting*.json
